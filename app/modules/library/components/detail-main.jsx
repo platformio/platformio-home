@@ -6,7 +6,9 @@
  * the root directory of this source tree.
  */
 
-import { Button, Col, Icon, Row, Select, Tabs, Tooltip } from 'antd';
+import * as path from '../../core/path';
+
+import { Button, Col, Icon, Popconfirm, Row, Select, Tabs, Tooltip } from 'antd';
 
 import LibraryDetailExamplesBlock from '../containers/detail-examples-block';
 import LibraryDetailHeadersBlock from '../containers/detail-headers-block';
@@ -43,13 +45,16 @@ export default class LibraryDetailMain extends React.Component {
     openUrl: PropTypes.func.isRequired,
     revealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
-    installLibrary: PropTypes.func.isRequired
+    installLibrary: PropTypes.func.isRequired,
+    uninstallLibrary: PropTypes.func.isRequired,
+    showInstalledLibraries: PropTypes.func.isRequired
   }
 
   constructor() {
     super(...arguments);
     this.state = {
       installing: false,
+      uninstalling: false,
       versionForInstall: null,
       activeTab: 'examples'
     };
@@ -78,6 +83,24 @@ export default class LibraryDetailMain extends React.Component {
       () => this.setState({
         installing: false
       })
+    );
+  }
+
+  onDidUninstall() {
+    this.setState({
+      uninstalling: true
+    });
+    this.props.uninstallLibrary(
+      path.dirname(this.props.data.__pkg_dir),
+      this.props.data.__pkg_dir,
+      (err) => {
+        this.setState({
+          uninstalling: false
+        });
+        if (!err) {
+          this.props.showInstalledLibraries();
+        }
+      }
     );
   }
 
@@ -133,6 +156,40 @@ export default class LibraryDetailMain extends React.Component {
       );
   }
 
+  renderExtra() {
+    if (!this.props.data.__pkg_dir) {
+      return null;
+    }
+    return (
+      <ul className='list-inline' style={ { marginTop: '9px' } }>
+        <li>
+          <Tooltip title='Version'>
+            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } />
+            { ' ' + this.props.data.version }
+          </Tooltip>
+        </li>
+        <li>
+          <Button.Group>
+            <Button type='primary' icon='folder' onClick={ () => this.props.revealFile(this.props.data.__pkg_dir) }>
+              Reveal
+            </Button>
+            <Popconfirm title='Are you sure?'
+              okText='Yes'
+              cancelText='No'
+              onConfirm={ ::this.onDidUninstall }>
+              <Button type='primary'
+                icon='delete'
+                loading={ this.state.uninstalling }
+                disabled={ this.state.uninstalling }>
+                Uninstall
+              </Button>
+            </Popconfirm>
+          </Button.Group>
+        </li>
+      </ul>
+      );
+  }
+
   render() {
     let versions = null;
     if (this.props.data.versions) {
@@ -141,16 +198,10 @@ export default class LibraryDetailMain extends React.Component {
         return item;
       });
     }
-    let extra = '';
-    if (this.props.data.authors && this.props.data.authors.length) {
-      extra = <small>by { this.props.data.authors[0].name }</small>;
-    }
-    if (this.props.data.__pkg_dir && this.props.data.version) {
-      extra = <span>{ extra }<small className='pull-right' style={{ marginTop: '15px' }}><Tooltip title='Version'><Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } /> { this.props.data.version }</Tooltip></small></span>;
-    }
+    const authors = this.props.data.authors;
     return (
       <div>
-        <h1>{ this.props.data.name } { extra }</h1>
+        <h1>{ this.props.data.name } { authors && authors.length && <small>by { authors[0].name }</small> } <small className='pull-right'>{ this.renderExtra() }</small></h1>
         <div className='lead'>
           { this.props.data.description }
         </div>
@@ -247,10 +298,6 @@ export default class LibraryDetailMain extends React.Component {
             { this.props.data.__src_url &&
               <div>
                 <Icon type='github' /> <a onClick={ () => this.props.openUrl(this.props.data.__src_url) }>Source</a>
-              </div> }
-            { this.props.data.__pkg_dir &&
-              <div>
-                <Icon type='folder' /> <a onClick={ () => this.props.revealFile(this.props.data.__pkg_dir) }>Location</a>
               </div> }
             { this.props.data.dlstats &&
               <div>

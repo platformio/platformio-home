@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Card, Col, Icon, Row, Tooltip } from 'antd';
+import { Button, Card, Col, Icon, Popconfirm, Row, Tooltip } from 'antd';
 
 import { LibraryStorage } from '../storage';
 import PropTypes from 'prop-types';
@@ -54,18 +54,18 @@ export default class LibraryStorageItem extends React.Component {
     });
   }
 
-  onDidShow(event, item) {
-    event.stopPropagation();
+  onDidShow(e, item) {
+    e.stopPropagation();
     this.props.onShow(item);
   }
 
-  onDidKeywordSearch(event, name) {
-    event.stopPropagation();
+  onDidKeywordSearch(e, name) {
+    e.stopPropagation();
     this.props.onSearch(`keyword:"${name}"`);
   }
 
-  onDidUninstallOrUpdateItem(event, cmd) {
-    event.stopPropagation();
+  onDidUninstallOrUpdateItem(e, cmd) {
+    e.stopPropagation();
     this.setState({
       actionInProgress: true
     });
@@ -80,7 +80,7 @@ export default class LibraryStorageItem extends React.Component {
     const title = (
     <h2><a onClick={ (e) => this.onDidShow(e, this.props.item) }>{ this.props.item.name }</a> <small>{ this.props.item.authors && this.props.item.authors.length ? ` by ${ this.props.item.authors[0].name }` : '' }</small></h2>
     );
-    const extra = <span><Tooltip title='Version'><Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version }</Tooltip></span>;
+    const extra = <span><Tooltip title='Version'> <Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version } </Tooltip></span>;
     return (
       <Card title={ title }
         extra={ extra }
@@ -110,13 +110,18 @@ export default class LibraryStorageItem extends React.Component {
                 </Button>
                 ) : ('') }
               { this.props.onUninstall && this.props.actions & LibraryStorage.ACTION_UNINSTALL ? (
-                <Button type='primary'
-                  icon='delete'
-                  loading={ this.state.actionInProgress }
-                  disabled={ this.state.actionInProgress }
-                  onClick={ (e) => this.onDidUninstallOrUpdateItem(e, 'uninstall') }>
-                  Uninstall
-                </Button>
+                <Popconfirm title='Are you sure?'
+                  okText='Yes'
+                  cancelText='No'
+                  onClick={ e => e.stopPropagation() }
+                  onConfirm={ (e) => this.onDidUninstallOrUpdateItem(e, 'uninstall') }>
+                  <Button type='primary'
+                    icon='delete'
+                    loading={ this.state.actionInProgress }
+                    disabled={ this.state.actionInProgress }>
+                    Uninstall
+                  </Button>
+                </Popconfirm>
                 ) : ('') }
               { this.props.onUpdate && this.props.actions & LibraryStorage.ACTION_UPDATE ? (
                 <Button type='primary'

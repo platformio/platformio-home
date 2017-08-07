@@ -30,16 +30,6 @@ const routes = [
     component: LibrarySearchPage
   },
   {
-    path: '/libraries/builtin',
-    icon: 'eye-o',
-    label: 'Built-in',
-    component: LibraryBuiltinPage
-  },
-  {
-    path: '/libraries/builtin/show',
-    component: LibraryDetailPage
-  },
-  {
     path: '/libraries/installed',
     icon: 'hdd',
     label: 'Installed',
@@ -47,6 +37,16 @@ const routes = [
   },
   {
     path: '/libraries/installed/show',
+    component: LibraryDetailPage
+  },
+  {
+    path: '/libraries/builtin',
+    icon: 'eye-o',
+    label: 'Built-in',
+    component: LibraryBuiltinPage
+  },
+  {
+    path: '/libraries/builtin/show',
     component: LibraryDetailPage
   },
   {

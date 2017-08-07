@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Form, Icon, Input } from 'antd';
+import { Button, Col, Form, Icon, Input, Row } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -51,7 +51,9 @@ export default class AccountPasswordForm extends React.Component {
     const {getFieldDecorator} = this.props.form;
     return (
       <div className='text-left'>
-        <div className='lead'>Change your password or recover your current one.</div>
+        <div className='lead'>
+          Change your password or recover your current one.
+        </div>
         <Form onSubmit={ this.onDidSubmit } className='account-form'>
           <Form.Item>
             { getFieldDecorator('passwordOld', {
@@ -62,7 +64,6 @@ export default class AccountPasswordForm extends React.Component {
               })(
                 <Input prefix={ <Icon type='lock' style={ { fontSize: 13 } } /> } type='password' placeholder='Current Password' />
               ) }
-            <a onClick={ () => this.props.showForgotPage() }>Forgot your password?</a>
           </Form.Item>
           <Form.Item>
             { getFieldDecorator('passwordNew', {
@@ -75,12 +76,19 @@ export default class AccountPasswordForm extends React.Component {
               ) }
           </Form.Item>
           <Form.Item>
-            <Button loading={ this.state.loading }
-              type='primary'
-              htmlType='submit'
-              className='block account-submit-button'>
-              Save changes
-            </Button>
+            <Row>
+              <Col xs={ 12 } className='text-left'>
+                <a onClick={ () => this.props.showForgotPage() }>Forgot your password?</a>
+              </Col>
+              <Col xs={ 12 }>
+                <Button loading={ this.state.loading }
+                  type='primary'
+                  htmlType='submit'
+                  className='block account-submit-button'>
+                  Save changes
+                </Button>
+              </Col>
+            </Row>
           </Form.Item>
         </Form>
       </div>

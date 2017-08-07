@@ -246,6 +246,7 @@ function* watchInstallPlatform() {
 function* watchUninstallOrUpdatePlatform() {
   yield takeEvery([actions.UNINSTALL_PLATFORM, actions.UPDATE_PLATFORM], function*(action) {
     const {pkgDir, onEnd} = action;
+    let err = null;
     try {
       const result = yield call(apiFetchData, {
         query: 'core.call',
@@ -266,14 +267,13 @@ function* watchUninstallOrUpdatePlatform() {
         }
       }
       yield put(notifySuccess(`Platform has been successfully ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstalled' : 'updated'}`, result));
-    } catch (err) {
-      if (err) {
-        yield put(notifyError(`Could not ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update'} platform`, err));
-      }
+    } catch (err_) {
+      err = err_;
+      yield put(notifyError(`Could not ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update'} platform`, err));
     }
     finally {
       if (onEnd) {
-        yield call(onEnd);
+        yield call(onEnd, err);
       }
     }
   });

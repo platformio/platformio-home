@@ -248,6 +248,7 @@ function* watchInstallLibrary() {
 function* watchUninstallOrUpdateLibrary() {
   yield takeEvery([actions.UNINSTALL_LIBRARY, actions.UPDATE_LIBRARY], function*(action) {
     const {storageDir, pkgDir, onEnd} = action;
+    let err;
     try {
       const result = yield call(apiFetchData,
         {
@@ -272,12 +273,13 @@ function* watchUninstallOrUpdateLibrary() {
 
       yield put(notifySuccess('Congrats!', lastLine(result)));
 
-    } catch (err) {
+    } catch (err_) {
+      err = err_;
       yield put(notifyError(`Libraries: Could not ${action.type === actions.UNINSTALL_LIBRARY? 'uninstall' : 'update'} library`, err));
     }
     finally {
       if (onEnd) {
-        yield call(onEnd);
+        yield call(onEnd, err);
       }
     }
   });

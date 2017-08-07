@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Card, Col, Icon, Row, Tooltip } from 'antd';
+import { Button, Card, Col, Icon, Popconfirm, Row, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -54,21 +54,21 @@ export default class PlatformCard extends React.Component {
     });
   }
 
-  onDidReveal(event) {
-    event.stopPropagation();
+  onDidReveal(e) {
+    e.stopPropagation();
     if (this.props.item.__pkg_dir) {
       this.props.revealFile(this.props.item.__pkg_dir);
     }
   }
 
-  onDidShow(event) {
-    event.stopPropagation();
+  onDidShow(e) {
+    e.stopPropagation();
     this.props.showPlatform(this.props.item.version ? `${this.props.item.name}@${this.props.item.version}` : this.props.item.name);
   }
 
-  onDidInstall(event) {
-    event.stopPropagation();
-    const button = event.target;
+  onDidInstall(e) {
+    e.stopPropagation();
+    const button = e.target;
     button.classList.add('btn-inprogress', 'disabled');
     this.props.installPlatform(
       this.props.item.name,
@@ -76,8 +76,8 @@ export default class PlatformCard extends React.Component {
     );
   }
 
-  onDidUninstallOrUpdate(event, cmd) {
-    event.stopPropagation();
+  onDidUninstallOrUpdate(e, cmd) {
+    e.stopPropagation();
     this.setState({
       actionInProgress: true
     });
@@ -89,8 +89,8 @@ export default class PlatformCard extends React.Component {
     );
   }
 
-  onDidFramework(event, name) {
-    event.stopPropagation();
+  onDidFramework(e, name) {
+    e.stopPropagation();
     this.props.showFramework(name);
   }
 
@@ -100,7 +100,7 @@ export default class PlatformCard extends React.Component {
     );
     let extra;
     if (this.props.item.version) {
-      extra = <span><Tooltip title='Version'><Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version }</Tooltip></span>;
+      extra = <span><Tooltip title='Version'> <Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version } </Tooltip></span>;
     }
     return (
       <Card title={ title }
@@ -130,13 +130,18 @@ export default class PlatformCard extends React.Component {
                   Reveal
                 </Button> }
               { this.props.actions && this.props.actions.includes('uninstall') &&
-                <Button type='primary'
-                  icon='delete'
-                  loading={ this.state.actionInProgress }
-                  disabled={ this.state.actionInProgress }
-                  onClick={ (e) => this.onDidUninstallOrUpdate(e, 'uninstall') }>
-                  Uninstall
-                </Button> }
+                <Popconfirm title='Are you sure?'
+                  okText='Yes'
+                  cancelText='No'
+                  onClick={ e => e.stopPropagation() }
+                  onConfirm={ (e) => this.onDidUninstallOrUpdate(e, 'uninstall') }>
+                  <Button type='primary'
+                    icon='delete'
+                    loading={ this.state.actionInProgress }
+                    disabled={ this.state.actionInProgress } >
+                    Uninstall
+                  </Button>
+                </Popconfirm> }
               { this.props.actions && this.props.actions.includes('update') &&
                 <Button type='primary'
                   icon='cloud-download-o'

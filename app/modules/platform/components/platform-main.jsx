@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Button, Col, Icon, Row, Select, Tabs, Tooltip } from 'antd';
+import { Alert, Button, Col, Icon, Popconfirm, Row, Select, Tabs, Tooltip } from 'antd';
 
 import Boards from '../components/boards';
 import PlatformDetailPackages from '../components/platform-packages';
@@ -39,6 +39,7 @@ export default class PlatformMain extends React.Component {
     showFramework: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
+    uninstallPlatform: PropTypes.func.isRequired,
     openUrl: PropTypes.func.isRequired
   }
 
@@ -46,6 +47,7 @@ export default class PlatformMain extends React.Component {
     super(...arguments);
     this.state = {
       installing: false,
+      uninstalling: false,
       versionForInstall: null
     };
   }
@@ -69,6 +71,23 @@ export default class PlatformMain extends React.Component {
       () => this.setState({
         installing: false
       }));
+  }
+
+  onDidUninstall() {
+    this.setState({
+      uninstalling: true
+    });
+    this.props.uninstallPlatform(
+      this.props.data.__pkg_dir,
+      (err) => {
+        this.setState({
+          uninstalling: false
+        });
+        if (!err) {
+          this.props.showInstalledPlatforms();
+        }
+      }
+    );
   }
 
   renderQuickInstallation(versions) {
@@ -99,14 +118,44 @@ export default class PlatformMain extends React.Component {
       );
   }
 
-  render() {
-    let extra;
-    if (this.props.data.version) {
-      extra = <small className='pull-right' style={ { marginTop: '15px' } }><Tooltip title='Version'> <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } /> { this.props.data.version } </Tooltip></small>;
+  renderExtra() {
+    if (!this.props.data.__pkg_dir) {
+      return null;
     }
     return (
+      <ul className='list-inline' style={ { marginTop: '9px' } }>
+        <li>
+          <Tooltip title='Version'>
+            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } />
+            { ' ' + this.props.data.version }
+          </Tooltip>
+        </li>
+        <li>
+          <Button.Group>
+            <Button type='primary' icon='folder' onClick={ () => this.props.revealFile(this.props.data.__pkg_dir) }>
+              Reveal
+            </Button>
+            <Popconfirm title='Are you sure?'
+              okText='Yes'
+              cancelText='No'
+              onConfirm={ ::this.onDidUninstall }>
+              <Button type='primary'
+                icon='delete'
+                loading={ this.state.uninstalling }
+                disabled={ this.state.uninstalling }>
+                Uninstall
+              </Button>
+            </Popconfirm>
+          </Button.Group>
+        </li>
+      </ul>
+      );
+  }
+
+  render() {
+    return (
       <div>
-        <h1>{ this.props.data.title } { extra }</h1>
+        <h1>{ this.props.data.title } <small className='pull-right'>{ this.renderExtra() }</small></h1>
         <div className='lead'>
           { this.props.data.description }
         </div>
@@ -176,10 +225,6 @@ export default class PlatformMain extends React.Component {
               { this.props.data.__src_url &&
                 <li>
                   <Icon type='github' /> <a onClick={ () => this.props.openUrl(this.props.data.__src_url) }>Source</a>
-                </li> }
-              { this.props.data.__pkg_dir &&
-                <li>
-                  <Icon type='folder' /> <a onClick={ () => this.props.revealFile(this.props.data.__pkg_dir) }>Location</a>
                 </li> }
               { this.props.data.versions &&
                 <li>

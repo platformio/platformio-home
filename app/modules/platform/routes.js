@@ -18,6 +18,16 @@ import PlatformUpdatesPage from './containers/updates-page';
 const routes = [
   {
     path: '/platforms',
+    icon: 'hdd',
+    label: 'Installed',
+    component: PlatformInstalledPage
+  },
+  {
+    path: '/platforms/installed',
+    component: PlatformInstalledPage
+  },
+  {
+    path: '/platforms/embedded',
     icon: 'desktop',
     label: 'Embedded',
     component: PlatformEmbeddedPage
@@ -37,12 +47,6 @@ const routes = [
   {
     path: '/platforms/frameworks/show',
     component: FrameworkDetailPage
-  },
-  {
-    path: '/platforms/installed',
-    icon: 'hdd',
-    label: 'Installed',
-    component: PlatformInstalledPage
   },
   {
     path: '/platforms/updates',

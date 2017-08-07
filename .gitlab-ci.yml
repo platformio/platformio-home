@@ -1,0 +1,21 @@
+image: node:6
+
+before_script:
+    - npm isntall
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+    - test
+
+lint:
+  stage: test
+  script:
+    - npm run lint
+
+build:
+  stage: test
+  script:
+    - npm run build

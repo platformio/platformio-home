@@ -57,9 +57,9 @@ class CodeBeautifier extends React.Component {
     }
   }
 
-  onDidToggle(event) {
-    event.target.classList.toggle('anticon-up-circle-o');
-    event.target.classList.toggle('anticon-down-circle-o');
+  onDidToggle(e) {
+    e.target.classList.toggle('anticon-up-circle-o');
+    e.target.classList.toggle('anticon-down-circle-o');
     this._codeTogglePlaceholder.classList.toggle('hide');
   }
 

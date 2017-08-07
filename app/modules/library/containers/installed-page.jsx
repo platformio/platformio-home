@@ -10,6 +10,7 @@ import * as actions from '../actions';
 
 import { INSTALLED_INPUT_FILTER_KEY, selectInstalledFilter, selectVisibleInstalledLibs } from '../selectors';
 
+import { Button } from 'antd';
 import { INPUT_FILTER_DELAY } from '../../../config';
 import { LibraryStorage } from '../storage';
 import LibraryStoragesList from '../components/storages-list';
@@ -45,8 +46,16 @@ class LibraryInstalledPage extends React.Component {
     return (
       <div className='page-container'>
         <LibraryStoragesList {...this.props} />
+        { this.props.items && this.props.items.length === 0 && (
+          <div className='text-center'>
+            <br />
+            <Button icon='star' type='primary' onClick={ () => this.props.searchLibrary('') }>
+              Show TOP libraries
+            </Button>
+          </div>
+          ) }
       </div>
-    );
+      );
   }
 
 }
@@ -57,8 +66,13 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleInstalledLibs(state),
     filterValue: selectInstalledFilter(state),
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest => goTo(ownProps.history, '/libraries/installed/show', { idOrManifest })
+    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', {
+      query,
+      page
+    }),
+    showLibrary: idOrManifest => goTo(ownProps.history, '/libraries/installed/show', {
+      idOrManifest
+    })
   };
 }
 
