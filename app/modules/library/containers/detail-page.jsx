@@ -35,7 +35,8 @@ class LibraryDetailPage extends React.Component {
     revealFile: PropTypes.func.isRequired,
     loadLibraryData: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
-    searchLibrary: PropTypes.func.isRequired
+    searchLibrary: PropTypes.func.isRequired,
+    showInstalledLibraries: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -64,7 +65,8 @@ function mapStateToProps(state, ownProps) {
   return {
     data: selectLibraryData(state, idOrManifest),
     idOrManifest,
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page })
+    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
+    showInstalledLibraries: () => goTo(ownProps.history, '/libraries/installed'),
   };
 }
 

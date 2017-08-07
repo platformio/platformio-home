@@ -8,10 +8,10 @@
 
 import * as actions from '../actions';
 
+import { Alert, Button } from 'antd';
 import { INSTALLED_INPUT_FILTER_KEY, selectInstalledFilter, selectVisibleInstalledPlatforms } from '../selectors';
 import { openUrl, revealFile } from '../../core/actions';
 
-import { Alert } from 'antd';
 import { INPUT_FILTER_DELAY } from '../../../config';
 import PlatformsList from '../components/platforms-list';
 import PropTypes from 'prop-types';
@@ -35,7 +35,9 @@ class PlatformInstalledPage extends React.Component {
     showFramework: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
     openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired
+    revealFile: PropTypes.func.isRequired,
+    showEmbeddedPlatforms: PropTypes.func.isRequired,
+    showDesktopPlatforms: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -45,12 +47,31 @@ class PlatformInstalledPage extends React.Component {
   render() {
     return (
       <div className='page-container'>
-        <Alert className='block' showIcon message={
+        <Alert className='block' showIcon message={ (
           <div>
-            Project can depend on a specific version of development platform using <kbd>platform = name@x.y.z</kbd> in <b>platformio.ini</b>. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
+            Project can depend on a specific version of development platform using <kbd>platform = name@x.y.z</kbd> option in <b>platformio.ini</b>. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
           </div>
-         } />
+         ) } />
         <PlatformsList { ...this.props } actions={ ['reveal', 'uninstall'] } />
+        { this.props.items && this.props.items.length === 0 && (
+          <div className='text-center'>
+            <ul className='list-inline'>
+              <li>
+                <Button icon='download' type='primary' onClick={ () => this.props.showEmbeddedPlatforms() }>
+                  Install Embedded Platform
+                </Button>
+              </li>
+              <li>
+                or
+              </li>
+              <li>
+                <Button icon='download' type='primary' onClick={ () => this.props.showDesktopPlatforms() }>
+                  Install Desktop Platform
+                </Button>
+              </li>
+            </ul>
+          </div>
+          ) }
       </div>
       );
   }
@@ -68,7 +89,9 @@ function mapStateToProps(state, ownProps) {
     }),
     showFramework: name => goTo(ownProps.history, '/platforms/frameworks/show', {
       name
-    })
+    }),
+    showEmbeddedPlatforms: () => goTo(ownProps.history, '/platforms/embedded'),
+    showDesktopPlatforms: () => goTo(ownProps.history, '/platforms/desktop')
   };
 }
 

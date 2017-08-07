@@ -34,13 +34,13 @@ export default class FrameworksList extends React.Component {
     this.props.setFilter(value);
   }
 
-  onDidShow(event, name) {
-    event.stopPropagation();
+  onDidShow(e, name) {
+    e.stopPropagation();
     this.props.showFramework(name);
   }
 
-  onDidPlatform(event, name) {
-    event.stopPropagation();
+  onDidPlatform(e, name) {
+    e.stopPropagation();
     this.props.showPlatform(name);
   }
 

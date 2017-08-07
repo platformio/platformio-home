@@ -55,16 +55,16 @@ export default class LibraryStorageItems extends React.Component {
     );
   }
 
-  onDidReveal(event, dir) {
-    event.stopPropagation();
+  onDidReveal(e, dir) {
+    e.stopPropagation();
     if (dir) {
       this.props.revealFile(dir);
     }
   }
 
-  onDidToggleStorageList(event) {
-    event.target.classList.toggle('anticon-up-circle-o');
-    event.target.classList.toggle('anticon-down-circle-o');
+  onDidToggleStorageList(e) {
+    e.target.classList.toggle('anticon-up-circle-o');
+    e.target.classList.toggle('anticon-down-circle-o');
     this.storageItemsPlacehodler.classList.toggle('hide');
   }
 

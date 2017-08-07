@@ -35,13 +35,13 @@ export default class LibrarySearchCard extends React.Component {
     }
   }
 
-  onDidShow(event, id) {
-    event.stopPropagation();
+  onDidShow(e, id) {
+    e.stopPropagation();
     this.props.showLibrary(id);
   }
 
-  onDidKeywordSearch(event, name) {
-    event.stopPropagation();
+  onDidKeywordSearch(e, name) {
+    e.stopPropagation();
     this.props.searchLibrary(`keyword:"${name}"`);
   }
 
