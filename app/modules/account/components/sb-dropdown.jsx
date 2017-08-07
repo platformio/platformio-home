@@ -30,7 +30,7 @@ export default class AccountStatusBarDropdown extends React.Component {
       return <a onClick={ () => this.props.showLoginPage() }>Have an accont? Log in</a>;
     }
     return (
-      <Dropdown overlay={ this.renderUsermenu() }>
+      <Dropdown overlay={ this.renderUsermenu() } trigger={ ['click'] }>
         <a className='ant-dropdown-link' href='#'>
           <Icon type='user' />
           { ' ' + this.props.data.username.split('@')[0] }
