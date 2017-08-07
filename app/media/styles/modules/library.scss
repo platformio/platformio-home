@@ -1,0 +1,73 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+.libraries-module {
+
+  .search-tips {
+    margin-top: 5px;
+
+    button {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+  }
+
+  .libraries-stats {
+    h2 {
+      border-bottom: 1px solid #e9e9e9;
+      padding-bottom: $component-padding/2;
+      margin: $component-padding*1.5 0;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        margin-bottom: $component-padding/1.6;
+      }
+
+      &.last-keywords li {
+        margin-bottom: $component-padding/1.7;
+      }
+    }
+
+    .trending .anticon {
+      margin-right: 3px;
+      font-size: 10px;
+    }
+  }
+
+  .libraries-detail {
+    h2 {
+      margin: $component-padding*1.5 0 $component-padding/2 0;
+    }
+
+    .library-author .anticon {
+      margin-right: 4px;
+    }
+
+    .library-subpages {
+      padding: $component-padding*1.5 $component-padding*1.5 0 0;
+    }
+
+    .library-author {
+      margin-bottom: 5px;
+      word-break: break-all;
+    }
+  }
+
+  .lib-storages-toggler {
+    float: right;
+    margin-top: $component-padding;
+    font-size: 22px !important;
+    font-weight: normal;
+    color: #d9d9d9;
+    cursor: pointer;
+  }
+}

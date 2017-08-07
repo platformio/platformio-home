@@ -1,0 +1,46 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+ .board-explorer {
+
+  padding-top: $component-padding/1.2;
+
+  .ant-table-expand-icon-th,
+  .ant-table-row-expand-icon-cell {
+    min-width: 20px;
+    width: 20px;
+    padding: 0 0 0 6px !important;
+  }
+
+  thead {
+    white-space: nowrap;
+  }
+
+  tbody {
+    .board-extra-column .anticon {
+      font-size: 20px;
+    }
+    .board-extra-column a:not(:last-child) {
+      margin-right: 4px;
+    }
+  }
+}
+
+.pf-detail {
+  h2 {
+    margin: $component-padding*1.5 0 $component-padding/2 0;
+  }
+
+  .tabs-block {
+    padding: $component-padding*1.5 $component-padding*1.5 0 0;
+  }
+
+  .resources-list li {
+    padding-bottom: 5px;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "presets": ["es2015", "react"],
+  "plugins": [
+    ["import", {"libraryName": "antd", "style": true}],
+    "transform-runtime",
+    "transform-class-properties",
+    "transform-function-bind",
+    "transform-object-rest-spread",
+    "react-hot-loader/babel"
+  ]
+}

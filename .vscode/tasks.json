@@ -1,0 +1,36 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "shell": false,
+    "showOutput": "always",
+    "suppressTaskName": true,
+    "tasks": [
+        {
+            "taskName": "Start",
+            "command": "npm",
+            "args": ["start"],
+            "isBuildCommand": true
+        },
+        {
+            "taskName": "Start Dev",
+            "command": "npm",
+            "args": ["run", "dev"]
+        },
+        {
+            "taskName": "lint",
+            "command": "npm",
+            "args": ["run", "lint"]
+        },
+        {
+            "taskName": "Build (deploy)",
+            "command": "npm",
+            "args": ["run", "build"]
+        },
+        {
+            "taskName": "Esformatter",
+            "command": "./node_modules/.bin/esformatter",
+            "args": ["-i", "${file}"]
+        }
+    ]
+}

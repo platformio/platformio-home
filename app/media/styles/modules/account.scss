@@ -1,0 +1,86 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+$form-max-width: 350px;
+
+ .account-module {
+
+  dt,
+  dd {
+    padding-bottom: $component-padding/2;
+  }
+
+  .login-page,
+  .registration-page,
+  .forgot-page,
+  .password-page,
+  .token-page {
+    max-width: 768px;
+
+    .account-form {
+      display: inline-block;
+      width: 100%;
+      max-width: $form-max-width;
+      text-align: center;
+      margin-top: $component-padding*2;
+
+      .account-submit-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .login-page {
+    .login-logo {
+      margin: $component-padding*2;
+    }
+    .login-left-side {
+      text-align: right;
+      padding-right: $component-padding*2;
+
+      .pioaccount-banner {
+        max-width: $form-max-width;
+        text-align: left;
+        float: right;
+
+        .anticon {
+          font-size: 28px;
+          margin-top: $component-padding/2.2;
+          color: $primary-color;
+        }
+      }
+    }
+
+    .login-right-side {
+      text-align: left;
+      border-left: 1px solid $border-color;
+      padding-left: $component-padding*2;
+
+      .account-form {
+        margin: 0;
+      }
+    }
+  }
+
+  .password-page .account-form {
+    margin-top: 0;
+  }
+
+  .token-page {
+
+    .account-form {
+      max-width: 400px;
+
+      hr {
+        margin-top: 0;
+      }
+    }
+
+  }
+
+ }

@@ -1,0 +1,27 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+.home-page {
+
+  max-width: 768px;
+  padding-top: $component-padding/1.2;
+
+  .pio-logo-versions {
+    .versions {
+      padding-top: $component-padding;
+    }
+  }
+
+  .quick-links {
+    button {
+        width: 250px;
+        margin-bottom: $component-padding/1.5;
+        text-align: left;
+      }
+    }
+}

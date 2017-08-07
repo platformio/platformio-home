@@ -1,0 +1,155 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+import { Button, Card, Col, Icon, Row, Tooltip } from 'antd';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+
+
+export default class PlatformCard extends React.Component {
+
+  static propTypes = {
+    item: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      version: PropTypes.string,
+      versionLatest: PropTypes.object,
+      frameworks: PropTypes.array,
+      __src_url: PropTypes.string,
+      __pkg_dir: PropTypes.string
+    }),
+    actions: PropTypes.arrayOf(PropTypes.string),
+    showPlatform: PropTypes.func.isRequired,
+    showFramework: PropTypes.func.isRequired,
+    installPlatform: PropTypes.func.isRequired,
+    uninstallPlatform: PropTypes.func.isRequired,
+    updatePlatform: PropTypes.func.isRequired,
+    revealFile: PropTypes.func.isRequired
+  }
+
+  constructor() {
+    super(...arguments);
+    this.state = {
+      actionInProgress: false,
+      componentMounted: false
+    };
+  }
+
+  componentDidMount() {
+    this.setState({
+      componentMounted: true
+    });
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      componentMounted: false
+    });
+  }
+
+  onDidReveal(event) {
+    event.stopPropagation();
+    if (this.props.item.__pkg_dir) {
+      this.props.revealFile(this.props.item.__pkg_dir);
+    }
+  }
+
+  onDidShow(event) {
+    event.stopPropagation();
+    this.props.showPlatform(this.props.item.version ? `${this.props.item.name}@${this.props.item.version}` : this.props.item.name);
+  }
+
+  onDidInstall(event) {
+    event.stopPropagation();
+    const button = event.target;
+    button.classList.add('btn-inprogress', 'disabled');
+    this.props.installPlatform(
+      this.props.item.name,
+      () => button.classList.remove('btn-inprogress', 'disabled')
+    );
+  }
+
+  onDidUninstallOrUpdate(event, cmd) {
+    event.stopPropagation();
+    this.setState({
+      actionInProgress: true
+    });
+    (cmd === 'uninstall' ? this.props.uninstallPlatform : this.props.updatePlatform)(
+      this.props.item.__pkg_dir,
+      () => this.state.componentMounted ? this.setState({
+        actionInProgress: false
+      }) : {}
+    );
+  }
+
+  onDidFramework(event, name) {
+    event.stopPropagation();
+    this.props.showFramework(name);
+  }
+
+  render() {
+    const title = (
+    <h2><a onClick={ ::this.onDidShow }>{ this.props.item.title }</a></h2>
+    );
+    let extra;
+    if (this.props.item.version) {
+      extra = <span><Tooltip title='Version'><Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version }</Tooltip></span>;
+    }
+    return (
+      <Card title={ title }
+        extra={ extra }
+        onClick={ ::this.onDidShow }
+        className='list-item-card'>
+        <div className='block'>
+          { this.props.item.description }
+        </div>
+        <Row>
+          <Col sm={ 16 }>
+            <div className='inline-buttons'>
+              { (this.props.item.frameworks || []).map(item => (
+                  <Button key={ item.title }
+                    icon='setting'
+                    size='small'
+                    onClick={ (e) => this.onDidFramework(e, item.name) }>
+                    { item.title }
+                  </Button>
+                )) }
+            </div>
+          </Col>
+          <Col sm={ 8 } className='text-right text-nowrap'>
+            <Button.Group>
+              { this.props.actions && this.props.actions.includes('reveal') &&
+                <Button type='primary' icon='folder' onClick={ ::this.onDidReveal }>
+                  Reveal
+                </Button> }
+              { this.props.actions && this.props.actions.includes('uninstall') &&
+                <Button type='primary'
+                  icon='delete'
+                  loading={ this.state.actionInProgress }
+                  disabled={ this.state.actionInProgress }
+                  onClick={ (e) => this.onDidUninstallOrUpdate(e, 'uninstall') }>
+                  Uninstall
+                </Button> }
+              { this.props.actions && this.props.actions.includes('update') &&
+                <Button type='primary'
+                  icon='cloud-download-o'
+                  loading={ this.state.actionInProgress }
+                  disabled={ this.state.actionInProgress }
+                  onClick={ (e) => this.onDidUninstallOrUpdate(e, 'update') }>
+                  { this.props.item.versionLatest ? `Update to ${this.props.item.versionLatest}` : 'Update' }
+                </Button> }
+            </Button.Group>
+          </Col>
+        </Row>
+      </Card>
+      );
+  }
+
+}

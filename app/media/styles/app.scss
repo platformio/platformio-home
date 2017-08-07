@@ -1,0 +1,121 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+.app-container {
+  height: 100vh;
+
+  .main-container {
+    padding: 0;
+    overflow: auto;
+
+    .ant-layout-header {
+      background: #ececec;
+      padding: 11px 20px 14px 20px;
+      margin: 0;
+      height: 50px;
+      line-height: inherit;
+      vertical-align: middle;
+      max-width: $max-content-width;
+      // position: fixed;
+      // width: 100%;
+      // z-index: 10000;
+
+      .account-bar {
+        line-height: 30px;
+      }
+    }
+
+    .ant-layout-content {
+      background: #fff;
+      padding: 0 20px;
+      margin: 0;
+
+      .ant-menu-horizontal {
+        margin: 5px 0 20px 0;
+      }
+
+      .page-container {
+        max-width: $max-content-width - 40; // 20+20 padding
+      }
+    }
+  }
+
+  .ant-layout-sider {
+    overflow: auto;
+    height: 100vh;
+    // position: fixed;
+    // left: 0;
+
+    .logo {
+      text-align: center;
+      height: 50px;
+      padding-top: 10px;
+    }
+
+    .anticon {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .ant-menu-item {
+      height: 70px;
+      line-height: 35px;
+      padding: 12px 0 !important;
+      text-align: center;
+
+      .menu-item-label {
+        display: block;
+        line-height: 12px;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .ant-btn-sm {
+    font-size: 12px;
+  }
+
+  .ant-btn-group .ant-btn.ant-btn-loading .anticon {
+    margin-left: 0 !important;
+  }
+
+  h1 > .anticon,
+  h2 > .anticon {
+    font-size: 50%;
+  }
+  h3 > .anticon,
+  h4 > .anticon,
+  h5 > .anticon,
+  h6 > .anticon {
+    font-size: 80%;
+  }
+
+  h1 .ant-badge-count,
+  h2 .ant-badge-count,
+  h3 .ant-badge-count,
+  h4 .ant-badge-count,
+  h5 .ant-badge-count,
+  h6 .ant-badge-count {
+    background-color: #d9d9d9;
+    font-size: 40%;
+  }
+}
+
+/* Menu with Babges */
+.ant-menu {
+  .ant-badge-count {
+    padding: 0;
+    font-size: 10px;
+  }
+  &.ant-menu-inline .ant-badge-count {
+    right: -7px;
+  }
+  &.ant-menu-horizontal .ant-badge-count {
+    right: -30px;
+  }
+}
