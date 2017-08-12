@@ -22,6 +22,7 @@ import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
 import qs from 'querystringify';
+import { reportException } from './helpers';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -55,6 +56,7 @@ function* watchNotifyError() {
         Report a problem
       </Button>)
     });
+    reportException(`${title} => ${description}`);
   });
 }
 

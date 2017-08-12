@@ -12,7 +12,7 @@ export const PLATFORMIO_API_ENDPOINT = 'http://api.platformio.org';
 export const PIOPLUS_API_ENDPOINT = 'https://api.pioplus.com';
 
 let wsrpc = 'http://localhost:8008/wsrpc';
-if (process.env.NODE_ENV === 'production' && location && location.origin) {
-  wsrpc = `${location.origin}/wsrpc`;
+if (process.env.NODE_ENV === 'production' && window.location && window.location.origin) {
+  wsrpc = `${window.location.origin}/wsrpc`;
 }
 export const BACKEND_ENDPOINT = wsrpc;

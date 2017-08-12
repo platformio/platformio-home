@@ -10,10 +10,23 @@ import ReactGA from 'react-ga';
 import qs from 'querystringify';
 
 
+export function reportException(description, fatal=false) {
+  if (description instanceof ErrorEvent) {
+    description = [
+      description.message,
+      `${description.filename}:${description.lineno}`
+    ];
+  }
+  ReactGA.exception({
+    description: description.toString().substring(0, 2048),
+    fatal
+  });
+}
+
 export function getStartLocation() {
   let startLocation = null;
-  if (location && location.search) {
-    startLocation = qs.parse(location.search);
+  if (window.location && window.location.search) {
+    startLocation = qs.parse(window.location.search);
     startLocation = startLocation && startLocation.start ? startLocation.start : null;
   }
   return startLocation || '/';
