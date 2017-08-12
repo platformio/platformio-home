@@ -10,6 +10,14 @@ import ReactGA from 'react-ga';
 import qs from 'querystringify';
 
 
+export function inIframe () {
+  try {
+    return window.self !== window.top;
+  } catch (err) {
+    return true;
+  }
+}
+
 export function reportException(description, fatal=false) {
   if (description instanceof ErrorEvent) {
     description = [

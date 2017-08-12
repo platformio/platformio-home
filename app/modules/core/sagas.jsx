@@ -14,6 +14,7 @@ import * as selectors from './selectors';
 import { Button, Modal, notification } from 'antd';
 import { CHECK_CORE_UPDATES_INTERVAL, PIOPLUS_API_ENDPOINT } from '../../config';
 import { STORE_READY, updateEntity, updateStorageItem } from '../../store/actions';
+import { inIframe, reportException } from './helpers';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import React from 'react';
@@ -22,7 +23,6 @@ import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
 import qs from 'querystringify';
-import { reportException } from './helpers';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -103,15 +103,23 @@ function* watchOSRequests() {
     try {
       switch (action.type) {
         case actions.OPEN_URL:
+        const isWebUrl = action.url.startsWith('http');
           const url = new URL(action.url, true);
           url.query.utm_source = 'platformio';
           url.query.utm_medium = 'piohome';
-          yield call(apiFetchData, {
-            query: 'os.openUrl',
-            params: [url.toString()]
-          });
-          // track outbound URLs
-          if (action.url.startsWith('http')) {
+
+          if (isWebUrl && !inIframe()) {
+            const redirectWindow = window.open(url.toString(), '_blank');
+            redirectWindow.location;
+          } else {
+            yield call(apiFetchData, {
+              query: 'os.openUrl',
+              params: [url.toString()]
+            });
+          }
+
+          if (isWebUrl) {
+            // track outbound URLs
             ReactGA.event({
               category: 'Misc',
               action: 'Outbound',
