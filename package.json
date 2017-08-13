@@ -54,7 +54,7 @@
     "eslint-import-resolver-webpack": "^0.8.3",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-react": "^7.1.0",
-    "extract-text-webpack-plugin": "^2.1.2",
+    "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.26.0",
     "less": "^2.7.2",
@@ -65,7 +65,7 @@
     "sass-loader": "^6.0.2",
     "style-loader": "^0.18.2",
     "url-loader": "0.5.9",
-    "webpack": "^2.2.1",
+    "webpack": "^3.5.4",
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-dashboard": "^0.4.0",
     "webpack-dev-server": "^2.4.1"
