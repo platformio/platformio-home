@@ -73,7 +73,7 @@ class HomePage extends React.Component {
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('https://pioplus.com') }>Plus</a>
+                <a onClick={ () => this.props.openUrl('https://twitter.com/PlatformIO_Org') }>News</a>
               </li>
               <li>
                 ·
@@ -85,7 +85,7 @@ class HomePage extends React.Component {
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/ide/atom.html#quick-start') }>Get Started</a>
+                <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/ide/pioide.html') }>Get Started</a>
               </li>
               <li>
                 ·
