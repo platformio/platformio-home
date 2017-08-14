@@ -13,7 +13,7 @@ export function join(...paths) {
 }
 
 export function dirname(path) {
-  if (!path.includes(sep)) {
+  if (!path.includes(sep) || path === sep) {
     return path;
   }
   let dirname = path.substr(0, path.lastIndexOf(sep));
@@ -25,7 +25,7 @@ export function dirname(path) {
 
 export function basename(path, ext=undefined) {
   let basename = path;
-  if (path.includes(sep)) {
+  if (path.includes(sep) && path !== sep) {
     basename = path.substr(path.lastIndexOf(sep));
     while (basename.startsWith(sep)) {
       basename = basename.substr(1);

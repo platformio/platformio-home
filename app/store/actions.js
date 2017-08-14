@@ -32,7 +32,7 @@ export const resetStore = () => createAction(RESET_STORE);
 export const updateEntity = (key, data) => createAction(UPDATE_ENTITY, { key, data });
 export const deleteEntity = re => createAction(DELETE_ENTITY, { re });
 export const updateInputValue = (key, value) => createAction(UPDATE_INPUT_VALUE, { key, value });
-export const lazyUpdateInputValue = (key, value, delay=0) => createAction(LAZY_UPDATE_INPUT_VALUE, { key, value, delay });
+export const lazyUpdateInputValue = (key, value) => createAction(LAZY_UPDATE_INPUT_VALUE, { key, value});
 
 export const updateStorageItem = (key, data) => createAction(UPDATE_STORAGE_ITEM, { key, data });
 export const deleteStorageItem = re => createAction(DELETE_STORAGE_ITEM, { re });

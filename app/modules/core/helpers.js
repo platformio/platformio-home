@@ -25,8 +25,9 @@ export function reportException(description, fatal=false) {
       `${description.filename}:${description.lineno}`
     ];
   }
+  description = description.toString().replace(/@/g, '_');
   ReactGA.exception({
-    description: description.toString().substring(0, 2048),
+    description: description.substring(0, 2048),
     fatal
   });
 }

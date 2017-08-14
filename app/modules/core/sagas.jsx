@@ -14,8 +14,8 @@ import * as selectors from './selectors';
 import { Button, Modal, notification } from 'antd';
 import { CHECK_CORE_UPDATES_INTERVAL, PIOPLUS_API_ENDPOINT } from '../../config';
 import { STORE_READY, updateEntity, updateStorageItem } from '../../store/actions';
-import { inIframe, reportException } from './helpers';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { inIframe, reportException } from './helpers';
 
 import React from 'react';
 import ReactGA from 'react-ga';
@@ -197,6 +197,91 @@ function* watchFSGlob() {
   });
 }
 
+function* watchListLogicalDisks() {
+  yield takeLatest(actions.LIST_LOGICAL_DISKS, function*() {
+    let items = yield select(selectors.selectLogicalDisks);
+    if (items) {
+      return;
+    }
+    try {
+      items = yield call(apiFetchData, {
+        query: 'os.listLogicalDisks'
+      });
+      yield put(updateEntity('logicalDisks', items));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not fetch logical disks', err));
+    }
+  });
+}
+
+function* watchListDir() {
+  yield takeEvery(actions.LIST_DIR, function*({ path }) {
+    let items = yield select(selectors.selectDirItems);
+    if (items && items.hasOwnProperty(path)) {
+      return;
+    } else if (!items) {
+      items = {};
+    }
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'os.listDir',
+        params: [path]
+      });
+      yield put(updateEntity('dirItems', Object.assign({}, items, {[path]: result})));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not list directory' + path, err));
+    }
+  });
+}
+
+function* watchIsFile() {
+  yield takeEvery(actions.IS_FILE, function*({ path }) {
+    let items = yield select(selectors.selectIsFileItems);
+    if (items && items.hasOwnProperty(path)) {
+      return;
+    } else if (!items) {
+      items = {};
+    }
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'os.isFile',
+        params: [path]
+      });
+      yield put(updateEntity('isFileItems', Object.assign({}, items, {[path]: result})));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not check is file ' + path, err));
+    }
+  });
+}
+
+function* watchIsDir() {
+  yield takeEvery(actions.IS_DIR, function*({ path }) {
+    let items = yield select(selectors.selectIsDirItems);
+    if (items && items.hasOwnProperty(path)) {
+      return;
+    } else if (!items) {
+      items = {};
+    }
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'os.isDir',
+        params: [path]
+      });
+      yield put(updateEntity('isDirItems', Object.assign({}, items, {[path]: result})));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not check is directory ' + path, err));
+    }
+  });
+}
+
+function* watchResetFSItems() {
+  yield takeLatest(actions.RESET_FS_ITEMS, function*() {
+    yield put(updateEntity('dirItems', null));
+    yield put(updateEntity('isFileItems', null));
+    yield put(updateEntity('isDirItems', null));
+  });
+}
+
 function* watchSendFeedback() {
   yield takeLatest(actions.SEND_FEEDBACK, function*({body, onEnd}) {
     let err;
@@ -247,8 +332,13 @@ export default [
   watchNotifySuccess,
   watchUpdateRouteBadge,
   watchOSRequests,
-  watchFSGlob,
   watchRequestContent,
+  watchFSGlob,
+  watchListLogicalDisks,
+  watchListDir,
+  watchIsFile,
+  watchIsDir,
+  watchResetFSItems,
   watchSendFeedback,
   watchAutoUpdateCorePackages
 ];

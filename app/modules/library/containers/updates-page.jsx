@@ -10,7 +10,6 @@ import * as actions from '../actions';
 
 import { UPDATES_INPUT_FILTER_KEY, selectUpdatesFilter, selectVisibleLibUpdates } from '../selectors';
 
-import { INPUT_FILTER_DELAY } from '../../../config';
 import { LibraryStorage } from '../storage';
 import LibraryStoragesList from '../components/storages-list';
 import PropTypes from 'prop-types';
@@ -65,7 +64,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     revealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

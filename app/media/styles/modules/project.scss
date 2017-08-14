@@ -6,12 +6,9 @@
  * the root directory of this source tree.
  */
 
-@import 'variables';
-@import 'common';
-@import 'app';
-@import 'modules/account';
-@import 'modules/core';
-@import 'modules/home';
-@import 'modules/library';
-@import 'modules/platform';
-@import 'modules/project';
+.project-open-modal {
+  .ant-modal-body {
+    padding: 0;
+    margin: 0;
+  }
+}

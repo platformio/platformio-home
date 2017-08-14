@@ -11,7 +11,6 @@ import * as actions from '../actions';
 import { UPDATES_INPUT_FILTER_KEY, selectUpdatesFilter, selectVisiblePlatformUpdates } from '../selectors';
 import { openUrl, revealFile } from '../../core/actions';
 
-import { INPUT_FILTER_DELAY } from '../../../config';
 import PlatformsList from '../components/platforms-list';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -66,7 +65,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     openUrl,
     revealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

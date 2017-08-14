@@ -11,7 +11,6 @@ import * as actions from '../actions';
 import { BOARDS_INPUT_FILTER_KEY, selectBoardsFilter, selectVisibleBoards } from '../selectors';
 
 import Boards from '../components/boards';
-import { INPUT_FILTER_DELAY } from '../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { bindActionCreators } from 'redux';
@@ -69,7 +68,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     openUrl,
-    setFilter: value => dispatch(lazyUpdateInputValue(BOARDS_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(BOARDS_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

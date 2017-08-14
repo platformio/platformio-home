@@ -12,7 +12,6 @@ import { Alert, Button } from 'antd';
 import { INSTALLED_INPUT_FILTER_KEY, selectInstalledFilter, selectVisibleInstalledPlatforms } from '../selectors';
 import { openUrl, revealFile } from '../../core/actions';
 
-import { INPUT_FILTER_DELAY } from '../../../config';
 import PlatformsList from '../components/platforms-list';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -99,7 +98,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     openUrl,
     revealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

@@ -190,30 +190,3 @@ ul.list-styled {
   font-size: 18px !important;
   height: 40px !important;
 }
-
-.source-code-toggler {
-  float: right;
-  margin-top: $component-padding/2;
-  font-size: 18px !important;
-  font-weight: normal;
-  color: #d9d9d9;
-  cursor: pointer;
-}
-
-.release-notes {
-
-  h2 {
-    margin-top: 5px !important;
-  }
-
-  h3 {
-    margin-top: $component-padding*1.5 !important;
-    border-bottom: 1px solid #e9e9e9;
-  }
-
-  ul {
-    list-style-type: initial;
-    padding-left: 20px;
-  }
-
-}

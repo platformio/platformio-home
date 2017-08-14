@@ -20,6 +20,11 @@ export const REVEAL_FILE = 'REVEAL_FILE';
 export const FS_GLOB = 'FS_GLOB';
 export const REQUEST_CONTENT = 'REQUEST_CONTENT';
 
+export const LIST_LOGICAL_DISKS = 'LIST_LOGICAL_DISKS';
+export const LIST_DIR = 'LIST_DIR';
+export const IS_FILE = 'IS_FILE';
+export const IS_DIR = 'IS_DIR';
+export const RESET_FS_ITEMS = 'RESET_FS_ITEMS';
 
 export const notifyError = (title, err) => createAction(NOTIFY_ERROR, { title, err });
 export const notifySuccess = (title, result) => createAction(NOTIFY_SUCCESS, { title, result });
@@ -31,3 +36,8 @@ export const openUrl = (url) => createAction(OPEN_URL, { url });
 export const revealFile = (path) => createAction(REVEAL_FILE, { path });
 export const fsGlob = (pathnames, rootDir=undefined) => createAction(FS_GLOB, { pathnames, rootDir });
 export const requestContent = (uri, data=undefined) => createAction(REQUEST_CONTENT, { uri, data });
+export const listLogicalDisks = () => createAction(LIST_LOGICAL_DISKS);
+export const listDir = (path) => createAction(LIST_DIR, { path });
+export const isFile = (path) => createAction(IS_FILE, { path });
+export const isDir = (path) => createAction(IS_DIR, { path });
+export const resetFSItems = () => createAction(RESET_FS_ITEMS);

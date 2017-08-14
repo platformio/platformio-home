@@ -12,6 +12,7 @@ import * as actions from './actions';
 
 import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
 
+import { INPUT_FILTER_DELAY } from '../config';
 import accountSagas from '../modules/account/sagas';
 import { apiFetchData } from './api';
 import { asyncDelay } from '../modules/core/helpers';
@@ -19,8 +20,8 @@ import coreSagas from '../modules/core/sagas';
 import librarySagas from '../modules/library/sagas';
 import { notifyError } from '../modules/core/actions';
 import platformSagas from '../modules/platform/sagas';
+import projectSagas from '../modules/project/sagas';
 import telemetrySagas from './telemetry';
-// import projectSagas from '../modules/project/sagas';
 
 function* watchLoadStore() {
   yield takeLatest(actions.LOAD_STORE, function*() {
@@ -68,8 +69,8 @@ function* autoSaveState() {
 }
 
 function* watchLazyUpdateInputValue() {
-  yield takeLatest(actions.LAZY_UPDATE_INPUT_VALUE, function*({key, value, delay}) {
-    yield call(asyncDelay, delay);
+  yield takeLatest(actions.LAZY_UPDATE_INPUT_VALUE, function*({key, value}) {
+    yield call(asyncDelay, INPUT_FILTER_DELAY);
     yield put(actions.updateInputValue(key, value));
   });
 }
@@ -83,7 +84,7 @@ export default function* root() {
     ...accountSagas,
     ...coreSagas,
     ...librarySagas,
-    // ...projectSagas,
+    ...projectSagas,
     ...platformSagas
   ].map(item => fork(item));
 }
