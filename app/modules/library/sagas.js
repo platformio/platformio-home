@@ -11,6 +11,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
+import { PROJECTS_LOADED, loadProjects } from '../project/actions';
 import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { asyncDelay, lastLine } from '../core/helpers';
 import { call, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
@@ -160,6 +161,20 @@ function* watchLoadInstalledLibs() {
   }
 }
 
+function* fetchStorageUpdates(storageDir) {
+  let args = ['lib'];
+  if (storageDir) {
+    args = args.concat(['--storage-dir', storageDir]);
+  } else {
+    args.push('--global');
+  }
+  args = args.concat(['update', '--only-check', '--json-output']);
+  return yield call(apiFetchData, {
+    query: 'core.call',
+    params: [args]
+  });
+}
+
 function* watchLoadLibUpdates() {
   while (true) {
     yield take(actions.LOAD_LIB_UPDATES);
@@ -168,22 +183,14 @@ function* watchLoadLibUpdates() {
     yield put(deleteEntity(/^libUpdates/));
     yield put(updateRouteBadge('/libraries/updates', 0));
 
-    const storages = yield select(selectors.selectLibUpdates);
+    const storages = yield select(selectors.selectLibraryStorages);
     for (const storage of storages) {
       yield fork(function*() {
         try {
-          let args = ['lib'];
-          if (storage.path) {
-            args = args.concat(['--storage-dir', storage.path]);
-          } else {
-            args.push('--global');
-          }
-          args = args.concat(['update', '--only-check', '--json-output']);
-          const items = yield call(apiFetchData, {
-            query: 'core.call',
-            params: [args]
-          });
-          yield put(updateEntity(`libUpdates${storage.initialPath}`, items));
+          yield put(updateEntity(
+            `libUpdates${storage.initialPath}`,
+            yield call(fetchStorageUpdates, storage.path)
+          ));
         } catch (err) {
           return yield put(notifyError('Libraries: Updates', err));
         }
@@ -194,24 +201,28 @@ function* watchLoadLibUpdates() {
 
 function* watchAutoCheckLibraryUpdates() {
   const lastCheckKey = 'lastCheckLibraryUpdates';
-  yield takeLatest(STORE_READY, function*() {
-    const now = new Date().getTime();
-    const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-    if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
-      return;
-    }
-    yield put(updateStorageItem(lastCheckKey, now));
+  yield take(STORE_READY); // 1-time watcher
+  const now = new Date().getTime();
+  const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
+  if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
+    return;
+  }
+  yield put(updateStorageItem(lastCheckKey, now));
+
+  // preload projects list and its extra lib storages
+  yield put(loadProjects());
+  yield take(PROJECTS_LOADED);
+
+  let total = 0;
+  const storages = yield select(selectors.selectLibraryStorages);
+  for (const storage of storages) {
     try {
-      // TODO: Check updates for projects and extra storages
-      const result = yield call(apiFetchData, {
-        query: 'core.call',
-        params: [['lib', '--global', 'update', '--only-check', '--json-output']]
-      });
-      yield put(updateRouteBadge('/libraries/updates', result.length));
+      total += (yield call(fetchStorageUpdates, storage.path)).length;
     } catch (err) {
-      console.error('Failed check of PIO Core library updates', err);
+      console.error('Failed check of PIO Core library updates for ' + storage.path, err);
     }
-  });
+  }
+  yield put(updateRouteBadge('/libraries/updates', total));
 }
 
 function* watchInstallLibrary() {

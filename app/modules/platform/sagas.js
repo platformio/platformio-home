@@ -190,23 +190,22 @@ function* watchLoadPlatformUpdates() {
 
 function* watchAutoCheckPlatformUpdates() {
   const lastCheckKey = 'lastCheckPlatformUpdates';
-  yield takeLatest(STORE_READY, function*() {
-    const now = new Date().getTime();
-    const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-    if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
-      return;
-    }
-    yield put(updateStorageItem(lastCheckKey, now));
-    try {
-      const result = yield call(apiFetchData, {
-        query: 'core.call',
-        params: [['platform', 'update', '--only-check', '--json-output']]
-      });
-      yield put(updateRouteBadge('/platforms/updates', result.length));
-    } catch (err) {
-      console.error('Failed check of PIO Core platform updates', err);
-    }
-  });
+  yield take(STORE_READY); // 1-time watcher
+  const now = new Date().getTime();
+  const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
+  if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
+    return;
+  }
+  yield put(updateStorageItem(lastCheckKey, now));
+  try {
+    const result = yield call(apiFetchData, {
+      query: 'core.call',
+      params: [['platform', 'update', '--only-check', '--json-output']]
+    });
+    yield put(updateRouteBadge('/platforms/updates', result.length));
+  } catch (err) {
+    console.error('Failed check of PIO Core platform updates', err);
+  }
 }
 
 function* watchInstallPlatform() {

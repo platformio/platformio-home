@@ -13,9 +13,11 @@ export const ADD_PROJECT = 'HIDE_PADDCT';
 export const HIDE_PROJECT = 'HIDE_PROJECT';
 export const OPEN_PROJECT = 'OPEN_PROJECT';
 export const LOAD_PROJECTS = 'LOAD_PROJECTS';
+export const PROJECTS_LOADED = 'PROJECTS_LOADED';
 
 export const addProject = path => createAction(ADD_PROJECT, { path });
 export const hideProject = path => createAction(HIDE_PROJECT, { path });
 export const openProject = path => createAction(OPEN_PROJECT, { path });
 export const loadProjects = () => createAction(LOAD_PROJECTS);
+export const projectsLoaded = () => createAction(PROJECTS_LOADED);
 

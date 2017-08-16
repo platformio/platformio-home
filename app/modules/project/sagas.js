@@ -11,7 +11,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 
 import { apiFetchData } from '../../store/api';
@@ -43,16 +43,18 @@ function* watchHideProject() {
 }
 
 function* watchOpenProject() {
-  yield takeEvery(actions.OPEN_PROJECT, function*({path}) {
-    // FIXME: Send to middleware
-  });
+  // FIXME: Send to middleware
+  // yield takeEvery(actions.OPEN_PROJECT, function*({path}) {
+  // });
 }
 
 function* watchLoadProjects() {
-  yield takeLatest(actions.LOAD_PROJECTS, function*() {
+  while (true) {
+    yield take(actions.LOAD_PROJECTS);
     let items = yield select(selectors.selectProjects);
     if (items) {
-      return;
+      yield put(actions.projectsLoaded());
+      continue;
     }
     try {
       items = yield call(apiFetchData, {
@@ -60,10 +62,11 @@ function* watchLoadProjects() {
         params: [yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)]
       });
       yield put(updateEntity('projects', items));
+      yield put(actions.projectsLoaded());
     } catch (err) {
       yield put(notifyError('Could not load recent projects', err));
     }
-  });
+  }
 }
 
 export default [
