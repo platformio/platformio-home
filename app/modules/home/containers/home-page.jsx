@@ -118,6 +118,18 @@ class HomePage extends React.Component {
               <li>
                 <a onClick={ () => this.props.openUrl('https://github.com/platformio/platformio/issues') }>Report an Issue</a>
               </li>
+              <li>
+                ·
+              </li>
+              <li>
+                <a onClick={ () => this.props.openUrl('http://platformio.org/donate') }>Donate</a>
+              </li>
+              <li>
+                ·
+              </li>
+              <li>
+                <a onClick={ () => this.props.openUrl('http://platformio.org/contact') }>Contact</a>
+              </li>
             </ul>
             <hr />
           </div>

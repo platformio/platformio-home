@@ -25,10 +25,9 @@ const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 function* watchAddProject() {
   yield takeEvery(actions.ADD_PROJECT, function*({path}) {
     const result = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
-    if (result.includes(path)) {
-      return;
+    if (!result.includes(path)) {
+      yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, path]));
     }
-    yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, path]));
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());
   });
