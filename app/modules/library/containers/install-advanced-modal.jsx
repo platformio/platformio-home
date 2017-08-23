@@ -40,15 +40,14 @@ class LibraryInstallAdvancedModal extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.props.loadProjects();
-  }
-
   componentWillReceiveProps(newProps) {
     if (newProps.library) {
       this.setState({
         value: newProps.library
       });
+    }
+    if (newProps.visible) {
+      this.props.loadProjects();
     }
   }
 

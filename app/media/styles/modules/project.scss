@@ -12,3 +12,13 @@
     margin: 0;
   }
 }
+
+.project-new-modal {
+  .ant-alert {
+    min-height: 200px;
+  }
+
+  .slick-dots li button {
+    background-color: $primary-color !important;
+  }
+}

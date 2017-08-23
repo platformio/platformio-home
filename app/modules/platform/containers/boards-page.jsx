@@ -8,7 +8,7 @@
 
 import * as actions from '../actions';
 
-import { BOARDS_INPUT_FILTER_KEY, selectBoardsFilter, selectVisibleBoards } from '../selectors';
+import { BOARDS_INPUT_FILTER_KEY, selectBoardsFilter, selectNormalizedBoards } from '../selectors';
 
 import Boards from '../components/boards';
 import PropTypes from 'prop-types';
@@ -58,7 +58,7 @@ class BoardsPage extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    items: selectVisibleBoards(state),
+    items: selectNormalizedBoards(state),
     filterValue: selectBoardsFilter(state),
     showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
     showFramework: name => goTo(ownProps.history, '/platforms/frameworks/show', { name })

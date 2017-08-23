@@ -13,9 +13,10 @@ import * as selectors from './selectors';
 
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
+import { notifyError, notifySuccess } from '../core/actions';
 
+import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
-import { notifyError } from '../core/actions';
 import { selectStorageItem } from '../../store/selectors';
 
 
@@ -58,7 +59,7 @@ function* watchLoadProjects() {
     }
     try {
       items = yield call(apiFetchData, {
-        query: 'app.loadProjects',
+        query: 'project.getProjects',
         params: [yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)]
       });
       yield put(updateEntity('projects', items));
@@ -69,9 +70,43 @@ function* watchLoadProjects() {
   }
 }
 
+function* watchInitProject() {
+  while (true) {
+    const { board, framework, projectDir, onEnd } = yield take(actions.INIT_PROJECT);
+    let err,
+      result = null;
+    try {
+      const start = new Date().getTime();
+
+      result = yield call(apiFetchData, {
+        query: 'project.init',
+        params: [board, framework, projectDir]
+      });
+
+      ReactGA.timing({
+        category: 'Project',
+        variable: 'init',
+        value: new Date().getTime() - start,
+        label: board
+      });
+
+      yield put(notifySuccess('Project has been successfully initialized', `Board: ${board}, framework: ${framework}, location: ${result}`));
+    } catch (_err) {
+      err = _err;
+      yield put(notifyError('Could not initialize project', err));
+    }
+    finally {
+      if (onEnd) {
+        yield call(onEnd, err, result);
+      }
+    }
+  }
+}
+
 export default [
   watchAddProject,
   watchHideProject,
   watchOpenProject,
-  watchLoadProjects
+  watchLoadProjects,
+  watchInitProject
 ];

@@ -10,6 +10,7 @@ import { Button, Col, Icon, Row } from 'antd';
 
 import PioVersions from './pio-versions';
 import PlatformIOLogo from '../components/pio-logo';
+import ProjectNewModal from '../../project/containers/new-modal';
 import ProjectOpenModal from '../../project/containers/open-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -31,8 +32,21 @@ class HomePage extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
+      newProjectVisible: false,
       openProjectVisible: false
     };
+  }
+
+  onDidNewProject() {
+    this.setState({
+      newProjectVisible: true
+    });
+  }
+
+  onDidCancelNewProject() {
+    this.setState({
+      newProjectVisible: false
+    });
   }
 
   onDidOpenProject() {
@@ -50,7 +64,6 @@ class HomePage extends React.Component {
   render() {
     return (
       <section className='page-container'>
-        <ProjectOpenModal visible={ this.state.openProjectVisible } onCancel={ ::this.onDidCancelOpenProject } />
         <div className='home-page'>
           <h1>Welcome to <a onClick={ () => this.props.openUrl('http://platformio.org') }>PlatformIO</a></h1>
           <br />
@@ -134,19 +147,9 @@ class HomePage extends React.Component {
   //   // @TODO:
   //   return [
   //     {
-  //       text: 'New Project',
-  //       icon: 'plus',
-  //     // callback: () => helpers.runAtomCommand('platformio-ide:initialize-new-project'),
-  //     },
-  //     {
   //       text: 'Import Arduino Project',
   //       icon: 'folder-add',
   //     // callback: () => helpers.runAtomCommand('platformio-ide:import-arduino-ide-project'),
-  //     },
-  //     {
-  //       text: 'Open Project',
-  //       icon: 'folder',
-  //       callback: () => helpers.runAtomCommand('application:add-project-folder'),
   //     },
   //     {
   //       text: 'Project Examples',
@@ -162,9 +165,18 @@ class HomePage extends React.Component {
         <h2>Quick Access</h2>
         <ul>
           <li>
+            <ProjectNewModal visible={ this.state.newProjectVisible } onCancel={ ::this.onDidCancelNewProject } />
+            <Button size='large'
+              icon='plus'
+              disabled={ this.state.newProjectVisible } onClick={ ::this.onDidNewProject } >
+              New Project
+            </Button>
+          </li>
+          <li>
+            <ProjectOpenModal visible={ this.state.openProjectVisible } onCancel={ ::this.onDidCancelOpenProject } />
             <Button size='large'
               icon='folder'
-              loading={ this.state.advancedOpened } disabled={ this.state.openProjectVisible } onClick={ ::this.onDidOpenProject } >
+              disabled={ this.state.openProjectVisible } onClick={ ::this.onDidOpenProject } >
               Open Project
             </Button>
           </li>
