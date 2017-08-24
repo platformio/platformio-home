@@ -28,7 +28,6 @@ class ProjectNewModal extends React.Component {
 
     projectsDir: PropTypes.string,
 
-    loadBoards: PropTypes.func.isRequired,
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     initProject: PropTypes.func.isRequired,
@@ -111,8 +110,7 @@ class ProjectNewModal extends React.Component {
 
   render() {
     return (
-      <Modal className='project-new-modal'
-        visible={ this.props.visible }
+      <Modal visible={ this.props.visible }
         confirmLoading={ this.state.inProgress }
         width={ 600 }
         title='Project Wizard'
@@ -149,7 +147,10 @@ class ProjectNewModal extends React.Component {
         </Form.Item>
         <Form.Item label='Location' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
           <Checkbox onChange={ ::this.onDidUseDefaultLocation } checked={ this.state.useDefaultLocation }>
-            Use default location <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={{ wordBreak: 'break-all' }}><Icon type='question-circle' /></Tooltip>
+            Use default location
+            <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={ { wordBreak: 'break-all' } }>
+              <Icon type='question-circle' style={{ marginLeft: '5px' }} />
+            </Tooltip>
           </Checkbox>
         </Form.Item>
         { !this.state.useDefaultLocation && this.renderExplorer() }

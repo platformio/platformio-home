@@ -18,7 +18,6 @@ import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { inIframe, reportException } from './helpers';
 
 import React from 'react';
-import ReactGA from 'react-ga';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
@@ -75,9 +74,9 @@ function* watchNotifySuccess() {
         content: (
         <div>
           { result.split('\n').map((text, index) => (
-              <p key={ index }>
+              <div key={ index }>
                 { text }
-              </p>)) }
+              </div>)) }
         </div>)
       });
     } else {
@@ -106,27 +105,17 @@ function* watchOSRequests() {
     try {
       switch (action.type) {
         case actions.OPEN_URL:
-        const isWebUrl = action.url.startsWith('http');
           const url = new URL(action.url, true);
           url.query.utm_source = 'platformio';
           url.query.utm_medium = 'piohome';
 
-          if (isWebUrl && !inIframe()) {
+          if (action.url.startsWith('http') && !inIframe()) {
             const redirectWindow = window.open(url.toString(), '_blank');
             redirectWindow.location;
           } else {
             yield call(apiFetchData, {
               query: 'os.openUrl',
               params: [url.toString()]
-            });
-          }
-
-          if (isWebUrl) {
-            // track outbound URLs
-            ReactGA.event({
-              category: 'Misc',
-              action: 'Outbound',
-              label: action.url
             });
           }
           break;

@@ -28,7 +28,6 @@ class ProjectImportArduinoModal extends React.Component {
 
     boards: PropTypes.array,
 
-    loadBoards: PropTypes.func.isRequired,
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     importArduinoProject: PropTypes.func.isRequired,
@@ -105,8 +104,7 @@ class ProjectImportArduinoModal extends React.Component {
 
   render() {
     return (
-      <Modal className='project-new-modal'
-        visible={ this.props.visible }
+      <Modal visible={ this.props.visible }
         confirmLoading={ this.state.inProgress }
         width={ 600 }
         title='Import Arduino Project'
@@ -125,16 +123,23 @@ class ProjectImportArduinoModal extends React.Component {
 
     return (
       <div>
-        <p style={{ marginBottom: '5px' }}>Please select a board to initialize a project. You can change it later in <code>platformio.ini</code> file which will be created in a project directory:</p>
-        <p className='block'>
+        <div style={ { marginBottom: '5px' } }>
+          Please select a board to initialize a project. You can change it later in <code>platformio.ini</code> file which will be created in a project directory:
+        </div>
+        <div className='block'>
           <BoardSelect onSelect={ ::this.onDidBoard } />
-        </p>
-        <p className='block'>
+        </div>
+        <div className='block'>
           <Checkbox onChange={ ::this.onDidUseArduinoLibs } checked={ this.state.useArduinoLibs }>
-            Use libraries installed by Arduino IDE <Tooltip title='We highly recommend to use PlatformIO Library Manager'><Icon type='question-circle' /></Tooltip>
+            Use libraries installed by Arduino IDE
+            <Tooltip title='We highly recommend to use PlatformIO Library Manager'>
+              <Icon type='question-circle' style={{ marginLeft: '5px' }} />
+            </Tooltip>
           </Checkbox>
-        </p>
-        <p style={{ marginBottom: '5px' }}>Choose a directory with existing Arduino IDE project:</p>
+        </div>
+        <div style={ { marginBottom: '5px' } }>
+          Choose a directory with existing Arduino IDE project:
+        </div>
         <FileExplorer pick='folder' onSelect={ ::this.onDidArduinoProjectDir } />
       </div> );
   }

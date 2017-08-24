@@ -10,13 +10,16 @@
 
 import * as path from '../modules/core/path';
 
+import { IMPORT_ARDUINO_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT } from '../modules/project/actions';
+import { INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY } from '../modules/library/actions';
+import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../modules/platform/actions';
 import { select, takeEvery, takeLatest } from 'redux-saga/effects';
 
+import { OPEN_URL } from '../modules/core/actions';
 import ReactGA from 'react-ga';
 import { STORE_READY } from './actions';
 import { getStartLocation } from '../modules/core/helpers';
 import { selectStorage } from './selectors';
-
 
 function* watchActivateGA() {
   yield takeLatest(STORE_READY, function*() {
@@ -59,11 +62,10 @@ function* watchActivateGA() {
 }
 
 function* watchPackageActions() {
-  const re = new RegExp('^(install|uninstall|update)_(library|platform)', 'i');
-  yield takeEvery('*', function (action) {
-    if (!re.test(action.type)) {
-      return;
-    }
+  const actions = [
+    INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY,
+    INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM];
+  yield takeEvery(actions, function (action) {
     let label = '';
     if (action.type.endsWith('_LIBRARY')) {
       label = action.lib || (action.pkgDir ? path.basename(action.pkgDir) : '');
@@ -79,7 +81,29 @@ function* watchPackageActions() {
   });
 }
 
+function* watchProjectActions() {
+  yield takeEvery([IMPORT_ARDUINO_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT], function(action) {
+    ReactGA.event({
+      category: 'Project',
+      action: action.type.toLowerCase(),
+      label: action.board || undefined
+    });
+  });
+}
+
+function* watchOutboundLinks() {
+  yield takeEvery(OPEN_URL, function({ url }) {
+    ReactGA.event({
+      category: 'Misc',
+      action: 'Outbound',
+      label: url
+    });
+  });
+}
+
 export default [
   watchActivateGA,
-  watchPackageActions
+  watchPackageActions,
+  watchProjectActions,
+  watchOutboundLinks
 ];

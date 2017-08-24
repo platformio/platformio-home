@@ -9,7 +9,7 @@
 import { createAction } from '../../store/actions';
 
 
-export const ADD_PROJECT = 'HIDE_PADDCT';
+export const ADD_PROJECT = 'ADD_PROJECT';
 export const HIDE_PROJECT = 'HIDE_PROJECT';
 export const OPEN_PROJECT = 'OPEN_PROJECT';
 export const LOAD_PROJECTS = 'LOAD_PROJECTS';
@@ -24,4 +24,3 @@ export const loadProjects = () => createAction(LOAD_PROJECTS);
 export const projectsLoaded = () => createAction(PROJECTS_LOADED);
 export const initProject = (board, framework, projectDir, onEnd=undefined) => createAction(INIT_PROJECT, { board, framework, projectDir, onEnd });
 export const importArduinoProject = (board, useArduinoLibs, arduinoProjectDir, onEnd=undefined) => createAction(IMPORT_ARDUINO_PROJECT, { board, useArduinoLibs, arduinoProjectDir, onEnd });
-
