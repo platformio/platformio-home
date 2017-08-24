@@ -58,7 +58,7 @@ function* watchLoadProjects() {
     }
     try {
       items = yield call(apiFetchData, {
-        query: 'project.getProjects',
+        query: 'project.get_projects',
         params: [yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)]
       });
       yield put(updateEntity('projects', items));
@@ -102,10 +102,44 @@ function* watchInitProject() {
   }
 }
 
+function* watchImportArduinoProject() {
+  while (true) {
+    const { board, useArduinoLibs, arduinoProjectDir, onEnd } = yield take(actions.IMPORT_ARDUINO_PROJECT);
+    let err,
+      result = null;
+    try {
+      const start = new Date().getTime();
+
+      result = yield call(apiFetchData, {
+        query: 'project.import_arduino',
+        params: [board, useArduinoLibs, arduinoProjectDir]
+      });
+
+      ReactGA.timing({
+        category: 'Project',
+        variable: 'import_arduino',
+        value: new Date().getTime() - start,
+        label: board
+      });
+
+      yield put(notifySuccess('Project has been successfully imported', `Board: ${board}, new location: ${result}`));
+    } catch (_err) {
+      err = _err;
+      yield put(notifyError('Could not import Arduino project', err));
+    }
+    finally {
+      if (onEnd) {
+        yield call(onEnd, err, result);
+      }
+    }
+  }
+}
+
 export default [
   watchAddProject,
   watchHideProject,
   watchOpenProject,
   watchLoadProjects,
-  watchInitProject
+  watchInitProject,
+  watchImportArduinoProject
 ];

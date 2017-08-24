@@ -10,6 +10,7 @@ import { Button, Col, Icon, Row } from 'antd';
 
 import PioVersions from './pio-versions';
 import PlatformIOLogo from '../components/pio-logo';
+import ProjectImportArduinoModal from '../../project/containers/import-arduino-modal';
 import ProjectNewModal from '../../project/containers/new-modal';
 import ProjectOpenModal from '../../project/containers/open-modal';
 import PropTypes from 'prop-types';
@@ -33,6 +34,7 @@ class HomePage extends React.Component {
     super(...arguments);
     this.state = {
       newProjectVisible: false,
+      importArduinoProjectVisible: false,
       openProjectVisible: false
     };
   }
@@ -46,6 +48,18 @@ class HomePage extends React.Component {
   onDidCancelNewProject() {
     this.setState({
       newProjectVisible: false
+    });
+  }
+
+  onDidImportArduinoProject() {
+    this.setState({
+      importArduinoProjectVisible: true
+    });
+  }
+
+  onDidCancelImportArduinoProject() {
+    this.setState({
+      importArduinoProjectVisible: false
     });
   }
 
@@ -182,6 +196,14 @@ class HomePage extends React.Component {
               icon='plus'
               disabled={ this.state.newProjectVisible } onClick={ ::this.onDidNewProject } >
               New Project
+            </Button>
+          </li>
+          <li>
+            <ProjectImportArduinoModal visible={ this.state.importArduinoProjectVisible } onCancel={ ::this.onDidCancelImportArduinoProject } />
+            <Button size='large'
+              icon='folder-add'
+              disabled={ this.state.importArduinoProjectVisible } onClick={ ::this.onDidImportArduinoProject } >
+              Import Arduino Project
             </Button>
           </li>
           <li>

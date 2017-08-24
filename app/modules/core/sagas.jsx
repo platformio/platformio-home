@@ -45,7 +45,10 @@ function* watchNotifyError() {
     console.error(title, err);
     let description = err.stack || err.toString();
     if (err.name === 'JsonRpcError') {
-      description = `${err.message}: ${err.data}`;
+      description = err.message;
+      if (err.data) {
+        description += ': ' + err.data;
+      }
     }
     notification.error({
       message: title,

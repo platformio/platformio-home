@@ -8,18 +8,15 @@
 
 import * as actions from '../actions';
 
-import { Checkbox, Form, Icon, Modal, Select, Spin, Tooltip, message } from 'antd';
+import { Checkbox, Form, Icon, Modal, Select, Tooltip, message } from 'antd';
 
+import BoardSelect from '../../platform/containers/board-select';
 import FileExplorer from '../../core/containers/file-explorer';
 import ProjectInitCarousel from '../components/init-carousel';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { cmpSort } from '../../core/helpers';
 import { connect } from 'react-redux';
-import fuzzaldrin from 'fuzzaldrin-plus';
-import { loadBoards } from '../../platform/actions';
 import { openUrl } from '../../core/actions';
-import { selectNormalizedBoards } from '../../platform/selectors';
 import { selectStorageItem } from '../../../store/selectors';
 
 
@@ -29,7 +26,6 @@ class ProjectNewModal extends React.Component {
     visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
 
-    boards: PropTypes.array,
     projectsDir: PropTypes.string,
 
     loadBoards: PropTypes.func.isRequired,
@@ -51,16 +47,10 @@ class ProjectNewModal extends React.Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.visible) {
-      this.props.loadBoards();
-    }
-  }
-
-  onDidBoard(boardId) {
-    const frameworks = (this.props.boards.find(item => item.id === boardId) || {}).frameworks || [];
+  onDidBoard(board) {
+    const frameworks = board.frameworks || [];
     this.setState({
-      selectedBoard: boardId,
+      selectedBoard: board.id,
       selectedFramework: frameworks.length ? frameworks[0].name : null,
       frameworks
     });
@@ -135,49 +125,14 @@ class ProjectNewModal extends React.Component {
   }
 
   renderBody() {
-    if (!this.props.boards) {
-      return (
-        <div className='text-center'>
-          <Spin tip='Loading...' size='large' />
-        </div>
-        );
-    }
-
     if (this.state.inProgress) {
       return <ProjectInitCarousel openUrl={ this.props.openUrl } />;
     }
 
-    const data = {};
-    this.props.boards
-      .sort((a, b) => cmpSort(a.platform.title.toUpperCase(), b.platform.title.toUpperCase()))
-      .forEach(item => {
-        const group = item.platform.title;
-        const candidates = data.hasOwnProperty(group) ? data[group] : [];
-        candidates.push(item);
-        data[group] = candidates;
-      });
-
-    console.warn(this.state);
     return (
       <Form>
         <Form.Item label='Board' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          <Select showSearch
-            style={ { width: '100%' } }
-            size='large'
-            placeholder={ `Select a board (${ this.props.boards.length } available)` }
-            optionFilterProp='children'
-            filterOption={ (input, option) => fuzzaldrin.match(option.props.children, input).length }
-            onChange={ ::this.onDidBoard }>
-            { Object.keys(data).map(group => (
-                <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
-                  { data[group].map(item => (
-                      <Select.Option key={ item.id } value={ item.id }>
-                        { item.name.includes(item.vendor) ? item.name : `${item.name} (${item.vendor})` }
-                      </Select.Option>
-                    )) }
-                </Select.OptGroup>
-              )) }
-          </Select>
+          <BoardSelect onSelect={ ::this.onDidBoard } />
         </Form.Item>
         <Form.Item label='Framework' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
           <Select value={ this.state.selectedFramework }
@@ -194,7 +149,7 @@ class ProjectNewModal extends React.Component {
         </Form.Item>
         <Form.Item label='Location' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
           <Checkbox onChange={ ::this.onDidUseDefaultLocation } checked={ this.state.useDefaultLocation }>
-            Use default location <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={{ wordBreak: 'break-all' }}><Icon type='info-circle-o' /></Tooltip>
+            Use default location <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={{ wordBreak: 'break-all' }}><Icon type='question-circle' /></Tooltip>
           </Checkbox>
         </Form.Item>
         { !this.state.useDefaultLocation && this.renderExplorer() }
@@ -211,13 +166,11 @@ class ProjectNewModal extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    boards: selectNormalizedBoards(state),
     projectsDir: selectStorageItem(state, 'projectsDir')
   };
 }
 
 export default connect(mapStateToProps, {
   ...actions,
-  loadBoards,
   openUrl
 })(ProjectNewModal);

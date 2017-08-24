@@ -15,6 +15,7 @@ export const OPEN_PROJECT = 'OPEN_PROJECT';
 export const LOAD_PROJECTS = 'LOAD_PROJECTS';
 export const PROJECTS_LOADED = 'PROJECTS_LOADED';
 export const INIT_PROJECT = 'INIT_PROJECT';
+export const IMPORT_ARDUINO_PROJECT = 'IMPORT_ARDUINO_PROJECT';
 
 export const addProject = path => createAction(ADD_PROJECT, { path });
 export const hideProject = path => createAction(HIDE_PROJECT, { path });
@@ -22,4 +23,5 @@ export const openProject = path => createAction(OPEN_PROJECT, { path });
 export const loadProjects = () => createAction(LOAD_PROJECTS);
 export const projectsLoaded = () => createAction(PROJECTS_LOADED);
 export const initProject = (board, framework, projectDir, onEnd=undefined) => createAction(INIT_PROJECT, { board, framework, projectDir, onEnd });
+export const importArduinoProject = (board, useArduinoLibs, arduinoProjectDir, onEnd=undefined) => createAction(IMPORT_ARDUINO_PROJECT, { board, useArduinoLibs, arduinoProjectDir, onEnd });
 

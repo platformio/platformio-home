@@ -27,7 +27,7 @@ export default class AccountStatusBarDropdown extends React.Component {
 
   render() {
     if (!this.props.data || !this.props.data.username) {
-      return <a onClick={ () => this.props.showLoginPage() }>Have an accont? Log in</a>;
+      return <a onClick={ () => this.props.showLoginPage() }>Have an account? Log in</a>;
     }
     return (
       <Dropdown overlay={ this.renderUsermenu() } trigger={ ['click'] }>
