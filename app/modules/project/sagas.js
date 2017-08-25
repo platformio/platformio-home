@@ -13,7 +13,7 @@ import * as selectors from './selectors';
 
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
-import { notifyError, notifySuccess } from '../core/actions';
+import { notifyError, notifySuccess, postToIDE } from '../core/actions';
 
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
@@ -43,9 +43,9 @@ function* watchHideProject() {
 }
 
 function* watchOpenProject() {
-  // FIXME: Send to middleware
-  // yield takeEvery(actions.OPEN_PROJECT, function*({path}) {
-  // });
+  yield takeEvery(actions.OPEN_PROJECT, function*({path}) {
+    yield put(postToIDE('open_project', [path]));
+  });
 }
 
 function* watchLoadProjects() {

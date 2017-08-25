@@ -14,6 +14,7 @@ export const NOTIFY_SUCCESS = 'NOTIFY_SUCCESS';
 
 export const SEND_FEEDBACK = 'SEND_FEEDBACK';
 export const UPDATE_ROUTE_BADGE = 'UPDATE_ROUTE_BADGE';
+export const POST_TO_IDE = 'POST_TO_IDE';
 
 export const OPEN_URL = 'OPEN_URL';
 export const REVEAL_FILE = 'REVEAL_FILE';
@@ -31,6 +32,7 @@ export const notifySuccess = (title, result) => createAction(NOTIFY_SUCCESS, { t
 
 export const sendFeedback = (body, onEnd=undefined) => createAction(SEND_FEEDBACK, { body, onEnd });
 export const updateRouteBadge = (path, count) => createAction(UPDATE_ROUTE_BADGE, { path, count });
+export const postToIDE = (command, params) => createAction(POST_TO_IDE, { command, params });
 
 export const openUrl = (url) => createAction(OPEN_URL, { url });
 export const revealFile = (path) => createAction(REVEAL_FILE, { path });
