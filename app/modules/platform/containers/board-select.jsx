@@ -60,7 +60,7 @@ class BoardSelect extends React.Component {
         onChange={ ::this.onDidChange }>
         { Object.keys(data).map(group => (
             <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
-              { data[group].map(item => (
+              { data[group].sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())).map(item => (
                   <Select.Option key={ item.id } value={ item.id }>
                     { item.name.includes(item.vendor) ? item.name : `${item.name} (${item.vendor})` }
                   </Select.Option>
