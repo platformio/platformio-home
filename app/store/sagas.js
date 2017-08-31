@@ -27,7 +27,7 @@ function* watchLoadStore() {
   yield takeLatest(actions.LOAD_STORE, function*() {
     try {
       const newState = yield call(apiFetchData, {
-        query: 'app.loadState'
+        query: 'app.load_state'
       });
       yield put(actions.updateStore(newState));
       yield put(actions.fireStoreReady());
@@ -59,7 +59,7 @@ function* autoSaveState() {
       });
 
       const result = yield call(apiFetchData, {
-        query: 'app.saveState',
+        query: 'app.save_state',
         params: [savedState]
       });
       if (!result) {

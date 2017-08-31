@@ -37,7 +37,7 @@ function* watchLoadAccountInfo() {
     }
     try {
       data = yield call(apiFetchData, {
-        query: 'core.authInfo',
+        query: 'core.auth_info',
         params: [extended]
       });
     } catch (err) {}

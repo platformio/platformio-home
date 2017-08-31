@@ -114,7 +114,7 @@ function* watchOSRequests() {
             redirectWindow.location;
           } else {
             yield call(apiFetchData, {
-              query: 'os.openUrl',
+              query: 'os.open_url',
               params: [url.toString()]
             });
           }
@@ -122,7 +122,7 @@ function* watchOSRequests() {
 
         case actions.REVEAL_FILE:
           yield call(apiFetchData, {
-            query: 'os.revealFile',
+            query: 'os.reveal_file',
             params: [action.path]
           });
           break;
@@ -150,7 +150,7 @@ function* watchRequestContent() {
         });
       } else {
         content = yield call(apiFetchData, {
-          query: 'os.requestContent',
+          query: 'os.request_content',
           params: [uri, data]
         });
       }
@@ -197,7 +197,7 @@ function* watchListLogicalDisks() {
     }
     try {
       items = yield call(apiFetchData, {
-        query: 'os.listLogicalDisks'
+        query: 'os.list_logical_disks'
       });
       yield put(updateEntity('logicalDisks', items));
     } catch (err) {
@@ -216,7 +216,7 @@ function* watchListDir() {
     }
     try {
       const result = yield call(apiFetchData, {
-        query: 'os.listDir',
+        query: 'os.list_dir',
         params: [path]
       });
       yield put(updateEntity('dirItems', Object.assign({}, items, {[path]: result})));
@@ -236,7 +236,7 @@ function* watchIsFile() {
     }
     try {
       const result = yield call(apiFetchData, {
-        query: 'os.isFile',
+        query: 'os.is_file',
         params: [path]
       });
       yield put(updateEntity('isFileItems', Object.assign({}, items, {[path]: result})));
@@ -256,7 +256,7 @@ function* watchIsDir() {
     }
     try {
       const result = yield call(apiFetchData, {
-        query: 'os.isDir',
+        query: 'os.is_dir',
         params: [path]
       });
       yield put(updateEntity('isDirItems', Object.assign({}, items, {[path]: result})));
@@ -280,7 +280,7 @@ function* watchSendFeedback() {
     try {
       body = body.trim().substr(0, 1000);
       yield call(apiFetchData, {
-        query: 'os.requestContent',
+        query: 'os.request_content',
         params: [`${PIOPLUS_API_ENDPOINT}/v1/feedback`, {
           body
         }]
