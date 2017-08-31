@@ -13,8 +13,10 @@ import * as selectors from './selectors';
 
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../store/actions';
-import { notifyError, notifySuccess, postToIDE } from '../core/actions';
+import { notifyError, notifySuccess } from '../core/actions';
 
+import { Modal } from 'antd';
+import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { selectStorageItem } from '../../store/selectors';
@@ -23,10 +25,10 @@ import { selectStorageItem } from '../../store/selectors';
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
 function* watchAddProject() {
-  yield takeEvery(actions.ADD_PROJECT, function*({path}) {
+  yield takeEvery(actions.ADD_PROJECT, function*({projectDir}) {
     const result = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
-    if (!result.includes(path)) {
-      yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, path]));
+    if (!result.includes(projectDir)) {
+      yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, projectDir]));
       yield put(saveState()); // force state saving when new project is opening in new window (VSCode issue)
     }
     yield put(deleteEntity(/^projects/));
@@ -35,17 +37,33 @@ function* watchAddProject() {
 }
 
 function* watchHideProject() {
-  yield takeEvery(actions.HIDE_PROJECT, function*({path}) {
+  yield takeEvery(actions.HIDE_PROJECT, function*({projectDir}) {
     const storageItems = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     const entityItems = (yield select(selectors.selectProjects)) || [];
-    yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== path)));
-    yield put(updateEntity('projects', entityItems.filter(item => item.path !== path)));
+    yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== projectDir)));
+    yield put(updateEntity('projects', entityItems.filter(item => item.projectDir !== projectDir)));
   });
 }
 
 function* watchOpenProject() {
-  yield takeEvery(actions.OPEN_PROJECT, function*({path}) {
-    yield put(postToIDE('open_project', [path]));
+  yield takeEvery(actions.OPEN_PROJECT, function*({projectDir}) {
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'ide.open_project',
+        params: [projectDir]
+      });
+      console.info(result);
+    } catch (err) {
+      Modal.success({
+        title: 'Open Project...',
+        content: (
+        <div style={ { wordBreak: 'break-all' } }>
+          <div className='block'>Project has been successfully configured and is located by this path: <code>{ projectDir }</code>.</div>
+          You can open it with your favourite IDE or process with <kbd>platformio run</kbd> command.
+        </div>
+        )
+      });
+    }
   });
 }
 
@@ -66,6 +84,57 @@ function* watchLoadProjects() {
       yield put(actions.projectsLoaded());
     } catch (err) {
       yield put(notifyError('Could not load recent projects', err));
+    }
+  }
+}
+
+function* watchLoadProjectExamples() {
+  while (true) {
+    yield take(actions.LOAD_PROJECT_EXAMPLES);
+    let items = yield select(selectors.selectProjectExamples);
+    if (items) {
+      continue;
+    }
+    try {
+      items = yield call(apiFetchData, {
+        query: 'project.get_project_examples'
+      });
+      yield put(updateEntity('projectExamples', items));
+    } catch (err) {
+      yield put(notifyError('Could not load project examples', err));
+    }
+  }
+}
+
+function* watchImportProject() {
+  while (true) {
+    const { projectDir, onEnd } = yield take(actions.IMPORT_PROJECT);
+    let err,
+      result = null;
+    try {
+      const start = new Date().getTime();
+
+      result = yield call(apiFetchData, {
+        query: 'project.import_pio',
+        params: [projectDir]
+      });
+
+      ReactGA.timing({
+        category: 'Project',
+        variable: 'import',
+        value: new Date().getTime() - start,
+        label: projectDir
+      });
+
+      yield put(notifySuccess('Project has been successfully imported', `Location: ${result}`));
+    } catch (_err) {
+      err = _err;
+      yield put(notifyError('Could not import project', err));
+    }
+    finally {
+      if (onEnd) {
+        yield call(onEnd, err, result);
+      }
     }
   }
 }
@@ -141,6 +210,8 @@ export default [
   watchHideProject,
   watchOpenProject,
   watchLoadProjects,
+  watchLoadProjectExamples,
+  watchImportProject,
   watchInitProject,
   watchImportArduinoProject
 ];

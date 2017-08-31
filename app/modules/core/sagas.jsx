@@ -319,20 +319,6 @@ function* watchAutoUpdateCorePackages() {
   });
 }
 
-function* watchPostToIDE() {
-  yield takeEvery(actions.POST_TO_IDE, function*({ command, params }) {
-    try {
-      const result = yield call(apiFetchData, {
-        query: `ide.${command}`,
-        params
-      });
-      console.info(result);
-    } catch (err) {
-      console.error(`Could not post a "${command}" command to IDE`, err);
-    }
-  });
-}
-
 export default [
   watchNotifyError,
   watchNotifySuccess,
@@ -346,6 +332,5 @@ export default [
   watchIsDir,
   watchResetFSItems,
   watchSendFeedback,
-  watchAutoUpdateCorePackages,
-  watchPostToIDE
+  watchAutoUpdateCorePackages
 ];

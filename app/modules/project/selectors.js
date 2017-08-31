@@ -21,6 +21,10 @@ export function selectProjects(state) {
   return selectEntity(state, 'projects');
 }
 
+export function selectProjectExamples(state) {
+  return selectEntity(state, 'projectExamples');
+}
+
 export function selectVisibleProjects(state) {
   const filterValue = selectFilter(state);
   const items = selectProjects(state);

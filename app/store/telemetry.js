@@ -10,7 +10,7 @@
 
 import * as path from '../modules/core/path';
 
-import { IMPORT_ARDUINO_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT } from '../modules/project/actions';
+import { HIDE_PROJECT, IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, OPEN_PROJECT } from '../modules/project/actions';
 import { INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY } from '../modules/library/actions';
 import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../modules/platform/actions';
 import { select, takeEvery, takeLatest } from 'redux-saga/effects';
@@ -82,11 +82,15 @@ function* watchPackageActions() {
 }
 
 function* watchProjectActions() {
-  yield takeEvery([IMPORT_ARDUINO_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT], function(action) {
+  yield takeEvery([IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT], function(action) {
+    let label = action.board || undefined;
+    if (!label && action.projectDir) {
+      label = path.join(path.basename(path.dirname(action.projectDir)), path.basename(action.projectDir));
+    }
     ReactGA.event({
       category: 'Project',
       action: action.type.toLowerCase(),
-      label: action.board || undefined
+      label
     });
   });
 }

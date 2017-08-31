@@ -10,6 +10,7 @@ import { Button, Col, Icon, Row } from 'antd';
 
 import PioVersions from './pio-versions';
 import PlatformIOLogo from '../components/pio-logo';
+import ProjectExamplesModal from '../../project/containers/examples-modal';
 import ProjectImportArduinoModal from '../../project/containers/import-arduino-modal';
 import ProjectNewModal from '../../project/containers/new-modal';
 import ProjectOpenModal from '../../project/containers/open-modal';
@@ -35,7 +36,8 @@ class HomePage extends React.Component {
     this.state = {
       newProjectVisible: false,
       importArduinoProjectVisible: false,
-      openProjectVisible: false
+      openProjectVisible: false,
+      projectExamplesVisible: false
     };
   }
 
@@ -72,6 +74,18 @@ class HomePage extends React.Component {
   onDidCancelOpenProject() {
     this.setState({
       openProjectVisible: false
+    });
+  }
+
+  onDidProjectExamples() {
+    this.setState({
+      projectExamplesVisible: true
+    });
+  }
+
+  onDidCancelProjectExamples() {
+    this.setState({
+      projectExamplesVisible: false
     });
   }
 
@@ -169,22 +183,6 @@ class HomePage extends React.Component {
       );
   }
 
-  // getQuickLinks() {
-  //   // @TODO:
-  //   return [
-  //     {
-  //       text: 'Import Arduino Project',
-  //       icon: 'folder-add',
-  //     // callback: () => helpers.runAtomCommand('platformio-ide:import-arduino-ide-project'),
-  //     },
-  //     {
-  //       text: 'Project Examples',
-  //       icon: 'code-o',
-  //     // callback: () => helpers.runAtomCommand('platformio-ide:project-examples'),
-  //     }
-  //   ];
-  // }
-
   renderQuickAccess() {
     return (
       <div className='quick-links'>
@@ -212,6 +210,14 @@ class HomePage extends React.Component {
               icon='folder'
               disabled={ this.state.openProjectVisible } onClick={ ::this.onDidOpenProject } >
               Open Project
+            </Button>
+          </li>
+          <li>
+            <ProjectExamplesModal router={ this.context.router } visible={ this.state.projectExamplesVisible } onCancel={ ::this.onDidCancelProjectExamples } />
+            <Button size='large'
+              icon='code-o'
+              disabled={ this.state.projectExamplesVisible } onClick={ ::this.onDidProjectExamples } >
+              Project Examples
             </Button>
           </li>
         </ul>
