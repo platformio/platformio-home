@@ -181,8 +181,13 @@ ul.list-styled {
   background-color: darken(#fff, 1%) !important;
   margin-bottom: $component-padding;
 
-  h2 {
-    font-size: 18px;
+  .ant-card-head-title {
+    small {
+      font-weight: normal;
+      font-size: 75%;
+      line-height: 1;
+      color: #777;
+    }
   }
 }
 

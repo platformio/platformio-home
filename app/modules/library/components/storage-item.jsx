@@ -78,7 +78,7 @@ export default class LibraryStorageItem extends React.Component {
 
   render() {
     const title = (
-    <h2><a onClick={ (e) => this.onDidShow(e, this.props.item) }>{ this.props.item.name }</a> <small>{ this.props.item.authors && this.props.item.authors.length ? ` by ${ this.props.item.authors[0].name }` : '' }</small></h2>
+    <div><a onClick={ (e) => this.onDidShow(e, this.props.item) }>{ this.props.item.name }</a> <small>{ this.props.item.authors && this.props.item.authors.length ? ` by ${ this.props.item.authors[0].name }` : '' }</small></div>
     );
     const extra = <span><Tooltip title='Version'> <Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version } </Tooltip></span>;
     return (

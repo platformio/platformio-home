@@ -95,9 +95,7 @@ export default class PlatformCard extends React.Component {
   }
 
   render() {
-    const title = (
-    <h2><a onClick={ ::this.onDidShow }>{ this.props.item.title }</a></h2>
-    );
+    const title = <a onClick={ ::this.onDidShow }>{ this.props.item.title }</a>;
     let extra;
     if (this.props.item.version) {
       extra = <span><Tooltip title='Version'> <Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version } </Tooltip></span>;
