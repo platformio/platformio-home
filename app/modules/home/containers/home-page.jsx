@@ -185,7 +185,6 @@ class HomePage extends React.Component {
               </li>
             </ul>
           </div>
-          { this.renderShowAtStartup() }
         </div>
       </section>
       );
