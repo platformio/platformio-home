@@ -29,6 +29,17 @@ import { selectStorageItem } from '../../store/selectors';
 const REQUESTED_CONTENTS_CACHE_SIZE = 50;
 const FS_GLOBS_CACHE_SIZE = 50;
 
+function* watchShowAtStartup() {
+  yield takeEvery(actions.SHOW_AT_STARTUP, function*({value}) {
+    const caller = yield select(selectStorageItem, 'coreCaller');
+    if (!caller) {
+      return;
+    }
+    const data = (yield select(selectStorageItem, 'showOnStartup')) || {};
+    data[caller] = value;
+    yield put(updateStorageItem('showOnStartup', data));
+  });
+}
 
 function* watchNotifyError() {
 
@@ -320,6 +331,7 @@ function* watchAutoUpdateCorePackages() {
 }
 
 export default [
+  watchShowAtStartup,
   watchNotifyError,
   watchNotifySuccess,
   watchUpdateRouteBadge,

@@ -13,9 +13,9 @@ import * as path from '../modules/core/path';
 import { HIDE_PROJECT, IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, OPEN_PROJECT } from '../modules/project/actions';
 import { INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY } from '../modules/library/actions';
 import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../modules/platform/actions';
+import { OPEN_URL, SHOW_AT_STARTUP } from '../modules/core/actions';
 import { select, takeEvery, takeLatest } from 'redux-saga/effects';
 
-import { OPEN_URL } from '../modules/core/actions';
 import ReactGA from 'react-ga';
 import { STORE_READY } from './actions';
 import { getStartLocation } from '../modules/core/helpers';
@@ -105,9 +105,20 @@ function* watchOutboundLinks() {
   });
 }
 
+function* watchShowAtStartup() {
+  yield takeEvery(SHOW_AT_STARTUP, function({ value }) {
+    ReactGA.event({
+      category: 'Misc',
+      action: 'ShowAtStartup',
+      label: value ? 1 : 0
+    });
+  });
+}
+
 export default [
   watchActivateGA,
   watchPackageActions,
   watchProjectActions,
-  watchOutboundLinks
+  watchOutboundLinks,
+  watchShowAtStartup
 ];

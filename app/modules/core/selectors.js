@@ -10,6 +10,15 @@ import { selectStorageItem } from '../../store/selectors';
 import shajs from 'sha.js';
 
 
+export function selectShowAtStartup(state) {
+  const caller = selectStorageItem(state, 'coreCaller');
+  if (!caller) {
+    return true;
+  }
+  const data = selectStorageItem(state, 'showOnStartup');
+  return !data || !data.hasOwnProperty(caller) || data[caller];
+}
+
 export function getRequestContentKey(uri, data=undefined) {
   const hash = shajs('sha1');
   hash.update(uri);

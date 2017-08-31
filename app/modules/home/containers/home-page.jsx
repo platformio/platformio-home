@@ -6,7 +6,8 @@
  * the root directory of this source tree.
  */
 
-import { Button, Col, Icon, Row } from 'antd';
+import { Button, Checkbox, Col, Icon, Row } from 'antd';
+import { openUrl, showAtStartup } from '../../core/actions';
 
 import PioVersions from './pio-versions';
 import PlatformIOLogo from '../components/pio-logo';
@@ -18,7 +19,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import RecentProjectsBlock from '../../project/containers/recent-block';
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { selectShowAtStartup } from '../../core/selectors';
+import { selectStorageItem } from '../../../store/selectors';
 
 
 class HomePage extends React.Component {
@@ -28,7 +30,10 @@ class HomePage extends React.Component {
   }
 
   static propTypes = {
-    openUrl: PropTypes.func.isRequired
+    caller: PropTypes.string,
+    showOnStartupState: PropTypes.bool,
+    openUrl: PropTypes.func.isRequired,
+    showAtStartup: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -39,6 +44,10 @@ class HomePage extends React.Component {
       openProjectVisible: false,
       projectExamplesVisible: false
     };
+  }
+
+  onDidShowOnStartup(e) {
+    this.props.showAtStartup(e.target.checked);
   }
 
   onDidNewProject() {
@@ -93,7 +102,7 @@ class HomePage extends React.Component {
     return (
       <section className='page-container'>
         <div className='home-page'>
-          <h1>Welcome to <a onClick={ () => this.props.openUrl('http://platformio.org') }>PlatformIO</a></h1>
+          <h1>Welcome to <a onClick={ () => this.props.openUrl('http://platformio.org') }>PlatformIO</a> <small className='pull-right' style={{ marginTop: '15px' }}>{ this.renderShowAtStartup() }</small></h1>
           <br />
           <Row className='text-center'>
             <Col span={ 12 } className='pio-logo-versions'>
@@ -159,11 +168,9 @@ class HomePage extends React.Component {
                 <a onClick={ () => this.props.openUrl('http://platformio.org/contact') }>Contact</a>
               </li>
             </ul>
-            <hr />
           </div>
-          <h2>Recent Projects</h2>
+          <hr className='block' />
           <RecentProjectsBlock router={ this.context.router } />
-          <br />
           <div className='block text-center'>
             If you enjoy using PlatformIO, please star our projects on GitHub!
             <ul className='list-inline'>
@@ -178,6 +185,7 @@ class HomePage extends React.Component {
               </li>
             </ul>
           </div>
+          { this.renderShowAtStartup() }
         </div>
       </section>
       );
@@ -215,7 +223,7 @@ class HomePage extends React.Component {
           <li>
             <ProjectExamplesModal router={ this.context.router } visible={ this.state.projectExamplesVisible } onCancel={ ::this.onDidCancelProjectExamples } />
             <Button size='large'
-              icon='code-o'
+              icon='copy'
               disabled={ this.state.projectExamplesVisible } onClick={ ::this.onDidProjectExamples } >
               Project Examples
             </Button>
@@ -224,8 +232,27 @@ class HomePage extends React.Component {
       </div>);
   }
 
+  renderShowAtStartup() {
+    if (!this.props.caller) {
+      return;
+    }
+    return (
+      <div className='block text-center'>
+        <Checkbox defaultChecked={ this.props.showOnStartupState } onChange={ ::this.onDidShowOnStartup }>Show at startup</Checkbox>
+      </div>
+    );
+  }
+
 }
 
 // Redux
 
-export default connect(null, { openUrl })(HomePage);
+function mapStateToProps(state) {
+  return {
+    caller: selectStorageItem(state, 'coreCaller'),
+    showOnStartupState: selectShowAtStartup(state)
+  };
+}
+
+
+export default connect(mapStateToProps, { openUrl, showAtStartup })(HomePage);
