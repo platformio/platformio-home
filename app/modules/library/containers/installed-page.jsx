@@ -11,7 +11,6 @@ import * as actions from '../actions';
 import { INSTALLED_INPUT_FILTER_KEY, selectInstalledFilter, selectVisibleInstalledLibs } from '../selectors';
 
 import { Button } from 'antd';
-import { INPUT_FILTER_DELAY } from '../../../config';
 import { LibraryStorage } from '../storage';
 import LibraryStoragesList from '../components/storages-list';
 import PropTypes from 'prop-types';
@@ -79,7 +78,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     revealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

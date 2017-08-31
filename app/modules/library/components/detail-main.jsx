@@ -8,12 +8,13 @@
 
 import * as path from '../../core/path';
 
-import { Button, Col, Icon, Popconfirm, Row, Select, Tabs, Tooltip } from 'antd';
+import { Button, Col, Dropdown, Icon, Menu, Popconfirm, Row, Select, Tabs, Tooltip } from 'antd';
 
 import LibraryDetailExamplesBlock from '../containers/detail-examples-block';
 import LibraryDetailHeadersBlock from '../containers/detail-headers-block';
 import LibraryDetailInstallationBlock from '../containers/detail-installation-block';
 import LibraryDetailManifestBlock from '../containers/detail-manifest-block';
+import LibraryInstallAdvancedModal from '../containers/install-advanced-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import RepositoryChangelog from '../../core/containers/repo-changelog';
@@ -53,9 +54,10 @@ export default class LibraryDetailMain extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
+      installToVisible: false,
       installing: false,
       uninstalling: false,
-      versionForInstall: null,
+      selectedVersion: null,
       activeTab: 'examples'
     };
   }
@@ -68,18 +70,29 @@ export default class LibraryDetailMain extends React.Component {
 
   onDidVersionChange(value) {
     this.setState({
-      versionForInstall: value
+      selectedVersion: value
+    });
+  }
+
+  onDidInstallTo() {
+    this.setState({
+      installToVisible: true
+    });
+  }
+
+  onDidCancelInstallTo() {
+    this.setState({
+      installToVisible: false
     });
   }
 
   onDidInstall() {
-    const storageDir = null; // TODO: Custom storage directory
     this.setState({
       installing: true
     });
     this.props.installLibrary(
-      storageDir,
-      this.state.versionForInstall ? `${this.props.data.id}@${this.state.versionForInstall}` : this.props.data.id,
+      null, // global storage
+      this.getLibraryForInstall(),
       () => this.setState({
         installing: false
       })
@@ -120,9 +133,14 @@ export default class LibraryDetailMain extends React.Component {
     this.props.searchLibrary(`keyword:"${name}"`);
   }
 
+  getLibraryForInstall() {
+    return this.state.selectedVersion ? `${this.props.data.id}@${this.state.selectedVersion}` : this.props.data.id;
+  }
+
   renderQuickInstallation(versions) {
     return (
       <div>
+        <LibraryInstallAdvancedModal library={ this.getLibraryForInstall() } visible={ this.state.installToVisible } onCancel={ ::this.onDidCancelInstallTo } />
         <h3>Installation</h3>
         <ul className='block list-inline'>
           <li>
@@ -135,21 +153,23 @@ export default class LibraryDetailMain extends React.Component {
             </Select>
           </li>
           <li>
-            <Button icon='download'
-              type='primary'
+            <Dropdown.Button type='primary'
+              overlay={ (
+                <Menu onClick={ ::this.onDidInstallTo }>
+                  <Menu.Item key=''>Install to...</Menu.Item>
+                </Menu>
+              )}
               loading={ this.state.installing }
               disabled={ this.state.installing }
               onClick={ ::this.onDidInstall }>
-              Install
-            </Button>
+              <Icon type='download' /> Install
+            </Dropdown.Button>
           </li>
           <li>
             |
           </li>
           <li>
-            <a onClick={ () => this.setState({
-                           activeTab: 'installation'
-                         }) }>More info</a>
+            <a onClick={ () => this.setState({ activeTab: 'installation' }) }>More info</a>
           </li>
         </ul>
       </div>

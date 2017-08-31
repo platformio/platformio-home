@@ -6,10 +6,11 @@
  * the root directory of this source tree.
  */
 
-import { LibraryStorage, filterStorageItems, getLibraryStorages } from './storage';
+import { LibraryStorage, filterStorageItems } from './storage';
 import { expandFrameworksOrPlatforms, selectRegistryFrameworks, selectRegistryPlatforms } from '../platform/selectors';
 
 import { selectInputValue } from '../../store/selectors';
+import { selectProjects } from '../project/selectors';
 
 
 // Data Filters
@@ -110,8 +111,20 @@ export function selectVisibletBuiltinLibs(state) {
   return filterStorageItems(items, filterValue);
 }
 
+export function selectLibraryStorages(state) {
+  const projects = selectProjects(state) || [];
+  const items = projects.map(
+    p => new LibraryStorage(`Project: ${p.name}`, p.path)
+  );
+  projects.forEach(p => p.extraLibStorages.forEach(s => {
+    items.push(new LibraryStorage(`Storage: ${s.name}`, s.path));
+  }));
+  items.push(new LibraryStorage('Global storage'));
+  return items;
+}
+
 export function selectInstalledLibs(state) {
-  return getLibraryStorages().map(storage => {
+  return selectLibraryStorages(state).map(storage => {
     const key = `installedLibs${storage.initialPath}`;
     if (state.entities.hasOwnProperty(key)) {
       storage.items = state.entities[key];
@@ -133,7 +146,7 @@ export function selectVisibleInstalledLibs(state) {
 }
 
 export function selectLibUpdates(state) {
-  return getLibraryStorages().map(storage => {
+  return selectLibraryStorages(state).map(storage => {
     const key = `libUpdates${storage.initialPath}`;
     if (state.entities.hasOwnProperty(key)) {
       storage.items = state.entities[key];

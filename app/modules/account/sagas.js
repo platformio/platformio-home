@@ -11,7 +11,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '../../store/actions';
 import { notifyError, notifySuccess } from '../core/actions';
 
@@ -29,23 +29,20 @@ function showAPIErrorMessage(output) {
 }
 
 function* watchLoadAccountInfo() {
-  yield takeLatest(actions.LOAD_ACCOUNT_INFO, function*({extended}) {
+  while (true) {
+    const { extended } = yield take(actions.LOAD_ACCOUNT_INFO);
     let data = yield select(selectors.selectAccountInfo);
     if (data && (!extended || data.groups)) {
-      return;
+      continue;
     }
     try {
-      const args = ['account', 'show', '--json-output'];
-      if (!extended) {
-        args.push('--offline');
-      }
       data = yield call(apiFetchData, {
-        query: 'core.call',
-        params: [args]
+        query: 'core.auth_info',
+        params: [extended]
       });
     } catch (err) {}
     yield put(updateEntity('accountInfo', data || {}));
-  });
+  }
 }
 
 function* watchLoginAccount() {

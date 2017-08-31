@@ -75,7 +75,7 @@ export default class FrameworksList extends React.Component {
 
   renderItem(item) {
     const title = (
-    <h2><a onClick={ (e) => this.onDidShow(e, item.name) }>{ item.title }</a></h2>
+    <a onClick={ (e) => this.onDidShow(e, item.name) }>{ item.title }</a>
     );
     return (
       <Card key={ item.name } title={ title }

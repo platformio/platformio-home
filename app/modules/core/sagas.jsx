@@ -15,9 +15,9 @@ import { Button, Modal, notification } from 'antd';
 import { CHECK_CORE_UPDATES_INTERVAL, PIOPLUS_API_ENDPOINT } from '../../config';
 import { STORE_READY, updateEntity, updateStorageItem } from '../../store/actions';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { inIframe, reportException } from './helpers';
 
 import React from 'react';
-import ReactGA from 'react-ga';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
@@ -44,7 +44,10 @@ function* watchNotifyError() {
     console.error(title, err);
     let description = err.stack || err.toString();
     if (err.name === 'JsonRpcError') {
-      description = `${err.message}: ${err.data}`;
+      description = err.message;
+      if (err.data) {
+        description += ': ' + err.data;
+      }
     }
     notification.error({
       message: title,
@@ -55,6 +58,7 @@ function* watchNotifyError() {
         Report a problem
       </Button>)
     });
+    reportException(`${title} => ${description}`);
   });
 }
 
@@ -70,9 +74,9 @@ function* watchNotifySuccess() {
         content: (
         <div>
           { result.split('\n').map((text, index) => (
-              <p key={ index }>
+              <div key={ index }>
                 { text }
-              </p>)) }
+              </div>)) }
         </div>)
       });
     } else {
@@ -104,23 +108,21 @@ function* watchOSRequests() {
           const url = new URL(action.url, true);
           url.query.utm_source = 'platformio';
           url.query.utm_medium = 'piohome';
-          yield call(apiFetchData, {
-            query: 'os.openUrl',
-            params: [url.toString()]
-          });
-          // track outbound URLs
-          if (action.url.startsWith('http')) {
-            ReactGA.event({
-              category: 'Misc',
-              action: 'Outbound',
-              label: action.url
+
+          if (action.url.startsWith('http') && !inIframe()) {
+            const redirectWindow = window.open(url.toString(), '_blank');
+            redirectWindow.location;
+          } else {
+            yield call(apiFetchData, {
+              query: 'os.open_url',
+              params: [url.toString()]
             });
           }
           break;
 
         case actions.REVEAL_FILE:
           yield call(apiFetchData, {
-            query: 'os.revealFile',
+            query: 'os.reveal_file',
             params: [action.path]
           });
           break;
@@ -148,7 +150,7 @@ function* watchRequestContent() {
         });
       } else {
         content = yield call(apiFetchData, {
-          query: 'os.requestContent',
+          query: 'os.request_content',
           params: [uri, data]
         });
       }
@@ -187,13 +189,98 @@ function* watchFSGlob() {
   });
 }
 
+function* watchListLogicalDisks() {
+  yield takeLatest(actions.LIST_LOGICAL_DISKS, function*() {
+    let items = yield select(selectors.selectLogicalDisks);
+    if (items) {
+      return;
+    }
+    try {
+      items = yield call(apiFetchData, {
+        query: 'os.list_logical_disks'
+      });
+      yield put(updateEntity('logicalDisks', items));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not fetch logical disks', err));
+    }
+  });
+}
+
+function* watchListDir() {
+  yield takeEvery(actions.LIST_DIR, function*({ path }) {
+    let items = yield select(selectors.selectDirItems);
+    if (items && items.hasOwnProperty(path)) {
+      return;
+    } else if (!items) {
+      items = {};
+    }
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'os.list_dir',
+        params: [path]
+      });
+      yield put(updateEntity('dirItems', Object.assign({}, items, {[path]: result})));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not list directory' + path, err));
+    }
+  });
+}
+
+function* watchIsFile() {
+  yield takeEvery(actions.IS_FILE, function*({ path }) {
+    let items = yield select(selectors.selectIsFileItems);
+    if (items && items.hasOwnProperty(path)) {
+      return;
+    } else if (!items) {
+      items = {};
+    }
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'os.is_file',
+        params: [path]
+      });
+      yield put(updateEntity('isFileItems', Object.assign({}, items, {[path]: result})));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not check is file ' + path, err));
+    }
+  });
+}
+
+function* watchIsDir() {
+  yield takeEvery(actions.IS_DIR, function*({ path }) {
+    let items = yield select(selectors.selectIsDirItems);
+    if (items && items.hasOwnProperty(path)) {
+      return;
+    } else if (!items) {
+      items = {};
+    }
+    try {
+      const result = yield call(apiFetchData, {
+        query: 'os.is_dir',
+        params: [path]
+      });
+      yield put(updateEntity('isDirItems', Object.assign({}, items, {[path]: result})));
+    } catch (err) {
+      return yield put(actions.notifyError('Could not check is directory ' + path, err));
+    }
+  });
+}
+
+function* watchResetFSItems() {
+  yield takeLatest(actions.RESET_FS_ITEMS, function*() {
+    yield put(updateEntity('dirItems', null));
+    yield put(updateEntity('isFileItems', null));
+    yield put(updateEntity('isDirItems', null));
+  });
+}
+
 function* watchSendFeedback() {
   yield takeLatest(actions.SEND_FEEDBACK, function*({body, onEnd}) {
     let err;
     try {
       body = body.trim().substr(0, 1000);
       yield call(apiFetchData, {
-        query: 'os.requestContent',
+        query: 'os.request_content',
         params: [`${PIOPLUS_API_ENDPOINT}/v1/feedback`, {
           body
         }]
@@ -237,8 +324,13 @@ export default [
   watchNotifySuccess,
   watchUpdateRouteBadge,
   watchOSRequests,
-  watchFSGlob,
   watchRequestContent,
+  watchFSGlob,
+  watchListLogicalDisks,
+  watchListDir,
+  watchIsFile,
+  watchIsDir,
+  watchResetFSItems,
   watchSendFeedback,
   watchAutoUpdateCorePackages
 ];

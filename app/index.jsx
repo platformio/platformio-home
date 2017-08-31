@@ -8,14 +8,17 @@
 
 import * as store from './store/index';
 
+import { getStartLocation, reportException } from './modules/core/helpers';
+
 import App from './app.jsx';
 import { AppContainer } from 'react-hot-loader';
 import { MemoryRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import React from 'react';
-import { getStartLocation } from './modules/core/helpers';
 import { render } from 'react-dom';
 
+
+window.addEventListener('error', err => reportException(err, true));
 
 render(
   <AppContainer>

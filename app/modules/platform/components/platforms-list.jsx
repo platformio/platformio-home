@@ -78,6 +78,7 @@ export default class PlatformsList extends React.Component {
             <Button ghost
               type='primary'
               icon='download'
+              disabled={ this.state.advancedVisible }
               onClick={ (e) => this.onDidAdvanced(e) }>
               Advanced Installation
             </Button>

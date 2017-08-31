@@ -12,7 +12,6 @@ import { DESKTOP_INPUT_FILTER_KEY, selectDesktopFilter, selectVisibleDesktopPlat
 import { openUrl, revealFile } from '../../core/actions';
 
 import { Alert } from 'antd';
-import { INPUT_FILTER_DELAY } from '../../../config';
 import PlatformsList from '../components/platforms-list';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -71,7 +70,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     openUrl,
     revealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(DESKTOP_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(DESKTOP_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

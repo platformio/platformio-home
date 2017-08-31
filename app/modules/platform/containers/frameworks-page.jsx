@@ -11,7 +11,6 @@ import * as actions from '../actions';
 import { FRAMEWORKS_INPUT_FILTER_KEY, selectFrameworksFilter, selectVisibleFrameworks } from '../selectors';
 
 import FrameworksList from '../components/frameworks-list';
-import { INPUT_FILTER_DELAY } from '../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { bindActionCreators } from 'redux';
@@ -60,7 +59,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    setFilter: value => dispatch(lazyUpdateInputValue(FRAMEWORKS_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(FRAMEWORKS_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 

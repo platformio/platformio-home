@@ -42,6 +42,7 @@ module.exports = {
         NODE_ENV: '"production"'
       }
     }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,

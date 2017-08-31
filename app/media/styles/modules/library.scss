@@ -70,4 +70,11 @@
     color: #d9d9d9;
     cursor: pointer;
   }
+
+  .lib-storage-items {
+    margin-bottom: $component-padding;
+    > h1 {
+      border-bottom: 1px solid #F0F0F0;
+    }
+  }
 }

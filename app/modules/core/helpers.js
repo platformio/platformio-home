@@ -10,10 +10,32 @@ import ReactGA from 'react-ga';
 import qs from 'querystringify';
 
 
+export function inIframe () {
+  try {
+    return window.self !== window.top;
+  } catch (err) {
+    return true;
+  }
+}
+
+export function reportException(description, fatal=false) {
+  if (description instanceof ErrorEvent) {
+    description = [
+      description.message,
+      `${description.filename}:${description.lineno}`
+    ];
+  }
+  description = description.toString().replace(/@/g, '_');
+  ReactGA.exception({
+    description: description.substring(0, 2048),
+    fatal
+  });
+}
+
 export function getStartLocation() {
   let startLocation = null;
-  if (location && location.search) {
-    startLocation = qs.parse(location.search);
+  if (window.location && window.location.search) {
+    startLocation = qs.parse(window.location.search);
     startLocation = startLocation && startLocation.start ? startLocation.start : null;
   }
   return startLocation || '/';

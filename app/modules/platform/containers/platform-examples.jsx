@@ -8,7 +8,7 @@
 
 import * as path from '../../core/path';
 
-import { ProjectExampleItem, ProjectExamples } from '../../project/containers/project-examples';
+import { ProjectExampleItem, ProjectExamples } from '../../project/containers/examples';
 
 import PropTypes from 'prop-types';
 import React from 'react';

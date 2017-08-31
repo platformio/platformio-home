@@ -337,9 +337,12 @@ export default class Boards extends React.Component {
         onFilter: (value, record) => record.frameworks.map(item => item.name).includes(value),
         render: (_, record) => (
           <span>{ record.frameworks.map((framework, index) => (
-          <a onClick={ () => this.props.showFramework(framework.name) } key={ framework.title }>
-            { framework.title + (record.frameworks.length > index + 1 ? ', ' : '') }
-          </a>
+          <span key={ framework.title }>
+            <a onClick={ () => this.props.showFramework(framework.name) }>
+             { framework.title}
+            </a>
+            { record.frameworks.length > index + 1 ? ', ' : '' }
+          </span>
         )) }</span>
         )
       },

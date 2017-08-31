@@ -47,7 +47,7 @@ export default class LibrarySearchCard extends React.Component {
 
   render() {
     const title = (
-    <h2><a onClick={ (e) => this.onDidShow(e, this.props.item.id) }>{ this.props.item.name }</a> <small>by { this.props.item.authornames.length ? this.props.item.authornames[0] : '' }</small></h2>
+    <div><a onClick={ (e) => this.onDidShow(e, this.props.item.id) }>{ this.props.item.name }</a> <small>by { this.props.item.authornames.length ? this.props.item.authornames[0] : '' }</small></div>
     );
     const extra = (
     <ul className='list-inline text-nowrap'>

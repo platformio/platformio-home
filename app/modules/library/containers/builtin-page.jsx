@@ -11,7 +11,6 @@ import * as actions from '../actions';
 import { BUILTIN_INPUT_FILTER_KEY, selectBuiltinFilter, selectVisibletBuiltinLibs } from '../selectors';
 
 import { Alert } from 'antd';
-import { INPUT_FILTER_DELAY } from '../../../config';
 import LibraryStoragesList from '../components/storages-list';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -33,6 +32,7 @@ class LibraryBuiltinPage extends React.Component {
       }).isRequired
     ),
     filterValue: PropTypes.string,
+    setFilter: PropTypes.func.isRequired,
     loadBuiltinLibs: PropTypes.func.isRequired,
     revealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
@@ -74,7 +74,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
     revealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(BUILTIN_INPUT_FILTER_KEY, value, INPUT_FILTER_DELAY))
+    setFilter: value => dispatch(lazyUpdateInputValue(BUILTIN_INPUT_FILTER_KEY, value))
   }), dispatch);
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LibraryBuiltinPage);

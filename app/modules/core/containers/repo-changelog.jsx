@@ -95,10 +95,10 @@ class ReleaseNotes extends React.Component {
       <div className='release-notes'>
         <h2>Release Notes</h2>
         { this.props.items.map(item => (
-            <p key={ item.id }>
+            <div key={ item.id }>
               <h3><Tooltip title={ item.tag_name }>{ item.name || item.tag_name }</Tooltip> <small>released <Tooltip title={ item.created_at }>{ humanize.relativeTime(new Date(item.created_at).getTime() / 1000) }</Tooltip></small></h3>
               <div dangerouslySetInnerHTML={ { __html: marked(item.body) } }></div>
-            </p>
+            </div>
           )) }
       </div>
       );

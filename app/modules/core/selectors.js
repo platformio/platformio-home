@@ -56,6 +56,22 @@ export function selectFSGlob(state, pathnames, rootDir=undefined) {
   return null;
 }
 
+export function selectLogicalDisks(state) {
+  return state.entities.logicalDisks;
+}
+
+export function selectDirItems(state) {
+  return state.entities.dirItems;
+}
+
+export function selectIsFileItems(state) {
+  return state.entities.isFileItems;
+}
+
+export function selectIsDirItems(state) {
+  return state.entities.isDirItems;
+}
+
 export function selectRouteBadges(state) {
   const items = selectStorageItem(state, 'routeBadges') || {};
   return Object.keys(items).map(key => ({path: key, count: items[key]}));

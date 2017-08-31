@@ -97,18 +97,18 @@ class Feedback extends React.Component {
           okText='Send feedback'
           onOk={ ::this.onDidSend }
           onCancel={ ::this.onDidCancel }>
-          <p className='block'>
+          <div className='block'>
             For technical support, please visit our <a onClick={ () => this.props.openUrl('https://community.platformio.org/') }>awesome community forums</a>.
-          </p>
-          <p>
+          </div>
+          <div>
             Share your thoughts and feedback with the PlatformIO Team:
-          </p>
-          <p className='block'>
+          </div>
+          <div className='block'>
             <Input.TextArea autosize={ { minRows: 4, maxRows: 10 } } onChange={ (e) => this.onDidValue(e.target.value) } ref={ elm => this._inputElement = elm } />
-          </p>
-          <p>
+          </div>
+          <div>
             <small>The form is <b>anonymous</b> but if you would like a response, please add your email.</small>
-          </p>
+          </div>
         </Modal>
       </div>
       );

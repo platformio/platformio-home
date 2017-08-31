@@ -1,0 +1,24 @@
+/**
+ * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
+ * All rights reserved.
+ *
+ * This source code is licensed under the license found in the LICENSE file in
+ * the root directory of this source tree.
+ */
+
+.project-open-modal {
+  .ant-modal-body {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.project-init-carousel {
+  .ant-alert {
+    min-height: 230px;
+  }
+
+  .slick-dots li button {
+    background-color: $primary-color !important;
+  }
+}

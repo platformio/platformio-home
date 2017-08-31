@@ -132,7 +132,7 @@ export function expandRegistryPackages(state, items) {
 
 // Filtered selectors
 
-export function selectVisibleBoards(state) {
+export function selectNormalizedBoards(state) {
   const items = selectBoards(state);
   if (!items) {
     return null;

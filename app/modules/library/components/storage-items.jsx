@@ -91,9 +91,13 @@ export default class LibraryStorageItems extends React.Component {
     const status = this.getStatus();
     const items = this.getStorageItems();
 
+    if (status === LibraryStorageItems.status.NORESULTS) {
+      return null;
+    }
+
     return (
       <div className='lib-storage-items'>
-        <h1><Icon type='folder' /> <a onClick={ (e) => this.onDidReveal(e, this.props.item.path) }>{ this.props.item.name }</a> { this.renderBadge(items, status) } { this.renderToggler(items) }</h1>
+        <h2><Icon type='folder' /> <a onClick={ (e) => this.onDidReveal(e, this.props.item.path) }>{ this.props.item.name }</a> { this.renderBadge(items, status) } { this.renderToggler(items) }</h2>
         { status === LibraryStorageItems.status.LOADING &&
           <div className='text-center'>
             <Spin tip='Loading...' size='large' />

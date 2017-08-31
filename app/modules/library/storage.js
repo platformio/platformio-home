@@ -49,17 +49,6 @@ export class LibraryStorage {
 
 }
 
-export function getLibraryStorages() {
-  const items = [];
-  // let items = getPioProjects().map(
-  //   p => new LibraryStorage(`Project: ${path.basename(p)}`, p)
-  // );
-  //   p => new LibraryStorage(`Storage: ${path.basename(p)}`, p)
-  // ));
-  items.push(new LibraryStorage('Global Storage'));
-  return items;
-}
-
 export function filterStorageItems(storages, filterValue) {
   return storages.map(storage => {
     let items = storage.items;
