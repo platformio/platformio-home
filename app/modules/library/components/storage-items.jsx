@@ -70,14 +70,14 @@ export default class LibraryStorageItems extends React.Component {
 
   renderBadge(items, status) {
     if (!items.length || status !== LibraryStorageItems.status.LOADED) {
-      return;
+      return null;
     }
     return <Badge count={ items.length } />;
   }
 
   renderToggler(items) {
     if (!items.length) {
-      return;
+      return null;
     }
     return (
       <Icon type='up-circle-o'
