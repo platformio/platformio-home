@@ -140,7 +140,7 @@ export default class LibraryDetailMain extends React.Component {
   renderQuickInstallation(versions) {
     return (
       <div>
-        <LibraryInstallAdvancedModal library={ this.getLibraryForInstall() } visible={ this.state.installToVisible } onCancel={ ::this.onDidCancelInstallTo } />
+        <LibraryInstallAdvancedModal library={ `id=${this.getLibraryForInstall()}` } visible={ this.state.installToVisible } onCancel={ ::this.onDidCancelInstallTo } />
         <h3>Installation</h3>
         <ul className='block list-inline'>
           <li>
