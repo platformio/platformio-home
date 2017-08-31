@@ -12,7 +12,7 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
-import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
+import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../store/actions';
 import { notifyError, notifySuccess, postToIDE } from '../core/actions';
 
 import ReactGA from 'react-ga';
@@ -27,6 +27,7 @@ function* watchAddProject() {
     const result = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     if (!result.includes(path)) {
       yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, path]));
+      yield put(saveState()); // force state saving when new project is opening in new window (VSCode issue)
     }
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());

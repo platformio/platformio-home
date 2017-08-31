@@ -40,12 +40,15 @@ function* watchLoadStore() {
 function* autoSaveState() {
   const keysForSave = ['inputValues', 'storage'];
   const triggerActions = [
+    actions.SAVE_STATE,
     actions.UPDATE_INPUT_VALUE,
     actions.UPDATE_STORAGE_ITEM,
     actions.DELETE_STORAGE_ITEM
   ];
-  yield takeLatest(triggerActions, function*() {
-    yield call(asyncDelay, 5000);
+  yield takeLatest(triggerActions, function*(action) {
+    if (action.type !== actions.SAVE_STATE) {
+      yield call(asyncDelay, 5000);
+    }
     try {
       const state = yield select();
       const savedState = {};
