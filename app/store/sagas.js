@@ -47,7 +47,7 @@ function* autoSaveState() {
   ];
   yield takeLatest(triggerActions, function*(action) {
     if (action.type !== actions.SAVE_STATE) {
-      yield call(asyncDelay, 5000);
+      yield call(asyncDelay, 2000);
     }
     try {
       const state = yield select();

@@ -105,13 +105,18 @@ class RecentProjectsBlock extends React.Component {
         </div>
         );
     }
+    if (!this.props.items.length) {
+      return null;
+    }
     return (
       <div>
+        <h2>Recent Projects</h2>
         <Input className='block input-search-lg'
           defaultValue={ this.props.filterValue }
           placeholder='Search project...'
           onChange={ e => this.props.setFilter(e.target.value) } />
         <Table rowKey='path'
+          className='block'
           dataSource={ this.props.items }
           columns={ this.getTableColumns() }
           expandedRowRender={ ::this.renderExpandedRow }

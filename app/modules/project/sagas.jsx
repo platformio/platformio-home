@@ -41,7 +41,7 @@ function* watchHideProject() {
     const storageItems = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     const entityItems = (yield select(selectors.selectProjects)) || [];
     yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== projectDir)));
-    yield put(updateEntity('projects', entityItems.filter(item => item.projectDir !== projectDir)));
+    yield put(updateEntity('projects', entityItems.filter(item => item.path !== projectDir)));
   });
 }
 

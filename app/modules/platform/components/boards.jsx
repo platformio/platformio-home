@@ -6,8 +6,9 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Badge, Button, Icon, Input, Spin, Table, Tooltip } from 'antd';
+import { Alert, Badge, Button, Icon, Input, Spin, Table, Tooltip, message } from 'antd';
 
+import Clipboard from 'clipboard';
 import { INPUT_FILTER_DELAY } from '../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -66,6 +67,17 @@ export default class Boards extends React.Component {
   componentDidMount() {
     if (this._searchInputElement) {
       this._searchInputElement.focus();
+    }
+  }
+
+  onDidExpand() {
+    this._clipboard = new Clipboard('.copy-board-id');
+    this._clipboard.on('success', () => message.success('Board ID has been copied to clipboard!'));
+  }
+
+  componentWillUnmount() {
+    if (this._clipboard) {
+      this._clipboard.destroy();
     }
   }
 
@@ -519,6 +531,7 @@ export default class Boards extends React.Component {
              expandedRowRender={ ::this.renderExpandedRow }
              columns={ this.getTableColumns(data) }
              dataSource={ data }
+             onExpand={ ::this.onDidExpand }
              onChange={ ::this.onDidTableChange } />;
   }
 
@@ -526,9 +539,7 @@ export default class Boards extends React.Component {
     return (
       <ul className='list-inline'>
         <li>
-          <Tooltip title='Board ID'>
-            <kbd>board = { record.id }</kbd>
-          </Tooltip>
+          <a className='copy-board-id' data-clipboard-text={ record.id }><Tooltip title='Click for copy Board ID to clipboard'><Icon type='copy' /> <code>{ record.id }</code></Tooltip></a>
         </li>
         <li>
           ·
@@ -541,7 +552,7 @@ export default class Boards extends React.Component {
         </li>
         { record.connectivity && (
         <li>
-          <Icon type='global' /> Connectivity: { (record.connectivity || ['-']).map(c => c.toUpperCase()).join(', ') }
+          <Icon type='global' /> Connectivity: { (record.connectivity || ['-']).map(c => c.toLowerCase()).join(', ') }
         </li>
         ) }
       </ul>);
