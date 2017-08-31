@@ -233,7 +233,7 @@ class HomePage extends React.Component {
 
   renderShowAtStartup() {
     if (!this.props.caller) {
-      return;
+      return null;
     }
     return (
       <div className='block text-center'>

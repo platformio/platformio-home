@@ -12,6 +12,7 @@ import { Route, Switch } from 'react-router';
 
 import AccountStatusBar from './modules/account/containers/status-bar';
 import Feedback from './modules/core/containers/feedback';
+import OpenInBrowser from './modules/core/containers/open-in-browser';
 import PlatformIOLogo from './modules/home/components/pio-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -39,6 +40,7 @@ export default class App extends React.Component {
               </Button.Group>
             </li>
             <li><Feedback /></li>
+            <li><OpenInBrowser /></li>
           </ul>
         </Col>
         <Col span={ 18 } className='account-bar text-right'>
