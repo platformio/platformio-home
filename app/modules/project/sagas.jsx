@@ -11,6 +11,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
+import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../platform/actions';
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../store/actions';
 import { notifyError, notifySuccess } from '../core/actions';
@@ -104,6 +105,12 @@ function* watchLoadProjectExamples() {
       yield put(notifyError('Could not load project examples', err));
     }
   }
+}
+
+function* watchCleanupProjectExamples() {
+  yield takeEvery([INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM], function*() {
+    yield put(deleteEntity(/^projectExamples/));
+  });
 }
 
 function* watchImportProject() {
@@ -211,6 +218,7 @@ export default [
   watchOpenProject,
   watchLoadProjects,
   watchLoadProjectExamples,
+  watchCleanupProjectExamples,
   watchImportProject,
   watchInitProject,
   watchImportArduinoProject
