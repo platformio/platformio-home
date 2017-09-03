@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
 import { connect } from 'react-redux';
-import fuzzaldrin from 'fuzzaldrin-plus';
 import { loadBoards } from '../../platform/actions';
 import { selectNormalizedBoards } from '../selectors';
 
@@ -56,7 +55,7 @@ class BoardSelect extends React.Component {
         size='large'
         placeholder={ `Select a board (${ this.props.items.length } available)` }
         optionFilterProp='children'
-        filterOption={ (input, option) => fuzzaldrin.match(option.props.children, input).length }
+        filterOption={ (input, option) => option.props.children.toLowerCase().includes(input.toLocaleLowerCase()) }
         onChange={ ::this.onDidChange }>
         { Object.keys(data).map(group => (
             <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
