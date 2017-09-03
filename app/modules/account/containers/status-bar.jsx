@@ -8,12 +8,11 @@
 
 import * as actions from '../actions';
 
-import { Col, Row, Spin } from 'antd';
-
 import AccountStatusBarDropdown from '../components/sb-dropdown';
 import AccountStatusBarUpgrade from '../components/sb-upgrade';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { openUrl } from '../../core/actions';
@@ -44,10 +43,12 @@ class AccountStatusBar extends React.Component {
       return <Spin size='small' />;
     }
     return (
-      <Row>
-        <Col span={ 16 } className='text-center'><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } openUrl={ this.props.openUrl } /></Col>
-        <Col span={ 8 } className='text-right'><AccountStatusBarDropdown { ...this.props } /></Col>
-      </Row>
+      <table border='0' cellPadding='0' cellSpacing='0' width='100%'>
+        <tr>
+          <td><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } openUrl={ this.props.openUrl } /></td>
+          <td className='text-right'><AccountStatusBarDropdown { ...this.props } /></td>
+        </tr>
+      </table>
     );
   }
 
