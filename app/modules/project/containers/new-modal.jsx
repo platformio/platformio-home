@@ -129,6 +129,7 @@ class ProjectNewModal extends React.Component {
 
     return (
       <Form>
+        <div className='block'>This wizard allows you to <b>create new</b> PlatformIO project or <b>update existing</b>. In the last case, you need to uncheck &quot;Use default location&quot; and specify path to existing project.</div>
         <Form.Item label='Board' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
           <BoardSelect onSelect={ ::this.onDidBoard } />
         </Form.Item>
