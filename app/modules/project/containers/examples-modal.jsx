@@ -131,24 +131,26 @@ class ProjectExamplesModal extends React.Component {
 
     return (
       <div>
-        <div className='block'>We use examples provided by <a onClick={ () => this.props.showInstalledPlatforms() }>installed development platforms</a>. Please install more platforms to see the new examples.</div>
-      <Select showSearch
-        style={ { width: '100%' } }
-        size='large'
-        placeholder='Select an example...'
-        optionFilterProp='children'
-        filterOption={ (input, option) => fuzzaldrin.match(option.props.children, input).length }
-        onChange={ ::this.onDidExample }>
-        { Object.keys(data).map(group => (
-            <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
-              { data[group].sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())).map(item => (
-                  <Select.Option key={ item.path } value={ item.path }>
-                    { item.name }
-                  </Select.Option>
-                )) }
-            </Select.OptGroup>
-          )) }
-      </Select>
+        <div className='block'>
+          We use examples provided by <a onClick={ () => this.props.showInstalledPlatforms() }>installed development platforms</a>. Please install more platforms to see the new examples.
+        </div>
+        <Select showSearch
+          style={ { width: '100%' } }
+          size='large'
+          placeholder='Select an example...'
+          optionFilterProp='children'
+          filterOption={ (input, option) => fuzzaldrin.match(option.props.children, input).length }
+          onChange={ ::this.onDidExample }>
+          { Object.keys(data).map(group => (
+              <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
+                { data[group].sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())).map(item => (
+                    <Select.Option key={ item.path } value={ item.path }>
+                      { item.name }
+                    </Select.Option>
+                  )) }
+              </Select.OptGroup>
+            )) }
+        </Select>
       </div>
       );
   }
@@ -162,7 +164,9 @@ class ProjectExamplesModal extends React.Component {
           </li>
         </ul>
         <br />
-        <div className='block'>We use examples from installed development platforms. Please install the one of them.</div>
+        <div className='block'>
+          We use examples from installed development platforms. Please install the one of them.
+        </div>
         <ul className='list-inline'>
           <li>
             <Button icon='download' type='primary' onClick={ () => this.props.showEmbeddedPlatforms() }>
@@ -179,7 +183,7 @@ class ProjectExamplesModal extends React.Component {
           </li>
         </ul>
       </div>
-    );
+      );
   }
 
 }
