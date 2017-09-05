@@ -134,18 +134,18 @@ export default class Boards extends React.Component {
       return result;
     }
     return result
-      .sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()))
-      .sort((a, b) => {
-      const aInc = a.extra.includes('certified');
-      const bInc = b.extra.includes('certified');
-      if (aInc && !bInc) {
-        return -1;
-      }
-      if (!aInc && bInc) {
-        return 1;
-      }
-      return 0;
-    });
+      .sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()));
+    //   .sort((a, b) => {
+    //   const aInc = a.extra.includes('certified');
+    //   const bInc = b.extra.includes('certified');
+    //   if (aInc && !bInc) {
+    //     return -1;
+    //   }
+    //   if (!aInc && bInc) {
+    //     return 1;
+    //   }
+    //   return 0;
+    // });
   }
 
   onDidFilter(value) {
