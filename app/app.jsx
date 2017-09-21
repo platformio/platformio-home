@@ -30,24 +30,26 @@ export default class App extends React.Component {
   renderHeader() {
     const router = this.context.router;
     return (
-      <table border='0' cellPadding='0' cellSpacing='0' width='100%'>
-        <tr>
-          <td>
-            <ul className='list-inline'>
-              <li>
-                <Button.Group>
-                  <Button icon='left' title='Go Back' disabled={ router.history.length < 1 || router.history.index === 0 } onClick={ () => router.history.goBack() }></Button>
-                  <Button icon='right' title='Go Forward' disabled={ router.history.length < 1 || router.history.index >= (router.history.length - 1) } onClick={ () => router.history.goForward() }></Button>
-                </Button.Group>
-              </li>
-              <li><Feedback /></li>
-              <li><OpenInBrowser /></li>
-            </ul>
-          </td>
-          <td className='account-bar text-right'>
-            { <AccountStatusBar router={ router } /> }
-          </td>
-        </tr>
+      <table cellPadding='0' cellSpacing='0' width='100%'>
+        <tbody>
+          <tr>
+            <td>
+              <ul className='list-inline'>
+                <li>
+                  <Button.Group>
+                    <Button icon='left' title='Go Back' disabled={ router.history.length < 1 || router.history.index === 0 } onClick={ () => router.history.goBack() }></Button>
+                    <Button icon='right' title='Go Forward' disabled={ router.history.length < 1 || router.history.index >= (router.history.length - 1) } onClick={ () => router.history.goForward() }></Button>
+                  </Button.Group>
+                </li>
+                <li><Feedback /></li>
+                <li><OpenInBrowser /></li>
+              </ul>
+            </td>
+            <td className='account-bar text-right'>
+              { <AccountStatusBar router={ router } /> }
+            </td>
+          </tr>
+        </tbody>
       </table>
       );
   }

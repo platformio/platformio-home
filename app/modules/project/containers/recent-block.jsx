@@ -67,6 +67,7 @@ class RecentProjectsBlock extends React.Component {
       {
         title: 'Boards',
         key: 'boards',
+        className: 'text-word-break',
         render: (_, record) => (
           <span>{ record.boards.map((board, index) => (
           <span key={ board.id }><a onClick={ () => this.onDidShowBoard(board.name) }>{ board.name }</a> { record.boards.length > index + 1 ? ', ' : '' }</span>

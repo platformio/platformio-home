@@ -43,11 +43,13 @@ class AccountStatusBar extends React.Component {
       return <Spin size='small' />;
     }
     return (
-      <table border='0' cellPadding='0' cellSpacing='0' width='100%'>
-        <tr>
-          <td><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } openUrl={ this.props.openUrl } /></td>
-          <td className='text-right'><AccountStatusBarDropdown { ...this.props } /></td>
-        </tr>
+      <table cellPadding='0' cellSpacing='0' width='100%'>
+        <tbody>
+          <tr>
+            <td><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } openUrl={ this.props.openUrl } /></td>
+            <td className='text-right'><AccountStatusBarDropdown { ...this.props } /></td>
+          </tr>
+        </tbody>
       </table>
     );
   }
