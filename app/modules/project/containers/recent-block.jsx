@@ -61,6 +61,7 @@ class RecentProjectsBlock extends React.Component {
       {
         title: 'Name',
         dataIndex: 'name',
+        className: 'text-word-break',
         sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
       },
       {
