@@ -114,6 +114,9 @@ dd {
 .text-nowrap {
   white-space: nowrap;
 }
+.text-word-break {
+  word-break: normal !important;
+}
 .text-muted {
   color: #777;
 }

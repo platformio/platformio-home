@@ -48,7 +48,7 @@ class PlatformInstalledPage extends React.Component {
       <div className='page-container'>
         <Alert className='block' showIcon message={ (
           <div>
-            Project can depend on a specific version of development platform using <kbd>platform = name@x.y.z</kbd> option in <b>platformio.ini</b>. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
+            Project can depend on a specific version of development platform or VCS (Git, Mercurial and Subversion). <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
           </div>
          ) } />
         <PlatformsList { ...this.props } actions={ ['reveal', 'uninstall'] } />
