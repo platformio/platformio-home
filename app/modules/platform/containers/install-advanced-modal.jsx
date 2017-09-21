@@ -6,12 +6,13 @@
  * the root directory of this source tree.
  */
 
+import * as actions from '../actions';
+
 import { Input, Modal } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { installPlatform } from '../actions';
 import { openUrl } from '../../core/actions';
 
 
@@ -21,6 +22,7 @@ class PlatformInstallAdvancedModal extends React.Component {
     visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
+    loadInstalledPlatforms: PropTypes.func.isRequired,
     openUrl: PropTypes.func.isRequired
   }
 
@@ -61,6 +63,7 @@ class PlatformInstallAdvancedModal extends React.Component {
       err => {
         this.setState({installing: false});
         if (!err) {
+          this.props.loadInstalledPlatforms();
           this.onDidCancel();
         }
       }
@@ -117,4 +120,4 @@ class PlatformInstallAdvancedModal extends React.Component {
 
 // Redux
 
-export default connect(null, { installPlatform, openUrl })(PlatformInstallAdvancedModal);
+export default connect(null, { ...actions, openUrl })(PlatformInstallAdvancedModal);

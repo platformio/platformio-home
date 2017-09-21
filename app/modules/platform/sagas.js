@@ -210,8 +210,6 @@ function* watchAutoCheckPlatformUpdates() {
 
 function* watchInstallPlatform() {
   yield takeEvery(actions.INSTALL_PLATFORM, function*({platform, onEnd}) {
-    // clean cache
-    yield put(deleteEntity(/^installedPlatforms/));
     let err,
       result = null;
     try {
@@ -229,6 +227,8 @@ function* watchInstallPlatform() {
         label: platform
       });
 
+      // clean cache
+      yield put(deleteEntity(/^installedPlatforms/));
       yield put(notifySuccess('Platform has been successfully installed', result));
     } catch (_err) {
       err = _err;

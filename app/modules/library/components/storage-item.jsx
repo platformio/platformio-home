@@ -77,7 +77,6 @@ export default class LibraryStorageItem extends React.Component {
   }
 
   render() {
-    console.log(13, this.props.item);
     const title = (
     <div><a onClick={ (e) => this.onDidShow(e, this.props.item) }>{ this.props.item.name }</a> <small>{ this.props.item.authors && this.props.item.authors.length ? ` by ${ this.props.item.authors[0].name }` : '' }</small></div>
     );
