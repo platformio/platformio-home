@@ -14,16 +14,13 @@
     overflow: auto;
 
     .ant-layout-header {
-      background: #ececec;
+      background-color: #ececec;
       padding: 11px 20px 14px 20px;
       margin: 0;
       height: 50px;
       line-height: inherit;
       vertical-align: middle;
       max-width: $max-content-width;
-      // position: fixed;
-      // width: 100%;
-      // z-index: 10000;
 
       .account-bar {
         line-height: 30px;
@@ -31,7 +28,6 @@
     }
 
     .ant-layout-content {
-      background: #fff;
       padding: 0 20px;
       margin: 0;
 

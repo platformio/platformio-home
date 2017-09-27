@@ -12,7 +12,7 @@
   },
   "homepage": "http://platformio.org",
   "dependencies": {
-    "antd": "2.13.2",
+    "antd": "2.13.3",
     "clipboard": "^1.7.1",
     "fuzzaldrin-plus": "^0.5.0",
     "highlight.js": "^9.12.0",
@@ -23,7 +23,7 @@
     "querystringify": "^1.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-ga": "^2.2.0",
+    "react-ga": "2.2.0",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.1",
@@ -71,8 +71,25 @@
     "webpack-dev-server": "^2.4.1"
   },
   "theme": {
-    "@icon-url": "'/fonts/iconfont'",
-    "@font-size-base": "14px",
-    "@card-padding-base": "15px"
+    "light": {
+      "@icon-url": "'/fonts/iconfont'",
+      "@font-size-base": "14px",
+      "@card-padding-base": "15px",
+      "@layout-body-background": "#fff"
+    },
+    "dark": {
+      "@icon-url": "'/fonts/iconfont'",
+      "@font-size-base": "14px",
+      "@card-padding-base": "15px",
+      "@primary-color": "#4080d0",
+      "@link-color": "#4080d0",
+      "@body-background": "#1e1e1e",
+      "@component-background": "#1e1e1e",
+      "@layout-body-background": "#1e1e1e",
+      "@layout-header-background": "#252526",
+      "@background-color-base": "#383838",
+      "@text-color": "#989898",
+      "@btn-default-bg": "#1e1e1e"
+    }
   }
 }
