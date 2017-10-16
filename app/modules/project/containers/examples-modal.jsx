@@ -15,7 +15,6 @@ import ProjectInitCarousel from '../components/init-carousel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import fuzzaldrin from 'fuzzaldrin-plus';
 import { openUrl } from '../../core/actions';
 import { selectProjectExamples } from '../selectors';
 
@@ -138,13 +137,12 @@ class ProjectExamplesModal extends React.Component {
           style={ { width: '100%' } }
           size='large'
           placeholder='Select an example...'
-          optionFilterProp='children'
-          filterOption={ (input, option) => fuzzaldrin.match(option.props.children, input).length }
+          filterOption={ (input, option) => option.key.toLowerCase().includes(input.toLowerCase()) }
           onChange={ ::this.onDidExample }>
           { Object.keys(data).map(group => (
               <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
                 { data[group].sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())).map(item => (
-                    <Select.Option key={ item.path } value={ item.path }>
+                    <Select.Option key={ `${group} ${item.path}` } value={ item.path }>
                       { item.name }
                     </Select.Option>
                   )) }
