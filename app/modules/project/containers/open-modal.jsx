@@ -97,7 +97,7 @@ class ProjectOpenModal extends React.Component {
         onOk={ ::this.onDidOpen }
         onCancel={ ::this.onDidCancel }
         footer={ this.renderFooter() }>
-        <FileExplorer pick='folder' onSelect={ ::this.onDidSelect } />
+        <FileExplorer ask='directory' onSelect={ ::this.onDidSelect } />
       </Modal>
       );
   }

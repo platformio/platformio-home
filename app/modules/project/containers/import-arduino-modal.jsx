@@ -140,7 +140,7 @@ class ProjectImportArduinoModal extends React.Component {
         <div style={ { marginBottom: '5px' } }>
           Choose a directory with existing Arduino IDE project:
         </div>
-        <FileExplorer pick='folder' onSelect={ ::this.onDidArduinoProjectDir } />
+        <FileExplorer ask='directory' onSelect={ ::this.onDidArduinoProjectDir } />
       </div> );
   }
 

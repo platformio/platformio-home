@@ -21,7 +21,7 @@ import { selectStorageItem } from '../../../store/selectors';
 class FileExplorer extends React.Component {
 
   static propTypes = {
-    pick: PropTypes.string,
+    ask: PropTypes.string,
     multiple: PropTypes.bool,
     onSelect: PropTypes.func,
 
@@ -39,7 +39,7 @@ class FileExplorer extends React.Component {
   }
 
   static defaultProps = {
-    pick: 'folder',
+    ask: 'directory',
     multiple: false,
     onSelect: () => {
     }
@@ -120,7 +120,7 @@ class FileExplorer extends React.Component {
   }
 
   isNodeDisabled(isDir) {
-    return (this.props.pick === 'folder' && !isDir) || (this.props.pick !== 'folder' && isDir);
+    return (this.props.ask === 'directory' && !isDir) || (this.props.ask !== 'directory' && isDir);
   }
 
   render() {
