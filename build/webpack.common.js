@@ -15,6 +15,7 @@ const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 const rootDir = path.resolve(__dirname, '..');
 const mediaDir = path.join(rootDir, 'app', 'media');
 const packageConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
+const theme = 'light';
 
 module.exports = {
   appDir: path.join(rootDir, 'app'),
@@ -40,7 +41,7 @@ module.exports = {
         {
           loader: 'less-loader',
           options: {
-            modifyVars: packageConfig.theme
+            modifyVars: packageConfig.theme[theme]
           }
         }
       ],

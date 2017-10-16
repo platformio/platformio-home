@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "PlatformIO Home",
   "main": "''",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "homepage": "http://platformio.org",
   "dependencies": {
-    "antd": "2.13.2",
+    "antd": "2.13.6",
     "clipboard": "^1.7.1",
     "fuzzaldrin-plus": "^0.5.0",
     "highlight.js": "^9.12.0",
@@ -23,11 +23,11 @@
     "querystringify": "^1.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-ga": "^2.2.0",
+    "react-ga": "2.2.0",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.1",
-    "redux-saga": "^0.15.4",
+    "redux-saga": "^0.16.0",
     "sha.js": "^2.4.8",
     "sockjs-client": "^1.1.4",
     "superagent": "^3.5.2",
@@ -55,24 +55,41 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-react": "^7.1.0",
     "extract-text-webpack-plugin": "^3.0.0",
-    "file-loader": "^0.11.2",
+    "file-loader": "^1.1.5",
     "html-webpack-plugin": "^2.26.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.4",
     "node-sass": "^4.3.0",
-    "react-hot-loader": "^3.0.0-beta.7",
+    "react-hot-loader": "^3.1.1",
     "redux-logger": "^3.0.6",
     "sass-loader": "^6.0.2",
-    "style-loader": "^0.18.2",
-    "url-loader": "0.5.9",
+    "style-loader": "^0.19.0",
+    "url-loader": "0.6.2",
     "webpack": "^3.5.4",
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-dashboard": "^0.4.0",
     "webpack-dev-server": "^2.4.1"
   },
   "theme": {
-    "@icon-url": "'/fonts/iconfont'",
-    "@font-size-base": "14px",
-    "@card-padding-base": "15px"
+    "light": {
+      "@icon-url": "'/fonts/iconfont'",
+      "@font-size-base": "14px",
+      "@card-padding-base": "15px",
+      "@layout-body-background": "#fff"
+    },
+    "dark": {
+      "@icon-url": "'/fonts/iconfont'",
+      "@font-size-base": "14px",
+      "@card-padding-base": "15px",
+      "@primary-color": "#4080d0",
+      "@link-color": "#4080d0",
+      "@body-background": "#1e1e1e",
+      "@component-background": "#1e1e1e",
+      "@layout-body-background": "#1e1e1e",
+      "@layout-header-background": "#252526",
+      "@background-color-base": "#383838",
+      "@text-color": "#989898",
+      "@btn-default-bg": "#1e1e1e"
+    }
   }
 }
