@@ -9,7 +9,7 @@
 export const sep = navigator && navigator.platform && navigator.platform.startsWith('Win')? '\\' : '/';
 
 export function join(...paths) {
-  return paths.join(sep);
+  return paths.map((item, index) => item.endsWith(sep) || index === (paths.length - 1)? item : `${item}${sep}`).join('');
 }
 
 export function dirname(path) {
