@@ -75,7 +75,7 @@ class DeviceLocalPage extends React.Component {
       <div className='page-container'>
         <Alert className='block' showIcon message={ (
           <div>
-            PlatformIO automatically detects upoad port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port') }>More details...</a>
+            PlatformIO automatically detects upload port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port') }>More details...</a>
           </div>
          ) } />
         <div className='block text-right'>
