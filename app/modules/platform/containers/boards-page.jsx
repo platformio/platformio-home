@@ -17,7 +17,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { lazyUpdateInputValue } from '../../../store/actions';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 
 
 class BoardsPage extends React.Component {
@@ -29,7 +29,7 @@ class BoardsPage extends React.Component {
     loadBoards: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -47,7 +47,7 @@ class BoardsPage extends React.Component {
           onFilter={ this.props.setFilter }
           showPlatform={ this.props.showPlatform }
           showFramework={ this.props.showFramework }
-          openUrl={ this.props.openUrl } />
+          osOpenUrl={ this.props.osOpenUrl } />
       </section>
     );
   }
@@ -67,7 +67,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    openUrl,
+    osOpenUrl,
     setFilter: value => dispatch(lazyUpdateInputValue(BOARDS_INPUT_FILTER_KEY, value))
   }), dispatch);
 }

@@ -13,7 +13,7 @@ import { Input, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 
 
 class PlatformInstallAdvancedModal extends React.Component {
@@ -23,7 +23,7 @@ class PlatformInstallAdvancedModal extends React.Component {
     onCancel: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
     loadInstalledPlatforms: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -106,11 +106,11 @@ class PlatformInstallAdvancedModal extends React.Component {
           <li><code>&lt;repository&gt;</code></li>
           <li><code>&lt;name&gt;=&lt;repository&gt;</code> (name it should have locally)</li>
           <li><code>&lt;repository#tag&gt;</code> (&quot;tag&quot; can be commit, branch or tag)</li>
-          <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/userguide/platforms/cmd_install.html') }>more (docs)...</a></li>
+          <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/userguide/platforms/cmd_install.html') }>more (docs)...</a></li>
         </ul>
 
         <div className='block'>
-          Project can depend on a specific version of development platform, please use <code>platform = name@x.y.z</code> option in <b>platformio.ini</b> in this case. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
+          Project can depend on a specific version of development platform, please use <code>platform = name@x.y.z</code> option in <b>platformio.ini</b> in this case. <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
         </div>
       </Modal>
     );
@@ -120,4 +120,4 @@ class PlatformInstallAdvancedModal extends React.Component {
 
 // Redux
 
-export default connect(null, { ...actions, openUrl })(PlatformInstallAdvancedModal);
+export default connect(null, { ...actions, osOpenUrl })(PlatformInstallAdvancedModal);

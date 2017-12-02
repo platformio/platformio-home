@@ -19,7 +19,7 @@ export default class AccountForgotForm extends React.Component {
     forgotAccountPassword: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {

@@ -43,8 +43,8 @@ export default class LibraryDetailMain extends React.Component {
       __src_url: PropTypes.string,
       __pkg_dir: PropTypes.string
     }),
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
     uninstallLibrary: PropTypes.func.isRequired,
@@ -190,7 +190,7 @@ export default class LibraryDetailMain extends React.Component {
         </li>
         <li>
           <Button.Group>
-            <Button type='primary' icon='folder' onClick={ () => this.props.revealFile(this.props.data.__pkg_dir) }>
+            <Button type='primary' icon='folder' onClick={ () => this.props.osRevealFile(this.props.data.__pkg_dir) }>
               Reveal
             </Button>
             <Popconfirm title='Are you sure?'
@@ -289,14 +289,14 @@ export default class LibraryDetailMain extends React.Component {
                   { item.email &&
                     <div>
                       <Icon type='mail' />
-                      <a onClick={ () => this.props.openUrl(`mailto:${item.email}`) }>
+                      <a onClick={ () => this.props.osOpenUrl(`mailto:${item.email}`) }>
                         { item.email }
                       </a>
                     </div> }
                   { item.url &&
                     <div>
                       <Icon type='link' />
-                      <a onClick={ () => this.props.openUrl(item.url) }>
+                      <a onClick={ () => this.props.osOpenUrl(item.url) }>
                         { item.url }
                       </a>
                     </div> }
@@ -305,19 +305,19 @@ export default class LibraryDetailMain extends React.Component {
             <h2>Resources</h2>
             { this.props.data.id > 0 &&
               <div>
-                <Icon type='link' /> <a onClick={ () => this.props.openUrl(`http://platformio.org/lib/show/${this.props.data.id}/${this.props.data.name}`) }>Registry</a> <small><kbd>ID: { this.props.data.id }</kbd></small>
+                <Icon type='link' /> <a onClick={ () => this.props.osOpenUrl(`http://platformio.org/lib/show/${this.props.data.id}/${this.props.data.name}`) }>Registry</a> <small><kbd>ID: { this.props.data.id }</kbd></small>
               </div> }
             { this.props.data.homepage &&
               <div>
-                <Icon type='home' /> <a onClick={ () => this.props.openUrl(this.props.data.homepage) }>Homepage</a>
+                <Icon type='home' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.homepage) }>Homepage</a>
               </div> }
             { this.props.data.repository &&
               <div>
-                <Icon type='github' /> <a onClick={ () => this.props.openUrl(this.props.data.repository) }>Repository</a>
+                <Icon type='github' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.repository) }>Repository</a>
               </div> }
             { this.props.data.__src_url &&
               <div>
-                <Icon type='github' /> <a onClick={ () => this.props.openUrl(this.props.data.__src_url) }>Source</a>
+                <Icon type='github' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.__src_url) }>Source</a>
               </div> }
             { this.props.data.dlstats &&
               <div>

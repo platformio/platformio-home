@@ -15,7 +15,7 @@ import ProjectInitCarousel from '../components/init-carousel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectProjectExamples } from '../selectors';
 
 
@@ -32,7 +32,7 @@ class ProjectExamplesModal extends React.Component {
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     importProject: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired,
     showEmbeddedPlatforms: PropTypes.func.isRequired,
     showDesktopPlatforms: PropTypes.func.isRequired
@@ -104,7 +104,7 @@ class ProjectExamplesModal extends React.Component {
 
   renderBody() {
     if (this.state.inProgress) {
-      return <ProjectInitCarousel openUrl={ this.props.openUrl } />;
+      return <ProjectInitCarousel osOpenUrl={ this.props.osOpenUrl } />;
     }
 
     if (!this.props.items) {
@@ -199,5 +199,5 @@ function mapStateToProps(state, ownProps) {
 
 export default connect(mapStateToProps, {
   ...actions,
-  openUrl
+  osOpenUrl
 })(ProjectExamplesModal);

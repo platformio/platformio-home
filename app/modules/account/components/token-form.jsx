@@ -18,7 +18,7 @@ export default class AccountTokenForm extends React.Component {
     form: PropTypes.object.isRequired,
     token: PropTypes.string,
     showAccountToken: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -67,9 +67,9 @@ export default class AccountTokenForm extends React.Component {
       <div className='text-left'>
         <Alert showIcon message='Personal Authentication Token' description={ (
           <div>
-            It is intended for <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/ci/index.html') }>Continuous Integration</a> systems, <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote™</a> operations when you can not authenticate manually.
+            It is intended for <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/ci/index.html') }>Continuous Integration</a> systems, <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote™</a> operations when you can not authenticate manually.
             <div>
-              PlatformIO handles <b>Personal Authentication Token</b> from an environment variable <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN') }>PLATFORMIO_AUTH_TOKEN</a>.
+              PlatformIO handles <b>Personal Authentication Token</b> from an environment variable <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN') }>PLATFORMIO_AUTH_TOKEN</a>.
             </div>
           </div>
         ) } />

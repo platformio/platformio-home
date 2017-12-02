@@ -28,8 +28,8 @@ export default class PlatformsList extends React.Component {
     installPlatform: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
     updatePlatform: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -85,7 +85,7 @@ export default class PlatformsList extends React.Component {
             <Button ghost
               type='primary'
               icon='plus-circle-o'
-              onClick={ () => this.props.openUrl('http://docs.platformio.org/page/platforms/creating_platform.html') }>
+              onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/platforms/creating_platform.html') }>
               Custom Platform
             </Button>
           </Button.Group>

@@ -11,17 +11,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { inIframe } from '../helpers';
-import { openUrl } from '../actions';
+import { osOpenUrl } from '../actions';
 
 
 class OpenInBrowser extends React.Component {
 
   static propTypes = {
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   onDidOpen() {
-    this.props.openUrl(window.location.origin);
+    this.props.osOpenUrl(window.location.origin);
   }
 
   render() {
@@ -35,5 +35,5 @@ class OpenInBrowser extends React.Component {
 // Redux
 
 export default connect(null, {
-  openUrl
+  osOpenUrl
 })(OpenInBrowser);

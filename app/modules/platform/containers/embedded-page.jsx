@@ -9,7 +9,7 @@
 import * as actions from '../actions';
 
 import { EMBEDDED_INPUT_FILTER_KEY, selectEmbeddedFilter, selectVisibleEmbeddedPlatforms } from '../selectors';
-import { openUrl, revealFile } from '../../core/actions';
+import { osOpenUrl, osRevealFile } from '../../core/actions';
 
 import PlatformsList from '../components/platforms-list';
 import PropTypes from 'prop-types';
@@ -32,8 +32,8 @@ class PlatformEmbeddedPage extends React.Component {
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -63,8 +63,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    openUrl,
-    revealFile,
+    osOpenUrl,
+    osRevealFile,
     setFilter: value => dispatch(lazyUpdateInputValue(EMBEDDED_INPUT_FILTER_KEY, value))
   }), dispatch);
 }

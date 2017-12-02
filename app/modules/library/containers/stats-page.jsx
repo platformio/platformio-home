@@ -15,7 +15,7 @@ import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectStats } from '../selectors';
 
 
@@ -24,7 +24,7 @@ class LibraryStatsPage extends React.Component {
   static propTypes = {
     data: PropTypes.object,
     loadStats: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired
   }
@@ -66,4 +66,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, openUrl })(LibraryStatsPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(LibraryStatsPage);

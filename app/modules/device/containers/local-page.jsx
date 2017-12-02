@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectLocalDevices } from '../selectors';
 
 
@@ -26,7 +26,7 @@ class DeviceLocalPage extends React.Component {
       PropTypes.object.isRequired
     ),
     loadLocalDevices: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -75,7 +75,7 @@ class DeviceLocalPage extends React.Component {
       <div className='page-container'>
         <Alert className='block' showIcon message={ (
           <div>
-            PlatformIO automatically detects upload port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>. <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port') }>More details...</a>
+            PlatformIO automatically detects upload port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>. <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port') }>More details...</a>
           </div>
          ) } />
         <div className='block text-right'>
@@ -131,5 +131,5 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   ...actions,
-  openUrl
+  osOpenUrl
 })(DeviceLocalPage);

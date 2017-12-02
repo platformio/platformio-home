@@ -15,8 +15,8 @@ import FileExplorer from '../../core/containers/file-explorer';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isFile } from '../../core/actions';
-import { selectIsFileItems } from '../../core/selectors';
+import { osIsFile } from '../../core/actions';
+import { selectOsIsFileItems } from '../../core/selectors';
 
 
 class ProjectOpenModal extends React.Component {
@@ -25,10 +25,10 @@ class ProjectOpenModal extends React.Component {
     visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
 
-    isFileItems: PropTypes.object,
+    osIsFileItems: PropTypes.object,
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
-    isFile: PropTypes.func.isRequired
+    osIsFile: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -44,13 +44,13 @@ class ProjectOpenModal extends React.Component {
     if (!this.state.checking) {
       return;
     }
-    this.validateProjectDir(newProps.isFileItems);
+    this.validateProjectDir(newProps.osIsFileItems);
   }
 
-  validateProjectDir(isFileItems) {
-    if (!isFileItems || !isFileItems.hasOwnProperty(this.state.platformioIni)) {
+  validateProjectDir(osIsFileItems) {
+    if (!osIsFileItems || !osIsFileItems.hasOwnProperty(this.state.platformioIni)) {
       if (!this.state.checking) {
-        this.props.isFile(this.state.platformioIni);
+        this.props.osIsFile(this.state.platformioIni);
       }
       this.setState({
         checking: true
@@ -62,7 +62,7 @@ class ProjectOpenModal extends React.Component {
       checking: false
     });
 
-    if (!isFileItems[this.state.platformioIni]) {
+    if (!osIsFileItems[this.state.platformioIni]) {
       return message.error('This is not PlatformIO Project (should contain "platformio.ini" file).');
     }
     this.props.addProject(this.state.projectDir);
@@ -74,7 +74,7 @@ class ProjectOpenModal extends React.Component {
     if (!this.state.projectDir) {
       return message.error('Please select Project Folder');
     }
-    this.validateProjectDir(this.props.isFileItems);
+    this.validateProjectDir(this.props.osIsFileItems);
   }
 
   onDidCancel() {
@@ -84,7 +84,7 @@ class ProjectOpenModal extends React.Component {
   onDidSelect(projectDir) {
     this.setState({
       projectDir,
-      platformioIni: path.join(projectDir, 'platformio.ini')
+      platformioIni: projectDir ? path.join(projectDir, 'platformio.ini') : null
     });
   }
 
@@ -124,12 +124,12 @@ class ProjectOpenModal extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isFileItems: selectIsFileItems(state)
+    osIsFileItems: selectOsIsFileItems(state)
   };
 }
 
 export default connect(mapStateToProps, {
   addProject,
   openProject,
-  isFile
+  osIsFile
 })(ProjectOpenModal);

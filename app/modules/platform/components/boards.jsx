@@ -46,7 +46,7 @@ export default class Boards extends React.Component {
     onFilter: PropTypes.func,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -470,7 +470,7 @@ export default class Boards extends React.Component {
     return (
       <span>
         <p>PlatformIO currently supports over 400 boards from leading manufacturers, and we are constantly adding new ones.</p>
-        You can be part of the process by letting us know what board you wish to see supported next, by <a onClick={ () => this.props.openUrl('https://github.com/platformio/platformio-core/issues') }>submitting a feature request</a>.
+        You can be part of the process by letting us know what board you wish to see supported next, by <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core/issues') }>submitting a feature request</a>.
       </span>
     );
   }
@@ -545,7 +545,7 @@ export default class Boards extends React.Component {
           ·
         </li>
         <li>
-          <Icon type='info-circle' /> <a onClick={ () => this.props.openUrl(record.url) }>Information</a>
+          <Icon type='info-circle' /> <a onClick={ () => this.props.osOpenUrl(record.url) }>Information</a>
         </li>
         <li>
           ·
@@ -561,11 +561,11 @@ export default class Boards extends React.Component {
   renderExtraFeatures(record) {
     return (
       <span>
-        { record.extra.includes('test') && <Tooltip title='Unit Testing'> <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/unit-testing.html') }> <Icon type='api' /> </a> </Tooltip> }
-        { record.extra.includes('debug') && <Tooltip title={ `Unified Debugger: ${ this.humanizeDebug(record.debug) }` }> <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/debugging.html') }> <Icon type='tool' /> </a> </Tooltip> }
+        { record.extra.includes('test') && <Tooltip title='Unit Testing'> <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/unit-testing.html') }> <Icon type='api' /> </a> </Tooltip> }
+        { record.extra.includes('debug') && <Tooltip title={ `Unified Debugger: ${ this.humanizeDebug(record.debug) }` }> <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/debugging.html') }> <Icon type='tool' /> </a> </Tooltip> }
         { record.extra.includes('iot') && <Tooltip title='IoT-enabled'> <a><Icon type='cloud-o' /></a> </Tooltip> }
         { record.extra.includes('certified') && <Tooltip title='Certified'> <a> <Icon type='safety' /> </a> </Tooltip> }
-        { record.extra.includes('shop') && <Tooltip title='Get Now!'> <a onClick={ () => this.props.openUrl(record.url) }> <Icon type='shopping-cart' /> </a> </Tooltip> }
+        { record.extra.includes('shop') && <Tooltip title='Get Now!'> <a onClick={ () => this.props.osOpenUrl(record.url) }> <Icon type='shopping-cart' /> </a> </Tooltip> }
     </span>
     );
   }

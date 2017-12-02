@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 
 
 class ProjectImportArduinoModal extends React.Component {
@@ -31,7 +31,7 @@ class ProjectImportArduinoModal extends React.Component {
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     importArduinoProject: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -118,7 +118,7 @@ class ProjectImportArduinoModal extends React.Component {
 
   renderBody() {
     if (this.state.inProgress) {
-      return <ProjectInitCarousel openUrl={ this.props.openUrl } />;
+      return <ProjectInitCarousel osOpenUrl={ this.props.osOpenUrl } />;
     }
 
     return (
@@ -150,5 +150,5 @@ class ProjectImportArduinoModal extends React.Component {
 
 export default connect(null, {
   ...actions,
-  openUrl
+  osOpenUrl
 })(ProjectImportArduinoModal);

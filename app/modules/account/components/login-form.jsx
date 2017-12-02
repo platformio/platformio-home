@@ -20,7 +20,7 @@ export default class AccountLoginForm extends React.Component {
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
     showForgotPage: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -70,12 +70,12 @@ export default class AccountLoginForm extends React.Component {
         <Col span={ 3 }><Icon type='info-circle-o' /></Col>
         <Col span={ 21 }>
           <h2>PlatformIO Account</h2>
-          <p className='block'>Having <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/pio-account.html') }>PIO Account</a> allows you to use extra professional features:</p>
+          <p className='block'>Having <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-account.html') }>PIO Account</a> allows you to use extra professional features:</p>
           <ul className='list-styled block'>
-            <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote™</a></li>
-            <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/debugging.html#piodebug') }>PIO Unified Debugger</a></li>
-            <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/plus/unit-testing.html') }>PIO Unit Testing</a></li>
-            <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/ide.html') }>Integration with Cloud IDEs</a></li>
+            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote™</a></li>
+            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/debugging.html#piodebug') }>PIO Unified Debugger</a></li>
+            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/unit-testing.html') }>PIO Unit Testing</a></li>
+            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/ide.html') }>Integration with Cloud IDEs</a></li>
           </ul>
         </Col>
       </Row>

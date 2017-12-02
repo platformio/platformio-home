@@ -15,7 +15,7 @@ import React from 'react';
 export default class ProjectInitCarousel extends React.Component {
 
   static propTypes = {
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   render() {
@@ -74,7 +74,7 @@ export default class ProjectInitCarousel extends React.Component {
             </li>
           </ul>
           <div>
-            <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf.html') }>
+            <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf.html') }>
               <Icon type='link' /> Please visit documentation</a> for the other options and examples.
           </div>
         </div>

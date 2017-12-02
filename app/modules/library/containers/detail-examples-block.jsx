@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { fsGlob } from '../../core/actions';
-import { selectFSGlob } from '../../core/selectors';
+import { osFsGlob } from '../../core/actions';
+import { selectOsFSGlob } from '../../core/selectors';
 
 
 class LibraryDetailExamplesBlock extends React.Component {
@@ -29,7 +29,7 @@ class LibraryDetailExamplesBlock extends React.Component {
       __pkg_dir: PropTypes.string
     }).isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
-    fsGlob: PropTypes.func.isRequired
+    osFsGlob: PropTypes.func.isRequired
   }
 
   static getGlobPatterns(custom) {
@@ -49,7 +49,7 @@ class LibraryDetailExamplesBlock extends React.Component {
 
   componentWillMount() {
     if (!this.props.uris) {
-      this.props.fsGlob(
+      this.props.osFsGlob(
         LibraryDetailExamplesBlock.getGlobPatterns(this.props.data.examples),
         this.props.data.__pkg_dir
       );
@@ -108,7 +108,7 @@ function mapStateToProps(state, ownProps) {
     };
   }
   return {
-    uris: selectFSGlob(
+    uris: selectOsFSGlob(
       state,
       LibraryDetailExamplesBlock.getGlobPatterns(ownProps.data.examples),
       ownProps.data.__pkg_dir
@@ -117,5 +117,5 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default connect(mapStateToProps, {
-  fsGlob
+  osFsGlob
 })(LibraryDetailExamplesBlock);

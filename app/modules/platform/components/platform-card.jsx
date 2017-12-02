@@ -31,7 +31,7 @@ export default class PlatformCard extends React.Component {
     installPlatform: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
     updatePlatform: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired
+    osRevealFile: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -57,7 +57,7 @@ export default class PlatformCard extends React.Component {
   onDidReveal(e) {
     e.stopPropagation();
     if (this.props.item.__pkg_dir) {
-      this.props.revealFile(this.props.item.__pkg_dir);
+      this.props.osRevealFile(this.props.item.__pkg_dir);
     }
   }
 

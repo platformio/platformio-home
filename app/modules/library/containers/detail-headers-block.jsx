@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { fsGlob } from '../../core/actions';
-import { selectFSGlob } from '../../core/selectors';
+import { osFsGlob } from '../../core/actions';
+import { selectOsFSGlob } from '../../core/selectors';
 
 
 class LibraryDetailHeadersBlock extends React.Component {
@@ -25,7 +25,7 @@ class LibraryDetailHeadersBlock extends React.Component {
       __pkg_dir: PropTypes.string
     }).isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
-    fsGlob: PropTypes.func.isRequired
+    osFsGlob: PropTypes.func.isRequired
   }
 
   static getGlobPatterns() {
@@ -41,7 +41,7 @@ class LibraryDetailHeadersBlock extends React.Component {
 
   componentWillMount() {
     if (this.props.data.__pkg_dir && !this.props.uris) {
-      this.props.fsGlob(LibraryDetailHeadersBlock.getGlobPatterns(), this.props.data.__pkg_dir);
+      this.props.osFsGlob(LibraryDetailHeadersBlock.getGlobPatterns(), this.props.data.__pkg_dir);
     }
   }
 
@@ -79,8 +79,8 @@ class LibraryDetailHeadersBlock extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    uris: ownProps.data.__pkg_dir ? selectFSGlob(state, LibraryDetailHeadersBlock.getGlobPatterns(), ownProps.data.__pkg_dir) : undefined
+    uris: ownProps.data.__pkg_dir ? selectOsFSGlob(state, LibraryDetailHeadersBlock.getGlobPatterns(), ownProps.data.__pkg_dir) : undefined
   };
 }
 
-export default connect(mapStateToProps, { fsGlob })(LibraryDetailHeadersBlock);
+export default connect(mapStateToProps, { osFsGlob })(LibraryDetailHeadersBlock);
