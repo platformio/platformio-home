@@ -112,7 +112,7 @@ function* watchUpdateRouteBadge() {
 }
 
 function* watchOSRequests() {
-  yield takeEvery([actions.OS_OPEN_URL, actions.OS_REVEAL_FILE, actions.OS_RENAME_FILE, actions.OS_MAKE_DIRS], function*(action) {
+  yield takeEvery([actions.OS_OPEN_URL, actions.OS_REVEAL_FILE, actions.OS_RENAME_FILE, actions.OS_MAKE_DIRS, actions.OS_COPY_FILE], function*(action) {
     try {
       switch (action.type) {
         case actions.OS_OPEN_URL:
@@ -141,6 +141,13 @@ function* watchOSRequests() {
         case actions.OS_RENAME_FILE:
           yield call(apiFetchData, {
             query: 'os.rename',
+            params: [action.src, action.dst]
+          });
+          break;
+
+        case actions.OS_COPY_FILE:
+          yield call(apiFetchData, {
+            query: 'os.copy',
             params: [action.src, action.dst]
           });
           break;
@@ -191,7 +198,7 @@ function* watchRequestContent() {
   });
 }
 
-function* watchFSGlob() {
+function* watchOsFSGlob() {
   yield takeEvery(actions.OS_FS_GLOB, function*({pathnames, rootDir}) {
     let items = yield select(selectors.selectOsFSGlob, pathnames, rootDir);
     if (items) {
@@ -231,7 +238,7 @@ function* watchListLogicalDisks() {
   });
 }
 
-function* watchListDir() {
+function* watchOsListDir() {
   yield takeEvery(actions.OS_LIST_DIR, function*({ path }) {
     let items = yield select(selectors.selectOsDirItems);
     if (items && items.hasOwnProperty(path)) {
@@ -251,7 +258,7 @@ function* watchListDir() {
   });
 }
 
-function* watchIsFile() {
+function* watchOsIsFile() {
   yield takeEvery(actions.OS_IS_FILE, function*({ path }) {
     let items = yield select(selectors.selectOsIsFileItems);
     if (items && items.hasOwnProperty(path)) {
@@ -271,7 +278,7 @@ function* watchIsFile() {
   });
 }
 
-function* watchIsDir() {
+function* watchOsIsDir() {
   yield takeEvery(actions.OS_IS_DIR, function*({ path }) {
     let items = yield select(selectors.selectOsIsDirItems);
     if (items && items.hasOwnProperty(path)) {
@@ -351,11 +358,11 @@ export default [
   watchUpdateRouteBadge,
   watchOSRequests,
   watchRequestContent,
-  watchFSGlob,
+  watchOsFSGlob,
   watchListLogicalDisks,
-  watchListDir,
-  watchIsFile,
-  watchIsDir,
+  watchOsListDir,
+  watchOsIsFile,
+  watchOsIsDir,
   watchResetFSItems,
   watchSendFeedback,
   watchAutoUpdateCorePackages

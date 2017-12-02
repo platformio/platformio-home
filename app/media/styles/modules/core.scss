@@ -36,6 +36,10 @@
 .file-explorer {
   background-color: #ececec;
 
+  .fe-toolbar {
+    padding: $component-padding/2;
+  }
+
   .fe-sidebar {
     padding: $component-padding/2 $component-padding/1.5;
 
@@ -56,6 +60,20 @@
     background-color: #fff;
     height: 350px;
     overflow: auto;
-    padding-left: $component-padding;
+    padding: $component-padding/2 $component-padding;
+    word-break: break-all;
+
+    .fe-root-items li {
+      padding-bottom: $component-padding/4;
+    }
+  }
+
+  .ant-breadcrumb {
+    .ant-breadcrumb-link a {
+      color: $primary-color;
+    }
+
+    border-bottom: 1px solid $border-color;
+    margin-bottom: $component-padding;
   }
 }
