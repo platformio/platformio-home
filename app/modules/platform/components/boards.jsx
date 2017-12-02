@@ -460,7 +460,7 @@ export default class Boards extends React.Component {
     const total = this.getDataTotal(data);
     return (
       <div>
-        <h1>Board Explorer <Badge overflowCount={ 1000 } count={ total } /></h1>
+        <h1>Board Explorer <Badge overflowCount={ 100000 } count={ total } /></h1>
         <Alert className='block' showIcon message={ this.renderNotifications() } />
       </div>
     );
