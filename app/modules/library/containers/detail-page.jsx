@@ -8,7 +8,7 @@
 
 import * as actions from '../actions';
 
-import { openUrl, revealFile } from '../../core/actions';
+import { osOpenUrl, osRevealFile } from '../../core/actions';
 
 import LibraryDetailMain from '../components/detail-main';
 import PropTypes from 'prop-types';
@@ -31,8 +31,8 @@ class LibraryDetailPage extends React.Component {
       PropTypes.number,
       PropTypes.object
     ]),
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     loadLibraryData: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
@@ -70,4 +70,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, openUrl, revealFile })(LibraryDetailPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl, osRevealFile })(LibraryDetailPage);

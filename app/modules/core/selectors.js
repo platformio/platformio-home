@@ -42,7 +42,7 @@ export function selectRequestedContent(state, uri, data=undefined) {
   return null;
 }
 
-export function selectFSGlobKey(pathnames, rootDir=undefined) {
+export function selectOsFSGlobKey(pathnames, rootDir=undefined) {
   const hash = shajs('sha1');
   hash.update(pathnames.join());
   if (rootDir) {
@@ -51,14 +51,14 @@ export function selectFSGlobKey(pathnames, rootDir=undefined) {
   return hash.digest('hex');
 }
 
-export function selectFSGlobs(state) {
-  return state.entities.fsGlob;
+export function selectOsFSGlobs(state) {
+  return state.entities.osFsGlob;
 }
 
-export function selectFSGlob(state, pathnames, rootDir=undefined) {
-  const globs = selectFSGlobs(state) || [];
+export function selectOsFSGlob(state, pathnames, rootDir=undefined) {
+  const globs = selectOsFSGlobs(state) || [];
   for (const glob of globs) {
-    if (glob.key === selectFSGlobKey(pathnames, rootDir)) {
+    if (glob.key === selectOsFSGlobKey(pathnames, rootDir)) {
       return glob.items;
     }
   }
@@ -69,16 +69,16 @@ export function selectLogicalDisks(state) {
   return state.entities.logicalDisks;
 }
 
-export function selectDirItems(state) {
-  return state.entities.dirItems;
+export function selectOsDirItems(state) {
+  return state.entities.osDirItems;
 }
 
-export function selectIsFileItems(state) {
-  return state.entities.isFileItems;
+export function selectOsIsFileItems(state) {
+  return state.entities.osIsFileItems;
 }
 
-export function selectIsDirItems(state) {
-  return state.entities.isDirItems;
+export function selectOsIsDirItems(state) {
+  return state.entities.osIsDirItems;
 }
 
 export function selectRouteBadges(state) {

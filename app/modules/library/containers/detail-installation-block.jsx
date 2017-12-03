@@ -33,7 +33,7 @@ export default class LibraryDetailInstallationBlock extends React.Component {
         title: PropTypes.string
       }))
     }).isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   getVersionName() {
@@ -109,13 +109,13 @@ lib_deps =
       <div>
         <h2 style={{ marginTop: 0 }}>Project Dependencies <small>platformio.ini</small></h2>
         <div className='block'>
-          PlatformIO Core has built-in powerful <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> with a <i>Semantic Versioning</i> support. It allows you to specify custom dependencies per project in <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf.html') }>Project Configuration File &quot;platformio.ini&quot;</a> using <kbd>lib_deps</kbd> option.
+          PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> with a <i>Semantic Versioning</i> support. It allows you to specify custom dependencies per project in <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf.html') }>Project Configuration File &quot;platformio.ini&quot;</a> using <kbd>lib_deps</kbd> option.
         </div>
         <div className='block'>
           No need to install them manully. PlatformIO will install all dependencies into a project <u>isolated storage</u> when you start building process.
         </div>
         <Alert className='block' showIcon message='Recommendation' description={ <span>We highly recommend to specify all project dependecies with <kbd>lib_deps</kbd> option and to avoid using <strike>global libraries</strike>.</span> } />
-        <div className='block'><Icon type='caret-right'/> <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/userguide/lib/cmd_install.html#description') }>Semantic Versioning Rules</a></div>
+        <div className='block'><Icon type='caret-right'/> <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/userguide/lib/cmd_install.html#description') }>Semantic Versioning Rules</a></div>
         <CodeBeautifier language='ini' content={ this.generatePIOProjectConf() } />
       </div>
       );

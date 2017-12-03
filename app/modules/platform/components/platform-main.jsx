@@ -34,13 +34,13 @@ export default class PlatformMain extends React.Component {
       __src_url: PropTypes.string,
       __pkg_dir: PropTypes.string
     }),
-    revealFile: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -53,7 +53,7 @@ export default class PlatformMain extends React.Component {
   }
 
   onDidReveal(dir) {
-    this.props.revealFile(dir);
+    this.props.osRevealFile(dir);
   }
 
   onDidVersionChange(value) {
@@ -132,7 +132,7 @@ export default class PlatformMain extends React.Component {
         </li>
         <li>
           <Button.Group>
-            <Button type='primary' icon='folder' onClick={ () => this.props.revealFile(this.props.data.__pkg_dir) }>
+            <Button type='primary' icon='folder' onClick={ () => this.props.osRevealFile(this.props.data.__pkg_dir) }>
               Reveal
             </Button>
             <Popconfirm title='Are you sure?'
@@ -169,7 +169,7 @@ export default class PlatformMain extends React.Component {
                   excludeColumns={ ['Platform'] }
                   showPlatform={ this.props.showPlatform }
                   showFramework={ this.props.showFramework }
-                  openUrl={ this.props.openUrl } />
+                  osOpenUrl={ this.props.osOpenUrl } />
               </Tabs.TabPane>
               <Tabs.TabPane tab={ <span><Icon type='copy' />Examples</span> } key='examples'>
                 { this.props.data.__pkg_dir ? (
@@ -179,7 +179,7 @@ export default class PlatformMain extends React.Component {
                   ) }
               </Tabs.TabPane>
               <Tabs.TabPane tab={ <span><Icon type='appstore-o' />Packages</span> } key='packages'>
-                <PlatformDetailPackages items={ this.props.data.packages } openUrl={ this.props.openUrl } showInstalledPlatforms={ this.props.showInstalledPlatforms } />
+                <PlatformDetailPackages items={ this.props.data.packages } osOpenUrl={ this.props.osOpenUrl } showInstalledPlatforms={ this.props.showInstalledPlatforms } />
               </Tabs.TabPane>
               <Tabs.TabPane tab={ <span><Icon type='clock-circle-o' />Changelog</span> } key='changelog'>
                 <RepositoryChangelog uri={ this.props.data.repository } />
@@ -203,28 +203,28 @@ export default class PlatformMain extends React.Component {
                 <kbd>platform = { this.props.data.name }</kbd>
               </li>
               <li>
-                <Icon type='home' /> <a onClick={ () => this.props.openUrl(this.props.data.homepage) }>Homepage</a>
+                <Icon type='home' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.homepage) }>Homepage</a>
               </li>
               { this.props.data.repository &&
                 <li>
-                  <Icon type='github' /> <a onClick={ () => this.props.openUrl(this.props.data.repository) }>Repository</a>
+                  <Icon type='github' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.repository) }>Repository</a>
                 </li> }
               <li>
-                <Icon type='info-circle-o' /> <a onClick={ () => this.props.openUrl(`http://docs.platformio.org/page/platforms/${this.props.data.name}.html`) }>Documentation</a>
+                <Icon type='info-circle-o' /> <a onClick={ () => this.props.osOpenUrl(`http://docs.platformio.org/page/platforms/${this.props.data.name}.html`) }>Documentation</a>
               </li>
               <li>
-                <Icon type='link' /> <a onClick={ () => this.props.openUrl(this.props.data.url) }>Vendor</a>
+                <Icon type='link' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.url) }>Vendor</a>
               </li>
               { this.props.data.license &&
                 <li>
                   <Icon type='copyright' />
-                  <a onClick={ () => this.props.openUrl(`https://opensource.org/licenses/${this.props.data.license}`) }>
+                  <a onClick={ () => this.props.osOpenUrl(`https://opensource.org/licenses/${this.props.data.license}`) }>
                     { ' ' + this.props.data.license }
                   </a>
                 </li> }
               { this.props.data.__src_url &&
                 <li>
-                  <Icon type='github' /> <a onClick={ () => this.props.openUrl(this.props.data.__src_url) }>Source</a>
+                  <Icon type='github' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.__src_url) }>Source</a>
                 </li> }
               { this.props.data.versions &&
                 <li>

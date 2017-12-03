@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectFrameworkData } from '../selectors';
 
 
@@ -25,7 +25,7 @@ class FrameworkDetailPage extends React.Component {
     loadFrameworkData: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -54,4 +54,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, openUrl })(FrameworkDetailPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(FrameworkDetailPage);

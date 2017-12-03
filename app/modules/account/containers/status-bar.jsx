@@ -15,7 +15,7 @@ import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectAccountInfo } from '../selectors';
 
 
@@ -31,7 +31,7 @@ class AccountStatusBar extends React.Component {
     logoutAccount: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -46,7 +46,7 @@ class AccountStatusBar extends React.Component {
       <table cellPadding='0' cellSpacing='0' width='100%'>
         <tbody>
           <tr>
-            <td><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } openUrl={ this.props.openUrl } /></td>
+            <td><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } osOpenUrl={ this.props.osOpenUrl } /></td>
             <td className='text-right'><AccountStatusBarDropdown { ...this.props } /></td>
           </tr>
         </tbody>
@@ -68,5 +68,5 @@ function mapStateToProps(state, ownProps) {
 
 export default connect(mapStateToProps, {
   ...actions,
-  openUrl
+  osOpenUrl
 })(AccountStatusBar);

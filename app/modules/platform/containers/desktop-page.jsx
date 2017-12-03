@@ -9,7 +9,7 @@
 import * as actions from '../actions';
 
 import { DESKTOP_INPUT_FILTER_KEY, selectDesktopFilter, selectVisibleDesktopPlatforms } from '../selectors';
-import { openUrl, revealFile } from '../../core/actions';
+import { osOpenUrl, osRevealFile } from '../../core/actions';
 
 import { Alert } from 'antd';
 import PlatformsList from '../components/platforms-list';
@@ -32,8 +32,8 @@ class PlatformDesktopPage extends React.Component {
     loadRegistryPlatforms: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -68,8 +68,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    openUrl,
-    revealFile,
+    osOpenUrl,
+    osRevealFile,
     setFilter: value => dispatch(lazyUpdateInputValue(DESKTOP_INPUT_FILTER_KEY, value))
   }), dispatch);
 }

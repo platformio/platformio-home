@@ -27,7 +27,7 @@ export default class FrameworkDetailPage extends React.Component {
     }),
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   render() {
@@ -53,7 +53,7 @@ export default class FrameworkDetailPage extends React.Component {
                   excludeColumns={ ['Frameworks'] }
                   showPlatform={ this.props.showPlatform }
                   showFramework={ this.props.showFramework }
-                  openUrl={ this.props.openUrl } />
+                  osOpenUrl={ this.props.osOpenUrl } />
               </Tabs.TabPane>
             </Tabs>
           </Col>
@@ -77,13 +77,13 @@ export default class FrameworkDetailPage extends React.Component {
                 <kbd>framework = { this.props.data.name }</kbd>
               </li>
               <li>
-                <Icon type='home' /> <a onClick={ () => this.props.openUrl(this.props.data.homepage) }>Homepage</a>
+                <Icon type='home' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.homepage) }>Homepage</a>
               </li>
               <li>
-                <Icon type='info-circle-o' /> <a onClick={ () => this.props.openUrl(`http://docs.platformio.org/page/frameworks/${this.props.data.name}.html`) }>Documentation</a>
+                <Icon type='info-circle-o' /> <a onClick={ () => this.props.osOpenUrl(`http://docs.platformio.org/page/frameworks/${this.props.data.name}.html`) }>Documentation</a>
               </li>
               <li>
-                <Icon type='link' /> <a onClick={ () => this.props.openUrl(this.props.data.url) }>Vendor</a>
+                <Icon type='link' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.url) }>Vendor</a>
               </li>
             </ul>
           </Col>

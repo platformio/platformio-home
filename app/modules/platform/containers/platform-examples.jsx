@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { fsGlob } from '../../core/actions';
-import { selectFSGlob } from '../../core/selectors';
+import { osFsGlob } from '../../core/actions';
+import { selectOsFSGlob } from '../../core/selectors';
 
 
 class PlatformProjectExamples extends React.Component {
@@ -23,7 +23,7 @@ class PlatformProjectExamples extends React.Component {
   static propTypes = {
     pkgDir: PropTypes.string.isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
-    fsGlob: PropTypes.func.isRequired
+    osFsGlob: PropTypes.func.isRequired
   }
 
   static getGlobPatterns() {
@@ -39,7 +39,7 @@ class PlatformProjectExamples extends React.Component {
 
   componentWillMount() {
     if (!this.props.uris) {
-      this.props.fsGlob(PlatformProjectExamples.getGlobPatterns(), this.props.pkgDir);
+      this.props.osFsGlob(PlatformProjectExamples.getGlobPatterns(), this.props.pkgDir);
     }
   }
 
@@ -78,8 +78,8 @@ class PlatformProjectExamples extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    uris: selectFSGlob(state, PlatformProjectExamples.getGlobPatterns(), ownProps.pkgDir)
+    uris: selectOsFSGlob(state, PlatformProjectExamples.getGlobPatterns(), ownProps.pkgDir)
   };
 }
 
-export default connect(mapStateToProps, { fsGlob })(PlatformProjectExamples);
+export default connect(mapStateToProps, { osFsGlob })(PlatformProjectExamples);

@@ -18,7 +18,7 @@ export default class LibraryStorageItems extends React.Component {
 
   static propTypes = {
     item: PropTypes.instanceOf(LibraryStorage).isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     uninstallLibrary: PropTypes.func.isRequired,
@@ -58,7 +58,7 @@ export default class LibraryStorageItems extends React.Component {
   onDidReveal(e, dir) {
     e.stopPropagation();
     if (dir) {
-      this.props.revealFile(dir);
+      this.props.osRevealFile(dir);
     }
   }
 

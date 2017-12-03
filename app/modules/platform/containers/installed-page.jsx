@@ -10,7 +10,7 @@ import * as actions from '../actions';
 
 import { Alert, Button } from 'antd';
 import { INSTALLED_INPUT_FILTER_KEY, selectInstalledFilter, selectVisibleInstalledPlatforms } from '../selectors';
-import { openUrl, revealFile } from '../../core/actions';
+import { osOpenUrl, osRevealFile } from '../../core/actions';
 
 import PlatformsList from '../components/platforms-list';
 import PropTypes from 'prop-types';
@@ -33,8 +33,8 @@ class PlatformInstalledPage extends React.Component {
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     showEmbeddedPlatforms: PropTypes.func.isRequired,
     showDesktopPlatforms: PropTypes.func.isRequired
   }
@@ -48,7 +48,7 @@ class PlatformInstalledPage extends React.Component {
       <div className='page-container'>
         <Alert className='block' showIcon message={ (
           <div>
-            Project can depend on a specific version of development platform or VCS (Git, Mercurial and Subversion). <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
+            Project can depend on a specific version of development platform or VCS (Git, Mercurial and Subversion). <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_general.html#platform') }>More details...</a>
           </div>
          ) } />
         <PlatformsList { ...this.props } actions={ ['reveal', 'uninstall'] } />
@@ -96,8 +96,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    openUrl,
-    revealFile,
+    osOpenUrl,
+    osRevealFile,
     setFilter: value => dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value))
   }), dispatch);
 }

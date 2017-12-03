@@ -14,7 +14,7 @@ import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectAccountInfo } from '../selectors';
 
 
@@ -29,7 +29,7 @@ class AccountInformationPage extends React.Component {
     }),
     loadAccountInfo: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   componentWillMount() {
@@ -48,7 +48,7 @@ class AccountInformationPage extends React.Component {
             <Spin tip='Loading...' size='large' />
           </div>
           ) : (
-          <AccountInformation data={ this.props.data } openUrl={ this.props.openUrl } />
+          <AccountInformation data={ this.props.data } osOpenUrl={ this.props.osOpenUrl } />
           ) }
       </div>
       );
@@ -65,4 +65,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, openUrl })(AccountInformationPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountInformationPage);

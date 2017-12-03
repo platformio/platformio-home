@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 
 
 class AccountLoginPage extends React.Component {
@@ -24,7 +24,7 @@ class AccountLoginPage extends React.Component {
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
     showForgotPage: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   render() {
@@ -48,4 +48,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, openUrl })(AccountLoginPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountLoginPage);

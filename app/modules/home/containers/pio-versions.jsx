@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectStorageItem } from '../../../store/selectors';
 
 
@@ -18,7 +18,7 @@ class PioVersions extends React.Component {
 
   static propTypes = {
     coreVersion: PropTypes.string,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   renderCoreVersion() {
@@ -41,7 +41,7 @@ class PioVersions extends React.Component {
             ·
           </li>
           <li>
-            Core <a onClick={ () => this.props.openUrl('https://github.com/platformio/platformio/blob/develop/HISTORY.rst') }>{ this.renderCoreVersion() }</a>
+            Core <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio/blob/develop/HISTORY.rst') }>{ this.renderCoreVersion() }</a>
           </li>
         </ul>
       </div>
@@ -57,4 +57,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { openUrl })(PioVersions);
+export default connect(mapStateToProps, { osOpenUrl })(PioVersions);

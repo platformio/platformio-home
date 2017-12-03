@@ -16,7 +16,7 @@ import ProjectInitCarousel from '../components/init-carousel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectStorageItem } from '../../../store/selectors';
 
 
@@ -31,7 +31,7 @@ class ProjectNewModal extends React.Component {
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     initProject: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -124,7 +124,7 @@ class ProjectNewModal extends React.Component {
 
   renderBody() {
     if (this.state.inProgress) {
-      return <ProjectInitCarousel openUrl={ this.props.openUrl } />;
+      return <ProjectInitCarousel osOpenUrl={ this.props.osOpenUrl } />;
     }
 
     return (
@@ -159,7 +159,14 @@ class ProjectNewModal extends React.Component {
   }
 
   renderExplorer() {
-    return <FileExplorer ask='directory' onSelect={ ::this.onDidProjectDir } />;
+    return (
+      <div>
+        <div style={ { marginBottom: '5px' } }>
+          Choose a directory where we will create project files:
+        </div>
+        <FileExplorer ask='directory' onSelect={ ::this.onDidProjectDir } />
+      </div>
+    );
   }
 
 }
@@ -174,5 +181,5 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   ...actions,
-  openUrl
+  osOpenUrl
 })(ProjectNewModal);

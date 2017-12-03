@@ -7,7 +7,7 @@
  */
 
 import { Button, Input, Modal } from 'antd';
-import { openUrl, sendFeedback } from '../actions';
+import { osOpenUrl, sendFeedback } from '../actions';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -19,7 +19,7 @@ class Feedback extends React.Component {
 
   static propTypes = {
     sendFeedback: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -98,7 +98,7 @@ class Feedback extends React.Component {
           onOk={ ::this.onDidSend }
           onCancel={ ::this.onDidCancel }>
           <div className='block'>
-            For technical support, please visit our <a onClick={ () => this.props.openUrl('https://community.platformio.org/') }>awesome community forums</a>.
+            For technical support, please visit our <a onClick={ () => this.props.osOpenUrl('https://community.platformio.org/') }>awesome community forums</a>.
           </div>
           <div>
             Share your thoughts and feedback with the PlatformIO Team:
@@ -120,5 +120,5 @@ class Feedback extends React.Component {
 
 export default connect(null, {
   sendFeedback,
-  openUrl
+  osOpenUrl
 })(Feedback);

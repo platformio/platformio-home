@@ -25,7 +25,7 @@ export default class LibraryStats extends React.Component {
       topkeywords: PropTypes.array.isRequired,
       updated: PropTypes.array.isRequired
     }),
-    openUrl: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired
   }
@@ -51,7 +51,7 @@ export default class LibraryStats extends React.Component {
   }
 
   onDidRegister() {
-    this.props.openUrl('http://docs.platformio.org/page/librarymanager/creating.html');
+    this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/creating.html');
   }
 
   onDidAdvanced() {

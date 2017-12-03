@@ -8,7 +8,7 @@
 
 import * as actions from '../actions';
 
-import { openUrl, revealFile } from '../../core/actions';
+import { osOpenUrl, osRevealFile } from '../../core/actions';
 
 import PlatformDetailMain from '../components/platform-main';
 import PropTypes from 'prop-types';
@@ -24,8 +24,8 @@ class PlatformDetailPage extends React.Component {
   static propTypes = {
     name: PropTypes.string.isRequired,
     data: PropTypes.object,
-    openUrl: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     loadPlatformData: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
@@ -64,4 +64,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, openUrl, revealFile })(PlatformDetailPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl, osRevealFile })(PlatformDetailPage);

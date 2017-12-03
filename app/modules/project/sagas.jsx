@@ -12,9 +12,9 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../platform/actions';
+import { OS_RENAME_FILE, notifyError, notifySuccess } from '../core/actions';
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../store/actions';
-import { notifyError, notifySuccess } from '../core/actions';
 
 import { Modal } from 'antd';
 import React from 'react';
@@ -43,6 +43,23 @@ function* watchHideProject() {
     const entityItems = (yield select(selectors.selectProjects)) || [];
     yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== projectDir)));
     yield put(updateEntity('projects', entityItems.filter(item => item.path !== projectDir)));
+  });
+}
+
+function* watchProjectRename() {
+  yield takeEvery(OS_RENAME_FILE, function*({src, dst}) {
+    const storageItems = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
+    if (!storageItems.includes(src)) {
+      return;
+    }
+    if (!storageItems.includes(dst)) {
+      storageItems.push(dst);
+    }
+    yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== src)));
+    if (yield select(selectors.selectProjects)) {
+      yield put(deleteEntity(/^projects/));
+      yield put(actions.loadProjects());
+    }
   });
 }
 
@@ -215,6 +232,7 @@ function* watchImportArduinoProject() {
 export default [
   watchAddProject,
   watchHideProject,
+  watchProjectRename,
   watchOpenProject,
   watchLoadProjects,
   watchLoadProjectExamples,

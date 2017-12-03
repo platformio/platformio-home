@@ -23,17 +23,17 @@ export default class LibraryDetailManifestBlock extends React.Component {
       __pkg_dir: PropTypes.string
     }).isRequired,
     manifestContent: PropTypes.string,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   onDidEdit(url) {
     if (url.startsWith('https://raw.githubusercontent.com')) {
       const matches = url.match(new RegExp('content\.com/([^/]+/[^/]+)/(.+)$'));
       if (matches) {
-        return this.props.openUrl(`https://github.com/${matches[1]}/blob/${matches[2]}`);
+        return this.props.osOpenUrl(`https://github.com/${matches[1]}/blob/${matches[2]}`);
       }
     }
-    this.props.openUrl(url);
+    this.props.osOpenUrl(url);
   }
 
   render() {
@@ -45,9 +45,9 @@ export default class LibraryDetailManifestBlock extends React.Component {
         <Row className='block'>
           <Col xs={ 18 }>
             <span className='inline-block-tight'>Specification for manifests:</span>
-            <span className='inline-block-tight'><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/librarymanager/config.html') }>library.json</a>,</span>
-            <span className='inline-block-tight'><a onClick={ () => this.props.openUrl('https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification') }>library.properties</a>,</span>
-            <span className='inline-block-tight'><a onClick={ () => this.props.openUrl('http://yottadocs.mbed.com/reference/module.html') }>module.json</a></span>
+            <span className='inline-block-tight'><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/config.html') }>library.json</a>,</span>
+            <span className='inline-block-tight'><a onClick={ () => this.props.osOpenUrl('https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification') }>library.properties</a>,</span>
+            <span className='inline-block-tight'><a onClick={ () => this.props.osOpenUrl('http://yottadocs.mbed.com/reference/module.html') }>module.json</a></span>
           </Col>
           <Col xs={ 6 } className='text-right'>
             { this.props.data.confurl &&

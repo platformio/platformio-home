@@ -22,7 +22,7 @@ export default class LibraryStoragesList extends React.Component {
     ),
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     uninstallLibrary: PropTypes.func.isRequired,
@@ -68,7 +68,7 @@ export default class LibraryStoragesList extends React.Component {
           { this.props.items.map(item => (
               <LibraryStorageItems item={ item }
                 key={ item.name }
-                revealFile={ this.props.revealFile }
+                osRevealFile={ this.props.osRevealFile }
                 searchLibrary={ this.props.searchLibrary }
                 showLibrary={ this.props.showLibrary }
                 uninstallLibrary={ this.props.uninstallLibrary }

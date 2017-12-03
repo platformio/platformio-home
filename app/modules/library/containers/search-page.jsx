@@ -109,7 +109,7 @@ class LibrarySearchPage extends React.Component {
       <div className='page-container'>
         <LibrarySearchForm searchLibrary={ this.props.searchLibrary } defaultSearch={ this.props.searchQuery } />
         { totalResults > 0 && (
-          <h1>Libraries <Badge overflowCount={ 1000 } count={ totalResults } /></h1>
+          <h1>Libraries <Badge overflowCount={ 100000 } count={ totalResults } /></h1>
         )}
         { status === LibrarySearchPage.STATUS.LOADING &&
            <div className='text-center'>

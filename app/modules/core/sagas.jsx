@@ -27,7 +27,7 @@ import { selectStorageItem } from '../../store/selectors';
 
 
 const REQUESTED_CONTENTS_CACHE_SIZE = 50;
-const FS_GLOBS_CACHE_SIZE = 50;
+const OS_FS_GLOBS_CACHE_SIZE = 50;
 
 function* watchShowAtStartup() {
   yield takeEvery(actions.SHOW_AT_STARTUP, function*({value}) {
@@ -45,7 +45,7 @@ function* watchNotifyError() {
 
   function reportIssue(title, body) {
     title = `Home: ${title}`;
-    return getStore().dispatch(actions.openUrl(`https://github.com/platformio/platformio-core/issues/new?${ qs.stringify({title, body}) }`));
+    return getStore().dispatch(actions.osOpenUrl(`https://github.com/platformio/platformio-core/issues/new?${ qs.stringify({title, body}) }`));
   }
 
   yield takeEvery(actions.NOTIFY_ERROR, function({title, err}) {
@@ -112,10 +112,10 @@ function* watchUpdateRouteBadge() {
 }
 
 function* watchOSRequests() {
-  yield takeEvery([actions.OPEN_URL, actions.REVEAL_FILE], function*(action) {
+  yield takeEvery([actions.OS_OPEN_URL, actions.OS_REVEAL_FILE, actions.OS_RENAME_FILE, actions.OS_MAKE_DIRS, actions.OS_COPY_FILE], function*(action) {
     try {
       switch (action.type) {
-        case actions.OPEN_URL:
+        case actions.OS_OPEN_URL:
           const url = new URL(action.url, true);
           url.query.utm_source = 'platformio';
           url.query.utm_medium = 'piohome';
@@ -131,9 +131,30 @@ function* watchOSRequests() {
           }
           break;
 
-        case actions.REVEAL_FILE:
+        case actions.OS_REVEAL_FILE:
           yield call(apiFetchData, {
             query: 'os.reveal_file',
+            params: [action.path]
+          });
+          break;
+
+        case actions.OS_RENAME_FILE:
+          yield call(apiFetchData, {
+            query: 'os.rename',
+            params: [action.src, action.dst]
+          });
+          break;
+
+        case actions.OS_COPY_FILE:
+          yield call(apiFetchData, {
+            query: 'os.copy',
+            params: [action.src, action.dst]
+          });
+          break;
+
+        case actions.OS_MAKE_DIRS:
+          yield call(apiFetchData, {
+            query: 'os.make_dirs',
             params: [action.path]
           });
           break;
@@ -177,9 +198,9 @@ function* watchRequestContent() {
   });
 }
 
-function* watchFSGlob() {
-  yield takeEvery(actions.FS_GLOB, function*({pathnames, rootDir}) {
-    let items = yield select(selectors.selectFSGlob, pathnames, rootDir);
+function* watchOsFSGlob() {
+  yield takeEvery(actions.OS_FS_GLOB, function*({pathnames, rootDir}) {
+    let items = yield select(selectors.selectOsFSGlob, pathnames, rootDir);
     if (items) {
       return;
     }
@@ -188,12 +209,12 @@ function* watchFSGlob() {
         query: 'os.glob',
         params: [pathnames, rootDir]
       });
-      const current = (yield select(selectors.selectFSGlobs)) || [];
+      const current = (yield select(selectors.selectOsFSGlobs)) || [];
       current.push({
-        key: selectors.selectFSGlobKey(pathnames, rootDir),
+        key: selectors.selectOsFSGlobKey(pathnames, rootDir),
         items
       });
-      yield put(updateEntity('fsGlob', current.slice(FS_GLOBS_CACHE_SIZE * -1)));
+      yield put(updateEntity('osFsGlob', current.slice(OS_FS_GLOBS_CACHE_SIZE * -1)));
     } catch (err) {
       return yield put(actions.notifyError('Error occured while glob ' + JSON.stringify(pathnames), err));
     }
@@ -217,9 +238,9 @@ function* watchListLogicalDisks() {
   });
 }
 
-function* watchListDir() {
-  yield takeEvery(actions.LIST_DIR, function*({ path }) {
-    let items = yield select(selectors.selectDirItems);
+function* watchOsListDir() {
+  yield takeEvery(actions.OS_LIST_DIR, function*({ path }) {
+    let items = yield select(selectors.selectOsDirItems);
     if (items && items.hasOwnProperty(path)) {
       return;
     } else if (!items) {
@@ -228,18 +249,18 @@ function* watchListDir() {
     try {
       const result = yield call(apiFetchData, {
         query: 'os.list_dir',
-        params: [path]
+        params: [ /^[A-Z]:$/.test(path) ? path + '\\' : path]
       });
-      yield put(updateEntity('dirItems', Object.assign({}, items, {[path]: result})));
+      yield put(updateEntity('osDirItems', Object.assign({}, items, {[path]: result})));
     } catch (err) {
       return yield put(actions.notifyError('Could not list directory' + path, err));
     }
   });
 }
 
-function* watchIsFile() {
-  yield takeEvery(actions.IS_FILE, function*({ path }) {
-    let items = yield select(selectors.selectIsFileItems);
+function* watchOsIsFile() {
+  yield takeEvery(actions.OS_IS_FILE, function*({ path }) {
+    let items = yield select(selectors.selectOsIsFileItems);
     if (items && items.hasOwnProperty(path)) {
       return;
     } else if (!items) {
@@ -250,16 +271,16 @@ function* watchIsFile() {
         query: 'os.is_file',
         params: [path]
       });
-      yield put(updateEntity('isFileItems', Object.assign({}, items, {[path]: result})));
+      yield put(updateEntity('osIsFileItems', Object.assign({}, items, {[path]: result})));
     } catch (err) {
       return yield put(actions.notifyError('Could not check is file ' + path, err));
     }
   });
 }
 
-function* watchIsDir() {
-  yield takeEvery(actions.IS_DIR, function*({ path }) {
-    let items = yield select(selectors.selectIsDirItems);
+function* watchOsIsDir() {
+  yield takeEvery(actions.OS_IS_DIR, function*({ path }) {
+    let items = yield select(selectors.selectOsIsDirItems);
     if (items && items.hasOwnProperty(path)) {
       return;
     } else if (!items) {
@@ -270,7 +291,7 @@ function* watchIsDir() {
         query: 'os.is_dir',
         params: [path]
       });
-      yield put(updateEntity('isDirItems', Object.assign({}, items, {[path]: result})));
+      yield put(updateEntity('osIsDirItems', Object.assign({}, items, {[path]: result})));
     } catch (err) {
       return yield put(actions.notifyError('Could not check is directory ' + path, err));
     }
@@ -279,9 +300,9 @@ function* watchIsDir() {
 
 function* watchResetFSItems() {
   yield takeLatest(actions.RESET_FS_ITEMS, function*() {
-    yield put(updateEntity('dirItems', null));
-    yield put(updateEntity('isFileItems', null));
-    yield put(updateEntity('isDirItems', null));
+    yield put(updateEntity('osDirItems', null));
+    yield put(updateEntity('osIsFileItems', null));
+    yield put(updateEntity('osIsDirItems', null));
   });
 }
 
@@ -337,11 +358,11 @@ export default [
   watchUpdateRouteBadge,
   watchOSRequests,
   watchRequestContent,
-  watchFSGlob,
+  watchOsFSGlob,
   watchListLogicalDisks,
-  watchListDir,
-  watchIsFile,
-  watchIsDir,
+  watchOsListDir,
+  watchOsIsFile,
+  watchOsIsDir,
   watchResetFSItems,
   watchSendFeedback,
   watchAutoUpdateCorePackages

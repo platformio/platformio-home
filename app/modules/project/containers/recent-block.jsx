@@ -19,7 +19,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import humanize from 'humanize';
-import { revealFile } from '../../core/actions';
+import { osRevealFile } from '../../core/actions';
 
 
 class RecentProjectsBlock extends React.Component {
@@ -43,7 +43,7 @@ class RecentProjectsBlock extends React.Component {
     openProject: PropTypes.func.isRequired,
     hideProject: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     showBoards: PropTypes.func.isRequired
   }
 
@@ -132,7 +132,7 @@ class RecentProjectsBlock extends React.Component {
     return (
       <div>
         <Icon type='folder' />
-        <a onClick={ () => this.props.revealFile(record.path) }>
+        <a onClick={ () => this.props.osRevealFile(record.path) }>
           { ' ' + record.path }
         </a>
       </div>
@@ -153,7 +153,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    revealFile,
+    osRevealFile,
     updateInputValue,
     setFilter: value => dispatch(lazyUpdateInputValue(INPUT_FILTER_KEY, value))
   }), dispatch);

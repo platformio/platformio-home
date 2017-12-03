@@ -19,7 +19,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { lazyUpdateInputValue } from '../../../store/actions';
-import { revealFile } from '../../core/actions';
+import { osRevealFile } from '../../core/actions';
 
 
 class LibraryInstalledPage extends React.Component {
@@ -31,7 +31,7 @@ class LibraryInstalledPage extends React.Component {
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     loadInstalledLibs: PropTypes.func.isRequired,
-    revealFile: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     uninstallLibrary: PropTypes.func.isRequired
@@ -77,7 +77,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(Object.assign({}, actions, {
-    revealFile,
+    osRevealFile,
     setFilter: value => dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value))
   }), dispatch);
 }

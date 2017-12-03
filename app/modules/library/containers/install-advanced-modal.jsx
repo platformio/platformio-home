@@ -13,7 +13,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { installLibrary } from '../actions';
 import { loadProjects } from '../../project/actions';
-import { openUrl } from '../../core/actions';
+import { osOpenUrl } from '../../core/actions';
 import { selectProjects } from '../../project/selectors';
 
 
@@ -28,7 +28,7 @@ class LibraryInstallAdvancedModal extends React.Component {
 
     installLibrary: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
-    openUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -150,20 +150,20 @@ class LibraryInstallAdvancedModal extends React.Component {
             <ul className='list-styled'>
               <li><b>Global storage</b> – libraries are visible for all projects</li>
               <li><b>Project storage</b> – libraries are visible only for the specified project</li>
-              <li><b>Custom storage</b> – libraries are visible for project via <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#projectconf-lib-extra-dirs') }>lib_extra_dirs</a> option.</li>
-              <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/librarymanager/ldf.html#storage') }>More storages...</a></li>
+              <li><b>Custom storage</b> – libraries are visible for project via <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#projectconf-lib-extra-dirs') }>lib_extra_dirs</a> option.</li>
+              <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/ldf.html#storage') }>More storages...</a></li>
             </ul>
           </Collapse.Panel>
           <Collapse.Panel header='Installation format' key='format'>
             <Alert showIcon className='block' message={ (
                 <div>
-                  PlatformIO Core has built-in powerful <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify dependencies for specific project in <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/projectconf.html') }>Project Configuration File &quot;platformio.ini&quot;</a>  using <code>lib_deps</code> option. The dependent libraries will be installed automatically on the first build of a project. No need to install them manually.
+                  PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify dependencies for specific project in <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf.html') }>Project Configuration File &quot;platformio.ini&quot;</a>  using <code>lib_deps</code> option. The dependent libraries will be installed automatically on the first build of a project. No need to install them manually.
                 </div>
                 ) } />
             <ul className='list-styled'>
               <li><code>&lt;id&gt;</code> - 12345</li>
               <li><code>id=&lt;id&gt;</code> - id=12345</li>
-              <li><code>&lt;id&gt;@&lt;version&gt;</code> - 12345@1.2.3 or 12345@^1.2.3 (<a onClick={ () => this.props.openUrl('http://semver.org/') }>Semantic Versioning</a>)</li>
+              <li><code>&lt;id&gt;@&lt;version&gt;</code> - 12345@1.2.3 or 12345@^1.2.3 (<a onClick={ () => this.props.osOpenUrl('http://semver.org/') }>Semantic Versioning</a>)</li>
               <li><code>&lt;id&gt;@&lt;version range&gt;</code> - 12345@&gt;0.1.0,!=0.2.0,&lt;0.3.0</li>
               <li><code>&lt;name&gt;</code> - Foo</li>
               <li><code>&lt;name&gt;@&lt;version&gt;</code> - Foo@1.2.3 or Foo@~1.2.3</li>
@@ -174,7 +174,7 @@ class LibraryInstallAdvancedModal extends React.Component {
               <li><code>&lt;repository&gt;</code></li>
               <li><code>&lt;name&gt;=&lt;repository&gt;</code> (name it should have locally)</li>
               <li><code>&lt;repository#tag&gt;</code> (&quot;tag&quot; can be commit, branch or tag)</li>
-              <li><a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/userguide/lib/cmd_install.html') }>more in docs...</a></li>
+              <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/userguide/lib/cmd_install.html') }>more in docs...</a></li>
             </ul>
           </Collapse.Panel>
         </Collapse>
@@ -195,5 +195,5 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   installLibrary,
   loadProjects,
-  openUrl
+  osOpenUrl
 })(LibraryInstallAdvancedModal);

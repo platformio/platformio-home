@@ -73,3 +73,7 @@ export function commonprefix(paths) {
   }
   return common.join('');
 }
+
+export function split(path) {
+  return path.split(sep).filter(item => item.length);
+}

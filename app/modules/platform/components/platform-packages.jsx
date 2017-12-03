@@ -26,7 +26,7 @@ export default class PlatformDetailPackages extends React.Component {
       url: PropTypes.string,
       optional: PropTypes.bool
     })),
-    openUrl: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired
   }
 
@@ -37,7 +37,7 @@ export default class PlatformDetailPackages extends React.Component {
         key: 'name',
         render: (_, record) => (
           <span>{ record.url ? (
-        <a onClick={ () => this.props.openUrl(record.url) }>
+        <a onClick={ () => this.props.osOpenUrl(record.url) }>
           { record.name }
         </a>
         ) : (

@@ -7,7 +7,7 @@
  */
 
 import { Button, Checkbox, Col, Icon, Row } from 'antd';
-import { openUrl, showAtStartup } from '../../core/actions';
+import { osOpenUrl, showAtStartup } from '../../core/actions';
 
 import PioVersions from './pio-versions';
 import PlatformIOLogo from '../components/pio-logo';
@@ -32,7 +32,7 @@ class HomePage extends React.Component {
   static propTypes = {
     caller: PropTypes.string,
     showOnStartupState: PropTypes.bool,
-    openUrl: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired,
     showAtStartup: PropTypes.func.isRequired
   }
 
@@ -102,11 +102,11 @@ class HomePage extends React.Component {
     return (
       <section className='page-container'>
         <div className='home-page'>
-          <h1>Welcome to <a onClick={ () => this.props.openUrl('http://platformio.org') }>PlatformIO</a> <small className='pull-right' style={{ marginTop: '15px' }}>{ this.renderShowAtStartup() }</small></h1>
+          <h1>Welcome to <a onClick={ () => this.props.osOpenUrl('http://platformio.org') }>PlatformIO</a> <small className='pull-right' style={{ marginTop: '15px' }}>{ this.renderShowAtStartup() }</small></h1>
           <br />
           <Row className='text-center'>
             <Col span={ 12 } className='pio-logo-versions'>
-              <a onClick={ () => this.props.openUrl('http://platformio.org') }>
+              <a onClick={ () => this.props.osOpenUrl('http://platformio.org') }>
                 <PlatformIOLogo />
               </a>
               { <PioVersions /> }
@@ -117,55 +117,55 @@ class HomePage extends React.Component {
           <div className='block text-center'>
             <ul className='list-inline'>
               <li>
-                <a onClick={ () => this.props.openUrl('http://platformio.org') }>Web</a>
+                <a onClick={ () => this.props.osOpenUrl('http://platformio.org') }>Web</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('https://github.com/platformio') }>Open Source</a>
+                <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio') }>Open Source</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('http://docs.platformio.org/page/ide/pioide.html') }>Get Started</a>
+                <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/ide/pioide.html') }>Get Started</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('http://docs.platformio.org/') }>Docs</a>
+                <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/') }>Docs</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('https://twitter.com/PlatformIO_Org') }>News</a>
+                <a onClick={ () => this.props.osOpenUrl('https://twitter.com/PlatformIO_Org') }>News</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('https://community.platformio.org/') }>Community</a>
+                <a onClick={ () => this.props.osOpenUrl('https://community.platformio.org/') }>Community</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('https://github.com/platformio/platformio/issues') }>Report an Issue</a>
+                <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio/issues') }>Report an Issue</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('http://platformio.org/donate') }>Donate</a>
+                <a onClick={ () => this.props.osOpenUrl('http://platformio.org/donate') }>Donate</a>
               </li>
               <li>
                 ·
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('http://platformio.org/contact') }>Contact</a>
+                <a onClick={ () => this.props.osOpenUrl('http://platformio.org/contact') }>Contact</a>
               </li>
             </ul>
           </div>
@@ -178,7 +178,7 @@ class HomePage extends React.Component {
                 <Icon type='star'></Icon>
               </li>
               <li>
-                <a onClick={ () => this.props.openUrl('https://github.com/platformio/platformio-core') }>PlatformIO Core</a>
+                <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core') }>PlatformIO Core</a>
               </li>
               <li>
                 <Icon type='star'></Icon>
@@ -254,4 +254,4 @@ function mapStateToProps(state) {
 }
 
 
-export default connect(mapStateToProps, { openUrl, showAtStartup })(HomePage);
+export default connect(mapStateToProps, { osOpenUrl, showAtStartup })(HomePage);
