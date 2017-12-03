@@ -159,7 +159,14 @@ class ProjectNewModal extends React.Component {
   }
 
   renderExplorer() {
-    return <FileExplorer ask='directory' onSelect={ ::this.onDidProjectDir } />;
+    return (
+      <div>
+        <div style={ { marginBottom: '5px' } }>
+          Choose a directory where we will create project files:
+        </div>
+        <FileExplorer ask='directory' onSelect={ ::this.onDidProjectDir } />
+      </div>
+    );
   }
 
 }

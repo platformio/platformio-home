@@ -76,13 +76,15 @@ class FileExplorer extends React.Component {
 
   onRequestCreateFolder() {
     this.setState({
-      pendingMakeDirs: !this.state.pendingMakeDirs
+      pendingMakeDirs: !this.state.pendingMakeDirs,
+      pendingRenameFile: false
     });
   }
 
   onRequestRenameFile() {
     this.setState({
-      pendingRenameFile: !this.state.pendingRenameFile
+      pendingRenameFile: !this.state.pendingRenameFile,
+      pendingMakeDirs: false
     });
   }
 
@@ -175,9 +177,9 @@ class FileExplorer extends React.Component {
             <Col xs={ 6 }></Col>
             <Col xs={ 18 }>
               { this.state.pendingMakeDirs ? (
-                <Input placeholder='Folder Name' onPressEnter={ ::this.onDidMakeDirs } />
+                <Input placeholder='Folder Name' onPressEnter={ ::this.onDidMakeDirs } ref={ elm => elm ? elm.focus() : '' } />
                 ) : (
-                <Input defaultValue={ path.basename(this.state.rootDir) } onPressEnter={ ::this.onDidRenameFile } />
+                <Input defaultValue={ path.basename(this.state.rootDir) } onPressEnter={ ::this.onDidRenameFile } ref={ elm => elm ? elm.focus() : '' } />
                 ) }
             </Col>
           </Row> }
@@ -196,7 +198,6 @@ class FileExplorer extends React.Component {
             type={ this.state.showHidden ? 'primary' : 'default' }
             onClick={ ::this.onDidToggleHidden }></Button>
         </Button.Group>
-
         <Button.Group className='inline-block'>
           <Button icon='folder-add'
             title='New folder'
@@ -213,8 +214,7 @@ class FileExplorer extends React.Component {
             { this.state.pendingRenameFile ? 'Cancel' : 'Rename' }
           </Button>
         </Button.Group>
-
-        <Button.Group>
+        <Button.Group className='inline-block'>
           <Button icon='copy'
             title='Duplicate'
             disabled={ !this.state.rootDir }
@@ -254,7 +254,9 @@ class FileExplorer extends React.Component {
       if (routes[routes.length - 1].path === route.path) {
         return <span>{ route.name }</span>;
       }
-      return <a onClick={ () => this.onDidChangeRoot(route.path) }>{ route.name }</a>;
+      return <a onClick={ () => this.onDidChangeRoot(route.path) }>
+               { route.name }
+             </a>;
     };
     return <Breadcrumb itemRender={ itemRender } routes={ routes.reverse() } />;
   }

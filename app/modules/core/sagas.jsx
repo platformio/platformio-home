@@ -249,7 +249,7 @@ function* watchOsListDir() {
     try {
       const result = yield call(apiFetchData, {
         query: 'os.list_dir',
-        params: [path]
+        params: [ /^[A-Z]:$/.test(path) ? path + '\\' : path]
       });
       yield put(updateEntity('osDirItems', Object.assign({}, items, {[path]: result})));
     } catch (err) {
