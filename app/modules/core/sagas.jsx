@@ -306,6 +306,16 @@ function* watchResetFSItems() {
   });
 }
 
+function* watchToggleFavoriteFolder() {
+  yield takeEvery(actions.TOGGLE_FAVORITE_FOLDER, function*({ path }) {
+    const items = (yield select(selectStorageItem, 'favoriteFolders')) || [];
+    yield put(updateStorageItem(
+      'favoriteFolders',
+      items.includes(path) ? items.filter(item => item !== path) : [...items, path])
+    );
+  });
+}
+
 function* watchSendFeedback() {
   yield takeLatest(actions.SEND_FEEDBACK, function*({body, onEnd}) {
     let err;
@@ -364,6 +374,7 @@ export default [
   watchOsIsFile,
   watchOsIsDir,
   watchResetFSItems,
+  watchToggleFavoriteFolder,
   watchSendFeedback,
   watchAutoUpdateCorePackages
 ];

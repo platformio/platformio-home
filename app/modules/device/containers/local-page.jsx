@@ -56,16 +56,16 @@ class DeviceLocalPage extends React.Component {
         )
       },
       {
-        title: 'Hardware',
-        dataIndex: 'hwid',
-        className: 'text-nowrap',
-        sorter: (a, b) => cmpSort(a.hwid.toUpperCase(), b.hwid.toUpperCase())
-      },
-      {
         title: 'Description',
         dataIndex: 'description',
         className: 'text-word-break',
         sorter: (a, b) => cmpSort(a.description.toUpperCase(), b.description.toUpperCase())
+      },
+      {
+        title: 'Hardware',
+        dataIndex: 'hwid',
+        className: 'text-nowrap',
+        sorter: (a, b) => cmpSort(a.hwid.toUpperCase(), b.hwid.toUpperCase())
       }
     ];
   }

@@ -31,6 +31,7 @@ class FileExplorer extends React.Component {
     osDirItems: PropTypes.object,
     homeDir: PropTypes.string,
     projectsDir: PropTypes.string,
+    favoriteFolders: PropTypes.arrayOf(PropTypes.string),
 
     listLogicalDisks: PropTypes.func.isRequired,
     osListDir: PropTypes.func.isRequired,
@@ -38,7 +39,8 @@ class FileExplorer extends React.Component {
     osRevealFile: PropTypes.func.isRequired,
     osCopyFile: PropTypes.func.isRequired,
     osRenameFile: PropTypes.func.isRequired,
-    resetFSItems: PropTypes.func.isRequired
+    resetFSItems: PropTypes.func.isRequired,
+    toggleFavoriteFolder: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -72,6 +74,10 @@ class FileExplorer extends React.Component {
     this.setState({
       showHidden: !this.state.showHidden
     });
+  }
+
+  onDidToggleFavorite() {
+    this.props.toggleFavoriteFolder(this.state.rootDir);
   }
 
   onRequestCreateFolder() {
@@ -192,6 +198,10 @@ class FileExplorer extends React.Component {
       <div className='fe-toolbar'>
         <Button.Group className='inline-block'>
           <Button icon='reload' title='Refresh' onClick={ ::this.onDidRefresh }></Button>
+          <Button icon={ this.state.rootDir && (this.props.favoriteFolders || []).includes(this.state.rootDir) ? 'star' : 'star-o' }
+            title='Toggle favorite folder'
+            disabled={ !this.state.rootDir }
+            onClick={ ::this.onDidToggleFavorite }></Button>
           <Button icon='eye'
             title='Show hidden files'
             ghost={ this.state.showHidden }
@@ -264,6 +274,7 @@ class FileExplorer extends React.Component {
   renderSidebar() {
     return (
       <div>
+        { this.renderSiderbarFavorites() }
         <b>Places</b>
         <ul className='block'>
           <li>
@@ -287,6 +298,35 @@ class FileExplorer extends React.Component {
               </li>
             )) }
         </ul>
+      </div>
+      );
+  }
+
+  renderSiderbarFavorites() {
+    const items = this.props.favoriteFolders || [];
+    let content = '';
+    if (!items || !items.length) {
+      content = <div>
+                  <small>Use <Icon type='star-o' /> to add folder</small>
+                </div>;
+    } else {
+      content = (
+        <ul>
+          { items.map(item => (
+              <li key={ item }>
+                <Icon type='star-o' />
+                <a onClick={ () => this.onDidChangeRoot(item) } title={ item }>
+                  { path.basename(item) }
+                </a>
+              </li>
+            )) }
+        </ul>
+      );
+    }
+    return (
+      <div className='block'>
+        <b>Favorites</b>
+        { content }
       </div>
       );
   }
@@ -340,7 +380,8 @@ function mapStateToProps(state) {
     disks: selectors.selectLogicalDisks(state),
     osDirItems: selectors.selectOsDirItems(state),
     homeDir: selectStorageItem(state, 'homeDir'),
-    projectsDir: selectStorageItem(state, 'projectsDir')
+    projectsDir: selectStorageItem(state, 'projectsDir'),
+    favoriteFolders: selectStorageItem(state, 'favoriteFolders')
   };
 }
 
