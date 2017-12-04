@@ -29,6 +29,7 @@ export const OS_FS_GLOB = 'OS_FS_GLOB';
 export const REQUEST_CONTENT = 'REQUEST_CONTENT';
 export const LIST_LOGICAL_DISKS = 'LIST_LOGICAL_DISKS';
 export const RESET_FS_ITEMS = 'RESET_FS_ITEMS';
+export const TOGGLE_FAVORITE_FOLDER = 'TOGGLE_FAVORITE_FOLDER';
 
 export const notifyError = (title, err) => createAction(NOTIFY_ERROR, { title, err });
 export const notifySuccess = (title, result) => createAction(NOTIFY_SUCCESS, { title, result });
@@ -50,3 +51,4 @@ export const osFsGlob = (pathnames, rootDir=undefined) => createAction(OS_FS_GLO
 export const requestContent = (uri, data=undefined) => createAction(REQUEST_CONTENT, { uri, data });
 export const listLogicalDisks = () => createAction(LIST_LOGICAL_DISKS);
 export const resetFSItems = () => createAction(RESET_FS_ITEMS);
+export const toggleFavoriteFolder = (path) => createAction(TOGGLE_FAVORITE_FOLDER, { path });

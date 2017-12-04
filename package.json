@@ -23,7 +23,7 @@
     "querystringify": "^1.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-ga": "2.2.0",
+    "react-ga": "^2.3.5",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "redux": "^3.7.1",
