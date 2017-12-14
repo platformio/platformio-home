@@ -121,11 +121,11 @@ class LibraryInstallAdvancedModal extends React.Component {
             onChange={ (e) => this.onDidValue(e.target.value) }
             onPressEnter={ ::this.onDidInstall }
             ref={ elm => this._inputElement = elm } />
-          <Select defaultValue='global'
+          <Select defaultValue=''
             style={ { width: '30%' } }
             size='large'
             onChange={ ::this.onDidStorage }>
-            <Select.Option value='global'>
+            <Select.Option value=''>
               Global storage
             </Select.Option>
             <Select.OptGroup label='Projects'>
