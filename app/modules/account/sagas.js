@@ -40,7 +40,9 @@ function* watchLoadAccountInfo() {
         query: 'core.auth_info',
         params: [extended]
       });
-    } catch (err) {}
+    } catch (err) {
+      yield put(notifyError('Could not load PIO Account information', err));
+    }
     yield put(updateEntity('accountInfo', data || {}));
   }
 }
