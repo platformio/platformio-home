@@ -227,7 +227,7 @@ export function selectPlatformData(state, name) {
 }
 
 export function selectFrameworkData(state, name) {
-  let data = selectRegistryFrameworks(state).find(item => item.name === name);
+  let data = (selectRegistryFrameworks(state) || []).find(item => item.name === name);
   if (!data) {
     return null;
   }

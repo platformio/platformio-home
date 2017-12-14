@@ -133,7 +133,7 @@ function* watchLoadPlatformData() {
         yield put(notifyError('Could not load platform data', err));
       }
     } else {
-      yield[call(checkBoards), call(checkRegistryPackages)];
+      yield [call(checkBoards), call(checkRegistryPackages)];
     }
   });
 }
@@ -141,7 +141,7 @@ function* watchLoadPlatformData() {
 function* watchLoadFrameworkData() {
   yield takeLatest(actions.LOAD_FRAMEWORK_DATA, function*() {
     const silent = false;
-    yield[call(checkRegistryPlatformsAndFrameworks, silent), call(checkBoards)];
+    yield [call(checkRegistryPlatformsAndFrameworks, silent), call(checkBoards)];
   });
 }
 
