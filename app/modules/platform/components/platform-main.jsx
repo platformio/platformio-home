@@ -233,7 +233,7 @@ export default class PlatformMain extends React.Component {
                     { this.props.data.versions.slice(0).reverse().map(name => (
                         <li key={ name }>
                           <Icon type='environment-o' />
-                          { name }
+                          { ' ' + name }
                         </li>
                       )) }
                   </ul>
