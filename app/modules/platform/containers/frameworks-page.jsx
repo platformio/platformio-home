@@ -25,7 +25,7 @@ class FrameworksPage extends React.Component {
     items: PropTypes.arrayOf(
       PropTypes.object.isRequired
     ),
-    filterValue: PropTypes.string.isRequired,
+    filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     loadRegistryFrameworks: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
