@@ -6,15 +6,29 @@
  * the root directory of this source tree.
  */
 
-import DeviceLocalPage from './containers/local-page';
+import DeviceLogicalPage from './containers/logical-page';
+import DeviceMDNSPage from './containers/mdns-page';
+import DeviceSerialPage from './containers/serial-page';
 
 
 const routes = [
   {
     path: '/device',
     icon: 'usb',
-    label: 'Local',
-    component: DeviceLocalPage
+    label: 'Serial',
+    component: DeviceSerialPage
+  },
+  {
+    path: '/device/logical',
+    icon: 'hdd',
+    label: 'Logical',
+    component: DeviceLogicalPage
+  },
+  {
+    path: '/device/mdns',
+    icon: 'wifi',
+    label: 'Multicast DNS',
+    component: DeviceMDNSPage
   }
 ];
 

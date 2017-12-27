@@ -9,32 +9,64 @@
 /* eslint-disable no-constant-condition */
 
 import * as actions from './actions';
+import * as selectors from './selectors';
 
-import { call, put, take } from 'redux-saga/effects';
+import { call, put, select, take } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '../../store/actions';
 
 import { apiFetchData } from '../../store/api';
 import { notifyError } from '../core/actions';
 
 
-function* watchLoadLocalDevices() {
+function* watchLoadSerialDevices() {
   while (true) {
-    yield take(actions.LOAD_LOCAL_DEVICES);
-    yield put(deleteEntity(/^localDevices/));
+    const { force } = yield take(actions.LOAD_SERIAL_DEVICES);
+    if (force) {
+      yield put(deleteEntity(/^serialDevices/));
+    }
+    let items = yield select(selectors.selectSerialDevices);
+    if (items) {
+      return;
+    }
     yield call(function*() {
       try {
-        const items = yield call(apiFetchData, {
+        items = yield call(apiFetchData, {
           query: 'core.call',
-          params: [['device', 'list', '--json-output']]
+          params: [['device', 'list', '--serial', '--json-output']]
         });
-        yield put(updateEntity('localDevices', items));
+        yield put(updateEntity('serialDevices', items));
       } catch (err) {
-        yield put(notifyError('Could not load local devices', err));
+        yield put(notifyError('Could not load serial devices', err));
+      }
+    });
+  }
+}
+
+function* watchLoadMDNSDevices() {
+  while (true) {
+    const { force } = yield take(actions.LOAD_MDNS_DEVICES);
+    if (force) {
+      yield put(deleteEntity(/^mDNSDevices/));
+    }
+    let items = yield select(selectors.selectMDNSDevices);
+    if (items) {
+      return;
+    }
+    yield call(function*() {
+      try {
+        items = yield call(apiFetchData, {
+          query: 'core.call',
+          params: [['device', 'list', '--mdns', '--json-output']]
+        });
+        yield put(updateEntity('mDNSDevices', items));
+      } catch (err) {
+        yield put(notifyError('Could not load mDNS services', err));
       }
     });
   }
 }
 
 export default [
-  watchLoadLocalDevices
+  watchLoadSerialDevices,
+  watchLoadMDNSDevices
 ];

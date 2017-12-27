@@ -159,7 +159,6 @@ export default class LibraryDetailMain extends React.Component {
                   <Menu.Item key=''>Install to...</Menu.Item>
                 </Menu>
               )}
-              loading={ this.state.installing }
               disabled={ this.state.installing }
               onClick={ ::this.onDidInstall }>
               <Icon type='download' /> Install

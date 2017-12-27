@@ -190,7 +190,7 @@ export function selectPlatformData(state, name) {
   if (name.includes('@')) {
     data = selectInstalledPlatformData(state, name);
   } else {
-    data = selectRegistryPlatforms(state).find(item => item.name === name);
+    data = (selectRegistryPlatforms(state) || []).find(item => item.name === name);
   }
   if (!data) {
     return null;

@@ -24,16 +24,16 @@ class FileExplorer extends React.Component {
     ask: PropTypes.string,
     onSelect: PropTypes.func,
 
-    disks: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      disk: PropTypes.string
+    devices: PropTypes.arrayOf(PropTypes.shape({
+      path: PropTypes.string,
+      name: PropTypes.string
     })),
     osDirItems: PropTypes.object,
     homeDir: PropTypes.string,
     projectsDir: PropTypes.string,
     favoriteFolders: PropTypes.arrayOf(PropTypes.string),
 
-    listLogicalDisks: PropTypes.func.isRequired,
+    loadLogicalDevices: PropTypes.func.isRequired,
     osListDir: PropTypes.func.isRequired,
     osMakeDirs: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired,
@@ -60,7 +60,7 @@ class FileExplorer extends React.Component {
   }
 
   componentWillMount() {
-    this.props.listLogicalDisks();
+    this.props.loadLogicalDevices();
   }
 
   onDidRefresh() {
@@ -132,16 +132,16 @@ class FileExplorer extends React.Component {
   }
 
   getRootItems() {
-    if (!this.props.disks) {
+    if (!this.props.devices) {
       return null;
     } else if (this.state.rootDir && (!this.props.osDirItems || !this.props.osDirItems.hasOwnProperty(this.state.rootDir))) {
       return null;
     }
 
     if (!this.state.rootDir) {
-      return this.props.disks.map(item => ({
-        name: item.name || item.disk,
-        path: item.disk,
+      return this.props.devices.map(item => ({
+        name: item.name || item.path,
+        path: item.path,
         isDir: true
       }));
     }
@@ -158,7 +158,7 @@ class FileExplorer extends React.Component {
   }
 
   render() {
-    if (!this.props.disks) {
+    if (!this.props.devices) {
       return (
         <div className='text-center' style={ { marginTop: '25px' } }>
           <Spin tip='Loading...' size='large' />
@@ -289,11 +289,11 @@ class FileExplorer extends React.Component {
         </ul>
         <b>Devices</b>
         <ul>
-          { this.props.disks.map(item => (
-              <li key={ item.disk }>
+          { this.props.devices.map(item => (
+              <li key={ item.path }>
                 <Icon type='hdd' />
-                <a onClick={ () => this.onDidChangeRoot(item.disk) }>
-                  { item.name || item.disk }
+                <a onClick={ () => this.onDidChangeRoot(item.path) }>
+                  { item.name || item.path }
                 </a>
               </li>
             )) }
@@ -377,7 +377,7 @@ class FileExplorer extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    disks: selectors.selectLogicalDisks(state),
+    devices: selectors.selectLogicalDevices(state),
     osDirItems: selectors.selectOsDirItems(state),
     homeDir: selectStorageItem(state, 'homeDir'),
     projectsDir: selectStorageItem(state, 'projectsDir'),

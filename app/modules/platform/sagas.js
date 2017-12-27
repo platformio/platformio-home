@@ -67,9 +67,13 @@ function* checkBoards() {
     return;
   }
   try {
-    const items = yield call(apiFetchData, {
+    let items = yield call(apiFetchData, {
       query: 'core.call',
       params: [['boards', '--json-output']]
+    });
+    items = items.map(item => {
+      item.frameworks = item.frameworks || [];
+      return item;
     });
     yield put(updateEntity('boards', items));
   } catch (err) {

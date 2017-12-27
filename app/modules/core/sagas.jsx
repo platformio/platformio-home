@@ -13,7 +13,7 @@ import * as selectors from './selectors';
 
 import { Button, Modal, notification } from 'antd';
 import { CHECK_CORE_UPDATES_INTERVAL, PIOPLUS_API_ENDPOINT } from '../../config';
-import { STORE_READY, updateEntity, updateStorageItem } from '../../store/actions';
+import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { inIframe, reportException } from './helpers';
 
@@ -221,9 +221,12 @@ function* watchOsFSGlob() {
   });
 }
 
-function* watchListLogicalDisks() {
-  yield takeLatest(actions.LIST_LOGICAL_DISKS, function*() {
-    let items = yield select(selectors.selectLogicalDisks);
+function* watchLoadLogicalDevices() {
+  yield takeLatest(actions.LOAD_LOGICAL_DEVICES, function*({ force }) {
+    if (force) {
+      yield put(deleteEntity(/^logicalDevices/));
+    }
+    let items = yield select(selectors.selectLogicalDevices);
     if (items) {
       return;
     }
@@ -231,9 +234,14 @@ function* watchListLogicalDisks() {
       items = yield call(apiFetchData, {
         query: 'os.list_logical_disks'
       });
-      yield put(updateEntity('logicalDisks', items));
+      items = items.map(item => {
+        item['path'] = item['disk'];
+        delete item['disk'];
+        return item;
+      });
+      yield put(updateEntity('logicalDevices', items));
     } catch (err) {
-      return yield put(actions.notifyError('Could not fetch logical disks', err));
+      return yield put(actions.notifyError('Could not load logical devices', err));
     }
   });
 }
@@ -369,7 +377,7 @@ export default [
   watchOSRequests,
   watchRequestContent,
   watchOsFSGlob,
-  watchListLogicalDisks,
+  watchLoadLogicalDevices,
   watchOsListDir,
   watchOsIsFile,
   watchOsIsDir,

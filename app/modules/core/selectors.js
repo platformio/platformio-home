@@ -65,8 +65,8 @@ export function selectOsFSGlob(state, pathnames, rootDir=undefined) {
   return null;
 }
 
-export function selectLogicalDisks(state) {
-  return state.entities.logicalDisks;
+export function selectLogicalDevices(state) {
+  return state.entities.logicalDevices;
 }
 
 export function selectOsDirItems(state) {
