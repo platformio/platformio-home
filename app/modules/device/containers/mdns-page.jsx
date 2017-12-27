@@ -8,7 +8,7 @@
 
 import * as actions from '../actions';
 
-import { Alert, Button, Icon, Spin, Table, Tooltip, message } from 'antd';
+import { Button, Icon, Spin, Table, Tooltip, message } from 'antd';
 
 import Clipboard from 'clipboard';
 import PropTypes from 'prop-types';
@@ -16,26 +16,26 @@ import React from 'react';
 import { cmpSort } from '../../core/helpers';
 import { connect } from 'react-redux';
 import { osOpenUrl } from '../../core/actions';
-import { selectLocalDevices } from '../selectors';
+import { selectMDNSDevices } from '../selectors';
 
 
-class DeviceLocalPage extends React.Component {
+class DeviceMDNSPage extends React.Component {
 
   static propTypes = {
     items: PropTypes.arrayOf(
       PropTypes.object.isRequired
     ),
-    loadLocalDevices: PropTypes.func.isRequired,
+    loadMDNSDevices: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
   }
 
   componentWillMount() {
-    this.props.loadLocalDevices();
+    this.props.loadMDNSDevices();
   }
 
   componentDidMount() {
-    this._clipboard = new Clipboard('.copy-port');
-    this._clipboard.on('success', () => message.success('Port name has been copied to clipboard!'));
+    this._clipboard = new Clipboard('.copy-name');
+    this._clipboard.on('success', () => message.success('A name has been copied to clipboard!'));
   }
 
   componentWillUnmount() {
@@ -44,28 +44,36 @@ class DeviceLocalPage extends React.Component {
     }
   }
 
+  ip2int(ip) {
+    return ip.split('.').reduce((ipInt, octet) => (ipInt<<8) + parseInt(octet, 10), 0) >>> 0;
+  }
+
   getTableColumns() {
     return [
       {
-        title: 'Port',
-        dataIndex: 'port',
+        title: 'Name',
+        dataIndex: 'name',
         className: 'text-nowrap',
-        sorter: (a, b) => cmpSort(a.port.toUpperCase(), b.port.toUpperCase()),
+        sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
         render: (text, record) => (
-          <span>{ record.port } <Tooltip title='Click for copy a port name to clipboard'><a className='copy-port' data-clipboard-text={ record.port }><Icon type='copy' /></a></Tooltip></span>
+          <span>{ record.name } <Tooltip title='Click for copy a name to clipboard'><a className='copy-name' data-clipboard-text={ record.name }><Icon type='copy' /></a></Tooltip></span>
         )
       },
       {
-        title: 'Description',
-        dataIndex: 'description',
+        title: 'Type',
+        dataIndex: 'type',
         className: 'text-word-break',
-        sorter: (a, b) => cmpSort(a.description.toUpperCase(), b.description.toUpperCase())
+        sorter: (a, b) => cmpSort(a.type.toUpperCase(), b.type.toUpperCase())
       },
       {
-        title: 'Hardware',
-        dataIndex: 'hwid',
-        className: 'text-nowrap',
-        sorter: (a, b) => cmpSort(a.hwid.toUpperCase(), b.hwid.toUpperCase())
+        title: 'IP',
+        dataIndex: 'ip',
+        sorter: (a, b) => this.ip2int(a.ip) > this.ip2int(b.ip)
+      },
+      {
+        title: 'Port',
+        dataIndex: 'port',
+        sorter: (a, b) => a.port > b.port
       }
     ];
   }
@@ -73,18 +81,13 @@ class DeviceLocalPage extends React.Component {
   render() {
     return (
       <div className='page-container'>
-        <Alert className='block' showIcon message={ (
-          <div>
-            PlatformIO automatically detects upload port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>. <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port') }>More details...</a>
-          </div>
-         ) } />
         <div className='block text-right'>
           <Button ghost
             type='primary'
             icon='reload'
             disabled={ !this.props.items }
             loading={ !this.props.items }
-            onClick={ () => this.props.loadLocalDevices() }>
+            onClick={ () => this.props.loadMDNSDevices(true) }>
             Refresh
           </Button>
         </div>
@@ -103,15 +106,20 @@ class DeviceLocalPage extends React.Component {
     }
     if (this.props.items.length === 0) {
       return (
-        <ul className='background-message text-center'>
-          <li>
-            No Items
-          </li>
-        </ul>
+        <div>
+          <ul className='background-message text-center'>
+            <li>
+              No Items
+            </li>
+          </ul>
+          <div className='text-center'>
+            <br />If you have Network Firewall, please enable incoming connections for PlatformIO Core (mDNS discovery service)
+          </div>
+        </div>
         );
     }
     return (
-      <Table rowKey='port'
+      <Table rowKey='name'
         dataSource={ this.props.items }
         columns={ this.getTableColumns() }
         size='middle'
@@ -125,11 +133,11 @@ class DeviceLocalPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectLocalDevices(state)
+    items: selectMDNSDevices(state)
   };
 }
 
 export default connect(mapStateToProps, {
   ...actions,
   osOpenUrl
-})(DeviceLocalPage);
+})(DeviceMDNSPage);

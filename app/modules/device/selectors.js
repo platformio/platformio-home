@@ -6,6 +6,10 @@
  * the root directory of this source tree.
  */
 
-export function selectLocalDevices(state) {
-  return state.entities.localDevices || null;
+export function selectSerialDevices(state) {
+  return state.entities.serialDevices || null;
+}
+
+export function selectMDNSDevices(state) {
+  return state.entities.mDNSDevices || null;
 }
