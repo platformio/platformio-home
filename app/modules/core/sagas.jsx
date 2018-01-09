@@ -193,7 +193,7 @@ function* watchRequestContent() {
       });
       yield put(updateEntity('requestedContents', contents.slice(REQUESTED_CONTENTS_CACHE_SIZE * -1)));
     } catch (err) {
-      return yield put(actions.notifyError('Error occured while requesting content from ' + uri, err));
+      return yield put(actions.notifyError('Error occurred while requesting content from ' + uri, err));
     }
   });
 }
@@ -216,7 +216,7 @@ function* watchOsFSGlob() {
       });
       yield put(updateEntity('osFsGlob', current.slice(OS_FS_GLOBS_CACHE_SIZE * -1)));
     } catch (err) {
-      return yield put(actions.notifyError('Error occured while glob ' + JSON.stringify(pathnames), err));
+      return yield put(actions.notifyError('Error occurred while glob ' + JSON.stringify(pathnames), err));
     }
   });
 }
@@ -232,12 +232,7 @@ function* watchLoadLogicalDevices() {
     }
     try {
       items = yield call(apiFetchData, {
-        query: 'os.list_logical_disks'
-      });
-      items = items.map(item => {
-        item['path'] = item['disk'];
-        delete item['disk'];
-        return item;
+        query: 'os.get_logical_devices'
       });
       yield put(updateEntity('logicalDevices', items));
     } catch (err) {

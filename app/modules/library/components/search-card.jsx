@@ -64,9 +64,9 @@ export default class LibrarySearchCard extends React.Component {
         </Tooltip>
       </li>
       <li>
-        <Tooltip title='Unique downloads per month'>
+        <Tooltip title='Downloads'>
           <Icon type='download' />
-          { ' ' + this.props.item.dlmonth.toLocaleString() }
+          { ' ' + this.props.item.dllifetime.toLocaleString() }
         </Tooltip>
       </li>
     </ul>

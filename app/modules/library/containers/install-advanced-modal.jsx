@@ -144,7 +144,11 @@ class LibraryInstallAdvancedModal extends React.Component {
             </Select.OptGroup>
           </Select>
         </Input.Group>
-        <hr />
+        <Alert showIcon className='block' message={ (
+            <div>
+              PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify project dependencies in <b>configuration file &quot;platformio.ini&quot;</b> using <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps') }>lib_deps</a> option. The dependent libraries will be installed automatically on the first build of a project. No need to install them manually.
+            </div>
+            ) } />
         <Collapse defaultActiveKey={ ['storage'] }>
           <Collapse.Panel header='Storage types' key='storage'>
             <ul className='list-styled'>
@@ -155,11 +159,6 @@ class LibraryInstallAdvancedModal extends React.Component {
             </ul>
           </Collapse.Panel>
           <Collapse.Panel header='Installation format' key='format'>
-            <Alert showIcon className='block' message={ (
-                <div>
-                  PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify dependencies for specific project in <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf.html') }>Project Configuration File &quot;platformio.ini&quot;</a>  using <code>lib_deps</code> option. The dependent libraries will be installed automatically on the first build of a project. No need to install them manually.
-                </div>
-                ) } />
             <ul className='list-styled'>
               <li><code>&lt;id&gt;</code> - 12345</li>
               <li><code>id=&lt;id&gt;</code> - id=12345</li>

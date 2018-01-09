@@ -10,7 +10,7 @@ import * as actions from '../actions';
 import * as path from '../path';
 import * as selectors from '../selectors';
 
-import { Breadcrumb, Button, Col, Icon, Input, Row, Spin } from 'antd';
+import { Breadcrumb, Button, Col, Icon, Input, Row, Tooltip, Spin } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -182,11 +182,13 @@ class FileExplorer extends React.Component {
           <Row>
             <Col xs={ 6 }></Col>
             <Col xs={ 18 }>
-              { this.state.pendingMakeDirs ? (
-                <Input placeholder='Folder Name' onPressEnter={ ::this.onDidMakeDirs } ref={ elm => elm ? elm.focus() : '' } />
-                ) : (
-                <Input defaultValue={ path.basename(this.state.rootDir) } onPressEnter={ ::this.onDidRenameFile } ref={ elm => elm ? elm.focus() : '' } />
-                ) }
+              <Tooltip title='Press Enter to finish...'>
+                { this.state.pendingMakeDirs ? (
+                  <Input placeholder='Folder Name' onPressEnter={ ::this.onDidMakeDirs } ref={ elm => elm ? elm.focus() : '' } />
+                  ) : (
+                  <Input defaultValue={ path.basename(this.state.rootDir) } onPressEnter={ ::this.onDidRenameFile } ref={ elm => elm ? elm.focus() : '' } />
+                  ) }
+              </Tooltip>
             </Col>
           </Row> }
       </div>
@@ -217,7 +219,6 @@ class FileExplorer extends React.Component {
             { this.state.pendingMakeDirs ? 'Cancel' : 'New' }
           </Button>
           <Button icon='edit'
-            title='Rename'
             disabled={ !this.state.rootDir }
             type={ this.state.pendingRenameFile ? 'danger' : 'default' }
             onClick={ ::this.onRequestRenameFile }>
@@ -226,13 +227,11 @@ class FileExplorer extends React.Component {
         </Button.Group>
         <Button.Group className='inline-block'>
           <Button icon='copy'
-            title='Duplicate'
-            disabled={ !this.state.rootDir }
+             disabled={ !this.state.rootDir }
             onClick={ ::this.onDidDuplicate }>
             Duplicate
           </Button>
           <Button icon='folder-open'
-            title='Reveal'
             disabled={ !this.state.rootDir }
             onClick={ () => this.props.osRevealFile(this.state.rootDir) }>
             Reveal

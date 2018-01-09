@@ -320,7 +320,7 @@ export default class LibraryDetailMain extends React.Component {
               </div> }
             { this.props.data.dlstats &&
               <div>
-                <h2>Unique Downloads</h2>
+                <h2>Downloads</h2>
                 <b>{ this.props.data.dlstats.day }</b> in the last day
                 <br /><b>{ this.props.data.dlstats.week }</b> in the last week
                 <br /><b>{ this.props.data.dlstats.month }</b> in the last month
