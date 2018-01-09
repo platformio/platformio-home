@@ -81,7 +81,7 @@ export default class LibraryStats extends React.Component {
             Register
           </Button>
           <Button ghost type='primary' icon='download' disabled={ this.state.advancedVisible } onClick={ ::this.onDidAdvanced }>
-            Advanced
+            Install
           </Button>
         </Button.Group>
       </Col>
