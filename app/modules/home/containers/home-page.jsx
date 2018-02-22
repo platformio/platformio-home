@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Checkbox, Col, Icon, Row } from 'antd';
+import { Button, Checkbox, Col, Divider, Icon, Row } from 'antd';
 import { osOpenUrl, showAtStartup } from '../../core/actions';
 
 import PioVersions from './pio-versions';
@@ -169,7 +169,7 @@ class HomePage extends React.Component {
               </li>
             </ul>
           </div>
-          <hr className='block' />
+          <Divider />
           <RecentProjectsBlock router={ this.context.router } />
           <div className='block text-center'>
             If you enjoy using PlatformIO, please star our projects on GitHub!

@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Button, Checkbox, Col, Form, Icon, Input, Row, message } from 'antd';
+import { Alert, Button, Checkbox, Col, Divider, Form, Icon, Input, Row, message } from 'antd';
 
 import Clipboard from 'clipboard';
 import PropTypes from 'prop-types';
@@ -114,7 +114,7 @@ export default class AccountTokenForm extends React.Component {
   renderToken() {
     return (
       <div>
-        <hr />
+        <Divider>Token</Divider>
         <Input disabled
           size='large'
           style={{ width: '100%' }}

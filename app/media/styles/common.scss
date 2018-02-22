@@ -6,17 +6,6 @@
  * the root directory of this source tree.
  */
 
-h1,
-h2 {
-  margin-bottom: $component-padding !important;
-}
-h3,
-h4,
-h5,
-h6 {
-  margin-bottom: $component-padding/1.2 !important;
-}
-
 h1 small,
 h2 small,
 h3 small,
@@ -57,13 +46,6 @@ kbd {
   border-radius: 3px;
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);
           box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);
-}
-
-hr {
-  margin-top: $component-padding;
-  margin-bottom: $component-padding;
-  border: 0;
-  border-top: 1px solid $border-color;
 }
 
 dl {
@@ -112,7 +94,7 @@ dd {
   text-align: right;
 }
 .text-nowrap {
-  white-space: nowrap;
+  white-space: nowrap !important;
 }
 .text-word-break {
   word-break: normal !important;
@@ -131,6 +113,14 @@ dd {
 .pull-left {
   float: left !important;
 }
+.clearfix {
+  &::after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+}
+
 .hide {
   display: none !important;
 }
@@ -142,18 +132,26 @@ dd {
 }
 
 .block {
-  margin-bottom: $component-padding;
+  margin-bottom: $component-padding !important;
+}
+.inline-block-tight {
+  margin-right: 5px;
 }
 .inline-block,
 .inline-block-tight {
   display: inline-block;
-  vertical-align: middle;
+  // vertical-align: middle;
 }
 .inline-block {
   margin-right: 10px;
 }
 .inline-block-tight {
   margin-right: 5px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
 }
 
 ul.background-message {
@@ -163,14 +161,17 @@ ul.background-message {
 }
 
 ul.list-inline {
-  padding-left: 0;
-  margin-left: -5px;
+  padding: 0;
+  margin: 0;
   list-style: none;
 }
 ul.list-inline > li {
   display: inline-block;
-  padding-right: 5px;
-  padding-left: 5px;
+  padding-right: 10px;
+}
+
+ul.list-inline > li:last-child {
+  padding-right: 0;
 }
 
 ul.list-styled {
@@ -181,10 +182,14 @@ ul.list-styled {
 /* Items: library, platform, framework */
 .list-item-card {
   cursor: pointer;
-  background-color: darken(#fff, 1%) !important;
-  margin-bottom: $component-padding;
+  margin-bottom: $component-padding !important;
+
+  .ant-card-head {
+    background-color: darken(#fff, 2%) !important;
+  }
 
   .ant-card-head-title {
+    white-space: initial !important;
     small {
       font-weight: normal;
       font-size: 75%;
@@ -192,9 +197,8 @@ ul.list-styled {
       color: #777;
     }
   }
-}
 
-.input-search-lg {
-  font-size: 18px !important;
-  height: 40px !important;
+  .list-item-card-head-extra {
+    padding-top: 7px;
+  }
 }

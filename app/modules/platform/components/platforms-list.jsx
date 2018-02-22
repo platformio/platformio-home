@@ -67,13 +67,13 @@ export default class PlatformsList extends React.Component {
     return (
       <div>
         <PlatformInstallAdvancedModal visible={ this.state.advancedVisible } onCancel={ ::this.onDidCancelAdvanced } />
-        <Input className='block input-search-lg'
-          placeholder='Filter platforms by name'
+        <Input.Search className='block'
+          placeholder='Filter platforms by name...'
           defaultValue={ this.props.filterValue }
           size='large'
           onChange={ e => this.onDidFilter(e.target.value) }
           ref={ item => item ? item.focus() : null } />
-        <div className='text-right'>
+        <div className='block text-right'>
           <Button.Group>
             <Button ghost
               type='primary'
@@ -96,7 +96,6 @@ export default class PlatformsList extends React.Component {
               No Results
             </li>
           </ul> }
-        <br />
         { this.props.items.map(item => (
             <PlatformCard key={ item.__pkg_dir || item.name } item={ item } { ...this.props } />
           )) }

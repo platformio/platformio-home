@@ -83,6 +83,7 @@ export default class LibraryStorageItem extends React.Component {
     const extra = <span><Tooltip title='Version'> <Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version } </Tooltip></span>;
     return (
       <Card title={ title }
+        hoverable
         extra={ extra }
         onClick={ (e) => this.onDidShow(e, this.props.item) }
         className='list-item-card'>

@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Col, Form, Icon, Input, Row } from 'antd';
+import { Button, Col, Divider, Form, Icon, Input, Row } from 'antd';
 
 import PlatformIOLogo from '../../home/components/pio-logo';
 import PropTypes from 'prop-types';
@@ -57,8 +57,9 @@ export default class AccountLoginForm extends React.Component {
       <div>
         <div className='login-logo'><PlatformIOLogo /></div>
         <Row>
-          <Col xs={ 12 } className='login-left-side'>{ this.renderBanner() }</Col>
-          <Col xs={ 12 } className='login-right-side'>{ this.renderForm() }</Col>
+          <Col xs={ 11 } className='login-left-side'>{ this.renderBanner() }</Col>
+          <Col xs={ 2 }><Divider type='vertical' /></Col>
+          <Col xs={ 11 } className='login-right-side'>{ this.renderForm() }</Col>
         </Row>
       </div>
     );

@@ -14,13 +14,15 @@
     overflow: auto;
 
     .ant-layout-header {
-      background-color: #ececec;
       padding: 11px 20px 14px 20px;
       margin: 0;
       height: 50px;
       line-height: inherit;
       vertical-align: middle;
-      max-width: $max-content-width;
+
+      .header-container {
+        max-width: $max-content-width;
+      }
 
       .account-bar {
         line-height: 30px;
@@ -44,8 +46,6 @@
   .ant-layout-sider {
     overflow: auto;
     height: 100vh;
-    // position: fixed;
-    // left: 0;
 
     .logo {
       text-align: center;
@@ -72,13 +72,9 @@
     }
   }
 
-  .ant-btn-sm {
-    font-size: 12px;
-  }
-
   h1 > .anticon,
   h2 > .anticon {
-    font-size: 50%;
+    font-size: 60%;
   }
   h3 > .anticon,
   h4 > .anticon,
@@ -87,22 +83,17 @@
     font-size: 80%;
   }
 
-  h1 .ant-badge-count,
-  h2 .ant-badge-count,
-  h3 .ant-badge-count,
-  h4 .ant-badge-count,
-  h5 .ant-badge-count,
-  h6 .ant-badge-count {
-    background-color: #d9d9d9;
-    font-size: 50%;
-  }
 }
 
 /* Menu with Babges */
 .ant-menu {
+
+  .ant-badge {
+    color: inherit !important;
+  }
   .ant-badge-count {
     padding: 0;
-    font-size: 10px;
+    font-size: 11px;
   }
   &.ant-menu-inline .ant-badge-count {
     right: -7px;

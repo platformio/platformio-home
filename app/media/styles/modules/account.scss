@@ -51,15 +51,17 @@ $form-max-width: 350px;
         .anticon {
           font-size: 28px;
           margin-top: $component-padding/2.2;
-          color: $primary-color;
         }
       }
     }
 
+    .ant-divider {
+      height: 250px;
+    }
+
     .login-right-side {
       text-align: left;
-      border-left: 1px solid $border-color;
-      padding-left: $component-padding*2;
+      padding-left: $component-padding/2;
 
       .account-form {
         margin: 0;

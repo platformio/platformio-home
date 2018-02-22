@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Col, Icon, Row, Tooltip } from 'antd';
+import { Button, Col, Divider, Icon, Row, Tooltip } from 'antd';
 
 import LibraryInstallAdvancedModal from '../containers/install-advanced-modal';
 import PropTypes from 'prop-types';
@@ -67,41 +67,34 @@ export default class LibraryStats extends React.Component {
   }
 
   render() {
-    const title_with_buttons = (
-    <Row>
-      <Col span={ 12 }>
-        Recently
-      </Col>
-      <Col className='text-right'>
-        <Button.Group>
-          <Button ghost type='primary' icon='code-o' onClick={ () => this.props.searchLibrary('') }>
-            All Libraries
-          </Button>
-          <Button ghost type='primary' icon='file-add' onClick={ ::this.onDidRegister }>
-            Register
-          </Button>
-          <Button ghost type='primary' icon='download' disabled={ this.state.advancedVisible } onClick={ ::this.onDidAdvanced }>
-            Install
-          </Button>
-        </Button.Group>
-      </Col>
-    </Row>
-    );
-
     return (
       <div>
         <LibraryInstallAdvancedModal visible={ this.state.advancedVisible } onCancel={ ::this.onDidCancelAdvanced } />
-        <h2>{ title_with_buttons }</h2>
+        <div className='text-right'>
+          <Button.Group>
+            <Button ghost type='primary' icon='code-o' onClick={ () => this.props.searchLibrary('') }>
+              All Libraries
+            </Button>
+            <Button ghost type='primary' icon='file-add' onClick={ ::this.onDidRegister }>
+              Register
+            </Button>
+            <Button ghost type='primary' icon='download' disabled={ this.state.advancedVisible } onClick={ ::this.onDidAdvanced }>
+              Install
+            </Button>
+          </Button.Group>
+        </div>
+
+        <Divider style={{ marginTop: 0 }}>Recently</Divider>
         <Row>
           <Col span={ 8 }>
             <h3>Updated</h3>
             <ul>
               { this.props.data.updated.map((item) => (
-                  <li key={ item.name }>
-                    <a onClick={ () => this.props.showLibrary(item.id) }>
+                  <li key={ item.id }>
+                    <a className='inline-block-tight' onClick={ () => this.props.showLibrary(item.id) }>
                       { item.name }
                     </a>
-                    <small title={ item.date }>{ ' ' + humanize.relativeTime(new Date(item.date).getTime() / 1000) }</small>
+                    <small title={ item.date }>{ humanize.relativeTime(new Date(item.date).getTime() / 1000) }</small>
                   </li>
                 )) }
             </ul>
@@ -110,11 +103,11 @@ export default class LibraryStats extends React.Component {
             <h3>Added</h3>
             <ul>
               { this.props.data.added.map((item) => (
-                  <li key={ item.name }>
-                    <a onClick={ () => this.props.showLibrary(item.id) }>
+                  <li key={ item.id }>
+                    <a className='inline-block-tight' onClick={ () => this.props.showLibrary(item.id) }>
                       { item.name }
                     </a>
-                    <small title={ item.date }>{ ' ' + humanize.relativeTime(new Date(item.date).getTime() / 1000) }</small>
+                    <small title={ item.date }>{ humanize.relativeTime(new Date(item.date).getTime() / 1000) }</small>
                   </li>
                 )) }
             </ul>
@@ -132,19 +125,20 @@ export default class LibraryStats extends React.Component {
             </ul>
           </Col>
         </Row>
-        <h2>Popular Tags</h2>
+
+        <Divider>Popular Tags</Divider>
         <div className='inline-buttons'>
           { this.props.data.topkeywords.map((name, index) => (
               <Button key={ name }
                 icon='tag'
                 size={ this.getKeywordBtnSize(index) }
-                onClick={ () => this.onDidKeywordSearch(name) }
-                className='inline-block-tight'>
+                onClick={ () => this.onDidKeywordSearch(name) }>
                 { name }
               </Button>
             )) }
         </div>
-        <h2>Trending</h2>
+
+        <Divider>Trending</Divider>
         <Row className='trending'>
           <Col span={ 8 }>
             <h3>Today</h3>

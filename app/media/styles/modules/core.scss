@@ -66,14 +66,9 @@
     .fe-root-items li {
       padding-bottom: $component-padding/4;
     }
-  }
 
-  .ant-breadcrumb {
-    .ant-breadcrumb-link a {
-      color: $primary-color;
+    .ant-divider {
+      margin: $component-padding/2.5 0 $component-padding/1.5 0;
     }
-
-    border-bottom: 1px solid $border-color;
-    margin-bottom: $component-padding;
   }
 }

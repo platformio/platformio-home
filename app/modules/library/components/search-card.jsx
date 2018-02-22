@@ -20,8 +20,9 @@ export default class LibrarySearchCard extends React.Component {
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       examplenums: PropTypes.number.isRequired,
-      dlmonth: PropTypes.number.isRequired,
+      dllifetime: PropTypes.number.isRequired,
       frameworks: PropTypes.arrayOf(PropTypes.object).isRequired,
+      platforms: PropTypes.arrayOf(PropTypes.string).isRequired,
       keywords: PropTypes.arrayOf(PropTypes.string).isRequired,
       authornames: PropTypes.arrayOf(PropTypes.string).isRequired
     }),
@@ -40,56 +41,88 @@ export default class LibrarySearchCard extends React.Component {
     this.props.showLibrary(id);
   }
 
-  onDidKeywordSearch(e, name) {
+  onDidFilterSearch(e, filter, value) {
     e.stopPropagation();
-    this.props.searchLibrary(`keyword:"${name}"`);
+    this.props.searchLibrary(`${filter}:"${value}"`);
   }
 
   render() {
-    const title = (
-    <div><a onClick={ (e) => this.onDidShow(e, this.props.item.id) }>{ this.props.item.name }</a> <small>by { this.props.item.authornames.length ? this.props.item.authornames[0] : '' }</small></div>
-    );
-    const extra = (
-    <ul className='list-inline text-nowrap'>
-      <li>
-        <Tooltip title='Compatible frameworks'>
-          <Icon type='setting' />
-          { ' ' + this.props.item.frameworks.map(item => item.title).join(', ') }
-        </Tooltip>
-      </li>
-      <li>
-        <Tooltip title='Total examples'>
-          <Icon type='copy' />
-          { ' ' + this.props.item.examplenums }
-        </Tooltip>
-      </li>
-      <li>
-        <Tooltip title='Downloads'>
-          <Icon type='download' />
-          { ' ' + this.props.item.dllifetime.toLocaleString() }
-        </Tooltip>
-      </li>
-    </ul>
+    const header = (
+    <div className='clearfix'>
+      <div className='pull-left'>
+        <a onClick={ (e) => this.onDidShow(e, this.props.item.id) }>
+          { this.props.item.name }
+        </a> <small>by { this.props.item.authornames.length ? this.props.item.authornames[0] : '' }</small>
+      </div>
+      <small className='pull-right list-item-card-head-extra'>{ this.renderExtraHead() }</small>
+    </div>
     );
     return (
-      <Card title={ title }
-        extra={ extra }
+      <Card hoverable
+        title={ header }
         onClick={ (e) => this.onDidShow(e, this.props.item.id) }
         className='list-item-card'>
         <div className='block'>
           { this.props.item.description }
         </div>
-        <div className='inline-buttons'>
-          { this.props.item.keywords.map(name => (
-              <Button key={ name }
-                icon='tag'
-                size='small'
-                onClick={ (e) => this.onDidKeywordSearch(e, name) }>
-                { name }
-              </Button>
-            )) }
+        <div>
+          <Icon type='tag' className='inline-block-tight' />
+          { this.renderKeywords(this.props.item.keywords) }
+        </div>
+        <div>
+          <Tooltip title='Compatible platforms'>
+            <Icon type='desktop' className='inline-block-tight' />
+            { this.renderFrameworksOrPlatforms(this.props.item.platforms, 'platform') }
+          </Tooltip>
         </div>
       </Card>
+      );
+  }
+
+  renderExtraHead() {
+    return (
+      <ul className='list-inline'>
+        <li>
+          <Tooltip title='Downloads'>
+            <Icon type='download' className='inline-block-tight' />
+            { this.props.item.dllifetime.toLocaleString() }
+          </Tooltip>
+        </li>
+        <li>
+          <Tooltip title='Total examples'>
+            <Icon type='copy' className='inline-block-tight' />
+            { this.props.item.examplenums }
+          </Tooltip>
+        </li>
+        <li>
+          <Tooltip title='Compatible frameworks'>
+            <Icon type='setting' className='inline-block-tight' />
+            { this.renderFrameworksOrPlatforms(this.props.item.frameworks, 'framework') }
+          </Tooltip>
+        </li>
+      </ul>
+      );
+  }
+
+  renderFrameworksOrPlatforms(items, filter) {
+    return (
+      <span>{ items.map((item, index) => (
+          <a key={ item.name } onClick={ (e) => this.onDidFilterSearch(e, filter, item.name) }>
+            { item.title }
+            { index < items.length - 1 ? ', ' : '' }
+          </a>
+        )) }</span>
+      );
+  }
+
+  renderKeywords(items) {
+    return (
+      <span>{ items.map((name, index) => (
+          <a key={ name } onClick={ (e) => this.onDidFilterSearch(e, 'keyword', name) }>
+            { name }
+            { index < items.length - 1 ? ', ' : '' }
+          </a>
+        )) }</span>
       );
   }
 

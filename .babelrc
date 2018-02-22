@@ -1,7 +1,7 @@
 {
   "presets": ["es2015", "react"],
   "plugins": [
-    ["import", {"libraryName": "antd", "style": true}],
+    ["import", {"libraryName": "antd", "libraryDirectory": "es", "style": true}],
     "transform-runtime",
     "transform-class-properties",
     "transform-function-bind",

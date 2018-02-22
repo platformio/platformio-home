@@ -9,7 +9,6 @@
 import { Alert, Badge, Button, Icon, Input, Spin, Table, Tooltip, message } from 'antd';
 
 import Clipboard from 'clipboard';
-import { INPUT_FILTER_DELAY } from '../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
@@ -61,7 +60,6 @@ export default class Boards extends React.Component {
       // eslint-disable-next-line react/no-direct-mutation-state
       this.state.data = this.normalizeTableData(this.props.items);
     }
-    this._filterTimer = null;
   }
 
   componentDidMount() {
@@ -148,21 +146,19 @@ export default class Boards extends React.Component {
     // });
   }
 
-  onDidFilter(value) {
+  onFilterChange(value) {
     this.setState({
       filterValue: value
     });
-    if (this._filterTimer) {
-      clearInterval(this._filterTimer);
+  }
+
+  onDidFilter() {
+    this.setState({
+      data: this.normalizeTableData(this.props.items)
+    });
+    if (this.props.onFilter) {
+      this.props.onFilter(this.state.filterValue);
     }
-    this._filterTimer = setTimeout(() => {
-      this.setState({
-        data: this.normalizeTableData(this.props.items)
-      });
-      if (this.props.onFilter) {
-        this.props.onFilter(value);
-      }
-    }, INPUT_FILTER_DELAY);
   }
 
   onDidTableChange(_, filters, sorters) {
@@ -177,7 +173,10 @@ export default class Boards extends React.Component {
       dataFilters: null,
       dataSorters: null
     });
-    this.onDidFilter(null);
+    // if (this._searchInputElement) {
+    //   this._searchInputElement.input.input.value = '';
+    // }
+    this.onDidFilter();
   }
 
   onToggleExtraFilter(value) {
@@ -430,11 +429,13 @@ export default class Boards extends React.Component {
     return (
       <div className='board-explorer'>
         { !this.props.noHeader && this.renderHeader(data) }
-        <Input className='block input-search-lg'
+        <Input.Search className='block'
+          enterButton
           placeholder='Search board...'
-          value={ this.state.filterValue || this.props.defaultFilter }
+          defaultValue={ this.state.filterValue || this.props.defaultFilter }
           size='large'
-          onChange={ e => this.onDidFilter(e.target.value) }
+          onChange={ (e) => this.onFilterChange(e.target.value)}
+          onSearch={ ::this.onDidFilter }
           ref={ elm => this._searchInputElement = elm } />
         { !data &&
           <div className='text-center'>
@@ -502,7 +503,7 @@ export default class Boards extends React.Component {
               icon='tool'
               ghost={ !this.isExtraFilterEnabled('debug') }
               onClick={ () => this.onToggleExtraFilter('debug') }>
-              Debugger
+              Debug
             </Button>
             {/* <Button type='primary'
               icon='shopping-cart'

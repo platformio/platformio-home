@@ -12,7 +12,7 @@
   },
   "homepage": "http://platformio.org",
   "dependencies": {
-    "antd": "2.13.11",
+    "antd": "3.2.1",
     "clipboard": "^1.7.1",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
@@ -21,8 +21,8 @@
     "marked": "^0.3.6",
     "prop-types": "^15.5.10",
     "querystringify": "^1.0.0",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-ga": "^2.3.5",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
@@ -73,13 +73,16 @@
   "theme": {
     "light": {
       "@icon-url": "'/fonts/iconfont'",
-      "@font-size-base": "14px",
       "@card-padding-base": "15px",
-      "@layout-body-background": "#fff"
+      "@btn-font-size-sm": "12px",
+      "@layout-sider-background": "#001529",
+      "@menu-dark-bg": "@layout-sider-background",
+      "@layout-header-background": "#ececec",
+      "@layout-body-background": "#fff",
+      "@breadcrumb-link-color": "@link-color"
     },
     "dark": {
       "@icon-url": "'/fonts/iconfont'",
-      "@font-size-base": "14px",
       "@card-padding-base": "15px",
       "@primary-color": "#4080d0",
       "@link-color": "#4080d0",

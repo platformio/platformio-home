@@ -10,7 +10,7 @@ import * as actions from '../actions';
 import * as path from '../path';
 import * as selectors from '../selectors';
 
-import { Breadcrumb, Button, Col, Icon, Input, Row, Tooltip, Spin } from 'antd';
+import { Breadcrumb, Button, Col, Divider, Icon, Input, Row, Spin, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -267,7 +267,12 @@ class FileExplorer extends React.Component {
                { route.name }
              </a>;
     };
-    return <Breadcrumb itemRender={ itemRender } routes={ routes.reverse() } />;
+    return (
+      <div>
+        <Breadcrumb itemRender={ itemRender } routes={ routes.reverse() } />
+        <Divider />
+      </div>
+    );
   }
 
   renderSidebar() {

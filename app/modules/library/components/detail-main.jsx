@@ -183,8 +183,8 @@ export default class LibraryDetailMain extends React.Component {
       <ul className='list-inline' style={ { marginTop: '9px' } }>
         <li>
           <Tooltip title='Version'>
-            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } />
-            { ' ' + this.props.data.version }
+            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } className='inline-block-tight' />
+            { this.props.data.version }
           </Tooltip>
         </li>
         <li>
