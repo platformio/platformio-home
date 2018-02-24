@@ -14,7 +14,6 @@ const common = require('./webpack.common');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-const theme = 'dark';
 
 module.exports = {
   entry: [
@@ -42,7 +41,7 @@ module.exports = {
           {
             loader: 'less-loader',
             options: {
-              modifyVars: common.packageConfig.theme[theme]
+              modifyVars: common.packageConfig.theme[common.theme]
             }
           }
         ],

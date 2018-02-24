@@ -68,6 +68,7 @@
   },
   "theme": {
     "light": {
+      "hljs-theme": "default",
       "@icon-url": "'/fonts/iconfont'",
       "@card-padding-base": "15px",
       "@btn-font-size-sm": "12px",
@@ -82,6 +83,7 @@
       "@tag-kbd-bg": "#333"
     },
     "dark": {
+      "hljs-theme": "monokai-sublime",
       "@icon-url": "'/fonts/iconfont'",
       "@body-background": "#1E1E1E",
       "@component-background": "#252526",
@@ -111,7 +113,7 @@
       "@card-shadow": "0 2px 8px rgba(255, 255, 255, .02)",
       "@breadcrumb-link-color": "@link-color",
       "@tabs-card-active-color": "@heading-color",
-      "@tab-hover-color": "fade(@tabs-card-active-color, 2%)",
+      "@tab-hover-color": "@heading-color",
       "@tag-code-color": "@body-background",
       "@tag-code-bg": "@heading-color",
       "@tag-kbd-color": "@body-background",

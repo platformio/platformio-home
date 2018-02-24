@@ -12,11 +12,13 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
+const theme = 'dark';
 const rootDir = path.resolve(__dirname, '..');
 const mediaDir = path.join(rootDir, 'app', 'media');
 const packageConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
 
 module.exports = {
+  theme: theme,
   packageConfig: packageConfig,
   appDir: path.join(rootDir, 'app'),
   mediaDir: mediaDir,

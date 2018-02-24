@@ -15,8 +15,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Create multiple instances
-const theme = 'dark';
-const extractThemeCSS = new ExtractTextPlugin(`themes/${theme}.css`);
+const extractThemeCSS = new ExtractTextPlugin(`themes/${common.theme}.css`);
 
 module.exports = {
   entry: [
@@ -43,7 +42,7 @@ module.exports = {
             {
               loader: 'less-loader',
               options: {
-                modifyVars: common.packageConfig.theme[theme]
+                modifyVars: common.packageConfig.theme[common.theme]
               }
             }
           ]
