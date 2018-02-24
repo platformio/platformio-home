@@ -33,19 +33,19 @@ samp {
 code {
   padding: 2px 4px;
   font-size: 90%;
-  color: #c7254e;
-  background-color: #f9f2f4;
+  color: @tag-code-color;
+  background-color: @tag-code-bg;
   border-radius: 4px;
 }
 
 kbd {
   padding: 2px 4px;
   font-size: 90% !important;
-  color: #fff;
-  background-color: #333;
+  color: @tag-kbd-color;
+  background-color: @tag-kbd-bg;
   border-radius: 3px;
-  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);
-          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .25);
+  -webkit-box-shadow: inset 0 -1px 0 @disabled-color;
+          box-shadow: inset 0 -1px 0 @disabled-color;
 }
 
 dl {
@@ -132,7 +132,7 @@ dd {
 }
 
 .block {
-  margin-bottom: $component-padding !important;
+  margin-bottom: @padding-sm !important;
 }
 .inline-block-tight {
   margin-right: 5px;
@@ -182,10 +182,10 @@ ul.list-styled {
 /* Items: library, platform, framework */
 .list-item-card {
   cursor: pointer;
-  margin-bottom: $component-padding !important;
+  margin-bottom: @padding-sm !important;
 
   .ant-card-head {
-    background-color: darken(#fff, 2%) !important;
+    background-color: @background-color-light !important;
   }
 
   .ant-card-head-title {

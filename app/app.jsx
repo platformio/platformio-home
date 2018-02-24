@@ -6,7 +6,6 @@
  * the root directory of this source tree.
  */
 
-import './media/styles/index.scss';
 import { Button, Layout, Tooltip } from 'antd';
 import { Route, Switch } from 'react-router';
 

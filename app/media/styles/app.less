@@ -6,6 +6,9 @@
  * the root directory of this source tree.
  */
 
+ @sider-width: 70px;
+ @max-content-width: @screen-xl - @sider-width;
+
 .app-container {
   height: 100vh;
 
@@ -21,7 +24,7 @@
       vertical-align: middle;
 
       .header-container {
-        max-width: $max-content-width;
+        max-width: @max-content-width;
       }
 
       .account-bar {
@@ -38,7 +41,7 @@
       }
 
       .page-container {
-        max-width: $max-content-width - 40; // 20+20 padding
+        max-width: @max-content-width - 40; // 20+20 padding
       }
     }
   }
@@ -74,7 +77,7 @@
 
   h1 > .anticon,
   h2 > .anticon {
-    font-size: 60%;
+    font-size: 70%;
   }
   h3 > .anticon,
   h4 > .anticon,

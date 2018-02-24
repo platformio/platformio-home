@@ -8,7 +8,7 @@
 
  .source-code-toggler {
   float: right;
-  margin-top: $component-padding/2;
+  margin-top: @padding-xs;
   font-size: 18px !important;
   font-weight: normal;
   color: #d9d9d9;
@@ -22,8 +22,8 @@
   }
 
   h3 {
-    margin-top: $component-padding*1.5 !important;
-    border-bottom: 1px solid #e9e9e9;
+    margin-top: @padding-xs !important;
+    border-bottom: 1px solid @border-color-split;
   }
 
   ul {
@@ -34,14 +34,14 @@
 }
 
 .file-explorer {
-  background-color: #ececec;
+  background-color: @layout-header-background;
 
   .fe-toolbar {
-    padding: $component-padding/2;
+    padding: @padding-xs;
   }
 
   .fe-sidebar {
-    padding: $component-padding/2 $component-padding/1.5;
+    padding: 0 @padding-sm;
 
     .fe-toolbar {
       margin-bottom: 5px;
@@ -57,18 +57,18 @@
   }
 
   .fe-tree {
-    background-color: #fff;
+    background-color: @layout-body-background;
     height: 350px;
     overflow: auto;
-    padding: $component-padding/2 $component-padding;
+    padding: @padding-xs @padding-sm;
     word-break: break-all;
 
     .fe-root-items li {
-      padding-bottom: $component-padding/4;
+      padding-bottom: @padding-xs/2;
     }
 
     .ant-divider {
-      margin: $component-padding/2.5 0 $component-padding/1.5 0;
+      margin: @padding-xs 0;
     }
   }
 }

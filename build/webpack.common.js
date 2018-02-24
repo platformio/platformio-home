@@ -15,11 +15,12 @@ const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 const rootDir = path.resolve(__dirname, '..');
 const mediaDir = path.join(rootDir, 'app', 'media');
 const packageConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-const theme = 'light';
 
 module.exports = {
+  packageConfig: packageConfig,
   appDir: path.join(rootDir, 'app'),
   mediaDir: mediaDir,
+  rootDir: rootDir,
   outputDir: path.join(rootDir, 'dist'),
 
   loaders: [
@@ -32,20 +33,6 @@ module.exports = {
           ['import', { libraryName: 'antd', style: true }]
         ]
       }
-    },
-    {
-      test: /\.less$/,
-      use: [
-        'style-loader',
-        'css-loader',
-        {
-          loader: 'less-loader',
-          options: {
-            modifyVars: packageConfig.theme[theme]
-          }
-        }
-      ],
-      include: [path.resolve(rootDir, 'node_modules/antd')]
     },
     {
       test: /\.css$/,
