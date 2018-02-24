@@ -12,7 +12,6 @@ const webpack = require('webpack');
 const path = require('path');
 const common = require('./webpack.common');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 
@@ -20,6 +19,7 @@ module.exports = {
   entry: [
     'react-hot-loader/patch',
     path.join(common.appDir, 'index.jsx'),
+    path.join(common.mediaDir, 'styles/index.less')
   ],
   devtool: process.env.WEBPACK_DEVTOOL || 'eval-source-map',
   output: {
@@ -31,11 +31,26 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   module: {
-    loaders: common.loaders.concat({
-      test: /\.scss$/,
-      loaders: ['style-loader', 'css-loader?importLoaders=1', 'sass-loader'],
-      exclude: ['node_modules']
-    })
+    loaders: [
+      ...common.loaders,
+      {
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              modifyVars: common.packageConfig.theme[common.theme]
+            }
+          }
+        ],
+        include: [
+          path.resolve(common.rootDir, 'node_modules/antd/lib'),
+          common.mediaDir
+        ]
+      }
+    ]
   },
   devServer: {
     contentBase: './dist',
@@ -59,7 +74,6 @@ module.exports = {
       filename: 'style.css',
       allChunks: true
     }),
-    new DashboardPlugin(),
     new HtmlWebpackPlugin({
       template: path.join(common.appDir, 'index.html'),
       inject: 'body',

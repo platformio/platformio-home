@@ -142,7 +142,7 @@ export default class LibraryDetailMain extends React.Component {
       <div>
         <LibraryInstallAdvancedModal library={ `id=${this.getLibraryForInstall()}` } visible={ this.state.installToVisible } onCancel={ ::this.onDidCancelInstallTo } />
         <h3>Installation</h3>
-        <ul className='block list-inline'>
+        <ul className='list-inline'>
           <li>
             <Select defaultValue={ versions[0].name } onChange={ ::this.onDidVersionChange }>
               { versions.map(item => (
@@ -171,6 +171,7 @@ export default class LibraryDetailMain extends React.Component {
             <a onClick={ () => this.setState({ activeTab: 'installation' }) }>More info</a>
           </li>
         </ul>
+        <br />
       </div>
       );
   }
@@ -183,8 +184,8 @@ export default class LibraryDetailMain extends React.Component {
       <ul className='list-inline' style={ { marginTop: '9px' } }>
         <li>
           <Tooltip title='Version'>
-            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } />
-            { ' ' + this.props.data.version }
+            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } className='inline-block-tight' />
+            { this.props.data.version }
           </Tooltip>
         </li>
         <li>

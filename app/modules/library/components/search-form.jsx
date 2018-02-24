@@ -32,7 +32,7 @@ export default class LibrarySearchForm extends React.Component {
     }
   }
 
-  onDidQuery(value) {
+  onQueryChange(value) {
     this.setState({
       searchQuery: value
     });
@@ -45,13 +45,13 @@ export default class LibrarySearchForm extends React.Component {
   render() {
     return (
       <div className='lib-search-from'>
-        <Input key={ this.props.defaultSearch }
-          className='input-search-lg'
-          placeholder='Search libraries'
+        <Input.Search key={ this.props.defaultSearch }
+          enterButton
+          placeholder='Search libraries...'
           defaultValue={ this.props.defaultSearch }
           size='large'
-          onChange={ (e) => this.onDidQuery(e.target.value)}
-          onPressEnter={ ::this.onDidSearch }
+          onChange={ (e) => this.onQueryChange(e.target.value)}
+          onSearch={ ::this.onDidSearch }
           ref={ elm => this._searchInputElement = elm } />
         <div className='block search-tips'>
           <Button size='small'

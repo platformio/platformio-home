@@ -6,8 +6,7 @@
  * the root directory of this source tree.
  */
 
-import './media/styles/index.scss';
-import { Button, Layout, LocaleProvider, Tooltip } from 'antd';
+import { Button, Layout, Tooltip } from 'antd';
 import { Route, Switch } from 'react-router';
 
 import AccountStatusBar from './modules/account/containers/status-bar';
@@ -17,7 +16,6 @@ import PlatformIOLogo from './modules/home/components/pio-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
 import RoutedMenu from './modules/core/containers/routed-menu';
-import enUS from 'antd/lib/locale-provider/en_US';
 import routes from './routes';
 
 
@@ -30,62 +28,73 @@ export default class App extends React.Component {
   renderHeader() {
     const router = this.context.router;
     return (
-      <table cellPadding='0' cellSpacing='0' width='100%'>
-        <tbody>
-          <tr>
-            <td>
-              <ul className='list-inline'>
-                <li>
-                  <Button.Group>
-                    <Button icon='left' title='Go Back' disabled={ router.history.length < 1 || router.history.index === 0 } onClick={ () => router.history.goBack() }></Button>
-                    <Button icon='right' title='Go Forward' disabled={ router.history.length < 1 || router.history.index >= (router.history.length - 1) } onClick={ () => router.history.goForward() }></Button>
-                  </Button.Group>
-                </li>
-                <li><Feedback /></li>
-                <li><OpenInBrowser /></li>
-              </ul>
-            </td>
-            <td className='account-bar text-right'>
-              { <AccountStatusBar router={ router } /> }
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      );
+      <div className='header-container'>
+        <table cellPadding='0' cellSpacing='0' width='100%'>
+          <tbody>
+            <tr>
+              <td>
+                <ul className='list-inline'>
+                  <li>
+                    <Button.Group>
+                      <Button icon='left'
+                        title='Go Back'
+                        disabled={ router.history.length < 1 || router.history.index === 0 }
+                        onClick={ () => router.history.goBack() }></Button>
+                      <Button icon='right'
+                        title='Go Forward'
+                        disabled={ router.history.length < 1 || router.history.index >= (router.history.length - 1) }
+                        onClick={ () => router.history.goForward() }></Button>
+                    </Button.Group>
+                  </li>
+                  <li>
+                    <Feedback />
+                  </li>
+                  <li>
+                    <OpenInBrowser />
+                  </li>
+                </ul>
+              </td>
+              <td className='account-bar text-right'>
+                { <AccountStatusBar router={ router } /> }
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>);
   }
 
   render() {
     const {Content, Header, Sider} = Layout;
     return (
-      <LocaleProvider locale={ enUS }>
-        <Layout className='app-container'>
-          <Layout>
-            <Sider width={ 70 }>
-              <div className='logo'>
-                <Tooltip placement='right' title='PlatformIO Home'>
-                  <a href='/'>
-                    <PlatformIOLogo width='32px' height='32px' />
-                  </a>
-                </Tooltip>
-              </div>
-              <RoutedMenu router={ this.context.router } routes={ routes } theme={ 'dark' } />
-            </Sider>
-            <Layout className='main-container'>
-              <Header>{ this.renderHeader() }</Header>
-              <Content>
-                <Switch>
-                  { routes.slice(0).reverse().map(item => (
-                      <Route path={ item.path }
-                        key={ item.path }
-                        exact={ item.exact }
-                        component={ item.component } />
-                    )) }
-                </Switch>
-              </Content>
-            </Layout>
+      <Layout className='app-container'>
+        <Layout hasSider>
+          <Sider width={ 70 }>
+            <div className='logo'>
+              <Tooltip placement='right' title='PlatformIO Home'>
+                <a href='/'>
+                  <PlatformIOLogo width='32px' height='32px' />
+                </a>
+              </Tooltip>
+            </div>
+            <RoutedMenu router={ this.context.router } routes={ routes } theme={ 'dark' } />
+          </Sider>
+          <Layout className='main-container'>
+            <Header>
+              { this.renderHeader() }
+            </Header>
+            <Content>
+              <Switch>
+                { routes.slice(0).reverse().map(item => (
+                    <Route path={ item.path }
+                      key={ item.path }
+                      exact={ item.exact }
+                      component={ item.component } />
+                  )) }
+              </Switch>
+            </Content>
           </Layout>
         </Layout>
-      </LocaleProvider>
+      </Layout>
       );
   }
 }

@@ -18,22 +18,13 @@
   }
 
   .libraries-stats {
-    h2 {
-      border-bottom: 1px solid #e9e9e9;
-      padding-bottom: $component-padding/2;
-      margin: $component-padding*1.5 0;
-    }
-
     ul {
-      list-style: none;
-      padding-left: 0;
-
       li {
-        margin-bottom: $component-padding/1.6;
+        margin-bottom: @padding-xs;
       }
 
       &.last-keywords li {
-        margin-bottom: $component-padding/1.7;
+        margin-bottom: @padding-xs/1.8;
       }
     }
 
@@ -45,7 +36,7 @@
 
   .libraries-detail {
     h2 {
-      margin: $component-padding*1.5 0 $component-padding/2 0;
+      margin: @padding-xs 0 @padding-xs/2 0;
     }
 
     .library-author .anticon {
@@ -53,7 +44,7 @@
     }
 
     .library-subpages {
-      padding: $component-padding*1.5 $component-padding*1.5 0 0;
+      padding-right: @padding-md;
     }
 
     .library-author {
@@ -64,17 +55,10 @@
 
   .lib-storages-toggler {
     float: right;
-    margin-top: $component-padding;
+    margin-top: @padding-sm;
     font-size: 22px !important;
     font-weight: normal;
     color: #d9d9d9;
     cursor: pointer;
-  }
-
-  .lib-storage-items {
-    margin-bottom: $component-padding;
-    > h1 {
-      border-bottom: 1px solid #F0F0F0;
-    }
   }
 }

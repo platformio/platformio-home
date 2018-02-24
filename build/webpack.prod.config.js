@@ -14,11 +14,13 @@ const common = require('./webpack.common');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// Create multiple instances
+const extractThemeCSS = new ExtractTextPlugin(`themes/${common.theme}.css`);
 
 module.exports = {
   entry: [
     path.join(common.appDir, 'index.jsx'),
-    path.join(common.mediaDir, 'styles', 'index.scss')
+    path.join(common.mediaDir, 'styles/index.less')
   ],
   output: {
     publicPath: './',
@@ -29,11 +31,28 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   module: {
-    loaders: common.loaders.concat({
-      test: /\.scss$/,
-      loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader?sourceMap&localIdentName=[local]___[hash:base64:5]!sass-loader?outputStyle=expanded' }),
-      exclude: ['node_modules']
-    })
+    loaders: [
+      ...common.loaders,
+      {
+        test: /\.less$/,
+        use: extractThemeCSS.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader',
+            {
+              loader: 'less-loader',
+              options: {
+                modifyVars: common.packageConfig.theme[common.theme]
+              }
+            }
+          ]
+        }),
+        include: [
+          path.resolve(common.rootDir, 'node_modules/antd/lib'),
+          path.join(common.mediaDir, 'styles')
+        ]
+      }
+    ]
   },
   plugins: [
     ...common.plugins,
@@ -52,7 +71,7 @@ module.exports = {
       }
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new ExtractTextPlugin('[contenthash].min.css'),
+    extractThemeCSS,
     new HtmlWebpackPlugin({
       template: path.join(common.appDir, 'index.html'),
       inject: 'body',

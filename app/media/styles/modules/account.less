@@ -6,13 +6,13 @@
  * the root directory of this source tree.
  */
 
-$form-max-width: 350px;
+@form-max-width: 350px;
 
  .account-module {
 
   dt,
   dd {
-    padding-bottom: $component-padding/2;
+    padding-bottom: @padding-xs;
   }
 
   .login-page,
@@ -25,9 +25,8 @@ $form-max-width: 350px;
     .account-form {
       display: inline-block;
       width: 100%;
-      max-width: $form-max-width;
+      max-width: @form-max-width;
       text-align: center;
-      margin-top: $component-padding*2;
 
       .account-submit-button {
         width: 100%;
@@ -37,29 +36,31 @@ $form-max-width: 350px;
 
   .login-page {
     .login-logo {
-      margin: $component-padding*2;
+      margin: @padding-lg;
     }
     .login-left-side {
       text-align: right;
-      padding-right: $component-padding*2;
+      padding-right: @padding-lg;
 
       .pioaccount-banner {
-        max-width: $form-max-width;
+        max-width: @form-max-width;
         text-align: left;
         float: right;
 
         .anticon {
           font-size: 28px;
-          margin-top: $component-padding/2.2;
-          color: $primary-color;
+          margin-top: @padding-xs;
         }
       }
     }
 
+    .ant-divider {
+      height: 250px;
+    }
+
     .login-right-side {
       text-align: left;
-      border-left: 1px solid $border-color;
-      padding-left: $component-padding*2;
+      padding-left: @padding-xs;
 
       .account-form {
         margin: 0;

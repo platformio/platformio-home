@@ -55,7 +55,7 @@ export default class FrameworksList extends React.Component {
 
     return (
       <div>
-        <Input className='block input-search-lg'
+        <Input.Search className='block'
           placeholder='Filter frameworks by name'
           defaultValue={ this.props.filterValue }
           size='large'
@@ -67,7 +67,6 @@ export default class FrameworksList extends React.Component {
               No Results
             </li>
           </ul> }
-        <br />
         { this.props.items.map(item => this.renderItem(item)) }
       </div>
       );
@@ -78,7 +77,7 @@ export default class FrameworksList extends React.Component {
     <a onClick={ (e) => this.onDidShow(e, item.name) }>{ item.title }</a>
     );
     return (
-      <Card key={ item.name } title={ title }
+      <Card hoverable key={ item.name } title={ title }
         onClick={ (e) => this.onDidShow(e, item.name) }
         className='list-item-card'>
         <div className='block'>

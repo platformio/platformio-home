@@ -6,7 +6,6 @@
  * the root directory of this source tree.
  */
 
-import 'highlight.js/styles/default.css';
 import * as path from '../path';
 
 import { Icon, Spin } from 'antd';

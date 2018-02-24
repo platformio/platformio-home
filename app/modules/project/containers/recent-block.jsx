@@ -113,7 +113,7 @@ class RecentProjectsBlock extends React.Component {
     return (
       <div>
         <h2>Recent Projects</h2>
-        <Input className='block input-search-lg'
+        <Input className='block'
           defaultValue={ this.props.filterValue }
           placeholder='Search project...'
           onChange={ e => this.props.setFilter(e.target.value) } />
@@ -131,9 +131,9 @@ class RecentProjectsBlock extends React.Component {
   renderExpandedRow(record) {
     return (
       <div>
-        <Icon type='folder' />
+        <Icon type='folder' className='inline-block-tight' />
         <a onClick={ () => this.props.osRevealFile(record.path) }>
-          { ' ' + record.path }
+          { record.path }
         </a>
       </div>
       );

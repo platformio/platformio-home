@@ -88,7 +88,7 @@ class PlatformInstallAdvancedModal extends React.Component {
         onOk={ ::this.onDidInstall }
         onCancel={ ::this.onDidCancel }>
         <Input
-          className='block input-search-lg'
+          className='block'
           placeholder='Platform name, repository, requirements...'
           size='large'
           value={ this.state.value }

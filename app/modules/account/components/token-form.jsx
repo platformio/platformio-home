@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Button, Checkbox, Col, Form, Icon, Input, Row, message } from 'antd';
+import { Alert, Button, Checkbox, Col, Divider, Form, Icon, Input, Row, message } from 'antd';
 
 import Clipboard from 'clipboard';
 import PropTypes from 'prop-types';
@@ -65,7 +65,7 @@ export default class AccountTokenForm extends React.Component {
     const {getFieldDecorator} = this.props.form;
     return (
       <div className='text-left'>
-        <Alert showIcon message='Personal Authentication Token' description={ (
+        <Alert showIcon message='Personal Authentication Token' className='block' description={ (
           <div>
             It is intended for <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/ci/index.html') }>Continuous Integration</a> systems, <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote™</a> operations when you can not authenticate manually.
             <div>
@@ -114,7 +114,7 @@ export default class AccountTokenForm extends React.Component {
   renderToken() {
     return (
       <div>
-        <hr />
+        <Divider>Token</Divider>
         <Input disabled
           size='large'
           style={{ width: '100%' }}

@@ -101,7 +101,7 @@ export default class PlatformCard extends React.Component {
       extra = <span><Tooltip title='Version'> <Icon type={ this.props.item.__src_url ? 'fork' : 'environment-o' } /> { this.props.item.version } </Tooltip></span>;
     }
     return (
-      <Card title={ title }
+      <Card hoverable title={ title }
         extra={ extra }
         onClick={ ::this.onDidShow }
         className='list-item-card'>

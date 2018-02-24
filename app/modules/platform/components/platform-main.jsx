@@ -126,8 +126,8 @@ export default class PlatformMain extends React.Component {
       <ul className='list-inline' style={ { marginTop: '9px' } }>
         <li>
           <Tooltip title='Version'>
-            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } />
-            { ' ' + this.props.data.version }
+            <Icon type={ this.props.data.__src_url ? 'fork' : 'environment-o' } className='inline-block-tight' />
+            { this.props.data.version }
           </Tooltip>
         </li>
         <li>
@@ -217,9 +217,9 @@ export default class PlatformMain extends React.Component {
               </li>
               { this.props.data.license &&
                 <li>
-                  <Icon type='copyright' />
+                  <Icon type='copyright' className='inline-block-tight' />
                   <a onClick={ () => this.props.osOpenUrl(`https://opensource.org/licenses/${this.props.data.license}`) }>
-                    { ' ' + this.props.data.license }
+                    { this.props.data.license }
                   </a>
                 </li> }
               { this.props.data.__src_url &&
@@ -232,8 +232,8 @@ export default class PlatformMain extends React.Component {
                   <ul>
                     { this.props.data.versions.slice(0).reverse().map(name => (
                         <li key={ name }>
-                          <Icon type='environment-o' />
-                          { ' ' + name }
+                          <Icon type='environment-o' className='inline-block-tight' />
+                          { name }
                         </li>
                       )) }
                   </ul>

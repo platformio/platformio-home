@@ -58,8 +58,8 @@ export default class LibraryStoragesList extends React.Component {
     }
     return (
       <div className='lib-storages-list'>
-        <Input className='block input-search-lg'
-          placeholder='Filter libraries by name'
+        <Input.Search className='block'
+          placeholder='Filter libraries by name...'
           defaultValue={ this.props.filterValue }
           size='large'
           onChange={ e => this.onDidFilter(e.target.value) }
