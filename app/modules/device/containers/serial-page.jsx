@@ -10,7 +10,7 @@ import * as actions from '../actions';
 
 import { Alert, Button, Icon, Spin, Table, Tooltip, message } from 'antd';
 
-import Clipboard from 'clipboard';
+import ClipboardJS from 'clipboard';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
@@ -34,7 +34,7 @@ class DeviceSerialPage extends React.Component {
   }
 
   componentDidMount() {
-    this._clipboard = new Clipboard('.copy-port');
+    this._clipboard = new ClipboardJS('.copy-port');
     this._clipboard.on('success', () => message.success('Port name has been copied to clipboard!'));
   }
 

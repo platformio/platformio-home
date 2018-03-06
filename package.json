@@ -11,8 +11,8 @@
   },
   "homepage": "http://platformio.org",
   "dependencies": {
-    "antd": "3.2.1",
-    "clipboard": "^1.7.1",
+    "antd": "3.2.3",
+    "clipboard": "^2.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
     "humanize": "^0.0.9",
