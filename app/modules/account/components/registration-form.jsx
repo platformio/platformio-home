@@ -27,7 +27,7 @@ export default class AccountRegistrationForm extends React.Component {
     };
   }
 
-  onDidSubmit = (e) => {
+  onDidSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) {
@@ -51,7 +51,7 @@ export default class AccountRegistrationForm extends React.Component {
     const {getFieldDecorator} = this.props.form;
     return (
       <div >
-        <Form onSubmit={ this.onDidSubmit } className='account-form'>
+        <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
           <Form.Item>
             <PlatformIOLogo />
           </Form.Item>

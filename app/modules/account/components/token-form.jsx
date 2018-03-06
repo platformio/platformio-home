@@ -40,7 +40,7 @@ export default class AccountTokenForm extends React.Component {
     }
   }
 
-  onDidSubmit = (e) => {
+  onDidSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) {
@@ -73,7 +73,7 @@ export default class AccountTokenForm extends React.Component {
             </div>
           </div>
         ) } />
-        <Form onSubmit={ this.onDidSubmit } className='account-form'>
+        <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
           <Form.Item>
             { getFieldDecorator('password', {
                 rules: [{

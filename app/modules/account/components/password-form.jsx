@@ -26,7 +26,7 @@ export default class AccountPasswordForm extends React.Component {
     };
   }
 
-  onDidSubmit = (e) => {
+  onDidSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) {
@@ -54,7 +54,7 @@ export default class AccountPasswordForm extends React.Component {
         <div className='lead'>
           Change your password or recover your current one.
         </div>
-        <Form onSubmit={ this.onDidSubmit } className='account-form'>
+        <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
           <Form.Item>
             { getFieldDecorator('passwordOld', {
                 rules: [{

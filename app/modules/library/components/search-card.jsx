@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Card, Icon, Tooltip } from 'antd';
+import { Card, Icon, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
