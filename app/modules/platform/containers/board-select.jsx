@@ -20,7 +20,7 @@ class BoardSelect extends React.Component {
 
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.object),
-    onSelect: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     loadBoards: PropTypes.func.isRequired
   }
 
@@ -31,7 +31,7 @@ class BoardSelect extends React.Component {
   }
 
   onDidChange(boardId) {
-    this.props.onSelect(this.props.items.find(item => item.id === boardId));
+    this.props.onChange(this.props.items.find(item => item.id === boardId));
   }
 
   render() {

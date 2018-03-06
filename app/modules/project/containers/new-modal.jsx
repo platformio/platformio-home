@@ -7,8 +7,9 @@
  */
 
 import * as actions from '../actions';
+import * as path from '../../core/path';
 
-import { Checkbox, Form, Icon, Modal, Select, Tooltip, message } from 'antd';
+import { Checkbox, Form, Icon, Input, Modal, Select, Tooltip } from 'antd';
 
 import BoardSelect from '../../platform/containers/board-select';
 import FileExplorer from '../../core/containers/file-explorer';
@@ -23,6 +24,7 @@ import { selectStorageItem } from '../../../store/selectors';
 class ProjectNewModal extends React.Component {
 
   static propTypes = {
+    form: PropTypes.object.isRequired,
     visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
 
@@ -37,11 +39,10 @@ class ProjectNewModal extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      selectedBoard: null,
       selectedFramework: null,
       useDefaultLocation: true,
       frameworks: [],
-      projectDir: null,
+      projectLocation: null,
       inProgress: false
     };
   }
@@ -49,7 +50,6 @@ class ProjectNewModal extends React.Component {
   onDidBoard(board) {
     const frameworks = board.frameworks || [];
     this.setState({
-      selectedBoard: board.id,
       selectedFramework: frameworks.length ? frameworks[0].name : null,
       frameworks
     });
@@ -67,38 +67,39 @@ class ProjectNewModal extends React.Component {
     });
   }
 
-  onDidProjectDir(projectDir) {
+  onDidProjectLocation(projectLocation) {
+    this.props.form.resetFields(['isCustomLocation']);
     this.setState({
-      projectDir
+      projectLocation
     });
   }
 
 
   onDidFinish() {
-    if (!this.state.selectedBoard) {
-      return message.error('Please select a board');
-    }
-    if (!this.state.useDefaultLocation && !this.state.projectDir) {
-      return message.error('Please select a custom project location');
-    }
-    this.setState({
-      inProgress: true
-    });
-    this.props.initProject(
-      this.state.selectedBoard,
-      this.state.selectedFramework,
-      this.state.projectDir,
-      (err, location) => {
-        this.setState({
-          inProgress: false
-        });
-        if (!err) {
-          this.props.addProject(location);
-          this.props.openProject(location);
-          this.onDidCancel();
-        }
+    this.props.form.resetFields(['isCustomLocation']);
+    this.props.form.validateFields((err, values) => {
+      if (err) {
+        return;
       }
-    );
+      this.setState({
+        inProgress: true
+      });
+      this.props.initProject(
+        values.board.id,
+        this.state.selectedFramework,
+        path.join(this.state.useDefaultLocation ? this.props.projectsDir : this.state.projectLocation, values.name),
+        (err, location) => {
+          this.setState({
+            inProgress: false
+          });
+          if (!err) {
+            this.props.addProject(location);
+            this.props.openProject(location);
+            this.onDidCancel();
+          }
+        }
+      );
+    });
   }
 
   onDidCancel() {
@@ -126,12 +127,34 @@ class ProjectNewModal extends React.Component {
     if (this.state.inProgress) {
       return <ProjectInitCarousel osOpenUrl={ this.props.osOpenUrl } />;
     }
-
+    const {getFieldDecorator} = this.props.form;
     return (
-      <Form>
-        <div className='block'>This wizard allows you to <b>create new</b> PlatformIO project or <b>update existing</b>. In the last case, you need to uncheck &quot;Use default location&quot; and specify path to existing project.</div>
+      <Form hideRequiredMark>
+        <div className='block'>
+          This wizard allows you to <b>create new</b> PlatformIO project or <b>update existing</b>. In the last case, you need to uncheck "Use default location" and specify
+          path to existing project.
+        </div>
+        <Form.Item label='Name' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
+          { getFieldDecorator('name', {
+              rules: [{
+                required: true,
+                whitespace: true,
+                pattern: /^[a-z\d\_\-\. ]+$/i,
+                message: 'Please input a valid name for project folder! [a-z0-9_-. ]'
+              }],
+            })(
+              <Input placeholder='Project name' />
+            ) }
+        </Form.Item>
         <Form.Item label='Board' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          <BoardSelect onSelect={ ::this.onDidBoard } />
+          { getFieldDecorator('board', {
+              rules: [{
+                required: true,
+                message: 'Please select a board!'
+              }]
+            })(
+              <BoardSelect onChange={ ::this.onDidBoard } />
+            ) }
         </Form.Item>
         <Form.Item label='Framework' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
           <Select value={ this.state.selectedFramework }
@@ -147,12 +170,19 @@ class ProjectNewModal extends React.Component {
           </Select>
         </Form.Item>
         <Form.Item label='Location' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          <Checkbox onChange={ ::this.onDidUseDefaultLocation } checked={ this.state.useDefaultLocation }>
-            Use default location
-            <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={ { wordBreak: 'break-all' } }>
-              <Icon type='question-circle' style={{ marginLeft: '5px' }} />
-            </Tooltip>
-          </Checkbox>
+          { getFieldDecorator('isCustomLocation', {
+              rules: [{
+                validator: (rule, value, callback) => setTimeout(() => callback((this.state.useDefaultLocation || this.state.projectLocation) ? undefined : true), 200),
+                message: 'Please select a custom project location!'
+              }]
+            })(
+              <Checkbox onChange={ ::this.onDidUseDefaultLocation } checked={ this.state.useDefaultLocation }>
+                Use default location
+                <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={ { wordBreak: 'break-all' } }>
+                  <Icon type='question-circle' style={ { marginLeft: '5px' } } />
+                </Tooltip>
+              </Checkbox>
+            ) }
         </Form.Item>
         { !this.state.useDefaultLocation && this.renderExplorer() }
       </Form> );
@@ -162,11 +192,11 @@ class ProjectNewModal extends React.Component {
     return (
       <div>
         <div style={ { marginBottom: '5px' } }>
-          Choose a directory where we will create project files:
+          Choose a location where we will create project folder:
         </div>
-        <FileExplorer ask='directory' onSelect={ ::this.onDidProjectDir } />
+        <FileExplorer ask='directory' onSelect={ ::this.onDidProjectLocation } />
       </div>
-    );
+      );
   }
 
 }
@@ -182,4 +212,4 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, {
   ...actions,
   osOpenUrl
-})(ProjectNewModal);
+})(Form.create()(ProjectNewModal));

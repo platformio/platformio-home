@@ -107,7 +107,7 @@
       "@btn-default-bg": "@background-color-base",
       "@input-bg": "@background-color-light",
       "@popover-bg": "@component-background",
-      "@tooltip-bg": "@background-color-light",
+      "@tooltip-bg": "@primary-1",
       "@card-padding-base": "15px",
       "@card-hover-border": "@border-color-base",
       "@card-shadow": "0 2px 8px rgba(255, 255, 255, .02)",
