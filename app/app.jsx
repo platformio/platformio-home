@@ -71,7 +71,7 @@ export default class App extends React.Component {
           <Sider width={ 70 }>
             <div className='logo'>
               <Tooltip placement='right' title='PlatformIO Home'>
-                <a href='/'>
+                <a href={ window.location }>
                   <PlatformIOLogo width='32px' height='32px' />
                 </a>
               </Tooltip>
