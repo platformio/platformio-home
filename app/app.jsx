@@ -16,6 +16,7 @@ import PlatformIOLogo from './modules/home/components/pio-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
 import RoutedMenu from './modules/core/containers/routed-menu';
+import SocialButtons from './modules/core/containers/social-buttons';
 import routes from './routes';
 
 
@@ -52,6 +53,9 @@ export default class App extends React.Component {
                   <li>
                     <OpenInBrowser />
                   </li>
+                  <li>
+                    <SocialButtons />
+                  </li>
                 </ul>
               </td>
               <td className='account-bar text-right'>
@@ -71,7 +75,7 @@ export default class App extends React.Component {
           <Sider width={ 70 }>
             <div className='logo'>
               <Tooltip placement='right' title='PlatformIO Home'>
-                <a href={ window.location }>
+                <a href={ window.location.href }>
                   <PlatformIOLogo width='32px' height='32px' />
                 </a>
               </Tooltip>
