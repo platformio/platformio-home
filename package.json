@@ -4,8 +4,8 @@
   "description": "PlatformIO Home",
   "main": "''",
   "scripts": {
-    "start": "webpack-dev-server --config ./build/webpack.dev.config.js --progress --profile --colors",
-    "build": "NODE_ENV=production webpack --config ./build/webpack.prod.config.js --progress --profile --colors",
+    "start": "webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors",
+    "build": "NODE_ENV=production webpack --config ./scripts/webpack.prod.config.js --progress --profile --colors",
     "lint": "eslint --ext js --ext jsx app || exit 0",
     "format": "esformatter -i ./app/**/*.js* ./app/**/**/*.js* ./app/**/**/**/*.js*"
   },
