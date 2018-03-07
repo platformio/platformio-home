@@ -117,17 +117,15 @@ class ProjectExamplesModal extends React.Component {
     if (this.props.items.length === 0) {
       return this.renderNoExamples();
     }
-
-    const data = {};
-    this.props.items
-      .sort((a, b) => cmpSort(a.platform.toUpperCase(), b.platform.toUpperCase()))
-      .forEach(item => {
-        const group = item.platform;
-        const candidates = data.hasOwnProperty(group) ? data[group] : [];
-        candidates.push(item);
-        data[group] = candidates;
-      });
-
+    const knownPlatforms = [];
+    const duplicatedPlatforms = [];
+    this.props.items.forEach(data => {
+      if (knownPlatforms.includes(data.platform.title)) {
+        duplicatedPlatforms.push(data.platform.title);
+        return;
+      }
+      knownPlatforms.push(data.platform.title);
+    });
     return (
       <div>
         <div className='block'>
@@ -139,10 +137,10 @@ class ProjectExamplesModal extends React.Component {
           placeholder='Select an example...'
           filterOption={ (input, option) => option.key.toLowerCase().includes(input.toLowerCase()) }
           onChange={ ::this.onDidExample }>
-          { Object.keys(data).map(group => (
-              <Select.OptGroup key={ group } label={ <span><Icon type='desktop' /> { group }</span> }>
-                { data[group].sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())).map(item => (
-                    <Select.Option key={ `${group} ${item.path}` } value={ item.path }>
+          { this.props.items.map(data => (
+              <Select.OptGroup key={ `${data.platform.title}-${data.platform.version}` } label={ <span><Icon type='desktop' /> { data.platform.title } { duplicatedPlatforms.includes(data.platform.title) ? `[#${data.platform.version}]` : ''}</span> }>
+                { data.items.map(item => (
+                    <Select.Option key={ `${data.platform.title}-${data.platform.version}-${item.path}` } value={ item.path }>
                       { item.name }
                     </Select.Option>
                   )) }

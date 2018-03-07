@@ -8,7 +8,7 @@
 
 import { Alert, Button, Checkbox, Col, Divider, Form, Icon, Input, Row, message } from 'antd';
 
-import Clipboard from 'clipboard';
+import ClipboardJS from 'clipboard';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -30,7 +30,7 @@ export default class AccountTokenForm extends React.Component {
   }
 
   componentDidMount() {
-    this._clipboard = new Clipboard('.copy-token');
+    this._clipboard = new ClipboardJS('.copy-token');
     this._clipboard.on('success', () => message.success('Token has been copied to clipboard!'));
   }
 
@@ -40,7 +40,7 @@ export default class AccountTokenForm extends React.Component {
     }
   }
 
-  onDidSubmit = (e) => {
+  onDidSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) {
@@ -73,7 +73,7 @@ export default class AccountTokenForm extends React.Component {
             </div>
           </div>
         ) } />
-        <Form onSubmit={ this.onDidSubmit } className='account-form'>
+        <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
           <Form.Item>
             { getFieldDecorator('password', {
                 rules: [{

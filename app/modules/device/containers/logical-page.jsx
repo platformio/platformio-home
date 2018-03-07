@@ -9,7 +9,7 @@
 import { Button, Icon, Spin, Table, Tooltip, message } from 'antd';
 import { loadLogicalDevices, osOpenUrl } from '../../core/actions';
 
-import Clipboard from 'clipboard';
+import ClipboardJS from 'clipboard';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
@@ -32,7 +32,7 @@ class DeviceLogicalPage extends React.Component {
   }
 
   componentDidMount() {
-    this._clipboard = new Clipboard('.copy-path');
+    this._clipboard = new ClipboardJS('.copy-path');
     this._clipboard.on('success', () => message.success('Device path has been copied to clipboard!'));
   }
 

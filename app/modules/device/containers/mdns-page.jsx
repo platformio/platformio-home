@@ -10,7 +10,7 @@ import * as actions from '../actions';
 
 import { Button, Icon, Spin, Table, Tooltip, message } from 'antd';
 
-import Clipboard from 'clipboard';
+import ClipboardJS from 'clipboard';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
@@ -34,7 +34,7 @@ class DeviceMDNSPage extends React.Component {
   }
 
   componentDidMount() {
-    this._clipboard = new Clipboard('.copy-name');
+    this._clipboard = new ClipboardJS('.copy-name');
     this._clipboard.on('success', () => message.success('A name has been copied to clipboard!'));
   }
 

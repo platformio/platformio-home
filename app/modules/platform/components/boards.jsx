@@ -8,7 +8,7 @@
 
 import { Alert, Badge, Button, Icon, Input, Spin, Table, Tooltip, message } from 'antd';
 
-import Clipboard from 'clipboard';
+import ClipboardJS from 'clipboard';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
@@ -69,7 +69,7 @@ export default class Boards extends React.Component {
   }
 
   onDidExpand() {
-    this._clipboard = new Clipboard('.copy-board-id');
+    this._clipboard = new ClipboardJS('.copy-board-id');
     this._clipboard.on('success', () => message.success('Board ID has been copied to clipboard!'));
   }
 

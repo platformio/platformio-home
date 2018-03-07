@@ -30,7 +30,7 @@ export default class AccountLoginForm extends React.Component {
     };
   }
 
-  onDidSubmit = (e) => {
+  onDidSubmit(e) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) {
@@ -86,7 +86,7 @@ export default class AccountLoginForm extends React.Component {
   renderForm() {
     const {getFieldDecorator} = this.props.form;
     return (
-      <Form onSubmit={ this.onDidSubmit } className='account-form'>
+      <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
         <Form.Item>
           { getFieldDecorator('username', {
               rules: [{

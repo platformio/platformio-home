@@ -127,7 +127,7 @@ class ProjectImportArduinoModal extends React.Component {
           Please select a board to initialize a project. You can change it later in <code>platformio.ini</code> file which will be created in a project directory:
         </div>
         <div className='block'>
-          <BoardSelect onSelect={ ::this.onDidBoard } />
+          <BoardSelect onChange={ ::this.onDidBoard } />
         </div>
         <div className='block'>
           <Checkbox onChange={ ::this.onDidUseArduinoLibs } checked={ this.state.useArduinoLibs }>

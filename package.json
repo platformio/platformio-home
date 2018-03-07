@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "PlatformIO Home",
   "main": "''",
   "scripts": {
@@ -11,8 +11,8 @@
   },
   "homepage": "http://platformio.org",
   "dependencies": {
-    "antd": "3.2.1",
-    "clipboard": "^1.7.1",
+    "antd": "3.2.3",
+    "clipboard": "^2.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
     "humanize": "^0.0.9",
@@ -107,7 +107,7 @@
       "@btn-default-bg": "@background-color-base",
       "@input-bg": "@background-color-light",
       "@popover-bg": "@component-background",
-      "@tooltip-bg": "@background-color-light",
+      "@tooltip-bg": "@primary-1",
       "@card-padding-base": "15px",
       "@card-hover-border": "@border-color-base",
       "@card-shadow": "0 2px 8px rgba(255, 255, 255, .02)",
