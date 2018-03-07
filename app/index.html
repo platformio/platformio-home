@@ -23,7 +23,10 @@
     return null;
   }
 
-  var theme = getQueryVariable('theme') || 'dark';
+  var theme = getQueryVariable('theme');
+  if (!theme || theme !== 'light') {
+    theme = 'dark';
+  }
   var link = document.createElement("link");
   link.href = "./themes/" + theme + ".css";
   link.type = "text/css";
