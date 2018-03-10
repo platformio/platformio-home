@@ -24,8 +24,14 @@
 </head>
 <% if (process.env.NODE_ENV === 'production') { %>
 <script>
-  var workspace = getQueryVariable('workspace') || 'platformio';
-  var theme = getQueryVariable('theme') || 'dark';
+  var workspace = getQueryVariable('workspace');
+  var theme = getQueryVariable('theme');
+  if (!workspace || workspace === 'undefined') {
+    workspace = 'platformio';
+  };
+  if (!theme || theme === 'undefined') {
+    theme = 'dark';
+  };
   var link = document.createElement('link');
   link.href = './themes/' + workspace + '-' + theme + '.css';
   link.type = 'text/css';
