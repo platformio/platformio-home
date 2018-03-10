@@ -6,6 +6,8 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Alert, Badge, Button, Icon, Input, Spin, Table, Tooltip, message } from 'antd';
 
 import ClipboardJS from 'clipboard';
@@ -112,10 +114,10 @@ export default class Boards extends React.Component {
     result = items.map(item => {
       item.frameworks = item.frameworks.sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()));
       item.extra = ['test'];
-      // if (item.url.includes('pjrc')) {
-      //   item.extra.push('certified');
-      //   item.extra.push('shop');
-      // }
+      if (workspaceSettings.isBoardCertified(item)) {
+        item.extra.push('certified');
+        item.extra.push('shop');
+      }
       if (item.debug) {
         item.extra.push('debug');
       }
@@ -523,7 +525,8 @@ export default class Boards extends React.Component {
       defaultPageSize: 15,
       pageSizeOptions: ['10', '15', '30', '50', '100', '1000'],
       size: 'default',
-      showSizeChanger: true
+      showSizeChanger: true,
+      hideOnSinglePage: true
     };
 
     return <Table size='middle'

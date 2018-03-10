@@ -6,6 +6,8 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Badge, Icon, Menu } from 'antd';
 
 import PropTypes from 'prop-types';
@@ -57,7 +59,7 @@ class RoutedMenu extends React.Component {
   }
 
   getRouteBadgeCount(path) {
-    if (!this.props.badges) {
+    if (!this.props.badges || path === '/') {
       return 0;
     }
     for (const item of this.props.badges) {
@@ -71,7 +73,11 @@ class RoutedMenu extends React.Component {
 
   render() {
     this._matchedBadges = [];
-    const items = this.props.routes.slice(0).reverse().map(item => item.label && this.renderItem(item));
+    const items = this.props.routes
+      .slice(0)
+      .filter(item => !workspaceSettings.get('menuIgnorePatterns', []).some(pattern => pattern.test(item.path)))
+      .reverse()
+      .map(item => item.label && this.renderItem(item));
     return (
       <Menu theme={ this.props.theme }
         mode={ this.props.mode || 'inline' }

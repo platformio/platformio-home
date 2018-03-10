@@ -11,21 +11,21 @@
 const webpack = require('webpack');
 const path = require('path');
 const common = require('./webpack.common');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// Create multiple instances
+const extractThemeCSS = new ExtractTextPlugin(`themes/${common.workspace}-${common.theme}.css`);
 
 module.exports = {
   entry: [
-    'react-hot-loader/patch',
     path.join(common.appDir, 'index.jsx'),
     path.join(common.mediaDir, 'styles/index.less')
   ],
-  devtool: process.env.WEBPACK_DEVTOOL || 'eval-source-map',
   output: {
-    publicPath: '/',
+    publicPath: './',
     path: common.outputDir,
-    filename: 'bundle.js'
+    filename: '[hash].min.js'
   },
   resolve: {
     extensions: ['.js', '.jsx']
@@ -35,45 +35,43 @@ module.exports = {
       ...common.loaders,
       {
         test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'less-loader',
-            options: {
-              modifyVars: common.packageConfig.theme[common.theme]
+        use: extractThemeCSS.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader',
+            {
+              loader: 'less-loader',
+              options: {
+                modifyVars: common.themeModifyVars
+              }
             }
-          }
-        ],
+          ]
+        }),
         include: [
           path.resolve(common.rootDir, 'node_modules/antd/lib'),
-          common.mediaDir
+          path.join(common.mediaDir, 'styles')
         ]
       }
     ]
   },
-  devServer: {
-    contentBase: './dist',
-    // do not print bundle build stats
-    noInfo: true,
-    // enable HMR
-    hot: true,
-    // embed the webpack-dev-server runtime into the bundle
-    inline: true,
-    // serve index.html in place of 404 responses to allow HTML5 history
-    historyApiFallback: true,
-    disableHostCheck: true,
-    port: 9000,
-    host: 'localhost'
-  },
   plugins: [
     ...common.plugins,
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new ExtractTextPlugin({
-      filename: 'style.css',
-      allChunks: true
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
     }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        screw_ie8: true,
+        // drop_console: true,
+        drop_debugger: true
+      }
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    extractThemeCSS,
     new HtmlWebpackPlugin({
       template: path.join(common.appDir, 'index.html'),
       inject: 'body',

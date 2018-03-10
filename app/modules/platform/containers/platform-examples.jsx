@@ -29,11 +29,11 @@ class PlatformProjectExamples extends React.Component {
   static getGlobPatterns() {
     return [
       path.join('examples', '*', '*.ini'),
-      path.join('examples', '*', '*', '*.c'),
-      path.join('examples', '*', '*', '*.cpp'),
-      path.join('examples', '*', '*', '*.h'),
-      path.join('examples', '*', '*', '*.hpp'),
-      path.join('examples', '*', '*', '*.ino'),
+      path.join('examples', '*', 'src', '*.c'),
+      path.join('examples', '*', 'src', '*.cpp'),
+      path.join('examples', '*', 'src', '*.h'),
+      path.join('examples', '*', 'src', '*.hpp'),
+      path.join('examples', '*', 'src', '*.ino'),
     ];
   }
 

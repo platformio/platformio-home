@@ -10,9 +10,9 @@ import { Button, Layout, Tooltip } from 'antd';
 import { Route, Switch } from 'react-router';
 
 import AccountStatusBar from './modules/account/containers/status-bar';
+import CompanyLogo from './modules/home/components/company-logo';
 import Feedback from './modules/core/containers/feedback';
 import OpenInBrowser from './modules/core/containers/open-in-browser';
-import PlatformIOLogo from './modules/home/components/pio-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
 import RoutedMenu from './modules/core/containers/routed-menu';
@@ -74,9 +74,9 @@ export default class App extends React.Component {
         <Layout hasSider>
           <Sider width={ 70 }>
             <div className='logo'>
-              <Tooltip placement='right' title='PlatformIO Home'>
+              <Tooltip placement='right' title='Reload Home'>
                 <a href={ window.location.href }>
-                  <PlatformIOLogo width='32px' height='32px' />
+                  <CompanyLogo width='32px' height='32px' />
                 </a>
               </Tooltip>
             </div>

@@ -6,11 +6,13 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
 
-export default class PlatformIOLogo extends React.Component {
+export default class CompanyLogo extends React.Component {
 
   static propTypes = {
     width: PropTypes.string,
@@ -19,7 +21,7 @@ export default class PlatformIOLogo extends React.Component {
 
   render() {
     return (
-      <img src={ require('../../../media/images/platformio_logo.png') } width={ this.props.width || '200px' } height={ this.props.height || '200px' } />
+      <img src={ workspaceSettings.get('companyLogoSrc') } height={ this.props.height || '200px' } />
       );
   }
 }

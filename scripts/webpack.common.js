@@ -12,14 +12,20 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
-const theme = 'dark';
 const rootDir = path.resolve(__dirname, '..');
 const mediaDir = path.join(rootDir, 'app', 'media');
 const packageConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
+const workspace = process.env.PIOHOME_WORKSPACE || 'platformio';
+const theme = process.env.PIOHOME_THEME || 'dark';
+const themeModifyVars = Object.assign({}, packageConfig.themes[theme],
+  (packageConfig.workspaces[workspace].themes ? packageConfig.workspaces[workspace].themes[theme] : null) || {}
+);
+
 
 module.exports = {
+  workspace: workspace,
   theme: theme,
-  packageConfig: packageConfig,
+  themeModifyVars: themeModifyVars,
   appDir: path.join(rootDir, 'app'),
   mediaDir: mediaDir,
   rootDir: rootDir,

@@ -5,7 +5,8 @@ module.exports = {
     "node": true
   },
   "globals": {
-    "APP_VERSION": false
+    "APP_VERSION": true,
+    "getQueryVariable": true
   },
   "plugins": [
     "import",

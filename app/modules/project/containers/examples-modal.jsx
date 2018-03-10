@@ -9,12 +9,12 @@
 import * as actions from '../actions';
 
 import { Button, Icon, Modal, Select, Spin, message } from 'antd';
-import { cmpSort, goTo } from '../../core/helpers';
 
 import ProjectInitCarousel from '../components/init-carousel';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 import { selectProjectExamples } from '../selectors';
 

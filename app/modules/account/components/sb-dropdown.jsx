@@ -49,7 +49,7 @@ export default class AccountStatusBarDropdown extends React.Component {
         </Menu.Item>
         { this.props.data.upgradePlan &&
           <Menu.Item key='upgrade'>
-            <a onClick={ () => this.props.osOpenUrl('http://platformio.org/pricing?utm_campaign=account-sb') }>
+            <a onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-sb') }>
               <Icon type='star' /> Upgrade</a>
           </Menu.Item> }
         <Menu.Divider />
