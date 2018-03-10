@@ -123,7 +123,10 @@ class RecentProjectsBlock extends React.Component {
           columns={ this.getTableColumns() }
           expandedRowRender={ ::this.renderExpandedRow }
           size='middle'
-          pagination={ false } />
+          pagination={{
+            defaultPageSize: 15,
+            hideOnSinglePage: true
+          }} />
       </div>
       );
   }

@@ -41,7 +41,7 @@ module.exports = {
           {
             loader: 'less-loader',
             options: {
-              modifyVars: common.packageConfig.theme[common.theme]
+              modifyVars: common.themeModifyVars
             }
           }
         ],

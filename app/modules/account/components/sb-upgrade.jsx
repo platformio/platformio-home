@@ -22,7 +22,7 @@ export default class AccountStatusBarUpgrade extends React.Component {
     if (!this.props.upgradePlan) {
       return null;
     }
-    return <Button type='danger' icon='star' onClick={ () => this.props.osOpenUrl('http://platformio.org/pricing?utm_campaign=account-sb') }>UPGRADE</Button>;
+    return <Button type='danger' icon='star' onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-sb') }>UPGRADE</Button>;
   }
 
 }

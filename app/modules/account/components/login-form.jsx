@@ -8,7 +8,7 @@
 
 import { Button, Col, Divider, Form, Icon, Input, Row } from 'antd';
 
-import PlatformIOLogo from '../../home/components/pio-logo';
+import CompanyLogo from '../../home/components/company-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -55,7 +55,7 @@ export default class AccountLoginForm extends React.Component {
   render() {
     return (
       <div>
-        <div className='login-logo'><PlatformIOLogo /></div>
+        <div className='login-logo'><CompanyLogo /></div>
         <Row>
           <Col xs={ 11 } className='login-left-side'>{ this.renderBanner() }</Col>
           <Col xs={ 2 }><Divider type='vertical' /></Col>

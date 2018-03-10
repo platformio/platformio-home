@@ -21,7 +21,7 @@ class OpenInBrowser extends React.Component {
   }
 
   onDidOpen() {
-    this.props.osOpenUrl(window.location.origin);
+    this.props.osOpenUrl(window.location.href);
   }
 
   render() {

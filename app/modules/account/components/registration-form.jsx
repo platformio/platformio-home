@@ -8,7 +8,7 @@
 
 import { Button, Form, Icon, Input } from 'antd';
 
-import PlatformIOLogo from '../../home/components/pio-logo';
+import CompanyLogo from '../../home/components/company-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -50,36 +50,34 @@ export default class AccountRegistrationForm extends React.Component {
   render() {
     const {getFieldDecorator} = this.props.form;
     return (
-      <div >
-        <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
-          <Form.Item>
-            <PlatformIOLogo />
-          </Form.Item>
-          <Form.Item>
-            { getFieldDecorator('username', {
-                rules: [{
-                  type: 'email',
-                  required: true,
-                  message: 'Please input valid email (we\'ll send further details)'
-                }],
-              })(
-                <Input prefix={ <Icon type='user' style={ { fontSize: 13 } } /> } placeholder='Email' ref={ elm => elm.focus() } />
-              ) }
-          </Form.Item>
-          <Form.Item>
-            <Button loading={ this.state.loading }
-              type='primary'
-              htmlType='submit'
-              className='block account-submit-button'>
-              Create Your PIO Account
-            </Button>
-            <div>
-              Already have an account? <a onClick={ () => this.props.showLoginPage() }>Log in.</a>
-            </div>
-          </Form.Item>
-        </Form>
-      </div>
-      );
+      <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
+        <Form.Item>
+          <br />
+          <CompanyLogo />
+        </Form.Item>
+        <Form.Item>
+          { getFieldDecorator('username', {
+              rules: [{
+                type: 'email',
+                required: true,
+                message: 'Please input valid email (we\'ll send further details)'
+              }],
+            })(
+              <Input prefix={ <Icon type='user' style={ { fontSize: 13 } } /> } placeholder='Email' ref={ elm => elm.focus() } />
+            ) }
+        </Form.Item>
+        <Form.Item>
+          <Button loading={ this.state.loading }
+            type='primary'
+            htmlType='submit'
+            className='block account-submit-button'>
+            Create Your PIO Account
+          </Button>
+          <div>
+            Already have an account? <a onClick={ () => this.props.showLoginPage() }>Log in.</a>
+          </div>
+        </Form.Item>
+      </Form>);
   }
 
 }

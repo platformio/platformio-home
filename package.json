@@ -10,6 +10,8 @@
     "format": "esformatter -i ./app/**/*.js* ./app/**/**/*.js* ./app/**/**/**/*.js*"
   },
   "homepage": "http://platformio.org",
+  "license": "UNLICENSED",
+  "private": true,
   "dependencies": {
     "antd": "3.2.3",
     "clipboard": "^2.0.0",
@@ -66,7 +68,7 @@
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-dev-server": "^2.4.1"
   },
-  "theme": {
+  "themes": {
     "light": {
       "hljs-theme": "default",
       "@icon-url": "'/fonts/iconfont'",
@@ -115,9 +117,22 @@
       "@tabs-card-active-color": "@heading-color",
       "@tab-hover-color": "@heading-color",
       "@tag-code-color": "@body-background",
-      "@tag-code-bg": "@heading-color",
+      "@tag-code-bg": "@text-color",
       "@tag-kbd-color": "@body-background",
-      "@tag-kbd-bg": "@heading-color"
+      "@tag-kbd-bg": "@text-color"
+    }
+  },
+  "workspaces": {
+    "platformio": {},
+    "aceinna": {
+      "themes": {
+        "light": {
+          "@primary-color": "#0C7F7B"
+        },
+        "dark": {
+          "@primary-color": "#0C7F7B"
+        }
+      }
     }
   }
 }

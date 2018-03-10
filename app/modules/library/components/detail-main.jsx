@@ -305,7 +305,7 @@ export default class LibraryDetailMain extends React.Component {
             <h2>Resources</h2>
             { this.props.data.id > 0 &&
               <div>
-                <Icon type='link' /> <a onClick={ () => this.props.osOpenUrl(`http://platformio.org/lib/show/${this.props.data.id}/${this.props.data.name}`) }>Registry</a> <small><kbd>ID: { this.props.data.id }</kbd></small>
+                <Icon type='link' /> <a onClick={ () => this.props.osOpenUrl(`https://platformio.org/lib/show/${this.props.data.id}/${this.props.data.name}`) }>Registry</a> <small><kbd>ID: { this.props.data.id }</kbd></small>
               </div> }
             { this.props.data.homepage &&
               <div>

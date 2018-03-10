@@ -6,6 +6,8 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -22,10 +24,11 @@ class SocialButtons extends React.Component {
   render() {
     return (
       <Button.Group>
-        <Button icon='twitter' title='Follow us on Twitter' onClick={ () => this.props.osOpenUrl('https://twitter.com/PlatformIO_Org') }>Follow Us</Button>
-        <Button icon='facebook' title='Follow us on Facebook' onClick={ () => this.props.osOpenUrl('https://www.facebook.com/platformio') }></Button>
-        <Button icon='linkedin' title='Follow us on LinkedIn' onClick={ () => this.props.osOpenUrl('https://www.linkedin.com/company/platformio') }></Button>
-        <Button icon='github' title='Give Us a star on GitHub' onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core') }></Button>
+        <Button icon='twitter' title='Follow us on Twitter' onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('twitter')) }>Follow Us</Button>
+        { workspaceSettings.getUrl('facebook')? <Button icon='facebook' title='Follow us on Facebook' onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('facebook')) }></Button> : null }
+        { workspaceSettings.getUrl('weibo')? <Button icon='weibo' title='Follow us on Weibo' onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('weibo')) }></Button> : null }
+        <Button icon='linkedin' title='Follow us on LinkedIn' onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('linkedin')) }></Button>
+        <Button icon='github' title='Give Us a star on GitHub' onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('github')) }></Button>
       </Button.Group>);
   }
 }

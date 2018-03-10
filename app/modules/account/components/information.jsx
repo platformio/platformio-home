@@ -37,11 +37,11 @@ export default class AccountInformation extends React.Component {
             </dd>
             <dt>PIO Plus Plan</dt>
             <dd>
-              <a onClick={ () => this.props.osOpenUrl('http://platformio.org/pricing?utm_campaign=account-info') } className='inline-block'>
+              <a onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-info') } className='inline-block'>
                 { this.props.data.currentPlan }
               </a>
               { this.props.data.upgradePlan &&
-                <Button type='primary' icon='star' className='block' onClick={ () => this.props.osOpenUrl('http://platformio.org/pricing?utm_campaign=account-info') }>UPGRADE</Button> }
+                <Button type='primary' icon='star' className='block' onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-info') }>UPGRADE</Button> }
               { this.props.data.upgradePlan && <Alert showIcon message='Please do not forget to re-login after account upgrade to apply the new permissions.' /> }
             </dd>
           </dl>

@@ -523,7 +523,8 @@ export default class Boards extends React.Component {
       defaultPageSize: 15,
       pageSizeOptions: ['10', '15', '30', '50', '100', '1000'],
       size: 'default',
-      showSizeChanger: true
+      showSizeChanger: true,
+      hideOnSinglePage: true
     };
 
     return <Table size='middle'

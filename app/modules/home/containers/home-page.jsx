@@ -6,11 +6,13 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Button, Checkbox, Col, Divider, Icon, Row } from 'antd';
 import { osOpenUrl, showAtStartup } from '../../core/actions';
 
+import CompanyLogo from '../components/company-logo';
 import PioVersions from './pio-versions';
-import PlatformIOLogo from '../components/pio-logo';
 import ProjectExamplesModal from '../../project/containers/examples-modal';
 import ProjectImportArduinoModal from '../../project/containers/import-arduino-modal';
 import ProjectNewModal from '../../project/containers/new-modal';
@@ -102,89 +104,26 @@ class HomePage extends React.Component {
     return (
       <section className='page-container'>
         <div className='home-page'>
-          <h1>Welcome to <a onClick={ () => this.props.osOpenUrl('http://platformio.org') }>PlatformIO</a> <small className='pull-right' style={{ marginTop: '15px' }}>{ this.renderShowAtStartup() }</small></h1>
+          <h1>Welcome to <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('home')) }>{ workspaceSettings.get('title') }</a> <small className='pull-right' style={ { marginTop: '15px' } }>{ this.renderShowAtStartup() }</small></h1>
           <br />
           <Row className='text-center'>
-            <Col span={ 12 } className='pio-logo-versions'>
-              <a onClick={ () => this.props.osOpenUrl('http://platformio.org') }>
-                <PlatformIOLogo />
+            <Col span={ 12 } className='company-logo-versions'>
+              <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('home')) }>
+                <CompanyLogo />
               </a>
-              { <PioVersions /> }
+              { workspaceSettings.get('showPIOVersions', false) && <PioVersions /> }
             </Col>
-            <Col span={ 12 }>{ this.renderQuickAccess() }</Col>
+            <Col span={ 12 }>
+              { this.renderQuickAccess() }
+            </Col>
           </Row>
           <br />
           <div className='block text-center'>
-            <ul className='list-inline'>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('http://platformio.org') }>Web</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio') }>Open Source</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/ide/pioide.html') }>Get Started</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/') }>Docs</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('https://twitter.com/PlatformIO_Org') }>News</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('https://community.platformio.org/') }>Community</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio/issues') }>Report an Issue</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('http://platformio.org/donate') }>Donate</a>
-              </li>
-              <li>
-                ·
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('http://platformio.org/contact') }>Contact</a>
-              </li>
-            </ul>
+            { this.renderQuickLinks() }
           </div>
           <Divider />
           <RecentProjectsBlock router={ this.context.router } />
-          <div className='block text-center'>
-            If you enjoy using PlatformIO, please star our projects on GitHub!
-            <ul className='list-inline'>
-              <li>
-                <Icon type='star'></Icon>
-              </li>
-              <li>
-                <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core') }>PlatformIO Core</a>
-              </li>
-              <li>
-                <Icon type='star'></Icon>
-              </li>
-            </ul>
-          </div>
+          { workspaceSettings.get('name') === 'platformio' ? this.renderPIOCoreBanner() : this.renderPoweredByPlatformIO() }
         </div>
       </section>
       );
@@ -199,23 +138,27 @@ class HomePage extends React.Component {
             <ProjectNewModal visible={ this.state.newProjectVisible } onCancel={ ::this.onDidCancelNewProject } />
             <Button size='large'
               icon='plus'
-              disabled={ this.state.newProjectVisible } onClick={ ::this.onDidNewProject } >
+              disabled={ this.state.newProjectVisible }
+              onClick={ ::this.onDidNewProject }>
               New Project
             </Button>
           </li>
-          <li>
-            <ProjectImportArduinoModal visible={ this.state.importArduinoProjectVisible } onCancel={ ::this.onDidCancelImportArduinoProject } />
-            <Button size='large'
-              icon='folder-add'
-              disabled={ this.state.importArduinoProjectVisible } onClick={ ::this.onDidImportArduinoProject } >
-              Import Arduino Project
-            </Button>
-          </li>
+          { (!workspaceSettings.get('ignoreQuickAccessButtons', []).includes('import-arduino-project')) &&
+            <li>
+              <ProjectImportArduinoModal visible={ this.state.importArduinoProjectVisible } onCancel={ ::this.onDidCancelImportArduinoProject } />
+              <Button size='large'
+                icon='folder-add'
+                disabled={ this.state.importArduinoProjectVisible }
+                onClick={ ::this.onDidImportArduinoProject }>
+                Import Arduino Project
+              </Button>
+            </li> }
           <li>
             <ProjectOpenModal visible={ this.state.openProjectVisible } onCancel={ ::this.onDidCancelOpenProject } />
             <Button size='large'
               icon='folder'
-              disabled={ this.state.openProjectVisible } onClick={ ::this.onDidOpenProject } >
+              disabled={ this.state.openProjectVisible }
+              onClick={ ::this.onDidOpenProject }>
               Open Project
             </Button>
           </li>
@@ -223,12 +166,35 @@ class HomePage extends React.Component {
             <ProjectExamplesModal router={ this.context.router } visible={ this.state.projectExamplesVisible } onCancel={ ::this.onDidCancelProjectExamples } />
             <Button size='large'
               icon='copy'
-              disabled={ this.state.projectExamplesVisible } onClick={ ::this.onDidProjectExamples } >
-              Project Examples
+              disabled={ this.state.projectExamplesVisible }
+              onClick={ ::this.onDidProjectExamples }>
+              { workspaceSettings.getMessage('homeQuickButtonProjectExamples') }
             </Button>
           </li>
         </ul>
       </div>);
+  }
+
+  renderQuickLinks() {
+    const links = workspaceSettings.get('homeQuickLinks', []);
+    const items = [];
+    links.forEach((item, index) => {
+      items.push(<a onClick={ () => this.props.osOpenUrl(item.url) }>
+                   { item.title }
+                 </a>);
+      if (index < links.length - 1) {
+        items.push('·');
+      }
+    });
+    return (
+      <ul className='list-inline'>
+        { items.map((item, index) => (
+            <li key={ index }>
+              { item }
+            </li>
+          )) }
+      </ul>
+      );
   }
 
   renderShowAtStartup() {
@@ -237,9 +203,48 @@ class HomePage extends React.Component {
     }
     return (
       <div className='block text-center'>
-        <Checkbox defaultChecked={ this.props.showOnStartupState } onChange={ ::this.onDidShowOnStartup }>Show at startup</Checkbox>
+        <Checkbox defaultChecked={ this.props.showOnStartupState } onChange={ ::this.onDidShowOnStartup }>
+          Show at startup
+        </Checkbox>
       </div>
-    );
+      );
+  }
+
+  renderPIOCoreBanner() {
+    return (
+      <div className='block text-center'>
+        If you enjoy using PlatformIO, please star our projects on GitHub!
+        <ul className='list-inline'>
+          <li>
+            <Icon type='star'></Icon>
+          </li>
+          <li>
+            <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core') }>PlatformIO Core</a>
+          </li>
+          <li>
+            <Icon type='star'></Icon>
+          </li>
+        </ul>
+      </div>
+      );
+  }
+
+  renderPoweredByPlatformIO() {
+    return (
+      <div className='block text-center powered-by-platformio'>
+        <ul className='list-inline'>
+          <li>
+            Powered by
+          </li>
+          <li>
+            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><img src={ require('../../../workspace/platformio/platformio_logo.png') } height='44' /></a>
+          </li>
+          <li className='pio-company-text'>
+            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><h2>PlatformIO <small>Enterprise</small></h2></a>
+          </li>
+        </ul>
+      </div>
+      );
   }
 
 }
@@ -254,4 +259,7 @@ function mapStateToProps(state) {
 }
 
 
-export default connect(mapStateToProps, { osOpenUrl, showAtStartup })(HomePage);
+export default connect(mapStateToProps, {
+  osOpenUrl,
+  showAtStartup
+})(HomePage);

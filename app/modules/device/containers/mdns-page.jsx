@@ -123,7 +123,10 @@ class DeviceMDNSPage extends React.Component {
         dataSource={ this.props.items }
         columns={ this.getTableColumns() }
         size='middle'
-        pagination={ false } />
+        pagination={{
+          defaultPageSize: 15,
+          hideOnSinglePage: true
+        }} />
       );
   }
 
