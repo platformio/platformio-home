@@ -27,10 +27,10 @@
   var workspace = getQueryVariable('workspace');
   var theme = getQueryVariable('theme');
   if (!workspace || workspace === 'undefined') {
-    workspace = 'platformio'
+    workspace = 'platformio';
   };
   if (!theme || theme === 'undefined') {
-    theme = 'dark'
+    theme = 'dark';
   };
   var link = document.createElement('link');
   link.href = './themes/' + workspace + '-' + theme + '.css';
