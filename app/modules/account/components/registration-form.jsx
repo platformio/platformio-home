@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Button, Form, Icon, Input } from 'antd';
+import { Alert, Button, Form, Icon, Input } from 'antd';
 
 import CompanyLogo from '../../home/components/company-logo';
 import PropTypes from 'prop-types';
@@ -17,7 +17,8 @@ export default class AccountRegistrationForm extends React.Component {
   static propTypes = {
     form: PropTypes.object.isRequired,
     registerAccount: PropTypes.func.isRequired,
-    showLoginPage: PropTypes.func.isRequired
+    showLoginPage: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -54,6 +55,11 @@ export default class AccountRegistrationForm extends React.Component {
         <Form.Item>
           <br />
           <CompanyLogo />
+          <div className='text-left' style={ { marginTop: '20px' } }>
+            <Alert showIcon message='PIO Plus Trial' description={ (
+              <span>We offer a <b>FREE</b> month of <a onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing') }>PIO Plus Basic plan</a> for new customers. Create new PIO Account and instantly access to all PIO Plus products. No Credit Card Required.</span>
+              ) } />
+          </div>
         </Form.Item>
         <Form.Item>
           { getFieldDecorator('username', {

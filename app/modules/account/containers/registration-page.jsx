@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
+import { osOpenUrl } from '../../core/actions';
 
 
 class AccountRegistrationPage extends React.Component {
@@ -42,4 +43,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, actions)(AccountRegistrationPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountRegistrationPage);
