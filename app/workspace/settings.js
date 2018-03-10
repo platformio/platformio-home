@@ -33,3 +33,7 @@ export function getMessage(id) {
 export function getUrl(id) {
   return indexes[workspace].urls[id];
 }
+
+export function isBoardCertified(board) {
+  return board.platform && board.platform.name === 'aceinna_imu';
+}
