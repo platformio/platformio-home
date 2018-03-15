@@ -134,15 +134,16 @@ class HomePage extends React.Component {
       <div className='quick-links'>
         <h2>Quick Access</h2>
         <ul>
-          <li>
-            <ProjectNewModal visible={ this.state.newProjectVisible } onCancel={ ::this.onDidCancelNewProject } />
-            <Button size='large'
-              icon='plus'
-              disabled={ this.state.newProjectVisible }
-              onClick={ ::this.onDidNewProject }>
-              New Project
-            </Button>
-          </li>
+          { (!workspaceSettings.get('ignoreQuickAccessButtons', []).includes('new-project')) &&
+            <li>
+              <ProjectNewModal visible={ this.state.newProjectVisible } onCancel={ ::this.onDidCancelNewProject } />
+              <Button size='large'
+                icon='plus'
+                disabled={ this.state.newProjectVisible }
+                onClick={ ::this.onDidNewProject }>
+                New Project
+              </Button>
+            </li> }
           { (!workspaceSettings.get('ignoreQuickAccessButtons', []).includes('import-arduino-project')) &&
             <li>
               <ProjectImportArduinoModal visible={ this.state.importArduinoProjectVisible } onCancel={ ::this.onDidCancelImportArduinoProject } />

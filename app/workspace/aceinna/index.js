@@ -27,7 +27,10 @@ export default {
     /^\/platforms\/(embedded|desktop|frameworks)/,
     /^\/device\//
   ],
-  ignoreQuickAccessButtons: ['import-arduino-project'],
+  ignoreQuickAccessButtons: [
+    'new-project',
+    'import-arduino-project'
+  ],
   companyLogoSrc: require('./aceinna_logo.png'),
   homeQuickLinks: [
     { title: 'Web', url: urls.home},
