@@ -24,11 +24,20 @@
   }
 
   .powered-by-platformio {
-    padding-top: @padding-md;
+    position: fixed;
+    bottom: 0;
+    left: 70px;
+    width: 100%;
+    background-color: @body-background;
+    padding: @padding-xs;
 
     .pio-company-text {
       vertical-align: bottom;
-      padding-bottom: 7px;
+    }
+
+    ul {
+      margin: auto;
+      width: 50%;
     }
 
     h2 {

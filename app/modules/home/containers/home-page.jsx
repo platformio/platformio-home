@@ -231,16 +231,16 @@ class HomePage extends React.Component {
 
   renderPoweredByPlatformIO() {
     return (
-      <div className='block text-center powered-by-platformio'>
+      <div className='powered-by-platformio'>
         <ul className='list-inline'>
           <li>
             Powered by
           </li>
           <li>
-            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><img src={ require('../../../workspace/platformio/platformio_logo.png') } height='44' /></a>
+            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><img src={ require('../../../workspace/platformio/platformio_logo.png') } height='38' /></a>
           </li>
           <li className='pio-company-text'>
-            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><h2>PlatformIO <small>Enterprise</small></h2></a>
+            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><h3>PlatformIO <small>Enterprise</small></h3></a>
           </li>
         </ul>
       </div>
