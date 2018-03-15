@@ -84,7 +84,7 @@ export default class ProjectInitCarousel extends React.Component {
           <Alert showIcon message='Upload Port' description={ (
         <div>
           <div className='block'>
-            PlatformIO automatically detects upoad port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>:
+            PlatformIO automatically detects upload port by default. You can configure a custom port using <code>upload_port</code> option in <b>platformio.ini</b>:
           </div>
           <ul className='block list-styled'>
             <li>
