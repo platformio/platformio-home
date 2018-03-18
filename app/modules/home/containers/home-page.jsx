@@ -116,11 +116,6 @@ class HomePage extends React.Component {
               { this.renderQuickAccess() }
             </Col>
           </Row>
-          <br />
-          <div className='block text-center'>
-            { this.renderQuickLinks() }
-          </div>
-          <Divider />
           <RecentProjectsBlock router={ this.context.router } />
         </div>
       </section>);
