@@ -28,7 +28,7 @@ class PlatformProjectExamples extends React.Component {
 
   static getGlobPatterns() {
     return [
-      path.join('examples', '*', '*.ini'),
+      path.join('examples', '*', 'platformio.ini'),
       path.join('examples', '*', 'src', '*.c'),
       path.join('examples', '*', 'src', '*.cpp'),
       path.join('examples', '*', 'src', '*.h'),
@@ -47,19 +47,20 @@ class PlatformProjectExamples extends React.Component {
     if (!this.props.uris.length) {
       return [];
     }
-    const candidates = new Map();
-    const prefix = path.commonprefix(this.props.uris);
-    for (const uri of this.props.uris) {
-      const exampleName = uri.substr(prefix.length + 1, uri.indexOf(path.sep, prefix.length + 1) - prefix.length - 1);
-      const item = candidates.has(exampleName) ? candidates.get(exampleName) : new ProjectExampleItem(exampleName);
-      item.addSource(uri, uri.substr(prefix.length + exampleName.length + 2));
-      candidates.set(exampleName, item);
-    }
-    const result = [];
-    for (const entry of candidates.entries()) {
-      result.push(entry[1]);
-    }
-    return result;
+
+    return this.props.uris
+      .filter(uri => uri.endsWith('platformio.ini'))
+      .sort()
+      .map(configUri => {
+        const projectDir = path.dirname(configUri);
+        const pei = new ProjectExampleItem(path.basename(projectDir), projectDir);
+        this.props.uris.forEach(uri => {
+          if (uri.startsWith(projectDir)) {
+            pei.addSource(uri, uri.substr(projectDir.length + 1));
+          }
+        });
+        return pei;
+    });
   }
 
   render() {

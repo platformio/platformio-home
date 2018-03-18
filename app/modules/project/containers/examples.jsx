@@ -17,8 +17,9 @@ import { cmpSort } from '../../core/helpers';
 
 export class ProjectExampleItem {
 
-  constructor(name) {
+  constructor(name, projectPath = undefined) {
     this.name = name;
+    this.projectPath  = projectPath;
     this._sources = [];
   }
 
