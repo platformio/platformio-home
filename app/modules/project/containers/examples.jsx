@@ -6,20 +6,23 @@
  * the root directory of this source tree.
  */
 
+import * as actions from '../actions';
 import * as path from '../../core/path';
+
+import { Button, Col, Row, Select } from 'antd';
 
 import CodeBeautifier from '../../core/containers/code-beautifier';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Select } from 'antd';
 import { cmpSort } from '../../core/helpers';
+import { connect } from 'react-redux';
 
 
 export class ProjectExampleItem {
 
   constructor(name, projectPath = undefined) {
     this.name = name;
-    this.projectPath  = projectPath;
+    this.projectPath = projectPath;
     this._sources = [];
   }
 
@@ -39,30 +42,37 @@ export class ProjectExampleItem {
 }
 
 
-export class ProjectExamples extends React.Component {
+export class ProjectExamplesWrapped extends React.Component {
 
   static propTypes = {
     items: PropTypes.arrayOf(
       PropTypes.instanceOf(ProjectExampleItem).isRequired
     ),
+
+    addProject: PropTypes.func.isRequired,
+    openProject: PropTypes.func.isRequired,
+    importProject: PropTypes.func.isRequired
   }
 
   constructor() {
     super(...arguments);
     this.state = {
-      sources: []
+      selectedItem: null,
+      importInProgress: false
     };
   }
 
   componentWillMount() {
-    this.setState({
-      sources: this.props.items.length ? this.props.items[0].getSources() : []
-    });
+    if (this.props.items.length) {
+      this.setState({
+        selectedItem: this.props.items[0]
+      });
+    }
   }
 
   onDidChange(name) {
     this.setState({
-      sources: this.props.items[this.props.items.findIndex(item => item.name === name)].getSources()
+      selectedItem: this.props.items.find(item => item.name === name)
     });
   }
 
@@ -71,6 +81,24 @@ export class ProjectExamples extends React.Component {
       return true;
     }
     return option.props.value.toLowerCase().includes(inputValue);
+  }
+
+  onDidImport() {
+    this.setState({
+      importInProgress: true
+    });
+    this.props.importProject(
+      this.state.selectedItem.projectPath,
+      (err, location) => {
+        this.setState({
+          importInProgress: false
+        });
+        if (!err) {
+          this.props.addProject(location);
+          this.props.openProject(location);
+        }
+      }
+    );
   }
 
   render() {
@@ -85,29 +113,69 @@ export class ProjectExamples extends React.Component {
     }
     return (
       <div>
-        <div className='block'>
-          <Select showSearch={ true }
-            defaultValue={ this.props.items[0].name }
-            filterOption={ ::this.onDidFilter }
-            onChange={ ::this.onDidChange }
-            style={ { width: '100%' } }>
-            { this.props.items.map(item => (
-                <Select.Option key={ item.name } value={ item.name }>
-                  { item.name }
-                </Select.Option>
-              )) }
-          </Select>
-        </div>
-        { this.state.sources.map((item, index) => (
-            <CodeBeautifier key={ item.uri }
-              className='block'
-              title={ (this.state.sources.length > 1 ? `${ index + 1 }. ` : '') + item.title }
-              uri={ item.uri }
-              language={ item.uri.endsWith('.ini') ? 'ini' : 'c' }
-              toggle />
-          )) }
+        { this.renderExamplesBar() }
+        { this.renderProjectSources() }
       </div>
       );
   }
 
+  renderExamplesBar() {
+    if (!this.state.selectedItem || !this.state.selectedItem.projectPath) {
+      return <div className='block'>
+               { this.renderExamplesSelect() }
+             </div>;
+    }
+    return (
+      <Row gutter={ 8 } className='block'>
+        <Col span={ 19 }>
+          { this.renderExamplesSelect() }
+        </Col>
+        <Col span={ 5 }>
+          <Button ghost
+            type='primary'
+            icon='folder-add'
+            style={ { width: '100%' } }
+            loading={ this.state.importInProgress }
+            onClick={ ::this.onDidImport } >
+            { this.state.importInProgress ? 'Please wait...' : 'Import' }
+          </Button>
+        </Col>
+      </Row>);
+  }
+
+  renderExamplesSelect() {
+    return (
+      <Select showSearch={ true }
+        defaultValue={ this.props.items[0].name }
+        filterOption={ ::this.onDidFilter }
+        onChange={ ::this.onDidChange }
+        style={ { width: '100%' } }>
+        { this.props.items.map(item => (
+            <Select.Option key={ item.name } value={ item.name }>
+              { item.name }
+            </Select.Option>
+          )) }
+      </Select>);
+  }
+
+  renderProjectSources() {
+    if (!this.state.selectedItem) {
+      return;
+    }
+    const sources = this.state.selectedItem.getSources();
+    return (
+      <div>
+        { sources.map((item, index) => (
+            <CodeBeautifier key={ item.uri }
+              className='block'
+              title={ (sources.length > 1 ? `${ index + 1 }. ` : '') + item.title }
+              uri={ item.uri }
+              language={ item.uri.endsWith('.ini') ? 'ini' : 'c' }
+              toggle />
+          )) }
+      </div>);
+  }
+
 }
+
+export const ProjectExamples = connect(null, actions)(ProjectExamplesWrapped);
