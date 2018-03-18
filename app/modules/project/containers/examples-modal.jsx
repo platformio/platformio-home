@@ -140,8 +140,9 @@ class ProjectExamplesModal extends React.Component {
           { this.props.items.map(data => (
               <Select.OptGroup key={ `${data.platform.title}-${data.platform.version}` } label={ <span><Icon type='desktop' /> { data.platform.title } { duplicatedPlatforms.includes(data.platform.title) ? `[#${data.platform.version}]` : ''}</span> }>
                 { data.items.map(item => (
-                    <Select.Option key={ `${data.platform.title}-${data.platform.version}-${item.path}` } value={ item.path }>
+                    <Select.Option key={ `${data.platform.title}-${data.platform.version}-${item.name}-${item.description}` } value={ item.path }>
                       { item.name }
+                      { item.description && <div><small>{ item.description }</small></div> }
                     </Select.Option>
                   )) }
               </Select.OptGroup>
