@@ -32,7 +32,7 @@ export default {
     'import-arduino-project'
   ],
   companyLogoSrc: require('./aceinna_logo.png'),
-  homeQuickLinks: [
+  footerQuickLinks: [
     { title: 'Web', url: urls.home},
     { title: 'Open Source', url: urls.github},
     { title: 'Documentation', url: 'https://www.aceinna.com/support/technical-documentation.cfm'},

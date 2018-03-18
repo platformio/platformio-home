@@ -15,7 +15,7 @@
     }
   }
 
-  .quick-links {
+  .quick-buttons {
     button {
         width: 250px;
         margin-bottom: @padding-xs;
@@ -23,26 +23,20 @@
     }
   }
 
-  .powered-by-platformio {
-    position: fixed;
-    bottom: 0;
-    left: 70px;
-    width: 100%;
-    background-color: @body-background;
-    padding: @padding-xs;
+  .ant-card-cover div {
+    height: 150px;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
 
-    .pio-company-text {
-      vertical-align: bottom;
-    }
+  .ant-card-body {
+    overflow-y: auto;
+    height: 150px;
+    font-size: 13px;
 
-    ul {
-      margin: auto;
-      width: 50%;
-    }
-
-    h2 {
+    .ant-card-meta-title {
       margin: 0;
-      padding: 0;
+      font-size: 13px;
     }
   }
 }

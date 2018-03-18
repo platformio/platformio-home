@@ -8,8 +8,8 @@
 
 import * as actions from '../actions';
 
+import { Divider, Icon, Input, Spin, Table, Tooltip } from 'antd';
 import { INPUT_FILTER_KEY, selectFilter, selectVisibleProjects } from '../selectors';
-import { Icon, Input, Spin, Table, Tooltip } from 'antd';
 import { cmpSort, goTo } from '../../core/helpers';
 import { lazyUpdateInputValue, updateInputValue } from '../../../store/actions';
 
@@ -111,8 +111,8 @@ class RecentProjectsBlock extends React.Component {
       return null;
     }
     return (
-      <div>
-        <h2>Recent Projects</h2>
+      <div className='block'>
+        <Divider>Recent Projects</Divider>
         <Input className='block'
           defaultValue={ this.props.filterValue }
           placeholder='Search project...'
