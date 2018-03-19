@@ -27,9 +27,12 @@ export default {
     /^\/platforms\/(embedded|desktop|frameworks)/,
     /^\/device\//
   ],
-  ignoreQuickAccessButtons: ['import-arduino-project'],
+  ignoreQuickAccessButtons: [
+    'new-project',
+    'import-arduino-project'
+  ],
   companyLogoSrc: require('./aceinna_logo.png'),
-  homeQuickLinks: [
+  footerQuickLinks: [
     { title: 'Web', url: urls.home},
     { title: 'Open Source', url: urls.github},
     { title: 'Documentation', url: 'https://www.aceinna.com/support/technical-documentation.cfm'},

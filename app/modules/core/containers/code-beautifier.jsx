@@ -38,7 +38,7 @@ class CodeBeautifier extends React.Component {
 
   componentWillMount() {
     if (!this.props.content && this.props.uri) {
-      this.props.requestContent(this.props.uri);
+      this.props.requestContent({ uri: this.props.uri, cacheValid: '7d' });
     }
   }
 

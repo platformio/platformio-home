@@ -8,7 +8,7 @@
 
 import * as workspaceSettings from '../../../workspace/settings';
 
-import { Button, Checkbox, Col, Divider, Icon, Row } from 'antd';
+import { Button, Checkbox, Col, Row } from 'antd';
 import { osOpenUrl, showAtStartup } from '../../core/actions';
 
 import CompanyLogo from '../components/company-logo';
@@ -19,6 +19,7 @@ import ProjectNewModal from '../../project/containers/new-modal';
 import ProjectOpenModal from '../../project/containers/open-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
+import RecentNews from './recent-news';
 import RecentProjectsBlock from '../../project/containers/recent-block';
 import { connect } from 'react-redux';
 import { selectShowAtStartup } from '../../core/selectors';
@@ -105,7 +106,6 @@ class HomePage extends React.Component {
       <section className='page-container'>
         <div className='home-page'>
           <h1>Welcome to <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('home')) }>{ workspaceSettings.get('title') }</a> <small className='pull-right' style={ { marginTop: '15px' } }>{ this.renderShowAtStartup() }</small></h1>
-          <br />
           <Row className='text-center'>
             <Col span={ 12 } className='company-logo-versions'>
               <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('home')) }>
@@ -117,32 +117,27 @@ class HomePage extends React.Component {
               { this.renderQuickAccess() }
             </Col>
           </Row>
-          <br />
-          <div className='block text-center'>
-            { this.renderQuickLinks() }
-          </div>
-          <Divider />
-          <RecentProjectsBlock router={ this.context.router } />
-          { workspaceSettings.get('name') === 'platformio' ? this.renderPIOCoreBanner() : this.renderPoweredByPlatformIO() }
+          <RecentNews />
+          <RecentProjectsBlock router={ this.context.router } showProjectExamplesModal={ ::this.onDidProjectExamples } showOpenProjectModal={ ::this.onDidOpenProject } />
         </div>
-      </section>
-      );
+      </section>);
   }
 
   renderQuickAccess() {
     return (
-      <div className='quick-links'>
+      <div className='quick-buttons'>
         <h2>Quick Access</h2>
         <ul>
-          <li>
-            <ProjectNewModal visible={ this.state.newProjectVisible } onCancel={ ::this.onDidCancelNewProject } />
-            <Button size='large'
-              icon='plus'
-              disabled={ this.state.newProjectVisible }
-              onClick={ ::this.onDidNewProject }>
-              New Project
-            </Button>
-          </li>
+          { (!workspaceSettings.get('ignoreQuickAccessButtons', []).includes('new-project')) &&
+            <li>
+              <ProjectNewModal visible={ this.state.newProjectVisible } onCancel={ ::this.onDidCancelNewProject } />
+              <Button size='large'
+                icon='plus'
+                disabled={ this.state.newProjectVisible }
+                onClick={ ::this.onDidNewProject }>
+                New Project
+              </Button>
+            </li> }
           { (!workspaceSettings.get('ignoreQuickAccessButtons', []).includes('import-arduino-project')) &&
             <li>
               <ProjectImportArduinoModal visible={ this.state.importArduinoProjectVisible } onCancel={ ::this.onDidCancelImportArduinoProject } />
@@ -175,28 +170,6 @@ class HomePage extends React.Component {
       </div>);
   }
 
-  renderQuickLinks() {
-    const links = workspaceSettings.get('homeQuickLinks', []);
-    const items = [];
-    links.forEach((item, index) => {
-      items.push(<a onClick={ () => this.props.osOpenUrl(item.url) }>
-                   { item.title }
-                 </a>);
-      if (index < links.length - 1) {
-        items.push('·');
-      }
-    });
-    return (
-      <ul className='list-inline'>
-        { items.map((item, index) => (
-            <li key={ index }>
-              { item }
-            </li>
-          )) }
-      </ul>
-      );
-  }
-
   renderShowAtStartup() {
     if (!this.props.caller) {
       return null;
@@ -209,44 +182,6 @@ class HomePage extends React.Component {
       </div>
       );
   }
-
-  renderPIOCoreBanner() {
-    return (
-      <div className='block text-center'>
-        If you enjoy using PlatformIO, please star our projects on GitHub!
-        <ul className='list-inline'>
-          <li>
-            <Icon type='star'></Icon>
-          </li>
-          <li>
-            <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core') }>PlatformIO Core</a>
-          </li>
-          <li>
-            <Icon type='star'></Icon>
-          </li>
-        </ul>
-      </div>
-      );
-  }
-
-  renderPoweredByPlatformIO() {
-    return (
-      <div className='block text-center powered-by-platformio'>
-        <ul className='list-inline'>
-          <li>
-            Powered by
-          </li>
-          <li>
-            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><img src={ require('../../../workspace/platformio/platformio_logo.png') } height='44' /></a>
-          </li>
-          <li className='pio-company-text'>
-            <a onClick={ () => this.props.osOpenUrl('https://platformio.org') }><h2>PlatformIO <small>Enterprise</small></h2></a>
-          </li>
-        </ul>
-      </div>
-      );
-  }
-
 }
 
 // Redux

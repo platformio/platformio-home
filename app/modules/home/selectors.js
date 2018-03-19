@@ -6,15 +6,9 @@
  * the root directory of this source tree.
  */
 
-.project-open-modal {
-  .ant-modal-body {
-    padding: 0;
-    margin: 0;
-  }
-}
+import { selectEntity } from '../../store/selectors';
 
-.project-init-carousel {
-  .ant-alert {
-    min-height: 230px;
-  }
+
+export function selectLatestTweets(state) {
+  return selectEntity(state, 'latestTweets');
 }

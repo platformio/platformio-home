@@ -32,7 +32,7 @@ class PioVersions extends React.Component {
 
   render() {
     return (
-      <div className='block versions'>
+      <div className='versions'>
         <ul className='list-inline'>
           <li>
             Home <code>{ APP_VERSION }</code>

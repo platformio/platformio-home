@@ -10,6 +10,7 @@ import { Button, Layout, Tooltip } from 'antd';
 import { Route, Switch } from 'react-router';
 
 import AccountStatusBar from './modules/account/containers/status-bar';
+import AppFooter from './footer';
 import CompanyLogo from './modules/home/components/company-logo';
 import Feedback from './modules/core/containers/feedback';
 import OpenInBrowser from './modules/core/containers/open-in-browser';
@@ -68,37 +69,36 @@ export default class App extends React.Component {
   }
 
   render() {
-    const {Content, Header, Sider} = Layout;
     return (
-      <Layout className='app-container'>
-        <Layout hasSider>
-          <Sider width={ 70 }>
-            <div className='logo'>
-              <Tooltip placement='right' title='Reload Home'>
-                <a href={ window.location.href }>
-                  <CompanyLogo width='32px' height='32px' />
-                </a>
-              </Tooltip>
-            </div>
-            <RoutedMenu router={ this.context.router } routes={ routes } theme={ 'dark' } />
-          </Sider>
-          <Layout className='main-container'>
-            <Header>
-              { this.renderHeader() }
-            </Header>
-            <Content>
-              <Switch>
-                { routes.slice(0).reverse().map(item => (
-                    <Route path={ item.path }
-                      key={ item.path }
-                      exact={ item.exact }
-                      component={ item.component } />
-                  )) }
-              </Switch>
-            </Content>
-          </Layout>
+      <Layout hasSider className='app-container'>
+        <Layout.Sider width={ 70 }>
+          <div className='logo'>
+            <Tooltip placement='right' title='Reload Home'>
+              <a href={ window.location.href }>
+                <CompanyLogo width='32px' height='32px' />
+              </a>
+            </Tooltip>
+          </div>
+          <RoutedMenu router={ this.context.router } routes={ routes } theme={ 'dark' } />
+        </Layout.Sider>
+        <Layout className='main-container'>
+          <Layout.Header>
+            { this.renderHeader() }
+          </Layout.Header>
+          <Layout.Content>
+            <Switch>
+              { routes.slice(0).reverse().map(item => (
+                  <Route path={ item.path }
+                    key={ item.path }
+                    exact={ item.exact }
+                    component={ item.component } />
+                )) }
+            </Switch>
+          </Layout.Content>
+          <AppFooter />
         </Layout>
       </Layout>
       );
   }
+
 }

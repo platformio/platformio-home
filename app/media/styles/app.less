@@ -9,6 +9,7 @@
  @sider-width: 70px;
  @max-content-width: @screen-xl - @sider-width;
 
+
 .app-container {
   height: 100vh;
 
@@ -75,6 +76,10 @@
     }
   }
 
+  .ant-layout-footer {
+    max-width: @max-content-width;
+  }
+
   h1 > .anticon,
   h2 > .anticon {
     font-size: 70%;
@@ -103,5 +108,16 @@
   }
   &.ant-menu-horizontal .ant-badge-count {
     right: -30px;
+  }
+}
+
+.powered-by-platformio {
+  .pio-company-text {
+    vertical-align: bottom;
+  }
+
+  h2 {
+    margin: 0;
+    padding: 0;
   }
 }

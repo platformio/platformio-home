@@ -15,7 +15,7 @@
     }
   }
 
-  .quick-links {
+  .quick-buttons {
     button {
         width: 250px;
         margin-bottom: @padding-xs;
@@ -23,17 +23,43 @@
     }
   }
 
-  .powered-by-platformio {
-    padding-top: @padding-md;
-
-    .pio-company-text {
-      vertical-align: bottom;
-      padding-bottom: 7px;
+  .recent-news {
+    .ant-card-cover div {
+      height: 150px;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
-    h2 {
-      margin: 0;
-      padding: 0;
+    .ant-card-body {
+      overflow-y: auto;
+      height: 150px;
+      font-size: 13px !important;
+
+      .ant-card-meta-title {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .ant-card-meta-description {
+        h2 {
+          margin: 0;
+          padding: 0;
+          font-size: 13px;
+          color: fade(@heading-color, 75%);
+        }
+
+        img {
+          height: @font-size-base;
+          display: inline;
+        }
+      }
+    }
+
+    .ant-carousel .slick-dots {
+      position: inherit;
+      bottom: inherit;
+      margin-top: @padding-sm;
     }
   }
+
 }

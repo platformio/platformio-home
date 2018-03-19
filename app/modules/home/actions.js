@@ -6,15 +6,9 @@
  * the root directory of this source tree.
  */
 
-.project-open-modal {
-  .ant-modal-body {
-    padding: 0;
-    margin: 0;
-  }
-}
+import { createAction } from '../../store/actions';
 
-.project-init-carousel {
-  .ant-alert {
-    min-height: 230px;
-  }
-}
+
+export const LOAD_LATEST_TWEETS = 'LOAD_LATEST_TWEETS';
+
+export const loadLatestTweets = (username) => createAction(LOAD_LATEST_TWEETS, { username });

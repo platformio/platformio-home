@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "PlatformIO Home",
   "main": "''",
   "scripts": {
@@ -13,7 +13,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "antd": "3.2.3",
+    "antd": "3.3.0",
     "clipboard": "^2.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",

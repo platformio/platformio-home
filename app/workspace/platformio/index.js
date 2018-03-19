@@ -23,7 +23,7 @@ export default {
   title: 'PlatformIO',
   companyLogoSrc: require('./platformio_logo.png'),
   showPIOVersions: true,
-  homeQuickLinks: [
+  footerQuickLinks: [
     { title: 'Web', url: urls.home},
     { title: 'Open Source', url: urls.github},
     { title: 'Get Started', url: 'http://docs.platformio.org/page/ide/pioide.html'},
