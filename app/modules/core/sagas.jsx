@@ -167,7 +167,7 @@ function* watchOSRequests() {
 
 function* watchRequestContent() {
   const crossDomains = ['api.github.com', 'raw.githubusercontent.com', 'platformio.org'];
-  yield takeEvery(actions.REQUEST_CONTENT, function*({uri, data}) {
+  yield takeEvery(actions.REQUEST_CONTENT, function*({uri, data, headers, cacheValid}) {
     let content = yield select(selectors.selectRequestedContent, uri, data);
     if (content) {
       return;
@@ -176,6 +176,9 @@ function* watchRequestContent() {
       if (uri.startsWith('http') && crossDomains.some(d => uri.includes(d))) {
         content = yield call(() => {
           const r = data ? requests.post(uri).send(data) : requests.get(uri);
+          if (headers) {
+            r.set(headers);
+          }
           return new Promise((resolve, reject) => {
             r.end((err, result) => err || !result.ok ? reject(err) : resolve(result.text));
           });
@@ -183,7 +186,7 @@ function* watchRequestContent() {
       } else {
         content = yield call(apiFetchData, {
           query: 'os.request_content',
-          params: [uri, data]
+          params: [uri, data, headers, cacheValid]
         });
       }
       const contents = (yield select(selectors.selectRequestedContents)) || [];

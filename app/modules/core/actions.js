@@ -48,7 +48,7 @@ export const osIsFile = (path) => createAction(OS_IS_FILE, { path });
 export const osIsDir = (path) => createAction(OS_IS_DIR, { path });
 export const osFsGlob = (pathnames, rootDir=undefined) => createAction(OS_FS_GLOB, { pathnames, rootDir });
 
-export const requestContent = (uri, data=undefined) => createAction(REQUEST_CONTENT, { uri, data });
+export const requestContent = ({ uri, data=undefined, headers=undefined, cacheValid=undefined }) => createAction(REQUEST_CONTENT, { uri, data, headers, cacheValid });
 export const loadLogicalDevices = (force=false) => createAction(LOAD_LOGICAL_DEVICES, { force });
 export const resetFSItems = () => createAction(RESET_FS_ITEMS);
 export const toggleFavoriteFolder = (path) => createAction(TOGGLE_FAVORITE_FOLDER, { path });
