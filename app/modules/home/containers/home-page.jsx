@@ -116,7 +116,7 @@ class HomePage extends React.Component {
               { this.renderQuickAccess() }
             </Col>
           </Row>
-          <RecentProjectsBlock router={ this.context.router } />
+          <RecentProjectsBlock router={ this.context.router } showProjectExamplesModal={ ::this.onDidProjectExamples } showOpenProjectModal={ ::this.onDidOpenProject } />
         </div>
       </section>);
   }

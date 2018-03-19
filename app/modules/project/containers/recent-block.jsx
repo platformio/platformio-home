@@ -8,7 +8,7 @@
 
 import * as actions from '../actions';
 
-import { Divider, Icon, Input, Spin, Table, Tooltip } from 'antd';
+import { Button, Divider, Icon, Input, Spin, Table, Tooltip } from 'antd';
 import { INPUT_FILTER_KEY, selectFilter, selectVisibleProjects } from '../selectors';
 import { cmpSort, goTo } from '../../core/helpers';
 import { lazyUpdateInputValue, updateInputValue } from '../../../store/actions';
@@ -26,6 +26,8 @@ class RecentProjectsBlock extends React.Component {
 
   static propTypes = {
     router: PropTypes.object.isRequired,
+    showProjectExamplesModal: PropTypes.func.isRequired,
+    showOpenProjectModal: PropTypes.func.isRequired,
 
     items: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -89,30 +91,54 @@ class RecentProjectsBlock extends React.Component {
         key: 'action',
         width: 100,
         render: (text, record) => (
-          <span>
-            <a onClick={ () => this.props.hideProject(record.path) }>Hide</a>
-            <span className='ant-divider' />
-            <a onClick={ () => this.props.openProject(record.path) }>Open</a>
-          </span>
+          <span><a onClick={ () => this.props.hideProject(record.path) }>Hide</a> <span className='ant-divider' /> <a onClick={ () => this.props.openProject(record.path) }>Open</a></span>
         )
       }
     ];
   }
 
   render() {
+    return (
+      <div className='block'>
+        <Divider>
+          Recent Projects
+        </Divider>
+        { this.renderProjects() }
+      </div>
+      );
+  }
+
+  renderProjects() {
     if (!this.props.items) {
       return (
         <div className='text-center'>
-          <Spin tip='Loading...' size='large' />
+          <Spin tip='Loading...' />
         </div>
         );
     }
-    if (!this.props.items.length) {
-      return null;
+    if (this.props.items.length) {
+      return (
+        <div className='text-center'>
+          <ul className='list-inline'>
+            <li>
+              <Button icon='download' onClick={ () => this.props.showProjectExamplesModal() }>
+                Import Example
+              </Button>
+            </li>
+            <li>
+              or
+            </li>
+            <li>
+              <Button icon='download' onClick={ () => this.props.showOpenProjectModal() }>
+                Open Existing Project
+              </Button>
+            </li>
+          </ul>
+        </div>
+        );
     }
     return (
-      <div className='block'>
-        <Divider>Recent Projects</Divider>
+      <div>
         <Input className='block'
           defaultValue={ this.props.filterValue }
           placeholder='Search project...'
@@ -123,10 +149,7 @@ class RecentProjectsBlock extends React.Component {
           columns={ this.getTableColumns() }
           expandedRowRender={ ::this.renderExpandedRow }
           size='middle'
-          pagination={{
-            defaultPageSize: 15,
-            hideOnSinglePage: true
-          }} />
+          pagination={ { defaultPageSize: 15, hideOnSinglePage: true } } />
       </div>
       );
   }
