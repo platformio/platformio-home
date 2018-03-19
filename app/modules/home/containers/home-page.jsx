@@ -19,6 +19,7 @@ import ProjectNewModal from '../../project/containers/new-modal';
 import ProjectOpenModal from '../../project/containers/open-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
+import RecentNews from './recent-news';
 import RecentProjectsBlock from '../../project/containers/recent-block';
 import { connect } from 'react-redux';
 import { selectShowAtStartup } from '../../core/selectors';
@@ -116,6 +117,7 @@ class HomePage extends React.Component {
               { this.renderQuickAccess() }
             </Col>
           </Row>
+          <RecentNews />
           <RecentProjectsBlock router={ this.context.router } showProjectExamplesModal={ ::this.onDidProjectExamples } showOpenProjectModal={ ::this.onDidOpenProject } />
         </div>
       </section>);

@@ -116,13 +116,13 @@ class RecentProjectsBlock extends React.Component {
         </div>
         );
     }
-    if (this.props.items.length) {
+    if (!this.props.items.length) {
       return (
         <div className='text-center'>
           <ul className='list-inline'>
             <li>
               <Button icon='download' onClick={ () => this.props.showProjectExamplesModal() }>
-                Import Example
+                Open Project Examples
               </Button>
             </li>
             <li>
