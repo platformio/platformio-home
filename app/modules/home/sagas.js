@@ -11,30 +11,31 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { call, put, select, take } from 'redux-saga/effects';
+import { STORE_READY, updateEntity } from '../../store/actions';
+import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 
 import { apiFetchData } from '../../store/api';
 import { notifyError } from '../core/actions';
-import { updateEntity } from '../../store/actions';
 
 
 function* watchLoadLatestTweets() {
-  while (true) {
-    const { username }  = yield take(actions.LOAD_LATEST_TWEETS);
+   yield takeEvery(actions.LOAD_LATEST_TWEETS, function*({ username }) {
     let items = yield select(selectors.selectLatestTweets);
     if (items) {
-      continue;
+      return;
     }
+    yield take(STORE_READY);
     try {
       items = yield call(apiFetchData, {
         query: 'misc.load_latest_tweets',
         params: [username]
       });
-      yield put(updateEntity('latestTweets', items));
     } catch (err) {
-      yield put(notifyError('Could not load latest Tweets', err));
+      items = err;
+      console.error(err);
     }
-  }
+    yield put(updateEntity('latestTweets', items));
+  });
 }
 
 export default [

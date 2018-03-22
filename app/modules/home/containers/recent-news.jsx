@@ -8,11 +8,12 @@
 
 import * as workspaceSettings from '../../../workspace/settings';
 
-import { Card, Carousel, Col, Divider, Icon, Row, Spin } from 'antd';
+import { Card, Carousel, Col, Divider, Icon, Row, Spin, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import jsonrpc from 'jsonrpc-lite';
 import { loadLatestTweets } from '../actions';
 import { osOpenUrl } from '../../core/actions';
 import { selectLatestTweets } from '../selectors';
@@ -21,7 +22,10 @@ import { selectLatestTweets } from '../selectors';
 class RecentNews extends React.Component {
 
   static propTypes = {
-    items: PropTypes.array,
+    items: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.instanceOf(jsonrpc.JsonRpcError)
+    ]),
     loadLatestTweets: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
   }
@@ -58,8 +62,15 @@ class RecentNews extends React.Component {
         </div>
         );
     }
+    else if (this.props.items instanceof jsonrpc.JsonRpcError) {
+      return (
+        <div className='text-center'>
+          <Tooltip title={ this.props.items.message }>An error occurred loading the latest news. Try again later. <Icon type='info-circle-o' /></Tooltip>
+        </div>
+        );
+    }
     return (
-      <Carousel className='block'>
+      <Carousel className='block' autoplay autoplaySpeed={ 5000 }>
         { [...Array(Math.ceil(this.props.items.length / 3)).keys()].map(rowNum => (
             <div key={ rowNum }>
               <Row gutter={ 18 }>

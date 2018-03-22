@@ -89,6 +89,7 @@ class RecentProjectsBlock extends React.Component {
       {
         title: 'Action',
         key: 'action',
+        className: 'text-nowrap',
         width: 100,
         render: (text, record) => (
           <span><a onClick={ () => this.props.hideProject(record.path) }>Hide</a> <span className='ant-divider' /> <a onClick={ () => this.props.openProject(record.path) }>Open</a></span>
