@@ -70,7 +70,7 @@ class RecentNews extends React.Component {
         );
     }
     return (
-      <Carousel className='block' autoplay autoplaySpeed={ 5000 }>
+      <Carousel className='block' autoplay autoplaySpeed={ 10000 }>
         { [...Array(Math.ceil(this.props.items.length / 3)).keys()].map(rowNum => (
             <div key={ rowNum }>
               <Row gutter={ 18 }>
