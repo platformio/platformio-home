@@ -30,10 +30,11 @@ function* watchLoadLatestTweets() {
         query: 'misc.load_latest_tweets',
         params: [username]
       });
-      yield put(updateEntity('latestTweets', items));
     } catch (err) {
-      yield put(notifyError('Could not load latest Tweets', err));
+      items = err;
+      console.error(err);
     }
+    yield put(updateEntity('latestTweets', items));
   });
 }
 
