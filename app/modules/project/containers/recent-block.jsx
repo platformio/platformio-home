@@ -7,6 +7,7 @@
  */
 
 import * as actions from '../actions';
+import * as workspaceSettings from '../../../workspace/settings';
 
 import { Button, Divider, Icon, Input, Spin, Table, Tooltip } from 'antd';
 import { INPUT_FILTER_KEY, selectFilter, selectVisibleProjects } from '../selectors';
@@ -67,7 +68,7 @@ class RecentProjectsBlock extends React.Component {
         sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
       },
       {
-        title: 'Boards',
+        title: workspaceSettings.getMessage('Boards'),
         key: 'boards',
         className: 'text-word-break',
         render: (_, record) => (

@@ -6,6 +6,8 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Alert, Button, Col, Icon, Popconfirm, Row, Select, Tabs, Tooltip } from 'antd';
 
 import Boards from '../components/boards';
@@ -148,8 +150,7 @@ export default class PlatformMain extends React.Component {
             </Popconfirm>
           </Button.Group>
         </li>
-      </ul>
-      );
+      </ul>);
   }
 
   render() {
@@ -163,7 +164,7 @@ export default class PlatformMain extends React.Component {
         <Row>
           <Col sm={ 20 } className='tabs-block'>
             <Tabs type='card'>
-              <Tabs.TabPane tab={ <span><Icon type='calculator' />Boards</span> } key='boards'>
+              <Tabs.TabPane tab={ <span>{ workspaceSettings.getCustomIcon('calculator') }{ workspaceSettings.getMessage('Boards') }</span> } key='boards'>
                 <Boards items={ this.props.data.boards }
                   noHeader
                   excludeColumns={ ['Platform'] }
