@@ -15,11 +15,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
+import { selectAccountInfo } from '../selectors';
 
 
 class AccountLoginPage extends React.Component {
 
   static propTypes = {
+    data: PropTypes.shape({
+      username: PropTypes.string,
+      groups: PropTypes.array,
+      currentPlan: PropTypes.string,
+      upgradePlan: PropTypes.string
+    }),
     loginAccount: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
@@ -28,6 +35,10 @@ class AccountLoginPage extends React.Component {
   }
 
   render() {
+    if (this.props.data && this.props.data.groups) {
+      this.props.showInformationPage();
+      return null;
+    }
     const WrappedForm = Form.create()(AccountLoginForm);
     return (
       <div className='page-container login-page text-center'>
@@ -42,6 +53,7 @@ class AccountLoginPage extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
+    data: selectAccountInfo(state),
     showInformationPage: () => goTo(ownProps.history, '/account', null, true),
     showRegistrationPage: () => goTo(ownProps.history, '/account/registration'),
     showForgotPage: () => goTo(ownProps.history, '/account/forgot')

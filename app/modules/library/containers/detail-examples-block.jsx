@@ -58,7 +58,15 @@ class LibraryDetailExamplesBlock extends React.Component {
 
   getRemoteItems() {
     return this.props.uris.sort().map(uri => {
-      const pe = new ProjectExampleItem(uri.includes('.') ? path.basename(uri, path.extname(uri)) : path.basename(uri));
+      let name = uri;
+      if (name.endsWith('/')) {
+        name = uri.substr(0, uri.length - 1);
+      }
+      name = name.substring(name.lastIndexOf('/') + 1);
+      if (name.includes('.')) {
+        name = name.substring(0, name.lastIndexOf('.'));
+      }
+      const pe = new ProjectExampleItem(name);
       pe.addSource(uri);
       return pe;
     });

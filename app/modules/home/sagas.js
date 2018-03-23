@@ -15,7 +15,6 @@ import { STORE_READY, updateEntity } from '../../store/actions';
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 
 import { apiFetchData } from '../../store/api';
-import { notifyError } from '../core/actions';
 
 
 function* watchLoadLatestTweets() {

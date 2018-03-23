@@ -15,7 +15,9 @@ const urls = {
 };
 
 const messages = {
-  homeQuickButtonProjectExamples: 'Custom IMU Examples'
+  homeQuickButtonProjectExamples: 'Custom IMU Examples',
+  Boards: 'IMUs',
+  'Search board...': 'Search IMU...'
 };
 
 export default {
@@ -39,6 +41,9 @@ export default {
     { title: 'News', url: urls.twitter},
     { title: 'Contact', url: 'https://www.aceinna.com/about-aceinna/contact.cfm'},
   ],
+  remapCustomIcons: {
+    calculator: 'axis'
+  },
   urls,
   messages
 };

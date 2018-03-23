@@ -433,7 +433,7 @@ export default class Boards extends React.Component {
         { !this.props.noHeader && this.renderHeader(data) }
         <Input.Search className='block'
           enterButton
-          placeholder='Search board...'
+          placeholder={ workspaceSettings.getMessage('Search board...') }
           defaultValue={ this.state.filterValue || this.props.defaultFilter }
           size='large'
           onChange={ (e) => this.onFilterChange(e.target.value)}
