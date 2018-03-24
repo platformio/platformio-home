@@ -6,6 +6,8 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Button, Input, Spin } from 'antd';
 
 import PlatformCard from './platform-card';
@@ -66,6 +68,23 @@ export default class PlatformsList extends React.Component {
 
     return (
       <div>
+        { workspaceSettings.get('showFilterByPlatforms', true) && this.renderAdvanced() }
+        { this.props.items && this.props.items.length === 0 &&
+          <ul className='background-message text-center'>
+            <li>
+              No Results
+            </li>
+          </ul> }
+        { this.props.items.filter(item => workspaceSettings.get('filterPlatformCard', () => true)(item)).map(item => (
+            <PlatformCard key={ item.__pkg_dir || item.name } item={ item } { ...this.props } />
+          )) }
+      </div>
+      );
+  }
+
+  renderAdvanced() {
+    return (
+      <div>
         <PlatformInstallAdvancedModal visible={ this.state.advancedVisible } onCancel={ ::this.onDidCancelAdvanced } />
         <Input.Search className='block'
           placeholder='Filter platforms by name...'
@@ -90,15 +109,6 @@ export default class PlatformsList extends React.Component {
             </Button>
           </Button.Group>
         </div>
-        { this.props.items && this.props.items.length === 0 &&
-          <ul className='background-message text-center'>
-            <li>
-              No Results
-            </li>
-          </ul> }
-        { this.props.items.map(item => (
-            <PlatformCard key={ item.__pkg_dir || item.name } item={ item } { ...this.props } />
-          )) }
       </div>
       );
   }
