@@ -7,6 +7,7 @@
  */
 
 import * as actions from '../actions';
+import * as workspaceSettings from '../../../workspace/settings';
 
 import { Button, Icon, Modal, Select, Spin, message } from 'antd';
 
@@ -119,12 +120,12 @@ class ProjectExamplesModal extends React.Component {
     }
     const knownPlatforms = [];
     const duplicatedPlatforms = [];
-    this.props.items.forEach(data => {
-      if (knownPlatforms.includes(data.platform.title)) {
-        duplicatedPlatforms.push(data.platform.title);
+    this.props.items.forEach(item => {
+      if (knownPlatforms.includes(item.platform.title)) {
+        duplicatedPlatforms.push(item.platform.title);
         return;
       }
-      knownPlatforms.push(data.platform.title);
+      knownPlatforms.push(item.platform.title);
     });
     return (
       <div>
@@ -137,7 +138,7 @@ class ProjectExamplesModal extends React.Component {
           placeholder='Select an example...'
           filterOption={ (input, option) => option.key.toLowerCase().includes(input.toLowerCase()) }
           onChange={ ::this.onDidExample }>
-          { this.props.items.map(data => (
+          { this.props.items.filter(item => workspaceSettings.get('filterProjectExample', () => true)(item)).map(data => (
               <Select.OptGroup key={ `${data.platform.title}-${data.platform.version}` } label={ <span><Icon type='desktop' /> { data.platform.title } { duplicatedPlatforms.includes(data.platform.title) ? `[#${data.platform.version}]` : ''}</span> }>
                 { data.items.map(item => (
                     <Select.Option key={ `${data.platform.title}-${data.platform.version}-${item.name}-${item.description}` } value={ item.path }>
