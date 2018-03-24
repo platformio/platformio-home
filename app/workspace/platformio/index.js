@@ -34,8 +34,6 @@ export default {
     { title: 'Donate', url: 'https://platformio.org/donate'},
     { title: 'Contact', url: 'https://platformio.org/contact'},
   ],
-  filterProjectExample: item => item.platform.title !== 'Aceinna IMU',
-  filterPlatformCard: item => item.title !== 'Aceinna IMU',
   urls,
   messages
 };
