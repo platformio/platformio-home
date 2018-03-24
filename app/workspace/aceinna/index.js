@@ -33,6 +33,7 @@ export default {
     'new-project',
     'import-arduino-project'
   ],
+  filterProjectExample: item => item.platform.title === 'Aceinna IMU',
   companyLogoSrc: require('./aceinna_logo.png'),
   footerQuickLinks: [
     { title: 'Web', url: urls.home},
