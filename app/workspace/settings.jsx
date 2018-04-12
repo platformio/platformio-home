@@ -35,8 +35,11 @@ export function getMessage(id) {
   return id;
 }
 
-export function getUrl(id) {
-  return workspace.urls[id];
+export function getUrl(id, defaultValue=undefined) {
+  if ( workspace.urls.hasOwnProperty(id)) {
+    return workspace.urls[id];
+  }
+  return defaultValue;
 }
 
 export function isBoardCertified(board) {

@@ -105,11 +105,11 @@ class HomePage extends React.Component {
     return (
       <section className='page-container'>
         <div className='home-page'>
-          <h1>Welcome to <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('home')) }>{ workspaceSettings.get('title') }</a> <small className='pull-right' style={ { marginTop: '15px' } }>{ this.renderShowAtStartup() }</small></h1>
+          <h1>Welcome to <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('welcome', workspaceSettings.getUrl('home'))) }>{ workspaceSettings.get('title') }</a> <small className='pull-right' style={ { marginTop: '15px' } }>{ this.renderShowAtStartup() }</small></h1>
           <Row className='text-center'>
             <Col span={ 12 } className='company-logo-versions'>
               <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('home')) }>
-                <CompanyLogo />
+                <CompanyLogo height={ workspaceSettings.get('companyLogoHomeHeight') } />
               </a>
               { workspaceSettings.get('showPIOVersions', false) && <PioVersions /> }
             </Col>
