@@ -129,9 +129,11 @@ class ProjectExamplesModal extends React.Component {
     });
     return (
       <div>
-        <div className='block'>
-          We use examples provided by <a onClick={ () => this.props.showInstalledPlatforms() }>installed development platforms</a>. Please install more platforms to see the new examples.
-        </div>
+        { !workspaceSettings.get('singleDevPlatform') &&
+          <div className='block'>
+            We use examples provided by <a onClick={ () => this.props.showInstalledPlatforms() }>installed development platforms</a>. Please install more platforms to see the new examples.
+          </div>
+        }
         <Select showSearch
           style={ { width: '100%' } }
           size='large'

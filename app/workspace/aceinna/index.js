@@ -48,7 +48,7 @@ export default {
   remapCustomIcons: {
     calculator: 'axis'
   },
-  showFilterByPlatforms: false,
+  singleDevPlatform: true,
   urls,
   messages
 };
