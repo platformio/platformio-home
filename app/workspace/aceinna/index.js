@@ -8,6 +8,7 @@
 
 const urls = {
   home: 'https://www.aceinna.com/',
+  welcome: 'https://github.com/Aceinna/platform-aceinna_imu#description',
   linkedin: 'https://www.linkedin.com/company/aceinna/',
   twitter: 'https://twitter.com/MEMSsensortech',
   github: 'https://github.com/aceinna',
@@ -36,6 +37,7 @@ export default {
   filterProjectExample: item => item.platform.title === 'Aceinna IMU',
   filterPlatformCard: item => item.title === 'Aceinna IMU',
   companyLogoSrc: require('./aceinna_logo.png'),
+  companyLogoHomeHeight: '150px',
   footerQuickLinks: [
     { title: 'Web', url: urls.home},
     { title: 'Open Source', url: urls.github},
@@ -46,7 +48,7 @@ export default {
   remapCustomIcons: {
     calculator: 'axis'
   },
-  showFilterByPlatforms: false,
+  singleDevPlatform: true,
   urls,
   messages
 };

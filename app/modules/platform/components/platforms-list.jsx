@@ -68,7 +68,7 @@ export default class PlatformsList extends React.Component {
 
     return (
       <div>
-        { workspaceSettings.get('showFilterByPlatforms', true) && this.renderAdvanced() }
+        { !workspaceSettings.get('singleDevPlatform') && this.renderAdvanced() }
         { this.props.items && this.props.items.length === 0 &&
           <ul className='background-message text-center'>
             <li>

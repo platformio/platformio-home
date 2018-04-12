@@ -176,7 +176,7 @@ export default class PlatformMain extends React.Component {
                 { this.props.data.__pkg_dir ? (
                   <PlatformProjectExamples pkgDir={ this.props.data.__pkg_dir } />
                   ) : (
-                  <Alert type='error' showIcon message={ <span>Examples availalbe only for <a onClick={ () => this.props.showInstalledPlatforms() }>installed platforms</a>.</span> } />
+                  <Alert type='error' showIcon message={ <span>Examples avaiable only for <a onClick={ () => this.props.showInstalledPlatforms() }>installed platforms</a>.</span> } />
                   ) }
               </Tabs.TabPane>
               <Tabs.TabPane tab={ <span><Icon type='appstore-o' />Packages</span> } key='packages'>
