@@ -24,9 +24,10 @@ export default class PlatformMain extends React.Component {
       name: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
+      url: PropTypes.string,
+      docs: PropTypes.string,
       homepage: PropTypes.string.isRequired,
       repository: PropTypes.string,
-      url: PropTypes.string,
       license: PropTypes.string,
       version: PropTypes.string,
       versions: PropTypes.arrayOf(PropTypes.string),
@@ -211,7 +212,7 @@ export default class PlatformMain extends React.Component {
                   <Icon type='github' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.repository) }>Repository</a>
                 </li> }
               <li>
-                <Icon type='info-circle-o' /> <a onClick={ () => this.props.osOpenUrl(`http://docs.platformio.org/page/platforms/${this.props.data.name}.html`) }>Documentation</a>
+                <Icon type='info-circle-o' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.docs || `http://docs.platformio.org/page/platforms/${this.props.data.name}.html`) }>Documentation</a>
               </li>
               <li>
                 <Icon type='link' /> <a onClick={ () => this.props.osOpenUrl(this.props.data.url) }>Vendor</a>
