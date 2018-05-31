@@ -37,7 +37,7 @@ class LibraryInstalledPage extends React.Component {
     uninstallLibrary: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadInstalledLibs();
   }
 

@@ -29,7 +29,7 @@ class LibraryStatsPage extends React.Component {
     showLibrary: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadStats();
   }
 

@@ -29,7 +29,7 @@ class DeviceMDNSPage extends React.Component {
     osOpenUrl: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadMDNSDevices();
   }
 

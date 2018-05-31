@@ -32,7 +32,7 @@ class BoardsPage extends React.Component {
     osOpenUrl: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (!this.props.items) {
       this.props.loadBoards();
     }

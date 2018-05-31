@@ -37,7 +37,7 @@ class PlatformProjectExamples extends React.Component {
     ];
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (!this.props.uris) {
       this.props.osFsGlob(PlatformProjectExamples.getGlobPatterns(), this.props.pkgDir);
     }

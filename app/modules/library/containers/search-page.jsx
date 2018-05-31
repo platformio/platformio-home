@@ -47,7 +47,7 @@ class LibrarySearchPage extends React.Component {
     this._moreItems = [];
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadSearchResult(this.props.searchQuery);
   }
 

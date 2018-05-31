@@ -23,7 +23,7 @@ class AccountIndex extends React.Component {
     loadAccountInfo: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadAccountInfo();
   }
 

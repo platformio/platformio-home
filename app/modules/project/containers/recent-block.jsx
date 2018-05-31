@@ -50,7 +50,7 @@ class RecentProjectsBlock extends React.Component {
     showBoards: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadProjects();
   }
 

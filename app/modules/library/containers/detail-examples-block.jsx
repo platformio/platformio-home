@@ -47,7 +47,7 @@ class LibraryDetailExamplesBlock extends React.Component {
     return result;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (!this.props.uris) {
       this.props.osFsGlob(
         LibraryDetailExamplesBlock.getGlobPatterns(this.props.data.examples),
