@@ -24,7 +24,7 @@ class BoardSelect extends React.Component {
     loadBoards: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (!this.props.items) {
       this.props.loadBoards();
     }

@@ -1,7 +1,7 @@
-image: node:6
+image: node:7
 
 before_script:
-    - npm isntall
+    - npm install
 
 cache:
   paths:

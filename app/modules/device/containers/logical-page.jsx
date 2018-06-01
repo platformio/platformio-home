@@ -27,7 +27,7 @@ class DeviceLogicalPage extends React.Component {
     osOpenUrl: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadLogicalDevices();
   }
 

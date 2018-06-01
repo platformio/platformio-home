@@ -32,7 +32,7 @@ class FrameworksPage extends React.Component {
     showFramework: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadRegistryFrameworks();
   }
 

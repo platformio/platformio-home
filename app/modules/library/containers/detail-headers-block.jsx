@@ -39,7 +39,7 @@ class LibraryDetailHeadersBlock extends React.Component {
     return result;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.data.__pkg_dir && !this.props.uris) {
       this.props.osFsGlob(LibraryDetailHeadersBlock.getGlobPatterns(), this.props.data.__pkg_dir);
     }

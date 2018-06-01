@@ -50,7 +50,7 @@ class RecentProjectsBlock extends React.Component {
     showBoards: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadProjects();
   }
 
@@ -118,7 +118,7 @@ class RecentProjectsBlock extends React.Component {
         </div>
         );
     }
-    if (!this.props.items.length) {
+    else if (!this.props.items.length && !this.props.filterValue) {
       return (
         <div className='text-center'>
           <ul className='list-inline'>

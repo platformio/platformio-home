@@ -36,7 +36,7 @@ class CodeBeautifier extends React.Component {
     this._codeTogglePlaceholder = null;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (!this.props.content && this.props.uri) {
       this.props.requestContent({ uri: this.props.uri, cacheValid: '7d' });
     }

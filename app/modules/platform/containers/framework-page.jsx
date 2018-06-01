@@ -28,7 +28,7 @@ class FrameworkDetailPage extends React.Component {
     osOpenUrl: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadFrameworkData(this.props.name);
   }
 

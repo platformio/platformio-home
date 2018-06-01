@@ -36,7 +36,7 @@ class PlatformDesktopPage extends React.Component {
     osRevealFile: PropTypes.func.isRequired
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.loadRegistryPlatforms();
   }
 
