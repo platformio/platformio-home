@@ -16,6 +16,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 
 module.exports = {
+  mode: 'development',
   entry: [
     'react-hot-loader/patch',
     path.join(common.appDir, 'index.jsx'),
@@ -31,8 +32,8 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   module: {
-    loaders: [
-      ...common.loaders,
+    rules: [
+      ...common.rules,
       {
         test: /\.less$/,
         use: [
@@ -41,7 +42,8 @@ module.exports = {
           {
             loader: 'less-loader',
             options: {
-              modifyVars: common.themeModifyVars
+              modifyVars: common.themeModifyVars,
+              javascriptEnabled: true
             }
           }
         ],

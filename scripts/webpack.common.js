@@ -31,7 +31,7 @@ module.exports = {
   rootDir: rootDir,
   outputDir: path.join(rootDir, 'dist'),
 
-  loaders: [
+  rules: [
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components|public\/)/,
