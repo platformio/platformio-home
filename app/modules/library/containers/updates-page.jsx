@@ -36,7 +36,8 @@ class LibraryUpdatesPage extends React.Component {
     updateLibrary: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     this.props.loadLibUpdates();
   }
 

@@ -57,9 +57,6 @@ class FileExplorer extends React.Component {
       pendingRenameFile: false,
       rootDir: null
     };
-  }
-
-  UNSAFE_componentWillMount() {
     this.props.loadLogicalDevices();
   }
 

@@ -44,7 +44,8 @@ class RepositoryChangelog extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     const api = RepositoryChangelog.prepareAPI(this.props.uri);
     if (api) {
       this.props.requestContent({ uri: api.requestEndpoint, cacheValid: '1h' });

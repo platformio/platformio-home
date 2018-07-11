@@ -32,7 +32,8 @@ class PlatformDetailPage extends React.Component {
     installPlatform: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     this.props.loadPlatformData(this.props.name);
   }
 

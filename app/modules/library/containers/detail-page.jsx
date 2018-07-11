@@ -39,7 +39,8 @@ class LibraryDetailPage extends React.Component {
     showInstalledLibraries: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     this.props.loadLibraryData(this.props.idOrManifest);
   }
 

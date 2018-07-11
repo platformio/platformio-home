@@ -40,7 +40,8 @@ class LibraryBuiltinPage extends React.Component {
     showInstalledPlatforms: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     this.props.loadBuiltinLibs();
   }
 

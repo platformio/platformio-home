@@ -30,7 +30,8 @@ class RecentNews extends React.Component {
     osOpenUrl: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     const twitterUrl = workspaceSettings.getUrl('twitter');
     this.props.loadLatestTweets(twitterUrl.substring(twitterUrl.lastIndexOf('/') + 1));
   }

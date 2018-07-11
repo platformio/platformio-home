@@ -60,9 +60,6 @@ export class ProjectExamplesWrapped extends React.Component {
       selectedItem: null,
       importInProgress: false
     };
-  }
-
-  UNSAFE_componentWillMount() {
     if (this.props.items.length) {
       this.setState({
         selectedItem: this.props.items[0]
