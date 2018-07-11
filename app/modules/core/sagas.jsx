@@ -43,9 +43,8 @@ function* watchShowAtStartup() {
 
 function* watchNotifyError() {
 
-  function reportIssue(title, body) {
-    title = `Home: ${title}`;
-    return getStore().dispatch(actions.osOpenUrl(`https://github.com/platformio/platformio-core/issues/new?${ qs.stringify({title, body}) }`));
+  function _openUrl(url) {
+    return getStore().dispatch(actions.osOpenUrl(url));
   }
 
   yield takeEvery(actions.NOTIFY_ERROR, function({title, err}) {
@@ -60,12 +59,23 @@ function* watchNotifyError() {
         description += ': ' + err.data;
       }
     }
+    if (['toolchain-gccarmlinuxgnueabi', 'WiringPi'].some(item => description.includes(item))) {
+      return notification.warning({
+        message: title,
+        description,
+        duration: 0,
+        btn: (
+        <Button type='danger' onClick={ () => _openUrl('https://github.com/platformio/platform-linux_arm/issues/2') }>
+          Check available solutions
+        </Button>)
+      });
+    }
     notification.error({
       message: title,
       description,
       duration: 0,
       btn: (
-      <Button type='danger' onClick={ () => reportIssue(title, description) }>
+      <Button type='danger' onClick={ () => _openUrl(`https://github.com/platformio/platformio-core/issues/new?${ qs.stringify({title: `Home: ${title}`, body: description}) }`) }>
         Report a problem
       </Button>)
     });
