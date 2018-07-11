@@ -281,6 +281,15 @@ function* watchUninstallOrUpdatePlatform() {
       yield put(notifySuccess(`Platform has been successfully ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstalled' : 'updated'}`, result));
     } catch (err_) {
       err = err_;
+      if (err.name === 'JsonRpcError' && err.data.includes('Error: Unknown development platform')) {
+        yield put(deleteEntity(/^installedPlatforms/));
+        const state = yield select();
+        if (state.router) {
+          return goTo(state.router.history, '/platforms/installed', undefined, true);
+        }
+      } else {
+        yield put(notifyError('Could not load platform data', err));
+      }
       yield put(notifyError(`Could not ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update'} platform`, err));
     }
     finally {

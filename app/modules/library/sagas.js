@@ -13,7 +13,7 @@ import * as selectors from './selectors';
 
 import { PROJECTS_LOADED, loadProjects } from '../project/actions';
 import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
-import { asyncDelay, lastLine } from '../core/helpers';
+import { asyncDelay, goTo, lastLine } from '../core/helpers';
 import { call, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
@@ -286,7 +286,15 @@ function* watchUninstallOrUpdateLibrary() {
 
     } catch (err_) {
       err = err_;
-      yield put(notifyError(`Libraries: Could not ${action.type === actions.UNINSTALL_LIBRARY? 'uninstall' : 'update'} library`, err));
+      if (err.name === 'JsonRpcError' && err.data.includes('Error: Detected unknown package')) {
+        yield put(deleteEntity(/^installedLibs/));
+        const state = yield select();
+        if (state.router) {
+          return goTo(state.router.history, '/libraries/installed', undefined, true);
+        }
+      } else {
+        yield put(notifyError(`Libraries: Could not ${action.type === actions.UNINSTALL_LIBRARY? 'uninstall' : 'update'} library`, err));
+      }
     }
     finally {
       if (onEnd) {
