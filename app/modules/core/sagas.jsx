@@ -189,16 +189,19 @@ function* watchRequestContent() {
           if (headers) {
             r.set(headers);
           }
-          return new Promise((resolve, reject) => {
-            r.end((err, result) => err || !result.ok ? reject(err) : resolve(result.text));
+          return new Promise((resolve) => {
+            r.end((err, result) => err || !result.ok ? resolve(undefined) : resolve(result.text));
           });
         });
-      } else {
+      }
+
+      if (!content) {
         content = yield call(apiFetchData, {
           query: 'os.request_content',
           params: [uri, data, headers, cacheValid]
         });
       }
+
       const contents = (yield select(selectors.selectRequestedContents)) || [];
       contents.push({
         key: selectors.getRequestContentKey(uri, data),
