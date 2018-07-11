@@ -31,6 +31,9 @@ function* watchLoadStore() {
       const newState = yield call(apiFetchData, {
         query: 'app.get_state'
       });
+      if (newState.hasOwnProperty('inputValues')) {
+        delete newState['inputValues'];
+      }
       yield put(actions.updateStore(newState));
       yield put(actions.fireStoreReady());
     } catch (err) {
@@ -40,10 +43,9 @@ function* watchLoadStore() {
 }
 
 function* autoSaveState() {
-  const keysForSave = ['inputValues', 'storage'];
+  const keysForSave = ['storage'];
   const triggerActions = [
     actions.SAVE_STATE,
-    actions.UPDATE_INPUT_VALUE,
     actions.UPDATE_STORAGE_ITEM,
     actions.DELETE_STORAGE_ITEM
   ];
