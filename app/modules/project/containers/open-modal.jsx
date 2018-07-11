@@ -40,11 +40,11 @@ class ProjectOpenModal extends React.Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
+  componentDidUpdate() {
     if (!this.state.checking) {
       return;
     }
-    this.validateProjectDir(newProps.osIsFileItems);
+    this.validateProjectDir(this.props.osIsFileItems);
   }
 
   validateProjectDir(osIsFileItems) {

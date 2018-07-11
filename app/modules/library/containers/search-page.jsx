@@ -48,13 +48,13 @@ class LibrarySearchPage extends React.Component {
     this.props.loadSearchResult(this.props.searchQuery);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const queryChanged = this.props.searchQuery !== nextProps.searchQuery;
-    if (queryChanged || this.props.searchPage !== nextProps.searchPage) {
-      if (queryChanged || !nextProps.searchPage) {
+  componentDidUpdate(prevProps) {
+    const queryChanged = this.props.searchQuery !== prevProps.searchQuery;
+    if (queryChanged || this.props.searchPage !== prevProps.searchPage) {
+      if (queryChanged || !this.props.searchPage) {
         this._moreItems = [];
       }
-      this.props.loadSearchResult(nextProps.searchQuery, nextProps.searchPage);
+      this.props.loadSearchResult(this.props.searchQuery, this.props.searchPage);
     }
   }
 

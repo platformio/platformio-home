@@ -61,9 +61,7 @@ export class ProjectExamplesWrapped extends React.Component {
       importInProgress: false
     };
     if (this.props.items.length) {
-      this.setState({
-        selectedItem: this.props.items[0]
-      });
+      this.state.selectedItem = this.props.items[0];
     }
   }
 

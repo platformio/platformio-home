@@ -47,8 +47,8 @@ class ProjectExamplesModal extends React.Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    if (!newProps.visible || this.props.items) {
+  componentDidUpdate(prevProps) {
+    if (!this.props.visible || prevProps.items) {
       return;
     }
     this.props.loadProjectExamples();

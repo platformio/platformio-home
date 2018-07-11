@@ -34,9 +34,9 @@ class LibraryStatsPage extends React.Component {
     this.props.loadStats();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     // check if a store cache is reset
-    if (this.props.data && !nextProps.data) {
+    if (prevProps.data && !this.props.data) {
       this.props.loadStats();
     }
   }

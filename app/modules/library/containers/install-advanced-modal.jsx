@@ -40,18 +40,13 @@ class LibraryInstallAdvancedModal extends React.Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.library) {
-      this.setState({
-        value: newProps.library
-      });
+  componentDidUpdate() {
+    if (!this.props.visible) {
+      return;
     }
-    if (newProps.visible) {
+    if (!this.props.projects) {
       this.props.loadProjects();
     }
-  }
-
-  componentDidUpdate() {
     setTimeout(() => this.focus(), 200);
   }
 
@@ -97,7 +92,6 @@ class LibraryInstallAdvancedModal extends React.Component {
 
   onDidCancel() {
     this.setState({
-      value: null,
       installing: false
     });
     this.props.onCancel();

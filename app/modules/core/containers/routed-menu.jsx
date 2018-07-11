@@ -38,7 +38,10 @@ class RoutedMenu extends React.Component {
     this._matchedBadges = [];
   }
 
-  componentWillReceiveProps() {
+  componentDidUpdate(prevProps) {
+    if (this.props.router.route.location.pathname === prevProps.router.route.location.pathname) {
+      return;
+    }
     this.setState({
       selectedKeys: [this.activeRouteKey()]
     });
