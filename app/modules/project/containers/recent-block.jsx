@@ -71,11 +71,19 @@ class RecentProjectsBlock extends React.Component {
         title: workspaceSettings.getMessage('Boards'),
         key: 'boards',
         className: 'text-word-break',
-        render: (_, record) => (
-          <span>{ record.boards.map((board, index) => (
+        render: (_, record) => {
+          const known = [];
+          return (
+            <span>{ record.boards.filter(board => {
+          if (known.includes(board.id)) {
+            return false;
+          }
+          known.push(board.id);
+          return true;
+        }).map((board, index) => (
           <span key={ board.id }><a onClick={ () => this.onDidShowBoard(board.name) }>{ board.name }</a> { record.boards.length > index + 1 ? ', ' : '' }</span>
-        )) }</span>
-        )
+        )) }</span>);
+        }
       },
       {
         title: 'Modified',
@@ -117,8 +125,7 @@ class RecentProjectsBlock extends React.Component {
           <Spin tip='Loading...' />
         </div>
         );
-    }
-    else if (!this.props.items.length && !this.props.filterValue) {
+    } else if (!this.props.items.length && !this.props.filterValue) {
       return (
         <div className='text-center'>
           <ul className='list-inline'>
