@@ -18,6 +18,7 @@ import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
+import { goTo } from '../core/helpers';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -134,7 +135,15 @@ function* watchLoadPlatformData() {
         items.push(data);
         yield put(updateEntity('installedPlatformsData', items.slice(INSTALLED_PLATFORMS_DATA_CACHE * -1)));
       } catch (err) {
-        yield put(notifyError('Could not load platform data', err));
+        if (err.name === 'JsonRpcError' && err.data.includes('Error: Unknown development platform')) {
+          yield put(deleteEntity(/^installedPlatforms/));
+          const state = yield select();
+          if (state.router) {
+            return goTo(state.router.history, '/platforms/installed', undefined, true);
+          }
+        } else {
+          yield put(notifyError('Could not load platform data', err));
+        }
       }
     } else {
       yield [call(checkBoards), call(checkRegistryPackages)];

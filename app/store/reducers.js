@@ -21,7 +21,7 @@ export function copyWithoutMatchingKeys(obj, re) {
   return newObj;
 }
 
-function router(state = {}, action) {
+function router(state = null, action) {
   if (action.type !== ActionTypes.CONNECT_ROUTER) {
     return state;
   }
