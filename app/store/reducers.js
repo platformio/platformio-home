@@ -21,6 +21,13 @@ export function copyWithoutMatchingKeys(obj, re) {
   return newObj;
 }
 
+function router(state = {}, action) {
+  if (action.type !== ActionTypes.CONNECT_ROUTER) {
+    return state;
+  }
+  return action.router;
+}
+
 function entities(state = {}, action) {
   switch (action.type) {
     case ActionTypes.UPDATE_ENTITY:
@@ -61,6 +68,7 @@ function storage(state = {}, action) {
 }
 
 const appReducer = combineReducers({
+  router,
   entities,
   inputValues,
   storage
