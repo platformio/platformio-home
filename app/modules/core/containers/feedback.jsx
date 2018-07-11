@@ -6,6 +6,8 @@
  * the root directory of this source tree.
  */
 
+import * as workspaceSettings from '../../../workspace/settings';
+
 import { Button, Input, Modal } from 'antd';
 import { osOpenUrl, sendFeedback } from '../actions';
 
@@ -90,16 +92,16 @@ class Feedback extends React.Component {
   render() {
     return (
       <div>
-        <Button icon='smile-o' title='Anonymous Feedback' onClick={ ::this.onDidShow }></Button>
         <Modal visible={ this.state.visible }
           confirmLoading={ this.state.loading }
           title='What can we improve?'
           okText='Send feedback'
           onOk={ ::this.onDidSend }
           onCancel={ ::this.onDidCancel }>
-          <div className='block'>
-            For technical support, please visit our <a onClick={ () => this.props.osOpenUrl('https://community.platformio.org/') }>awesome community forums</a>.
-          </div>
+          { workspaceSettings.getUrl('community') &&
+            <div className='block'>
+              For technical issues, please visit our <a onClick={ () => this.props.osOpenUrl(workspaceSettings.getUrl('community')) }>awesome community forums</a>.
+            </div> }
           <div>
             Share your thoughts and feedback with the PlatformIO Team:
           </div>
@@ -110,6 +112,12 @@ class Feedback extends React.Component {
             <small>The form is <b>anonymous</b> but if you would like a response, please add your email.</small>
           </div>
         </Modal>
+        <Button.Group>
+          <Button icon='question-circle-o' onClick={ () => this.props.osOpenUrl('https://platformio.org/support') }>
+            Support
+          </Button>
+          <Button icon='smile-o' title='Anonymous Feedback' onClick={ ::this.onDidShow }></Button>
+        </Button.Group>
       </div>
       );
   }

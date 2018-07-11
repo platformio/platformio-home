@@ -36,7 +36,7 @@ export function getMessage(id) {
 }
 
 export function getUrl(id, defaultValue=undefined) {
-  if ( workspace.urls.hasOwnProperty(id)) {
+  if (workspace.urls.hasOwnProperty(id)) {
     return workspace.urls[id];
   }
   return defaultValue;
