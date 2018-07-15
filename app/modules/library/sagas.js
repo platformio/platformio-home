@@ -11,7 +11,6 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { PROJECTS_LOADED, loadProjects } from '../project/actions';
 import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { asyncDelay, goTo, lastLine } from '../core/helpers';
 import { call, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
@@ -20,6 +19,8 @@ import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 import { CHECK_CORE_UPDATES_INTERVAL } from '../../config';
 import { apiFetchData } from '../../store/api';
 import { checkRegistryPlatformsAndFrameworks } from '../platform/sagas';
+import jsonrpc from 'jsonrpc-lite';
+import { preloadProjects } from '../project/sagas';
 import { selectStorageItem } from '../../store/selectors';
 
 
@@ -134,6 +135,7 @@ function* watchLoadBuiltinLibs() {
 function* watchLoadInstalledLibs() {
   while (true) {
     yield take(actions.LOAD_INSTALLED_LIBS);
+    yield call(preloadProjects);
     const storages = yield select(selectors.selectInstalledLibs);
     for (const storage of storages) {
       if (storage.items) {
@@ -154,6 +156,9 @@ function* watchLoadInstalledLibs() {
           });
           yield put(updateEntity(`installedLibs${storage.initialPath}`, items));
         } catch (err) {
+          if (err instanceof jsonrpc.JsonRpcError && err.data.includes('does not exist')) {
+            return yield put(updateEntity(`installedLibs${storage.initialPath}`, []));
+          }
           return yield put(notifyError('Libraries: Installed', err));
         }
       });
@@ -209,9 +214,7 @@ function* watchAutoCheckLibraryUpdates() {
   }
   yield put(updateStorageItem(lastCheckKey, now));
 
-  // preload projects list and its extra lib storages
-  yield put(loadProjects());
-  yield take(PROJECTS_LOADED);
+  yield call(preloadProjects);
 
   let total = 0;
   const storages = yield select(selectors.selectLibraryStorages);
@@ -286,7 +289,7 @@ function* watchUninstallOrUpdateLibrary() {
 
     } catch (err_) {
       err = err_;
-      if (err.name === 'JsonRpcError' && err.data.includes('Error: Detected unknown package')) {
+      if (err instanceof jsonrpc.JsonRpcError && err.data.includes('Error: Detected unknown package')) {
         yield put(deleteEntity(/^installedLibs/));
         const state = yield select();
         if (state.router) {

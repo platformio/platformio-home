@@ -18,7 +18,7 @@
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
     "humanize": "^0.0.9",
-    "jsonrpc-lite": "^1.2.4",
+    "jsonrpc-lite": "^2.0.0",
     "marked": "^0.4.0",
     "prop-types": "^15.5.10",
     "querystringify": "^2.0.0",

@@ -21,6 +21,7 @@ import React from 'react';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
+import jsonrpc from 'jsonrpc-lite';
 import qs from 'querystringify';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
@@ -53,7 +54,7 @@ function* watchNotifyError() {
     }
     console.error(title, err);
     let description = err.stack || err.toString();
-    if (err.name === 'JsonRpcError') {
+    if (err instanceof jsonrpc.JsonRpcError) {
       description = err.message;
       if (err.data) {
         description += ': ' + err.data;

@@ -85,6 +85,11 @@ function* watchOpenProject() {
   });
 }
 
+export function* preloadProjects() {
+  yield put(actions.loadProjects());
+  yield take(actions.PROJECTS_LOADED);
+}
+
 function* watchLoadProjects() {
   while (true) {
     yield take(actions.LOAD_PROJECTS);

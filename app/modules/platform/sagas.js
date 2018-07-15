@@ -19,6 +19,7 @@ import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { goTo } from '../core/helpers';
+import jsonrpc from 'jsonrpc-lite';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -135,7 +136,7 @@ function* watchLoadPlatformData() {
         items.push(data);
         yield put(updateEntity('installedPlatformsData', items.slice(INSTALLED_PLATFORMS_DATA_CACHE * -1)));
       } catch (err) {
-        if (err.name === 'JsonRpcError' && err.data.includes('Error: Unknown development platform')) {
+        if (err instanceof jsonrpc.JsonRpcError && err.data.includes('Error: Unknown development platform')) {
           yield put(deleteEntity(/^installedPlatforms/));
           const state = yield select();
           if (state.router) {
@@ -281,7 +282,7 @@ function* watchUninstallOrUpdatePlatform() {
       yield put(notifySuccess(`Platform has been successfully ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstalled' : 'updated'}`, result));
     } catch (err_) {
       err = err_;
-      if (err.name === 'JsonRpcError' && err.data.includes('Error: Unknown development platform')) {
+      if (err instanceof jsonrpc.JsonRpcError && err.data.includes('Error: Unknown development platform')) {
         yield put(deleteEntity(/^installedPlatforms/));
         const state = yield select();
         if (state.router) {
