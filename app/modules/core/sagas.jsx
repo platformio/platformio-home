@@ -12,8 +12,8 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { Button, Modal, notification } from 'antd';
-import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
-import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { inIframe, reportException } from './helpers';
 
 import { PIOPLUS_API_ENDPOINT } from '../../config';
@@ -360,31 +360,6 @@ function* watchSendFeedback() {
   });
 }
 
-function* watchAutoUpdateCorePackages() {
-  yield take(STORE_READY); // 1-time watcher
-  const coreSettings = yield select(selectStorageItem, 'coreSettings');
-  const checkInterval = parseInt(coreSettings && coreSettings.check_platformio_interval ? coreSettings.check_platformio_interval.value : 0);
-  if (checkInterval <= 0) {
-    return;
-  }
-  const lastCheckKey = 'lastUpdateCorePackages';
-  const now = new Date().getTime();
-  const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-  if (now < last + (checkInterval * 86400 * 1000)) {
-    return;
-  }
-  yield put(updateStorageItem(lastCheckKey, now));
-  try {
-    const result = yield call(apiFetchData, {
-      query: 'core.call',
-      params: [['update', '--core-packages']]
-    });
-    console.info(result);
-  } catch (err) {
-    console.error('Failed to update PIO Core', err);
-  }
-}
-
 export default [
   watchShowAtStartup,
   watchNotifyError,
@@ -399,6 +374,5 @@ export default [
   watchOsIsDir,
   watchResetFSItems,
   watchToggleFavoriteFolder,
-  watchSendFeedback,
-  watchAutoUpdateCorePackages
+  watchSendFeedback
 ];
