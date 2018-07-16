@@ -11,11 +11,11 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { CHECK_CORE_UPDATES_INTERVAL, PLATFORMIO_API_ENDPOINT } from '../../config';
 import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
+import { PLATFORMIO_API_ENDPOINT } from '../../config';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { goTo } from '../core/helpers';
@@ -203,11 +203,16 @@ function* watchLoadPlatformUpdates() {
 }
 
 function* watchAutoCheckPlatformUpdates() {
-  const lastCheckKey = 'lastCheckPlatformUpdates';
   yield take(STORE_READY); // 1-time watcher
+  const coreSettings = yield select(selectStorageItem, 'coreSettings');
+  const checkInterval = parseInt(coreSettings && coreSettings.check_platforms_interval ? coreSettings.check_platforms_interval.value : 0);
+  if (checkInterval <= 0) {
+    return;
+  }
+  const lastCheckKey = 'lastCheckPlatformUpdates';
   const now = new Date().getTime();
   const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-  if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
+  if (now < last + (checkInterval * 86400 * 1000)) {
     return;
   }
   yield put(updateStorageItem(lastCheckKey, now));

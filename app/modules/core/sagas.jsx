@@ -12,11 +12,11 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { Button, Modal, notification } from 'antd';
-import { CHECK_CORE_UPDATES_INTERVAL, PIOPLUS_API_ENDPOINT } from '../../config';
 import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
-import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { inIframe, reportException } from './helpers';
 
+import { PIOPLUS_API_ENDPOINT } from '../../config';
 import React from 'react';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
@@ -361,24 +361,28 @@ function* watchSendFeedback() {
 }
 
 function* watchAutoUpdateCorePackages() {
+  yield take(STORE_READY); // 1-time watcher
+  const coreSettings = yield select(selectStorageItem, 'coreSettings');
+  const checkInterval = parseInt(coreSettings && coreSettings.check_platformio_interval ? coreSettings.check_platformio_interval.value : 0);
+  if (checkInterval <= 0) {
+    return;
+  }
   const lastCheckKey = 'lastUpdateCorePackages';
-  yield takeLatest(STORE_READY, function*() {
-    const now = new Date().getTime();
-    const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-    if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
-      return;
-    }
-    yield put(updateStorageItem(lastCheckKey, now));
-    try {
-      const result = yield call(apiFetchData, {
-        query: 'core.call',
-        params: [['update', '--core-packages']]
-      });
-      console.info(result);
-    } catch (err) {
-      console.error('Failed to update PIO Core', err);
-    }
-  });
+  const now = new Date().getTime();
+  const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
+  if (now < last + (checkInterval * 86400 * 1000)) {
+    return;
+  }
+  yield put(updateStorageItem(lastCheckKey, now));
+  try {
+    const result = yield call(apiFetchData, {
+      query: 'core.call',
+      params: [['update', '--core-packages']]
+    });
+    console.info(result);
+  } catch (err) {
+    console.error('Failed to update PIO Core', err);
+  }
 }
 
 export default [

@@ -16,7 +16,6 @@ import { asyncDelay, goTo, lastLine } from '../core/helpers';
 import { call, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
-import { CHECK_CORE_UPDATES_INTERVAL } from '../../config';
 import { apiFetchData } from '../../store/api';
 import { checkRegistryPlatformsAndFrameworks } from '../platform/sagas';
 import jsonrpc from 'jsonrpc-lite';
@@ -205,11 +204,16 @@ function* watchLoadLibUpdates() {
 }
 
 function* watchAutoCheckLibraryUpdates() {
-  const lastCheckKey = 'lastCheckLibraryUpdates';
   yield take(STORE_READY); // 1-time watcher
+  const coreSettings = yield select(selectStorageItem, 'coreSettings');
+  const checkInterval = parseInt(coreSettings && coreSettings.check_libraries_interval ? coreSettings.check_libraries_interval.value : 0);
+  if (checkInterval <= 0) {
+    return;
+  }
+  const lastCheckKey = 'lastCheckLibraryUpdates';
   const now = new Date().getTime();
   const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-  if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
+  if (now < last + (checkInterval * 86400 * 1000)) {
     return;
   }
   yield put(updateStorageItem(lastCheckKey, now));
