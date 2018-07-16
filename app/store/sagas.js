@@ -43,7 +43,6 @@ function* watchLoadStore() {
 }
 
 function* autoSaveState() {
-  const keysForSave = ['storage'];
   const triggerActions = [
     actions.SAVE_STATE,
     actions.UPDATE_STORAGE_ITEM,
@@ -54,14 +53,14 @@ function* autoSaveState() {
       yield call(asyncDelay, 2000);
     }
     try {
-      const state = yield select();
-      const savedState = {};
-      keysForSave.forEach(key => {
-        if (state.hasOwnProperty(key)) {
-          savedState[key] = state[key];
-        }
-      });
-
+      const state = (yield select()) || {};
+      const savedState = {
+        storage: Object.assign({}, state.storage)
+      };
+      // don't serialize PIO Core Settings
+      if (savedState.storage.coreSettings) {
+        delete savedState.storage.coreSettings;
+      }
       const result = yield call(apiFetchData, {
         query: 'app.save_state',
         params: [savedState]
