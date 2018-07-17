@@ -81,10 +81,10 @@ export default class Boards extends React.Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
-    if (!this.state.data && newProps.items) {
+  componentDidUpdate() {
+    if (!this.state.data && this.props.items) {
       this.setState({
-        data: this.normalizeTableData(newProps.items)
+        data: this.normalizeTableData(this.props.items)
       });
     }
   }

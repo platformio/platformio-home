@@ -47,8 +47,8 @@ class ProjectExamplesModal extends React.Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    if (!newProps.visible || this.props.items) {
+  componentDidUpdate(prevProps) {
+    if (!this.props.visible || prevProps.items) {
       return;
     }
     this.props.loadProjectExamples();
@@ -131,7 +131,8 @@ class ProjectExamplesModal extends React.Component {
       <div>
         { !workspaceSettings.get('singleDevPlatform') &&
           <div className='block'>
-            We use examples provided by <a onClick={ () => this.props.showInstalledPlatforms() }>installed development platforms</a>. Please install more platforms to see the new examples.
+            <p>We use examples provided by <a onClick={ () => this.props.showInstalledPlatforms() }>installed development platforms</a>. Please install more platforms to see the new examples.</p>
+            Examples already contain pre-configured build environemnts (boards, flags, etc.). You can edit them later in <a onClick={() => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf.html') }>Project Configuration File &quot;platformio.ini&quot;</a> located in a root of project.
           </div>
         }
         <Select showSearch

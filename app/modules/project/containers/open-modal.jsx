@@ -40,7 +40,7 @@ class ProjectOpenModal extends React.Component {
     };
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     if (!this.state.checking) {
       return;
     }

@@ -10,6 +10,8 @@ export function createAction(type, payload = {}) {
   return { type, ...payload };
 }
 
+export const CONNECT_ROUTER = 'CONNECT_ROUTER';
+
 export const STORE_READY = 'STORE_READY';
 export const LOAD_STORE = 'LOAD_STORE';
 export const UPDATE_STORE = 'UPDATE_STORE';
@@ -24,6 +26,7 @@ export const LAZY_UPDATE_INPUT_VALUE = 'LAZY_UPDATE_INPUT_VALUE';
 export const UPDATE_STORAGE_ITEM = 'UPDATE_STORAGE_ITEM';
 export const DELETE_STORAGE_ITEM = 'DELETE_STORAGE_ITEM';
 
+export const connectRouter = (router) => createAction(CONNECT_ROUTER, { router });
 
 export const fireStoreReady = () => createAction(STORE_READY);
 export const loadStore = () => createAction(LOAD_STORE);

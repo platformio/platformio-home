@@ -13,6 +13,7 @@ import { Badge, Icon, Menu } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { connectRouter } from '../../../store/actions';
 import { goTo } from '../helpers';
 import { selectRouteBadges } from '../selectors';
 
@@ -27,7 +28,9 @@ class RoutedMenu extends React.Component {
       count: PropTypes.number
     })),
     theme: PropTypes.string,
-    mode: PropTypes.string
+    mode: PropTypes.string,
+
+    connectRouter: PropTypes.func.isRequired
   }
 
   constructor() {
@@ -36,9 +39,13 @@ class RoutedMenu extends React.Component {
       selectedKeys: []
     };
     this._matchedBadges = [];
+    this.props.connectRouter(this.props.router);
   }
 
-  componentWillReceiveProps() {
+  componentDidUpdate(prevProps) {
+    if (this.props.router.route.location.pathname === prevProps.router.route.location.pathname) {
+      return;
+    }
     this.setState({
       selectedKeys: [this.activeRouteKey()]
     });
@@ -119,4 +126,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(RoutedMenu);
+export default connect(mapStateToProps, { connectRouter })(RoutedMenu);

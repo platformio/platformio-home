@@ -36,7 +36,8 @@ class PlatformUpdatesPage extends React.Component {
     osRevealFile: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     this.props.loadPlatformUpdates();
   }
 

@@ -18,9 +18,9 @@
     overflow: auto;
 
     .ant-layout-header {
-      padding: 11px 20px 14px 20px;
+      padding: 0px 10px 10px 3px;
       margin: 0;
-      height: 50px;
+      height: unset;
       line-height: inherit;
       vertical-align: middle;
 
@@ -29,7 +29,11 @@
       }
 
       .account-bar {
-        line-height: 30px;
+        padding-top: 10px;
+      }
+
+      .ant-btn-group {
+        margin-top: 10px;
       }
     }
 
@@ -53,7 +57,7 @@
 
     .logo {
       text-align: center;
-      height: 50px;
+      height: 48px;
       padding-top: 10px;
     }
 
@@ -80,17 +84,23 @@
     max-width: @max-content-width;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    .ant-badge {
+      margin-left: 3px;
+    }
+    .ant-badge-count {
+      background-color: @primary-color;
+    }
+
+    > .anticon {
+      font-size: 80%;
+    }
+  }
+
   h1 > .anticon,
   h2 > .anticon {
     font-size: 70%;
   }
-  h3 > .anticon,
-  h4 > .anticon,
-  h5 > .anticon,
-  h6 > .anticon {
-    font-size: 80%;
-  }
-
 }
 
 /* Menu with Babges */

@@ -24,7 +24,7 @@ import { selectStorage } from './selectors';
 function* watchActivateGA() {
   yield takeLatest(STORE_READY, function*() {
     const storage = yield select(selectStorage);
-    if (!storage.cid) {
+    if (!storage.cid || (storage.coreSettings && storage.coreSettings.enable_telemetry && !storage.coreSettings.enable_telemetry.value)) {
       return;
     }
     ReactGA.initialize('UA-1768265-9', {

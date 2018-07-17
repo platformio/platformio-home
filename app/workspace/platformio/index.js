@@ -12,6 +12,7 @@ const urls = {
   facebook: 'https://www.facebook.com/platformio',
   linkedin: 'https://www.linkedin.com/company/platformio',
   github: 'https://github.com/platformio',
+  community: 'https://community.platformio.org',
 };
 
 const messages = {
@@ -29,10 +30,8 @@ export default {
     { title: 'Get Started', url: 'http://docs.platformio.org/page/ide/pioide.html'},
     { title: 'Docs', url: 'http://docs.platformio.org'},
     { title: 'News', url: urls.twitter},
-    { title: 'Community', url: 'https://community.platformio.org'},
-    { title: 'Report an Issue', url: 'https://github.com/platformio/platformio/issues'},
-    { title: 'Donate', url: 'https://platformio.org/donate'},
-    { title: 'Contact', url: 'https://platformio.org/contact'},
+    { title: 'Community', url: urls.community},
+    { title: 'Contact Us', url: 'https://platformio.org/contact'},
   ],
   urls,
   messages

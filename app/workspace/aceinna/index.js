@@ -26,7 +26,7 @@ export default {
   title: 'Aceinna\'s OpenIMU Platform',
   menuIgnorePatterns: [
     /^\/boards/,
-    /^\/libraries/,
+    /^\/libraries\/builtin/,
     /^\/platforms\/(embedded|desktop|frameworks)/,
     /^\/device\//
   ],

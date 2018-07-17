@@ -12,18 +12,23 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { STORE_READY, updateEntity } from '../../store/actions';
-import { call, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 
 import { apiFetchData } from '../../store/api';
+import { selectStorageItem } from '../../store/selectors';
 
 
 function* watchLoadLatestTweets() {
-   yield takeEvery(actions.LOAD_LATEST_TWEETS, function*({ username }) {
+  yield takeLatest(actions.LOAD_LATEST_TWEETS, function*({username}) {
     let items = yield select(selectors.selectLatestTweets);
     if (items) {
       return;
     }
-    yield take(STORE_READY);
+    // if storage is not loaded yet, wait and don't block other calls
+    // 'load_latest_tweets' blocks HOME's backend
+    if (!(yield select(selectStorageItem, 'coreVersion'))) {
+      yield take(STORE_READY);
+    }
     try {
       items = yield call(apiFetchData, {
         query: 'misc.load_latest_tweets',

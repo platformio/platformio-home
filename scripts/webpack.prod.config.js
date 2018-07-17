@@ -18,6 +18,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const extractThemeCSS = new ExtractTextPlugin(`themes/${common.workspace}-${common.theme}.css`);
 
 module.exports = {
+  mode: 'production',
+  optimization: {
+    nodeEnv: 'production'
+  },
   entry: [
     path.join(common.appDir, 'index.jsx'),
     path.join(common.mediaDir, 'styles/index.less')
@@ -31,8 +35,8 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   module: {
-    loaders: [
-      ...common.loaders,
+    rules: [
+      ...common.rules,
       {
         test: /\.less$/,
         use: extractThemeCSS.extract({
@@ -42,7 +46,8 @@ module.exports = {
             {
               loader: 'less-loader',
               options: {
-                modifyVars: common.themeModifyVars
+                modifyVars: common.themeModifyVars,
+                javascriptEnabled: true
               }
             }
           ]
@@ -56,20 +61,7 @@ module.exports = {
   },
   plugins: [
     ...common.plugins,
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
     new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        screw_ie8: true,
-        // drop_console: true,
-        drop_debugger: true
-      }
-    }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     extractThemeCSS,
     new HtmlWebpackPlugin({

@@ -12,15 +12,16 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { Button, Modal, notification } from 'antd';
-import { CHECK_CORE_UPDATES_INTERVAL, PIOPLUS_API_ENDPOINT } from '../../config';
-import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
+import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { inIframe, reportException } from './helpers';
 
+import { PIOPLUS_API_ENDPOINT } from '../../config';
 import React from 'react';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
+import jsonrpc from 'jsonrpc-lite';
 import qs from 'querystringify';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
@@ -43,9 +44,8 @@ function* watchShowAtStartup() {
 
 function* watchNotifyError() {
 
-  function reportIssue(title, body) {
-    title = `Home: ${title}`;
-    return getStore().dispatch(actions.osOpenUrl(`https://github.com/platformio/platformio-core/issues/new?${ qs.stringify({title, body}) }`));
+  function _openUrl(url) {
+    return getStore().dispatch(actions.osOpenUrl(url));
   }
 
   yield takeEvery(actions.NOTIFY_ERROR, function({title, err}) {
@@ -54,18 +54,29 @@ function* watchNotifyError() {
     }
     console.error(title, err);
     let description = err.stack || err.toString();
-    if (err.name === 'JsonRpcError') {
+    if (err instanceof jsonrpc.JsonRpcError) {
       description = err.message;
       if (err.data) {
         description += ': ' + err.data;
       }
+    }
+    if (['toolchain-gccarmlinuxgnueabi', 'WiringPi'].some(item => description.includes(item))) {
+      return notification.warning({
+        message: title,
+        description,
+        duration: 0,
+        btn: (
+        <Button type='danger' onClick={ () => _openUrl('https://github.com/platformio/platform-linux_arm/issues/2') }>
+          Check available solutions
+        </Button>)
+      });
     }
     notification.error({
       message: title,
       description,
       duration: 0,
       btn: (
-      <Button type='danger' onClick={ () => reportIssue(title, description) }>
+      <Button type='danger' onClick={ () => _openUrl(`https://github.com/platformio/platformio-core/issues/new?${ qs.stringify({title: `Home: ${title}`, body: description}) }`) }>
         Report a problem
       </Button>)
     });
@@ -179,16 +190,19 @@ function* watchRequestContent() {
           if (headers) {
             r.set(headers);
           }
-          return new Promise((resolve, reject) => {
-            r.end((err, result) => err || !result.ok ? reject(err) : resolve(result.text));
+          return new Promise((resolve) => {
+            r.end((err, result) => err || !result.ok ? resolve(undefined) : resolve(result.text));
           });
         });
-      } else {
+      }
+
+      if (!content) {
         content = yield call(apiFetchData, {
           query: 'os.request_content',
           params: [uri, data, headers, cacheValid]
         });
       }
+
       const contents = (yield select(selectors.selectRequestedContents)) || [];
       contents.push({
         key: selectors.getRequestContentKey(uri, data),
@@ -346,27 +360,6 @@ function* watchSendFeedback() {
   });
 }
 
-function* watchAutoUpdateCorePackages() {
-  const lastCheckKey = 'lastUpdateCorePackages';
-  yield takeLatest(STORE_READY, function*() {
-    const now = new Date().getTime();
-    const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-    if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
-      return;
-    }
-    yield put(updateStorageItem(lastCheckKey, now));
-    try {
-      const result = yield call(apiFetchData, {
-        query: 'core.call',
-        params: [['update', '--core-packages']]
-      });
-      console.info(result);
-    } catch (err) {
-      console.error('Failed to update PIO Core', err);
-    }
-  });
-}
-
 export default [
   watchShowAtStartup,
   watchNotifyError,
@@ -381,6 +374,5 @@ export default [
   watchOsIsDir,
   watchResetFSItems,
   watchToggleFavoriteFolder,
-  watchSendFeedback,
-  watchAutoUpdateCorePackages
+  watchSendFeedback
 ];

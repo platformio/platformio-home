@@ -11,13 +11,15 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { CHECK_CORE_UPDATES_INTERVAL, PLATFORMIO_API_ENDPOINT } from '../../config';
 import { STORE_READY, deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
+import { PLATFORMIO_API_ENDPOINT } from '../../config';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
+import { goTo } from '../core/helpers';
+import jsonrpc from 'jsonrpc-lite';
 import requests from 'superagent';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -134,7 +136,15 @@ function* watchLoadPlatformData() {
         items.push(data);
         yield put(updateEntity('installedPlatformsData', items.slice(INSTALLED_PLATFORMS_DATA_CACHE * -1)));
       } catch (err) {
-        yield put(notifyError('Could not load platform data', err));
+        if (err instanceof jsonrpc.JsonRpcError && err.data.includes('Error: Unknown development platform')) {
+          yield put(deleteEntity(/^installedPlatforms/));
+          const state = yield select();
+          if (state.router) {
+            return goTo(state.router.history, '/platforms/installed', undefined, true);
+          }
+        } else {
+          yield put(notifyError('Could not load platform data', err));
+        }
       }
     } else {
       yield [call(checkBoards), call(checkRegistryPackages)];
@@ -193,11 +203,16 @@ function* watchLoadPlatformUpdates() {
 }
 
 function* watchAutoCheckPlatformUpdates() {
-  const lastCheckKey = 'lastCheckPlatformUpdates';
   yield take(STORE_READY); // 1-time watcher
+  const coreSettings = yield select(selectStorageItem, 'coreSettings');
+  const checkInterval = parseInt(coreSettings && coreSettings.check_platforms_interval ? coreSettings.check_platforms_interval.value : 0);
+  if (checkInterval <= 0) {
+    return;
+  }
+  const lastCheckKey = 'lastCheckPlatformUpdates';
   const now = new Date().getTime();
   const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
-  if (now < last + (CHECK_CORE_UPDATES_INTERVAL * 1000)) {
+  if (now < last + (checkInterval * 86400 * 1000)) {
     return;
   }
   yield put(updateStorageItem(lastCheckKey, now));
@@ -272,6 +287,15 @@ function* watchUninstallOrUpdatePlatform() {
       yield put(notifySuccess(`Platform has been successfully ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstalled' : 'updated'}`, result));
     } catch (err_) {
       err = err_;
+      if (err instanceof jsonrpc.JsonRpcError && err.data.includes('Error: Unknown development platform')) {
+        yield put(deleteEntity(/^installedPlatforms/));
+        const state = yield select();
+        if (state.router) {
+          return goTo(state.router.history, '/platforms/installed', undefined, true);
+        }
+      } else {
+        yield put(notifyError('Could not load platform data', err));
+      }
       yield put(notifyError(`Could not ${action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update'} platform`, err));
     }
     finally {

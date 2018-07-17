@@ -39,7 +39,8 @@ class PlatformInstalledPage extends React.Component {
     showDesktopPlatforms: PropTypes.func.isRequired
   }
 
-  UNSAFE_componentWillMount() {
+  constructor() {
+    super(...arguments);
     this.props.loadInstalledPlatforms();
   }
 
