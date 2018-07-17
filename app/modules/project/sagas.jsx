@@ -12,14 +12,15 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../platform/actions';
+import { Modal, message } from 'antd';
 import { OS_RENAME_FILE, notifyError, notifySuccess } from '../core/actions';
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../store/actions';
 
-import { Modal } from 'antd';
 import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
+import jsonrpc from 'jsonrpc-lite';
 import { selectStorageItem } from '../../store/selectors';
 
 
@@ -224,7 +225,11 @@ function* watchImportArduinoProject() {
       yield put(notifySuccess('Project has been successfully imported', `Board: ${board}, new location: ${result}`));
     } catch (_err) {
       err = _err;
-      yield put(notifyError('Could not import Arduino project', err));
+      if (err instanceof jsonrpc.JsonRpcError && err.message.includes('Not an Arduino project')) {
+        message.error(`${err.message} (Project should countain .ino or .pde file with the same name as project folder)`, 10);
+      } else {
+        yield put(notifyError('Could not import Arduino project', err));
+      }
     }
     finally {
       if (onEnd) {
