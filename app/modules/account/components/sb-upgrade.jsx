@@ -14,15 +14,15 @@ import React from 'react';
 export default class AccountStatusBarUpgrade extends React.Component {
 
   static propTypes = {
-    upgradePlan: PropTypes.string,
+    upgradeInfo: PropTypes.shape({
+      buttonLabel: PropTypes.string,
+      url: PropTypes.string
+    }).isRequired,
     osOpenUrl: PropTypes.func.isRequired
   }
 
   render() {
-    if (!this.props.upgradePlan) {
-      return null;
-    }
-    return <Button type='danger' icon='star' onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-sb') }>UPGRADE</Button>;
+    return <Button type='danger' icon='star' onClick={ () => this.props.osOpenUrl(this.props.upgradeInfo.url) }>{ this.props.upgradeInfo.buttonLabel }</Button>;
   }
 
 }

@@ -8,6 +8,8 @@
 
 import * as actions from '../actions';
 
+import { selectAccountInfo, selectUpgradeInfo } from '../selectors';
+
 import AccountStatusBarDropdown from '../components/sb-dropdown';
 import AccountStatusBarUpgrade from '../components/sb-upgrade';
 import PropTypes from 'prop-types';
@@ -16,7 +18,6 @@ import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
-import { selectAccountInfo } from '../selectors';
 
 
 class AccountStatusBar extends React.Component {
@@ -27,6 +28,7 @@ class AccountStatusBar extends React.Component {
       username: PropTypes.string,
       upgradePlan: PropTypes.string
     }),
+    upgradeInfo: PropTypes.object,
     loadAccountInfo: PropTypes.func.isRequired,
     logoutAccount: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
@@ -47,8 +49,10 @@ class AccountStatusBar extends React.Component {
       <table cellPadding='0' cellSpacing='0' width='100%'>
         <tbody>
           <tr>
-            <td><AccountStatusBarUpgrade upgradePlan={ this.props.data && this.props.data.upgradePlan } osOpenUrl={ this.props.osOpenUrl } /></td>
-            <td className='text-right'><AccountStatusBarDropdown { ...this.props } /></td>
+            { this.props.upgradeInfo &&
+              <td><AccountStatusBarUpgrade upgradeInfo={ this.props.upgradeInfo } osOpenUrl={ this.props.osOpenUrl } /></td>
+            }
+            <td className='text-right text-nowrap'><AccountStatusBarDropdown { ...this.props } /></td>
           </tr>
         </tbody>
       </table>
@@ -62,6 +66,7 @@ class AccountStatusBar extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     data: selectAccountInfo(state),
+    upgradeInfo: selectUpgradeInfo(state),
     showInformationPage: () => goTo(ownProps.router.history, '/account'),
     showLoginPage: () => goTo(ownProps.router.history, '/account/login')
   };

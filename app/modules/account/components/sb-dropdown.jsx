@@ -16,8 +16,7 @@ export default class AccountStatusBarDropdown extends React.Component {
 
   static propTypes = {
     data: PropTypes.shape({
-      username: PropTypes.string,
-      upgradePlan: PropTypes.string
+      username: PropTypes.string
     }),
     logoutAccount: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
@@ -47,11 +46,6 @@ export default class AccountStatusBarDropdown extends React.Component {
           <a onClick={ () => this.props.showInformationPage() }>
             <Icon type='user' /> Account</a>
         </Menu.Item>
-        { this.props.data.upgradePlan &&
-          <Menu.Item key='upgrade'>
-            <a onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-sb') }>
-              <Icon type='star' /> Upgrade</a>
-          </Menu.Item> }
         <Menu.Divider />
         <Menu.Item key='logout'>
           <a onClick={ () => this.props.logoutAccount() }>

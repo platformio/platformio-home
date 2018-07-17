@@ -12,11 +12,12 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 
 import { call, put, select, take, takeLatest } from 'redux-saga/effects';
-import { deleteEntity, updateEntity } from '../../store/actions';
+import { deleteEntity, deleteStorageItem, updateEntity, updateStorageItem } from '../../store/actions';
 import { notifyError, notifySuccess } from '../core/actions';
 
 import { apiFetchData } from '../../store/api';
 import { message } from 'antd';
+import { selectStorageItem } from '../../store/selectors';
 
 
 const CORE_API_EXCEPTION_PREFIX = '[API] ';
@@ -28,11 +29,33 @@ function showAPIErrorMessage(output) {
   return message.error(pos !== -1 ? output.substr(pos + CORE_API_EXCEPTION_PREFIX.length) : output);
 }
 
+function* raffleOffProCoupon(accountInfo) {
+  if (!accountInfo || !accountInfo.upgradePlan) {
+    return;
+  }
+  const lastCheckKey = 'rafProLastCheck';
+  const now = new Date().getTime();
+  const last = (yield select(selectStorageItem, lastCheckKey)) || 0;
+  if (now < last + (7 * 86400 * 1000)) {
+    if (now > last + (86400 * 1000)) {
+      yield put(deleteStorageItem(/^rafProLucky/));
+    }
+    return;
+  }
+  yield put(updateStorageItem(lastCheckKey, now));
+  if (Math.random() > 0.5) {
+    yield put(updateStorageItem('rafProLucky', true));
+  } else {
+    yield put(deleteStorageItem(/^rafProLucky/));
+  }
+}
+
 function* watchLoadAccountInfo() {
   while (true) {
     const { extended } = yield take(actions.LOAD_ACCOUNT_INFO);
     let data = yield select(selectors.selectAccountInfo);
     if (data && (!extended || data.groups)) {
+      yield call(raffleOffProCoupon, data);
       continue;
     }
     try {
@@ -40,6 +63,7 @@ function* watchLoadAccountInfo() {
         query: 'core.auth_info',
         params: [extended]
       });
+      yield call(raffleOffProCoupon, data);
     } catch (err) {
       yield put(notifyError('Could not load PIO Account information', err));
     }
