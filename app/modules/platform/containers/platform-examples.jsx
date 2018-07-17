@@ -27,14 +27,16 @@ class PlatformProjectExamples extends React.Component {
   }
 
   static getGlobPatterns() {
-    return [
-      path.join('examples', '*', 'platformio.ini'),
-      path.join('examples', '*', 'src', '*.c'),
-      path.join('examples', '*', 'src', '*.cpp'),
-      path.join('examples', '*', 'src', '*.h'),
-      path.join('examples', '*', 'src', '*.hpp'),
-      path.join('examples', '*', 'src', '*.ino'),
-    ];
+    const patterns = [];
+    ['*', path.join('*', '*'), path.join('*', '*', '*')].forEach(wildcard => {
+      patterns.push(path.join('examples', wildcard, 'platformio.ini'));
+      patterns.push(path.join('examples', wildcard, 'src', '*.c'));
+      patterns.push(path.join('examples', wildcard, 'src', '*.cpp'));
+      patterns.push(path.join('examples', wildcard, 'src', '*.h'));
+      patterns.push(path.join('examples', wildcard, 'src', '*.hpp'));
+      patterns.push(path.join('examples', wildcard, 'src', '*.ino'));
+    });
+    return patterns;
   }
 
   constructor() {
@@ -54,7 +56,13 @@ class PlatformProjectExamples extends React.Component {
       .sort()
       .map(configUri => {
         const projectDir = path.dirname(configUri);
-        const pei = new ProjectExampleItem(path.basename(projectDir), projectDir);
+        const projectDirTokens = path.split(projectDir);
+        let projectName = path.basename(projectDir);
+        const examplesIndex = projectDirTokens.lastIndexOf('examples');
+        if (examplesIndex !== -1) {
+          projectName = projectDirTokens.slice(examplesIndex + 1).join('/');
+        }
+        const pei = new ProjectExampleItem(projectName, projectDir);
         this.props.uris.forEach(uri => {
           if (uri.startsWith(projectDir)) {
             pei.addSource(uri, uri.substr(projectDir.length + 1));
