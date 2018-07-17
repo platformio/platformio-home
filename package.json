@@ -1,7 +1,7 @@
 {
   "name": "platformio-home",
-  "version": "0.9.6",
-  "description": "PlatformIO Home",
+  "version": "1.0.0",
+  "description": "PIO Home",
   "main": "''",
   "scripts": {
     "start": "webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors",
