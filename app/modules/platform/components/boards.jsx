@@ -472,7 +472,7 @@ export default class Boards extends React.Component {
   renderNotifications() {
     return (
       <span>
-        <p>PlatformIO currently supports over 400 boards from leading manufacturers, and we are constantly adding new ones.</p>
+        <p>PlatformIO currently supports over 500 boards from leading manufacturers, and we are constantly adding new ones.</p>
         You can be part of the process by letting us know what board you wish to see supported next, by <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio-core/issues') }>submitting a feature request</a>.
       </span>
     );
