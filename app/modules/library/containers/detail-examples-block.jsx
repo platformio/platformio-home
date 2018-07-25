@@ -68,7 +68,7 @@ class LibraryDetailExamplesBlock extends React.Component {
         name = name.substring(0, name.lastIndexOf('.'));
       }
       const pe = new ProjectExampleItem(name);
-      pe.addSource(uri);
+      pe.addSource(uri, name);
       return pe;
     });
   }
