@@ -45,7 +45,7 @@ module.exports = {
     {
       test: /\.css$/,
       loaders: ['style-loader', 'css-loader?importLoaders=1'],
-      exclude: ['node_modules']
+      exclude: /node_modules/
     },
     {
       test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
