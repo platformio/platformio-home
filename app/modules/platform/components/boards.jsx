@@ -119,7 +119,10 @@ export default class Boards extends React.Component {
         item.extra.push('shop');
       }
       if (item.debug) {
-        item.extra.push('debug');
+        item.extra.push('debug-external');
+        if (this.hasOnboardDebug(item.debug)) {
+          item.extra.push('debug-onboard');
+        }
       }
       if ((item.connectivity || []).some(c => Boards.IoTConnectivity.includes(c))) {
         item.extra.push('iot');
@@ -199,27 +202,17 @@ export default class Boards extends React.Component {
     return humanize.filesize(size, 1024, size % 1024 === 0 || size < 1024 ? 0 : 1);
   }
 
-  humanizeDebug(debug) {
+  hasOnboardDebug(debug) {
     if (!debug || !debug.tools) {
-      return;
+      return false;
     }
-    const tools = [];
-    Object.keys(debug.tools).forEach(key => {
-      const options = debug.tools[key];
-      const attrs = [];
-      if (options.default) {
-        attrs.push('default');
+    let hasOnboard = false;
+    for (const key of Object.keys(debug.tools)) {
+      if (debug.tools[key].onboard) {
+        return true;
       }
-      if (options.onboard) {
-        attrs.push('on-board');
-      }
-      if (attrs.length) {
-        tools.push(`${key} (${attrs.join(', ')})`);
-      } else {
-        tools.push(key);
-      }
-    });
-    return tools.join(', ');
+    }
+    return false;
   }
 
   getVendorFilters(data) {
@@ -328,7 +321,12 @@ export default class Boards extends React.Component {
         filters: this.getVendorFilters(data),
         onFilter: (value, record) => record.vendor === value,
         sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
-        sortOrder: dataSorters.columnKey === 'name' && dataSorters.order
+        sortOrder: dataSorters.columnKey === 'name' && dataSorters.order,
+        render:(_, record) => (
+          <a onClick={ () => this.props.osOpenUrl(`http://docs.platformio.org/page/boards/${record.platform.name}/${record.id}.html`) }>
+            { record.name }
+          </a>
+        )
       },
       {
         title: 'Platform',
@@ -407,8 +405,12 @@ export default class Boards extends React.Component {
             value: 'test'
           },
           {
-            text: 'Unified Debugger',
-            value: 'debug'
+            text: 'Debug: On-board',
+            value: 'debug-onboard'
+          },
+          {
+            text: 'Debug: External',
+            value: 'debug-external'
           },
           // {
           //   text: 'Get Now!',
@@ -487,6 +489,7 @@ export default class Boards extends React.Component {
             Clear filters
           </Button>
         </li>
+        <li>&nbsp;</li>
         <li>
           <Button.Group>
             {/* <Button type='primary'
@@ -500,13 +503,7 @@ export default class Boards extends React.Component {
               ghost={ !this.isExtraFilterEnabled('iot') }
               onClick={ () => this.onToggleExtraFilter('iot') }>
               IoT-enabled
-            </Button>
-            <Button type='primary'
-              icon='tool'
-              ghost={ !this.isExtraFilterEnabled('debug') }
-              onClick={ () => this.onToggleExtraFilter('debug') }>
-              Debug
-            </Button>
+            </Button>         
             {/* <Button type='primary'
               icon='shopping-cart'
               ghost={ !this.isExtraFilterEnabled('shop') }
@@ -514,7 +511,24 @@ export default class Boards extends React.Component {
               Get Now!
             </Button> */}
           </Button.Group>
-        </li>
+        </li>        
+        <li>Debug: </li>
+        <li>
+          <Button.Group>
+            <Button type='primary'
+              icon='tool'
+              ghost={ !this.isExtraFilterEnabled('debug-onboard') }
+              onClick={ () => this.onToggleExtraFilter('debug-onboard') }>
+              On-board
+            </Button>
+            <Button type='primary'
+              icon='tool'
+              ghost={ !this.isExtraFilterEnabled('debug-external') }
+              onClick={ () => this.onToggleExtraFilter('debug-external') }>
+              External
+            </Button>  
+          </Button.Group>
+        </li>        
       </ul>
     </div>
     );
@@ -543,17 +557,13 @@ export default class Boards extends React.Component {
     return (
       <ul className='list-inline'>
         <li>
-          <a className='copy-board-id' data-clipboard-text={ record.id }><Tooltip title='Click for copy Board ID to clipboard'><Icon type='copy' /> <code>{ record.id }</code></Tooltip></a>
+          ID: <a className='copy-board-id' data-clipboard-text={ record.id }><Tooltip title='Click for copy Board ID to clipboard'><code>{ record.id }</code> <Icon type='copy' /></Tooltip></a>
         </li>
+        { record.connectivity && (
         <li>
           ·
         </li>
-        <li>
-          <Icon type='info-circle' /> <a onClick={ () => this.props.osOpenUrl(record.url) }>Information</a>
-        </li>
-        <li>
-          ·
-        </li>
+        ) }
         { record.connectivity && (
         <li>
           <Icon type='global' /> Connectivity: { (record.connectivity || ['-']).map(c => c.toLowerCase()).join(', ') }
@@ -566,7 +576,7 @@ export default class Boards extends React.Component {
     return (
       <span>
         { record.extra.includes('test') && <Tooltip title='Unit Testing'> <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/unit-testing.html') }> <Icon type='api' /> </a> </Tooltip> }
-        { record.extra.includes('debug') && <Tooltip title={ `Unified Debugger: ${ this.humanizeDebug(record.debug) }` }> <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/debugging.html') }> <Icon type='tool' /> </a> </Tooltip> }
+        { record.extra.some(item => item.startsWith('debug-')) && <Tooltip title={ `Debug: ${ record.extra.some(item => item === 'debug-onboard') ? 'On-board' : 'External' }` }> <a onClick={ () => this.props.osOpenUrl(`https://docs.platformio.org/page/boards/${record.platform.name}/${record.id}.html#debugging`) }> <Icon type='tool' /> </a> </Tooltip> }
         { record.extra.includes('iot') && <Tooltip title='IoT-enabled'> <a><Icon type='cloud-o' /></a> </Tooltip> }
         { record.extra.includes('certified') && <Tooltip title='Certified'> <a> <Icon type='safety' /> </a> </Tooltip> }
         { record.extra.includes('shop') && <Tooltip title='Get Now!'> <a onClick={ () => this.props.osOpenUrl(record.url) }> <Icon type='shopping-cart' /> </a> </Tooltip> }
