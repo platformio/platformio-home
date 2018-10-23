@@ -328,7 +328,12 @@ export default class Boards extends React.Component {
         filters: this.getVendorFilters(data),
         onFilter: (value, record) => record.vendor === value,
         sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
-        sortOrder: dataSorters.columnKey === 'name' && dataSorters.order
+        sortOrder: dataSorters.columnKey === 'name' && dataSorters.order,
+        render:(_, record) => (
+          <a onClick={ () => this.props.osOpenUrl(`http://docs.platformio.org/page/boards/${record.platform.name}/${record.id}.html`) }>
+            { record.name }
+          </a>
+        )
       },
       {
         title: 'Platform',
