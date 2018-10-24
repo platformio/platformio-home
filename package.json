@@ -13,7 +13,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "antd": "~3.7.2",
+    "antd": "~3.10.2",
     "clipboard": "^2.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
@@ -86,7 +86,8 @@
       "@tag-code-color": "#c7254e",
       "@tag-code-bg": "#f9f2f4",
       "@tag-kbd-color": "#fff",
-      "@tag-kbd-bg": "#333"
+      "@tag-kbd-bg": "#333",
+      "@table-header-sort-active-bg": "darken(@table-header-bg, 3%)"
     },
     "dark": {
       "hljs-theme": "monokai-sublime",
@@ -120,6 +121,9 @@
       "@breadcrumb-link-color": "@link-color",
       "@tabs-card-active-color": "@heading-color",
       "@table-expanded-row-bg": "darken(@body-background, 2%)",
+      "@table-header-sort-active-bg": "darken(@table-header-bg, 4%)",
+      "@table-header-sort-bg": "darken(@table-header-bg, 3%)",
+      "@table-body-sort-bg": "@table-header-sort-bg",
       "@carousel-dot-width": "20px",
       "@carousel-dot-height": "4px",
       "@carousel-dot-active-width": "28px",

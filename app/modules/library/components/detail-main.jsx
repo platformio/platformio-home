@@ -263,7 +263,7 @@ export default class LibraryDetailMain extends React.Component {
                 <h2>Platforms</h2>
                 { this.props.data.platforms.map(item => (
                     <Button key={ item.name }
-                      icon='desktop'
+                      icon='appstore'
                       size='small'
                       onClick={ () => this.onDidPlatformSearch(item.name) }>
                       { item.title }

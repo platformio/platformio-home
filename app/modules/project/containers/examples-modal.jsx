@@ -142,7 +142,7 @@ class ProjectExamplesModal extends React.Component {
           filterOption={ (input, option) => option.key.toLowerCase().includes(input.toLowerCase()) }
           onChange={ ::this.onDidExample }>
           { this.props.items.filter(item => workspaceSettings.get('filterProjectExample', () => true)(item)).map(data => (
-              <Select.OptGroup key={ `${data.platform.title}-${data.platform.version}` } label={ <span><Icon type='desktop' /> { data.platform.title } { duplicatedPlatforms.includes(data.platform.title) ? `[#${data.platform.version}]` : ''}</span> }>
+              <Select.OptGroup key={ `${data.platform.title}-${data.platform.version}` } label={ <span><Icon type='appstore' /> { data.platform.title } { duplicatedPlatforms.includes(data.platform.title) ? `[#${data.platform.version}]` : ''}</span> }>
                 { data.items.map(item => (
                     <Select.Option key={ `${data.platform.title}-${data.platform.version}-${item.name}-${item.description}` } value={ item.path }>
                       { item.name }
