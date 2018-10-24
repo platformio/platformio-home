@@ -28,7 +28,7 @@ const routes = [
   },
   {
     path: '/platforms/embedded',
-    icon: 'desktop',
+    icon: 'build',
     label: 'Embedded',
     component: PlatformEmbeddedPage
   },

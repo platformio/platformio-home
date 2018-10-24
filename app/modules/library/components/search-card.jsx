@@ -71,7 +71,7 @@ export default class LibrarySearchCard extends React.Component {
         </div>
         <div>
           <Tooltip title='Compatible platforms'>
-            <Icon type='desktop' className='inline-block-tight' />
+            <Icon type='appstore' className='inline-block-tight' />
             { this.renderFrameworksOrPlatforms(this.props.item.platforms, 'platform') }
           </Tooltip>
         </div>

@@ -9,51 +9,13 @@
  @sider-width: 70px;
  @max-content-width: @screen-xl - @sider-width;
 
-
 .app-container {
-  height: 100vh;
-
-  .main-container {
-    padding: 0;
-    overflow: auto;
-
-    .ant-layout-header {
-      padding: 0px 10px 10px 3px;
-      margin: 0;
-      height: unset;
-      line-height: inherit;
-      vertical-align: middle;
-
-      .header-container {
-        max-width: @max-content-width;
-      }
-
-      .account-bar {
-        padding-top: 10px;
-      }
-
-      .ant-btn-group {
-        margin-top: 10px;
-      }
-    }
-
-    .ant-layout-content {
-      padding: 0 20px;
-      margin: 0;
-
-      .ant-menu-horizontal {
-        margin: 5px 0 20px 0;
-      }
-
-      .page-container {
-        max-width: @max-content-width - 40; // 20+20 padding
-      }
-    }
-  }
 
   .ant-layout-sider {
     overflow: auto;
     height: 100vh;
+    position: fixed;
+    left: 0;
 
     .logo {
       text-align: center;
@@ -76,6 +38,45 @@
         display: block;
         line-height: 12px;
         font-size: 12px;
+      }
+    }
+  }
+
+  .main-container {
+    padding: 0;
+    margin-left: 70px;
+
+    .ant-layout-header {
+      padding: 0px 10px 10px 3px;
+      margin: 0;
+      height: unset;
+      line-height: inherit;
+      vertical-align: middle;
+
+      .header-container {
+        max-width: @max-content-width;
+      }
+
+      .account-bar {
+        padding-top: 10px;
+      }
+
+      .ant-btn-group {
+        margin-top: 10px;
+      }
+    }
+
+    .ant-layout-content {
+      overflow: initial;
+      padding: 0 20px;
+      margin: 0;
+
+      .ant-menu-horizontal {
+        margin: 5px 0 20px 0;
+      }
+
+      .page-container {
+        max-width: @max-content-width - 40; // 20+20 padding
       }
     }
   }
@@ -114,10 +115,10 @@
     font-size: 11px;
   }
   &.ant-menu-inline .ant-badge-count {
-    right: -7px;
+    right: 10px;
   }
   &.ant-menu-horizontal .ant-badge-count {
-    right: -30px;
+    right: -15px;
   }
 }
 

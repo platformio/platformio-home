@@ -41,7 +41,7 @@ const routes = [
   },
   {
     path: '/platforms',
-    icon: 'desktop',
+    icon: 'appstore',
     label: 'Platforms',
     component: PlatformPage
   },

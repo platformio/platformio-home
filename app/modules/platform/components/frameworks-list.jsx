@@ -86,7 +86,7 @@ export default class FrameworksList extends React.Component {
         <div className='inline-buttons'>
           { (item.platforms || []).map(item => (
               <Button key={ item.title }
-                icon='desktop'
+                icon='appstore'
                 size='small'
                 onClick={ (e) => this.onDidPlatform(e, item.name) }>
                 { item.title }

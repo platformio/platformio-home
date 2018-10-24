@@ -63,7 +63,7 @@ export default class FrameworkDetailPage extends React.Component {
               { this.props.data.platforms.map(item => (
                 <li key={ item.name }>
                   <Button
-                    icon='desktop'
+                    icon='appstore'
                     size='small'
                     onClick={ () => this.props.showPlatform(item.name) }>
                     { item.title }

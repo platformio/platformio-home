@@ -13,6 +13,17 @@
     background: @primary-color !important;
 }
 
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-sorters:hover {
+    background: @table-header-sort-active-bg;
+}
+
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters:hover .anticon-filter:hover,
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters:hover .ant-table-filter-icon:hover,
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters .anticon-filter.ant-table-filter-open,
+.ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters .ant-table-filter-icon.ant-table-filter-open {
+    background: darken(@table-header-sort-active-bg, 5%);
+}
+
 @import 'app';
 @import 'common';
 @import 'modules/account';
