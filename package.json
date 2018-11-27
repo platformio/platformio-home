@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "PIO Home",
   "main": "''",
   "scripts": {
@@ -13,7 +13,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "antd": "~3.10.3",
+    "antd": "~3.10.9",
     "clipboard": "^2.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
@@ -30,7 +30,6 @@
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
     "sha.js": "^2.4.8",
-    "sockjs-client": "^1.1.4",
     "superagent": "^3.5.2",
     "url-parse": "^1.1.9"
   },
