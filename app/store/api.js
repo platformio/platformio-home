@@ -8,7 +8,6 @@
 
 import { put, take } from 'redux-saga/effects';
 
-import SockJS from 'sockjs-client';
 import { createAction } from './actions';
 import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
@@ -61,8 +60,13 @@ export function apiMiddleware(options) {
       if (reconnect.timer) {
         clearTimeout(reconnect.timer);
       }
-      const sock = new SockJS(endpoint);
-
+      let sock = null;
+      try {
+        sock = new WebSocket(endpoint);
+      } catch (err) {
+        return message.error('Communication Error: This browser does not support WebSocket protocol', 0);
+      }
+      
       sock.onopen = () => {
         reconnect.retries = 0;
         if (reconnect.loading) {
@@ -106,10 +110,13 @@ export function apiMiddleware(options) {
     }
 
     socket = newSocket(options.endpoint);
+    if (!socket) {
+      return undefined;
+    }
     return next => action => {
       if (action && action.type === actions.API_REQUEST) {
         const msg = JSON.stringify(jsonrpc.request(action.id, action.query, action.params));
-        return socket.readyState === SockJS.OPEN ? socket.send(msg) : messageQueue.push(msg);
+        return socket.readyState === 1 ? socket.send(msg) : messageQueue.push(msg);
       }
       return next(action);
     };

@@ -57,7 +57,7 @@ function* watchNotifyError() {
     if (err instanceof jsonrpc.JsonRpcError) {
       description = err.message;
       if (err.data) {
-        description += ': ' + err.data;
+        description += ': ' + JSON.stringify(err.data);
       }
     }
     if (['toolchain-gccarmlinuxgnueabi', 'WiringPi'].some(item => description.includes(item))) {

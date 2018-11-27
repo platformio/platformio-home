@@ -11,8 +11,8 @@ export const PLATFORMIO_API_ENDPOINT = 'http://api.platformio.org';
 export const PIOPLUS_API_ENDPOINT = 'https://api.pioplus.com';
 export const PIOPLUS_UPGRADE_COUPON = 'HOME13V5OFF15';
 
-let wsrpc = 'http://127.0.0.1:8008/wsrpc';
-if (process.env.NODE_ENV === 'production' && window.location && window.location.origin) {
-  wsrpc = `${window.location.origin}/wsrpc`;
+let wsrpc = 'ws://127.0.0.1:8008/wsrpc';
+if (process.env.NODE_ENV === 'production' && window.location && window.location.host) {
+  wsrpc = `ws://${window.location.host}/wsrpc`;
 }
 export const BACKEND_ENDPOINT = wsrpc;
