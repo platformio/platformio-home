@@ -60,8 +60,8 @@ function* watchLoadAccountInfo() {
     }
     try {
       data = yield call(apiFetchData, {
-        query: 'core.auth_info',
-        params: [extended]
+        query: 'core.call',
+        params: [['account', 'show', '--json-output', ...(extended ? [] : ['--offline'])]]        
       });
       yield call(raffleOffProCoupon, data);
     } catch (err) {

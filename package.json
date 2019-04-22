@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "PIO Home",
   "main": "''",
   "scripts": {
@@ -19,7 +19,7 @@
     "highlight.js": "^9.12.0",
     "humanize": "^0.0.9",
     "jsonrpc-lite": "^2.0.0",
-    "marked": "^0.5.1",
+    "marked": "^0.6.2",
     "prop-types": "^15.5.10",
     "querystringify": "^2.0.0",
     "react": "^16.2.0",
@@ -30,7 +30,7 @@
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
     "sha.js": "^2.4.8",
-    "superagent": "^3.5.2",
+    "superagent": "^5.0.2",
     "url-parse": "^1.1.9"
   },
   "devDependencies": {
