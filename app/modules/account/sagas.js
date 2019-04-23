@@ -16,6 +16,7 @@ import { deleteEntity, deleteStorageItem, updateEntity, updateStorageItem } from
 import { notifyError, notifySuccess } from '../core/actions';
 
 import { apiFetchData } from '../../store/api';
+import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -65,7 +66,9 @@ function* watchLoadAccountInfo() {
       });
       yield call(raffleOffProCoupon, data);
     } catch (err) {
-      yield put(notifyError('Could not load PIO Account information', err));
+      if (!(err instanceof jsonrpc.JsonRpcError && err.data.includes('`pio account login`'))) {
+        yield put(notifyError('Could not load PIO Account information', err));        
+      }
     }
     yield put(updateEntity('accountInfo', data || {}));
   }
