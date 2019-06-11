@@ -24,6 +24,7 @@ class AccountInformationPage extends React.Component {
     data: PropTypes.shape({
       username: PropTypes.string,
       groups: PropTypes.array,
+      subscriptions: PropTypes.array,
       currentPlan: PropTypes.string,
       upgradePlan: PropTypes.string
     }),

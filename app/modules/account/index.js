@@ -6,8 +6,6 @@
  * the root directory of this source tree.
  */
 
-import * as actions from './actions';
-
 import MultiPage from '../core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -19,13 +17,7 @@ import { selectIsUserLogged } from './selectors';
 class AccountIndex extends React.Component {
 
   static propTypes = {
-    userLogged: PropTypes.bool,
-    loadAccountInfo: PropTypes.func.isRequired
-  }
-
-  constructor() {
-    super(...arguments);
-    this.props.loadAccountInfo();
+    userLogged: PropTypes.bool
   }
 
   render() {
@@ -45,4 +37,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, actions)(AccountIndex);
+export default connect(mapStateToProps)(AccountIndex);

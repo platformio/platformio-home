@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Icon, Tooltip } from 'antd';
+import { Divider, Icon, Table, Tag, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -19,6 +19,7 @@ export default class AccountInformation extends React.Component {
     data: PropTypes.shape({
       username: PropTypes.string.isRequired,
       groups: PropTypes.array,
+      subscriptions: PropTypes.array,
       currentPlan: PropTypes.string
     }).isRequired,
     logoutAccount: PropTypes.func.isRequired,
@@ -33,7 +34,7 @@ export default class AccountInformation extends React.Component {
           <dl className='dl-horizontal'>
             <dt>Logged in as</dt>
             <dd>
-              { this.props.data.username } (<a onClick={() => this.props.logoutAccount()}>Log out</a>)
+              { this.props.data.username } ( <a onClick={ () => this.props.logoutAccount() }>Log out</a> )
             </dd>
             <dt>PIO Plus Plan</dt>
             <dd>
@@ -43,32 +44,109 @@ export default class AccountInformation extends React.Component {
             </dd>
           </dl>
         </div>
-        <div>
-          <h1>Groups</h1>
-          { this.props.data.groups && this.props.data.groups.map(group => (
-              <dl key={ group.name } className='dl-horizontal'>
-                <dt>Name</dt>
-                <dd>
-                  { group.name }
-                </dd>
-                <dt>Expires</dt>
-                <dd>
-                  <Tooltip title={ group.expire ? new Date(group.expire * 1000).toString() : '' }>{ group.expire ? humanize.relativeTime(group.expire) : 'never' }</Tooltip>
-                </dd>
-                <dt>Permissions</dt>
-                <dd>
-                  <ul>
-                    { group.permissions.map(permissionName => (
-                        <li key={ permissionName }>
-                          <Icon type='check' /> { permissionName }
-                        </li>)
-                      ) }
-                  </ul>
-                </dd>
-              </dl>)
-            ) }
-        </div>
+        { this.renderSubscriptions() }
+        { this.renderGroups() }
       </div>);
+  }
+
+  renderSubscriptions() {
+    if (!this.props.data.subscriptions || !this.props.data.subscriptions.length) {
+      return;
+    }
+    const columns = [
+      {
+        title: 'Plan',
+        dataIndex: 'product_name',
+        key: 'product_name'
+      },
+      {
+        title: 'Start Date',
+        dataIndex: 'begin_time',
+        key: 'begin_time',
+        render: (text) => (
+          <Tooltip title={ new Date(parseInt(text) * 1000).toString() }>
+            { humanize.date('F j, Y', parseInt(text)) }
+          </Tooltip>
+        )
+      },
+      {
+        title: 'End Date',
+        dataIndex: 'end_time',
+        key: 'end_time',
+        render: (text) => (
+          <Tooltip title={ parseInt(text) ? new Date(parseInt(text) * 1000).toString() : '' }>
+            { parseInt(text) ? humanize.date('F j, Y', parseInt(text)) : '-' }
+          </Tooltip>
+        )
+      },
+      {
+        title: 'Next Payment',
+        dataIndex: 'next_bill_time',
+        key: 'next_bill_time',
+        render: (text) => (
+          <Tooltip title={ new Date(parseInt(text) * 1000).toString() }>
+            { humanize.date('F j, Y', parseInt(text)) }
+          </Tooltip>
+        )
+      },
+      {
+        title: 'State',
+        dataIndex: 'status',
+        key: 'status',
+        render: (text) => (
+          <Tag color={ text == 'active' ? '#87d068' : '#f5222d' }>
+            { text }
+          </Tag>
+        ),
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => record.status === 'active' && (
+          <span><a onClick={ () => this.props.osOpenUrl(record.update_url) }>Edit</a> <Divider type='vertical' /> <a onClick={ () => this.props.osOpenUrl(record.cancel_url) }>Cancel</a></span>
+        ),
+      },
+    ];
+    return (
+      <div>
+        <h1>Subscriptions</h1>
+        <Table columns={ columns } dataSource={ this.props.data.subscriptions } pagination={ false } />
+        <br />
+      </div>
+      );
+  }
+
+  renderGroups() {
+    return (
+      <div>
+        <h1>Groups</h1>
+        { this.props.data.groups && this.props.data.groups.map(group => (
+            <dl key={ group.name } className='dl-horizontal'>
+              <dt>Name</dt>
+              <dd>
+                { group.name }
+              </dd>
+              <dt>Expires</dt>
+              <dd>
+                <Tooltip title={ group.expire ? new Date(group.expire * 1000).toString() : '' }>
+                  { group.expire ? humanize.date('F j, Y', group.expire) : 'never' }
+                </Tooltip>
+              </dd>
+              <dt>Permissions</dt>
+              <dd>
+                <ul>
+                  { group.permissions.map(permissionName => (
+                      <li key={ permissionName }>
+                        <Icon type='check' />
+                        { ' ' + permissionName }
+                      </li>)
+                    ) }
+                </ul>
+              </dd>
+            </dl>)
+          ) }
+      </div>
+      );
   }
 
 }
