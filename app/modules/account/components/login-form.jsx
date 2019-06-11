@@ -73,9 +73,7 @@ export default class AccountLoginForm extends React.Component {
           <h2>PIO Account</h2>
           <p className='block'>Having <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-account.html') }>PIO Account</a> allows you to use extra professional features:</p>
           <ul className='list-styled block'>
-            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/debugging.html') }>PIO Unified Debugger</a></li>
-            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote™</a></li>
-            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/unit-testing.html') }>PIO Unit Testing</a></li>
+            <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/plus/pio-remote.html') }>PIO Remote</a></li>
             <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/ide.html') }>Integration with Cloud IDEs</a></li>
           </ul>
         </Col>
