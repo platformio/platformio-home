@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Button, Form, Icon, Input } from 'antd';
+import { Button, Form, Icon, Input } from 'antd';
 
 import CompanyLogo from '../../home/components/company-logo';
 import PropTypes from 'prop-types';

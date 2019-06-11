@@ -16,7 +16,6 @@ import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { inIframe, reportException } from './helpers';
 
-import { PIOPLUS_API_ENDPOINT } from '../../config';
 import React from 'react';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';

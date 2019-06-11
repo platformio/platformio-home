@@ -206,7 +206,6 @@ export default class Boards extends React.Component {
     if (!debug || !debug.tools) {
       return false;
     }
-    let hasOnboard = false;
     for (const key of Object.keys(debug.tools)) {
       if (debug.tools[key].onboard) {
         return true;
