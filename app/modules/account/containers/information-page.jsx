@@ -30,6 +30,7 @@ class AccountInformationPage extends React.Component {
     }),
     upgradeInfo: PropTypes.object,
     loadAccountInfo: PropTypes.func.isRequired,
+    logoutAccount: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
   }

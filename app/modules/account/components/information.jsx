@@ -36,7 +36,7 @@ export default class AccountInformation extends React.Component {
           <dl className='dl-horizontal'>
             <dt>Logged in as</dt>
             <dd>
-              { this.props.data.username }
+              { this.props.data.username } (<a onClick={() => this.props.logoutAccount()}>Log out</a>)
             </dd>
             <dt>PIO Plus Plan</dt>
             <dd>
