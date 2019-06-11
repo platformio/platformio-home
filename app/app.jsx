@@ -12,7 +12,6 @@ import { Route, Switch } from 'react-router';
 import AccountStatusBar from './modules/account/containers/status-bar';
 import AppFooter from './footer';
 import CompanyLogo from './modules/home/components/company-logo';
-import Feedback from './modules/core/containers/feedback';
 import OpenInBrowser from './modules/core/containers/open-in-browser';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -47,9 +46,6 @@ export default class App extends React.Component {
                         disabled={ router.history.length < 1 || router.history.index >= (router.history.length - 1) }
                         onClick={ () => router.history.goForward() }></Button>
                     </Button.Group>
-                  </li>
-                  <li>
-                    <Feedback />
                   </li>
                   <li>
                     <OpenInBrowser />
