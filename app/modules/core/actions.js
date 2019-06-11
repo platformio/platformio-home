@@ -12,7 +12,6 @@ import { createAction } from '../../store/actions';
 export const NOTIFY_ERROR = 'NOTIFY_ERROR';
 export const NOTIFY_SUCCESS = 'NOTIFY_SUCCESS';
 
-export const SEND_FEEDBACK = 'SEND_FEEDBACK';
 export const UPDATE_ROUTE_BADGE = 'UPDATE_ROUTE_BADGE';
 export const SHOW_AT_STARTUP = 'SHOW_AT_STARTUP';
 
@@ -34,7 +33,6 @@ export const TOGGLE_FAVORITE_FOLDER = 'TOGGLE_FAVORITE_FOLDER';
 export const notifyError = (title, err) => createAction(NOTIFY_ERROR, { title, err });
 export const notifySuccess = (title, result) => createAction(NOTIFY_SUCCESS, { title, result });
 
-export const sendFeedback = (body, onEnd=undefined) => createAction(SEND_FEEDBACK, { body, onEnd });
 export const updateRouteBadge = (path, count) => createAction(UPDATE_ROUTE_BADGE, { path, count });
 export const showAtStartup = (value) => createAction(SHOW_AT_STARTUP, { value });
 

@@ -16,7 +16,6 @@ import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { inIframe, reportException } from './helpers';
 
-import { PIOPLUS_API_ENDPOINT } from '../../config';
 import React from 'react';
 import URL from 'url-parse';
 import { apiFetchData } from '../../store/api';
@@ -336,30 +335,6 @@ function* watchToggleFavoriteFolder() {
   });
 }
 
-function* watchSendFeedback() {
-  yield takeLatest(actions.SEND_FEEDBACK, function*({body, onEnd}) {
-    let err;
-    try {
-      body = body.trim().substr(0, 1000);
-      yield call(apiFetchData, {
-        query: 'os.request_content',
-        params: [`${PIOPLUS_API_ENDPOINT}/v1/feedback`, {
-          body
-        }]
-      });
-      yield put(actions.notifySuccess('Congrats!', 'Your feedback has been submitted.'));
-    } catch (err_) {
-      err = err_;
-      yield put(actions.notifyError('Could not send your feedback, please try later.', err));
-    }
-    finally {
-      if (onEnd) {
-        yield call(onEnd, err);
-      }
-    }
-  });
-}
-
 export default [
   watchShowAtStartup,
   watchNotifyError,
@@ -373,6 +348,5 @@ export default [
   watchOsIsFile,
   watchOsIsDir,
   watchResetFSItems,
-  watchToggleFavoriteFolder,
-  watchSendFeedback
+  watchToggleFavoriteFolder
 ];

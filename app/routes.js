@@ -23,8 +23,8 @@ const routes = [
   },
   {
     path: '/account',
-    icon: 'user',
-    label: 'Account',
+    // icon: 'user',
+    // label: 'Account',
     component: AccountIndex
   },
   {

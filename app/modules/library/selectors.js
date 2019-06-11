@@ -123,12 +123,12 @@ export function selectLibraryStorages(state) {
     else if (project.envLibStorages) {
       project.envLibStorages.forEach(storage => {
         items.push(new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path));
-      })
+      });
     }
     project.extraLibStorages.forEach(storage => {
       items.push(new LibraryStorage(`Storage: ${storage.name}`, storage.path));
-    })
-  })
+    });
+  });
 
   items.push(new LibraryStorage('Global storage'));
   return items;
