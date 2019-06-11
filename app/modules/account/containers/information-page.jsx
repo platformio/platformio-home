@@ -8,8 +8,6 @@
 
 import * as actions from '../actions';
 
-import { selectAccountInfo, selectUpgradeInfo } from '../selectors';
-
 import AccountInformation from '../components/information';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -17,6 +15,7 @@ import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
+import { selectAccountInfo } from '../selectors';
 
 
 class AccountInformationPage extends React.Component {
@@ -28,7 +27,6 @@ class AccountInformationPage extends React.Component {
       currentPlan: PropTypes.string,
       upgradePlan: PropTypes.string
     }),
-    upgradeInfo: PropTypes.object,
     loadAccountInfo: PropTypes.func.isRequired,
     logoutAccount: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
@@ -65,7 +63,6 @@ class AccountInformationPage extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     data: selectAccountInfo(state),
-    upgradeInfo: selectUpgradeInfo(state),
     showLoginPage: () => goTo(ownProps.history, '/account/login', null, true)
   };
 }

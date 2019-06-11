@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Button, Icon, Tooltip } from 'antd';
+import { Icon, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -21,10 +21,7 @@ export default class AccountInformation extends React.Component {
       groups: PropTypes.array,
       currentPlan: PropTypes.string
     }).isRequired,
-    upgradeInfo: PropTypes.shape({
-      buttonLabel: PropTypes.string,
-      url: PropTypes.string
-    }),
+    logoutAccount: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
   }
 
@@ -43,9 +40,6 @@ export default class AccountInformation extends React.Component {
               <a onClick={ () => this.props.osOpenUrl('https://platformio.org/pricing?utm_campaign=account-info') } className='inline-block'>
                 { this.props.data.currentPlan }
               </a>
-              { this.props.upgradeInfo &&
-                <Button type='primary' icon='star' className='block' onClick={ () => this.props.osOpenUrl(this.props.upgradeInfo.url) }>{ this.props.upgradeInfo.buttonLabel }</Button> }
-              { this.props.upgradeInfo && <Alert showIcon message='Please do not forget to re-login after account upgrade to apply the new permissions.' /> }
             </dd>
           </dl>
         </div>
