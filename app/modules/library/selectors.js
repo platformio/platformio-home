@@ -115,7 +115,6 @@ export function selectLibraryStorages(state) {
   const coreVersion = selectStorageItem(state, 'coreVersion') || '';
   const projects = selectProjects(state) || [];
   const items = [];
-  console.warn(coreVersion);
   projects.forEach(project => {
     if (coreVersion.startsWith('3.')) {
       items.push(new LibraryStorage(`Project: ${project.name}`, project.path));
