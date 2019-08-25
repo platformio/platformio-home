@@ -92,7 +92,7 @@
       "hljs-theme": "monokai-sublime",
       "@icon-url": "'/fonts/iconfont'",
       "@body-background": "#1E1E1E",
-      "@component-background": "#252526",
+      "@component-background": "#323232",
       "@layout-header-background": "#323232",
       "@layout-body-background": "@body-background",
       "@background-color-base": "#181818",
