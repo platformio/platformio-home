@@ -34,7 +34,7 @@ class LibraryInstallAdvancedModal extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      value: this.props.library || null,
+      library: null,
       storageDir: null,
       installing: false
     };
@@ -56,9 +56,9 @@ class LibraryInstallAdvancedModal extends React.Component {
     }
   }
 
-  onDidValue(value) {
+  onDidLibraryChange(value) {
     this.setState({
-      value
+      library: value
     });
   }
 
@@ -69,7 +69,7 @@ class LibraryInstallAdvancedModal extends React.Component {
   }
 
   onDidInstall() {
-    if (!this.state.value) {
+    if (!this.state.library) {
       this.focus();
       return;
     }
@@ -78,7 +78,7 @@ class LibraryInstallAdvancedModal extends React.Component {
     });
     this.props.installLibrary(
       this.state.storageDir,
-      this.state.value,
+      this.state.library,
       err => {
         this.setState({
           installing: false
@@ -92,12 +92,18 @@ class LibraryInstallAdvancedModal extends React.Component {
 
   onDidCancel() {
     this.setState({
-      installing: false
+      installing: false,
+      library: null
     });
     this.props.onCancel();
   }
 
   render() {
+    if (this.props.visible && !this.state.library && this.props.library) {
+      this.setState({
+        library: this.props.library
+      });
+    }
     const projects = this.props.projects || [];
     return (
       <Modal visible={ this.props.visible }
@@ -107,16 +113,16 @@ class LibraryInstallAdvancedModal extends React.Component {
         okText='Install'
         onOk={ ::this.onDidInstall }
         onCancel={ ::this.onDidCancel }>
-        <p>
+        <div className='block'>
           <Input placeholder='Library id, name, repository, requirements...'
             size='large'
             style={ { width: '100%' } }
-            value={ this.state.value }
-            onChange={ (e) => this.onDidValue(e.target.value) }
+            value={ this.state.library }
+            onChange={ (e) => this.onDidLibraryChange(e.target.value) }
             onPressEnter={ ::this.onDidInstall }
             ref={ elm => this._inputElement = elm } />
-        </p>
-        <p>
+        </div>
+        <div className='block'>
           <Select defaultValue=''
             style={ { width: '100%' } }
             size='large'
@@ -139,7 +145,7 @@ class LibraryInstallAdvancedModal extends React.Component {
               )))}
             </Select.OptGroup>
           </Select>
-        </p>
+        </div>
 
         <Divider>Information</Divider>
         <Collapse>
