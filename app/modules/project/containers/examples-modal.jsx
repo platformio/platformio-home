@@ -92,6 +92,7 @@ class ProjectExamplesModal extends React.Component {
   render() {
     return (
       <Modal visible={ this.props.visible }
+        className='project-examples-modal'
         confirmLoading={ this.state.inProgress }
         width={ 600 }
         title='Import Project Example'
@@ -146,7 +147,7 @@ class ProjectExamplesModal extends React.Component {
                 { data.items.map(item => (
                     <Select.Option key={ `${data.platform.title}-${data.platform.version}-${item.name}-${item.description}` } value={ item.path }>
                       { item.name }
-                      { item.description && <div><small>{ item.description }</small></div> }
+                      { item.description && <div className='project-example-description'>{ item.description }</div> }
                     </Select.Option>
                   )) }
               </Select.OptGroup>
