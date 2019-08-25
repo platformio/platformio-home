@@ -134,13 +134,20 @@ export default class LibraryDetailMain extends React.Component {
   }
 
   getLibraryForInstall() {
-    return this.state.selectedVersion ? `${this.props.data.id}@${this.state.selectedVersion}` : this.props.data.id;
+    const latestVersion = this.props.data.versions.length ? this.props.data.versions[this.props.data.versions.length - 1].name : '';
+    if (this.state.selectedVersion && (!latestVersion || this.state.selectedVersion !== latestVersion)) {
+      return `${this.props.data.name}@${this.state.selectedVersion}`;
+    }
+    if (latestVersion.match(/[\d\.]+/)) {
+      return `${this.props.data.name}@^${latestVersion}`;
+    }
+    return `id=${this.props.data.id}`;
   }
 
   renderQuickInstallation(versions) {
     return (
       <div>
-        <LibraryInstallAdvancedModal library={ `id=${this.getLibraryForInstall()}` } visible={ this.state.installToVisible } onCancel={ ::this.onDidCancelInstallTo } />
+        <LibraryInstallAdvancedModal library={ this.getLibraryForInstall() } visible={ this.state.installToVisible } onCancel={ ::this.onDidCancelInstallTo } />
         <h3>Installation</h3>
         <ul className='list-inline'>
           <li>

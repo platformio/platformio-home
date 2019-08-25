@@ -59,17 +59,25 @@ function* watchNotifyError() {
         description += ': ' + JSON.stringify(err.data);
       }
     }
-    if (['toolchain-gccarmlinuxgnueabi', 'WiringPi'].some(item => description.includes(item))) {
-      return notification.warning({
-        message: title,
-        description,
-        duration: 0,
-        btn: (
-        <Button type='danger' onClick={ () => _openUrl('https://github.com/platformio/platform-linux_arm/issues/2') }>
-          Check available solutions
-        </Button>)
-      });
+    const knownIssues = [
+      [/toolchain-gccarmlinuxgnueabi|WiringPi/g, 'https://github.com/platformio/platform-linux_arm/issues/2'],
+      [/\[Error 2\] The system cannot find the file specified.*WindowsError/g, 'https://github.com/platformio/platformio-core/issues/2321'],
+      [/Please try this solution -> http:\/\/bit.ly\/faq-package-manager/g, 'http://bit.ly/faq-package-manager']
+    ];
+    for (const [regex, url] of knownIssues) {
+      if (description.match(regex)) {
+        return notification.warning({
+          message: title,
+          description,
+          duration: 0,
+          btn: (
+          <Button type='danger' onClick={ () => _openUrl(url) }>
+            Check available solutions
+          </Button>)
+        });
+      }
     }
+
     notification.error({
       message: title,
       description,

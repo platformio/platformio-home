@@ -20,6 +20,7 @@ import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../
 import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
+import { getSessionId } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { selectStorageItem } from '../../store/selectors';
 
@@ -67,22 +68,32 @@ function* watchProjectRename() {
 function* watchOpenProject() {
   yield takeEvery(actions.OPEN_PROJECT, function*({projectDir}) {
     try {
-      const result = yield call(apiFetchData, {
+      return yield call(apiFetchData, {
         query: 'ide.open_project',
-        params: [projectDir]
+        params: [projectDir, getSessionId()]
       });
-      console.info(result);
     } catch (err) {
-      Modal.success({
-        title: 'Open Project...',
-        content: (
-        <div style={ { wordBreak: 'break-all' } }>
-          <div className='block'>Project has been successfully configured and is located by this path: <code>{ projectDir }</code>.</div>
-          You can open it with your favourite IDE or process with <kbd>platformio run</kbd> command.
-        </div>
-        )
-      });
+      // Invalid params, PIO Core < 4.0.1b3
+      if (err instanceof jsonrpc.JsonRpcError && jsonrpc.JsonRpcError.code === -32602) {
+        try {
+          return yield call(apiFetchData, {
+            query: 'ide.open_project',
+            params: [projectDir]
+          });
+        } catch (err) {
+          console.warn(err);
+        }
+      }
     }
+    Modal.success({
+      title: 'Open Project...',
+      content: (
+      <div style={ { wordBreak: 'break-all' } }>
+        <div className='block'>Project has been successfully configured and is located by this path: <code>{ projectDir }</code>.</div>
+        You can open it with your favourite IDE or process with <kbd>platformio run</kbd> command.
+      </div>
+      )
+    });
   });
 }
 

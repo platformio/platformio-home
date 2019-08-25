@@ -8,7 +8,7 @@
 
 import { LibraryStorage, filterStorageItems } from './storage';
 import { expandFrameworksOrPlatforms, selectRegistryFrameworks, selectRegistryPlatforms } from '../platform/selectors';
-import { selectInputValue, selectStorageItem } from '../../store/selectors';
+import { selectInputValue } from '../../store/selectors';
 
 import { selectProjects } from '../project/selectors';
 
@@ -112,15 +112,10 @@ export function selectVisibletBuiltinLibs(state) {
 }
 
 export function selectLibraryStorages(state) {
-  const coreVersion = selectStorageItem(state, 'coreVersion') || '';
   const projects = selectProjects(state) || [];
   const items = [];
-  console.warn(coreVersion);
   projects.forEach(project => {
-    if (coreVersion.startsWith('3.')) {
-      items.push(new LibraryStorage(`Project: ${project.name}`, project.path));
-    }
-    else if (project.envLibStorages) {
+    if (project.envLibStorages) {
       project.envLibStorages.forEach(storage => {
         items.push(new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path));
       });
