@@ -6,7 +6,7 @@
  * the root directory of this source tree.
  */
 
-import { Alert, Collapse, Input, Modal, Select } from 'antd';
+import { Collapse, Divider, Input, Modal, Select } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -107,16 +107,18 @@ class LibraryInstallAdvancedModal extends React.Component {
         okText='Install'
         onOk={ ::this.onDidInstall }
         onCancel={ ::this.onDidCancel }>
-        <Input.Group compact className='block'>
+        <p>
           <Input placeholder='Library id, name, repository, requirements...'
             size='large'
-            style={ { width: '70%' } }
+            style={ { width: '100%' } }
             value={ this.state.value }
             onChange={ (e) => this.onDidValue(e.target.value) }
             onPressEnter={ ::this.onDidInstall }
             ref={ elm => this._inputElement = elm } />
+        </p>
+        <p>
           <Select defaultValue=''
-            style={ { width: '30%' } }
+            style={ { width: '100%' } }
             size='large'
             onChange={ ::this.onDidStorage }>
             <Select.Option value=''>
@@ -137,13 +139,15 @@ class LibraryInstallAdvancedModal extends React.Component {
               )))}
             </Select.OptGroup>
           </Select>
-        </Input.Group>
-        <Alert showIcon className='block' message={ (
+        </p>
+
+        <Divider>Information</Divider>
+        <Collapse>
+          <Collapse.Panel header='Project dependencies in "platformio.ini"' key='lib_deps'>
             <div>
-              PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify project dependencies in <b>configuration file &quot;platformio.ini&quot;</b> using <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps') }>lib_deps</a> option. The dependent libraries will be installed automatically on the first build of a project. No need to install them manually.
+              PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify project dependencies in <b>configuration file &quot;platformio.ini&quot;</b> using <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps') }>lib_deps</a> option. The dependent libraries will be installed automatically on the first build of a project. <b>NO NEED TO INSTALL THEM MANUALLY.</b>
             </div>
-            ) } />
-        <Collapse defaultActiveKey={ ['storage'] }>
+          </Collapse.Panel>
           <Collapse.Panel header='Storage types' key='storage'>
             <ul className='list-styled'>
               <li><b>Global storage</b> – libraries are visible for all projects</li>
