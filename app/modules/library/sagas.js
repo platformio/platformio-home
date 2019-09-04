@@ -247,21 +247,6 @@ function* watchInstallLibrary() {
         args.push('--global');
       }
       args = args.concat(['install', lib]);
-
-      // save library to `platformio.ini` lib_deps
-      if (storageDir) {
-        try {
-          const isPlatformIOProject = yield call(apiFetchData, {
-            query: 'os.is_file',
-            params: [path.join(storageDir, 'platformio.ini')]
-          });
-          if (isPlatformIOProject) {
-            args = args.concat(['--save']);
-          }
-        } catch (err) {
-        }
-      }
-
       result = yield call(apiFetchData, {
         query: 'core.call',
         params: [args]

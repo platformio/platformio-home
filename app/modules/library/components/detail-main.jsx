@@ -136,10 +136,10 @@ export default class LibraryDetailMain extends React.Component {
   getLibraryForInstall() {
     const latestVersion = this.props.data.versions.length ? this.props.data.versions[this.props.data.versions.length - 1].name : '';
     if (this.state.selectedVersion && (!latestVersion || this.state.selectedVersion !== latestVersion)) {
-      return `${this.props.data.name}@${this.state.selectedVersion}`;
+      return `id=${this.props.data.id}@${this.state.selectedVersion}`;
     }
     if (latestVersion.match(/^[\d\.]+$/)) {
-      return `${this.props.data.name}@^${latestVersion}`;
+      return `id=${this.props.data.id}@^${latestVersion}`;
     }
     return `id=${this.props.data.id}`;
   }
