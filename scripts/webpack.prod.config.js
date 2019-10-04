@@ -32,6 +32,7 @@ module.exports = {
     filename: '[hash].min.js'
   },
   resolve: {
+    alias: common.resolve.alias,
     extensions: ['.js', '.jsx']
   },
   module: {

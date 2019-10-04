@@ -29,6 +29,7 @@ module.exports = {
     filename: 'bundle.js'
   },
   resolve: {
+    alias: common.resolve.alias,
     extensions: ['.js', '.jsx']
   },
   module: {
