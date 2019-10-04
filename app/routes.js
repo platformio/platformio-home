@@ -10,6 +10,7 @@ import AccountIndex from './modules/account/index';
 import BoardsPage from './modules/platform/containers/boards-page';
 import DevicePage from './modules/device/index';
 import HomePage from './modules/home/containers/home-page';
+import InspectPage from './modules/inspect';
 import LibraryIndex from './modules/library/index';
 import PlatformPage from './modules/platform/index';
 
@@ -50,6 +51,12 @@ const routes = [
     icon: 'usb',
     label: 'Devices',
     component: DevicePage
+  },
+  {
+    path: '/inspect',
+    icon: 'monitor',
+    label: 'Inspect',
+    component: InspectPage
   }
 ];
 

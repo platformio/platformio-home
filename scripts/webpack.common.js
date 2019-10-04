@@ -30,6 +30,11 @@ module.exports = {
   mediaDir: mediaDir,
   rootDir: rootDir,
   outputDir: path.join(rootDir, 'dist'),
+  resolve: {
+    alias: {
+      '@Core': path.resolve(__dirname, '../app/modules/core/')
+    }
+  },
 
   rules: [
     {

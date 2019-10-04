@@ -29,12 +29,14 @@ module.exports = {
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": {
-          "resolve": {
-            "extensions": [".js", ".jsx"]
-          }
-        }
+        "config": "scripts/webpack.dev.config.js"
       }
+    },
+    "import/ignore": [
+      "node_modules"
+    ],
+    "react": {
+      "version": "detect",
     }
   },
   "rules": {
