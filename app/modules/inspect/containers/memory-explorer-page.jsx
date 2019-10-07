@@ -8,7 +8,7 @@
 
 import * as actions from '../actions';
 import * as pathlib from '@core/path';
-import {FileItemsType, MemoryExplorer} from '../components/memory-explorer';
+import { MemoryExplorer } from '../components/memory-explorer';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
@@ -20,7 +20,12 @@ class MemoryExplorerPage extends React.PureComponent {
 
   static propTypes = {
     saveTmpDatasize: PropTypes.func.isRequired,
-    files: FileItemsType
+    files: PropTypes.arrayOf(PropTypes.shape({
+      flashSize: PropTypes.int,
+      isDir: PropTypes.bool,
+      path: PropTypes.string.isRequired,
+      ramSize: PropTypes.int,
+    }))
   }
 
   constructor(...args) {
@@ -32,6 +37,7 @@ class MemoryExplorerPage extends React.PureComponent {
   }
 
   getItemsAtPath(cwd) {
+    cwd = pathlib.ensureTrailingSlash(cwd);
     const {files: allFiles} = this.props;
     if (allFiles === undefined) {
       return undefined;

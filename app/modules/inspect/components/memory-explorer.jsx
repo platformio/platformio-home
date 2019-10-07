@@ -79,6 +79,9 @@ export class MemoryExplorer extends React.PureComponent {
     let path;
     if (idx === PARENT_ITEM_IDX) {
       path = pathlib.dirname(dir);
+      if (path === dir) {
+        path = '';
+      }
     } else {
       const item = items[idx];
       if (!item.isDir)  {
@@ -90,7 +93,7 @@ export class MemoryExplorer extends React.PureComponent {
         path = pathlib.join(dir, item.relativePath);
       }
     }
-    onDirChange(pathlib.ensureTrailingSlash(path));
+    onDirChange(path);
    }
 
    handleBreadCrumbItemClick = (e) => {
@@ -107,7 +110,7 @@ export class MemoryExplorer extends React.PureComponent {
      }
 
     const path = pathlib.join(...pathlib.split(dir).slice(0, idx));
-    onDirChange(pathlib.ensureTrailingSlash(path));
+    onDirChange(path);
    }
 
   render() {

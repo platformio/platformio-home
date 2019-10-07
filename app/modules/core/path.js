@@ -25,7 +25,6 @@ export function dirname(path) {
   if (!path || !path.includes(sep) || path === sep) {
     return path;
   }
-  path = ensureNoTrailingSlash(path);
   let dirname = path.substr(0, path.lastIndexOf(sep));
   while (dirname.endsWith(sep)) {
     dirname = dirname.substr(0, dirname.length - 1);
