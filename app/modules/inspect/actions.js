@@ -6,15 +6,9 @@
  * the root directory of this source tree.
  */
 
-import InspectExplorerPage from './containers/memory-explorer-page';
+import { createAction } from '../../store/actions';
 
-const routes = [
-  {
-    path: '/inspect',
-    icon: 'cluster',
-    label: 'Explorer',
-    component: InspectExplorerPage
-  }
-];
 
-export default routes;
+export const TMP_SAVE_DATASIZE_JSON = 'TMP_SAVE_DATASIZE_JSON';
+
+export const saveTmpDatasize = (data) => createAction(TMP_SAVE_DATASIZE_JSON, data);

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+export const PARENT_DIR = '..';
 export const sep = navigator && navigator.platform && navigator.platform.startsWith('Win')? '\\' : '/';
 
 export function join(...paths) {
@@ -24,6 +25,7 @@ export function dirname(path) {
   if (!path || !path.includes(sep) || path === sep) {
     return path;
   }
+  path = ensureNoTrailingSlash(path);
   let dirname = path.substr(0, path.lastIndexOf(sep));
   while (dirname.endsWith(sep)) {
     dirname = dirname.substr(0, dirname.length - 1);
@@ -87,4 +89,15 @@ export function commonprefix(paths) {
 
 export function split(path) {
   return path.split(sep).filter(item => item.length);
+}
+
+export function ensureNoTrailingSlash(path) {
+  return path.replace(/\/+$/, '');
+}
+
+export function ensureTrailingSlash(path) {
+  if (!path.length) {
+    return '';
+  }
+  return ensureNoTrailingSlash(path) + '/';
 }
