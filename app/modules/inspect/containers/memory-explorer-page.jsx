@@ -16,6 +16,7 @@
 
 import * as actions from '../actions';
 import * as pathlib from '@core/path';
+
 import { MemoryExplorer } from '../components/memory-explorer';
 import PropTypes from 'prop-types';
 import React from 'react';

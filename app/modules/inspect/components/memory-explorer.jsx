@@ -15,7 +15,9 @@
  */
 
 import * as pathlib from '@core/path';
- import { Breadcrumb, Icon, Table } from 'antd';
+
+import { Breadcrumb, Icon, Table } from 'antd';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
