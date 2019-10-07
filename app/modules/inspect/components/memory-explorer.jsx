@@ -20,6 +20,7 @@ import { Breadcrumb, Icon, Table } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import humanize  from 'humanize';
 
 const PARENT_ITEM_IDX = -1;
 const PARENT_ITEM = {
@@ -47,6 +48,13 @@ export class MemoryExplorer extends React.PureComponent {
   }
 
   getTableColumns() {
+    const renderSize = size => humanize.filesize(
+      size,
+      1024,
+      size % 1024 === 0 || size < 1024 ? 0 : 1
+    );
+    const safeRenderSize = size => size !== undefined ? renderSize(size) : '';
+
     return [
       {
         title: '',
@@ -66,13 +74,15 @@ export class MemoryExplorer extends React.PureComponent {
         }
       },
       {
-        title: 'Flash Size',
+        title: 'Flash',
         dataIndex: 'flashSize',
+        render: safeRenderSize,
         width: 100
       },
       {
-        title: 'RAM Size',
+        title: 'RAM',
         dataIndex: 'ramSize',
+        render: safeRenderSize,
         width: 100
       }
     ];
@@ -144,7 +154,7 @@ export class MemoryExplorer extends React.PureComponent {
   }
 
   renderBreadCrumb() {
-    return (<Breadcrumb>
+    return (<Breadcrumb className="block">
           <Breadcrumb.Item key={0} >
             <a
               title={'/'}
