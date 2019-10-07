@@ -1,8 +1,8 @@
 language: node_js
 
-matrix:
-  - env: NPM_RUN=lint
-  - env: NPM_RUN=build
+env:
+  - NPM_RUN=lint
+  - NPM_RUN=build
 
 script:
   - npm run $NPM_RUN
