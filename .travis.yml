@@ -1,11 +1,8 @@
 language: node_js
 
-env:
-  - NPM_RUN=lint
-  - NPM_RUN=build
-
 script:
-  - npm run $NPM_RUN
+  - npm run lint
+  - npm run build
 
 notifications:
   email: false
