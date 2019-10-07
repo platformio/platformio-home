@@ -35,6 +35,9 @@ module.exports = {
           }
         }
       }
+    },
+    "react": {
+      "version": "detect"
     }
   },
   "rules": {
@@ -78,6 +81,9 @@ module.exports = {
       {
         "allowEmptyCatch": true
       }
+    ],
+    "import/no-named-as-default-member": [
+      "off"
     ]
-  },
+  }
 };
