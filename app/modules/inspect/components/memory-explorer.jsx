@@ -23,12 +23,11 @@ import React from 'react';
 import humanize  from 'humanize';
 
 const PARENT_ITEM_IDX = -1;
-const PARENT_ITEM = {
+const PARENT_ITEM = Object.freeze({
   idx: PARENT_ITEM_IDX,
   isDir: true,
   relativePath: pathlib.PARENT_DIR,
-};
-Object.freeze(PARENT_ITEM);
+});
 
 const FileItemType = PropTypes.shape({
   relativePath: PropTypes.string.isRequired,
