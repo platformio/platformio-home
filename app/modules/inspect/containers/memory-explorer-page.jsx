@@ -139,17 +139,8 @@ class MemoryExplorerPage extends React.PureComponent {
           dirUnfolder.remember(relativePathParts, isDir);
           aggregator.increment(name, { flashSize, ramSize });
 
-          if (relativePathParts.length === 1) {
-            return {
-              isDir,
-              flashSize,
-              ramSize,
-              relativePath: name,
-            };
-          }
-          // Construct intermediate virtual directory
           return {
-            isDir: true,
+            isDir: relativePathParts.length !== 1 || isDir,
             flashSize,
             ramSize,
             relativePath: name,
@@ -164,6 +155,7 @@ class MemoryExplorerPage extends React.PureComponent {
       })
       // Dir first order
       .sort((a, b) => b.isDir - a.isDir);
+
 
     return result;
   }
