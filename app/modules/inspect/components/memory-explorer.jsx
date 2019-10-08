@@ -32,11 +32,50 @@ const PARENT_ITEM = Object.freeze({
 const FileItemType = PropTypes.shape({
   relativePath: PropTypes.string.isRequired,
   isDir: PropTypes.bool,
-  ramSize: PropTypes.int,
-  flashSize: PropTypes.int
+  ram: PropTypes.int,
+  flash: PropTypes.int
 });
 
 export const FileItemsType = PropTypes.arrayOf(FileItemType);
+
+const formatSize = size => humanize.filesize(
+  size,
+  1024,
+  size % 1024 === 0 || size < 1024 ? 0 : 1
+);
+const safeFormatSize = size => size !== undefined ? formatSize(size) : '';
+
+function compareNumber(a, b) {
+  return a - b;
+}
+
+function compareString(a ,b) {
+  return String(a).localeCompare(b, undefined, {
+    caseFirst: 'upper',
+    numeric: true,
+  });
+}
+
+function compareBool(a, b) {
+  return a - b;
+}
+
+function sortDirFirst(a, b) {
+  return compareBool(b.isDir, a.isDir);
+}
+
+function multiSort(...sorters) {
+  return function(a, b) {
+    for (let i = 0; i < sorters.length; i++) {
+      const result = sorters[i](a, b);
+      if (result !== 0) {
+        return result;
+      }
+    }
+    return 0;
+  };
+
+}
 
 export class MemoryExplorer extends React.PureComponent {
 
@@ -47,13 +86,6 @@ export class MemoryExplorer extends React.PureComponent {
   }
 
   getTableColumns() {
-    const renderSize = size => humanize.filesize(
-      size,
-      1024,
-      size % 1024 === 0 || size < 1024 ? 0 : 1
-    );
-    const safeRenderSize = size => size !== undefined ? renderSize(size) : '';
-
     return [
       {
         title: '',
@@ -65,23 +97,36 @@ export class MemoryExplorer extends React.PureComponent {
       {
         title: 'Name',
         dataIndex: 'relativePath',
+        defaultSortOrder: 'ascend',
         render: (path, item) => {
           if (item.isDir || name == pathlib.PARENT_DIR) {
             return <a>{path}</a>;
           }
           return path;
-        }
+        },
+        sorter: multiSort(
+          sortDirFirst,
+          (a, b) => compareString(a.relativePath, b.relativePath)
+        ),
       },
       {
         title: 'Flash',
-        dataIndex: 'flashSize',
-        render: safeRenderSize,
+        dataIndex: 'flash',
+        render: safeFormatSize,
+        sorter: multiSort(
+          sortDirFirst,
+          (a, b) => compareNumber(a.flash, b.flash)
+        ),
         width: 100
       },
       {
         title: 'RAM',
-        dataIndex: 'ramSize',
-        render: safeRenderSize,
+        dataIndex: 'ram',
+        render: safeFormatSize,
+        sorter: multiSort(
+          sortDirFirst,
+          (a, b) => compareNumber(a.ram, b.ram)
+        ),
         width: 100
       }
     ];
@@ -99,18 +144,14 @@ export class MemoryExplorer extends React.PureComponent {
     if (idx === PARENT_ITEM_IDX) {
       path = pathlib.dirname(dir);
       if (path === dir) {
-        path = '';
+        path = pathlib.ROOT_DIR;
       }
     } else {
       const item = items[idx];
       if (!item.isDir)  {
         return;
       }
-      if (!dir.length) {
-        path = item.relativePath;
-      } else {
-        path = pathlib.join(dir, item.relativePath);
-      }
+      path = pathlib.join(dir, item.relativePath);
     }
     onDirChange(path);
    }
@@ -124,7 +165,7 @@ export class MemoryExplorer extends React.PureComponent {
      const { dir, onDirChange} = this.props;
      const idx = parseInt(a.dataset.idx);
      if (idx === 0) {
-       onDirChange('');
+       onDirChange(pathlib.ROOT_DIR);
        return;
      }
 
@@ -156,7 +197,7 @@ export class MemoryExplorer extends React.PureComponent {
     return (<Breadcrumb className="block">
           <Breadcrumb.Item key={0} >
             <a
-              title={'/'}
+              title={pathlib.ROOT_DIR}
               data-idx={0}
               onClick={this.handleBreadCrumbItemClick}
             >
@@ -176,16 +217,29 @@ export class MemoryExplorer extends React.PureComponent {
         </Breadcrumb>);
   }
 
+  getRowProps = () =>  ({ onClick: this.handleRowClick })
+
+  renderFooter = (ds) => {
+    const { ram, flash } = ds.reduce((acc, { ram, flash }) => {
+      acc.ram += ram | 0;
+      acc.flash += flash | 0;
+      return acc;
+    }, { ram: 0, flash: 0 });
+    return `Total: ${formatSize(flash)} Flash, ${formatSize(ram)} RAM`;
+  }
+
   renderList() {
     const {dir} = this.props;
-    const indexedItems = this.props.items.map((x, i) => ({...x, idx: i}));
-    const ds = dir.length ? [PARENT_ITEM, ...indexedItems] : indexedItems;
+    const indexedItems = this.props.items
+      .map((x, i) => ({...x, idx: i}));
+    const ds = dir === pathlib.ROOT_DIR ? indexedItems : [PARENT_ITEM, ...indexedItems];
 
     return (<Table
         childrenColumnName='_'
         columns={ this.getTableColumns() }
         dataSource={ds}
-        onRow={() => ({ onClick: this.handleRowClick })}
+        footer={this.renderFooter}
+        onRow={this.getRowProps}
         pagination={false}
         rowKey='idx'
         size='middle'

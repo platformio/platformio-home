@@ -17,6 +17,7 @@
 import { createAction } from '../../store/actions';
 
 
-export const TMP_SAVE_DATASIZE_JSON = 'TMP_SAVE_DATASIZE_JSON';
+export const LOAD_PROJECT_SIZE_DATA = 'LOAD_PROJECT_SIZE_DATA';
 
-export const saveTmpDatasize = (data) => createAction(TMP_SAVE_DATASIZE_JSON, data);
+export const loadProjectSizeData = (projectDir) =>
+  createAction(LOAD_PROJECT_SIZE_DATA, {projectDir});

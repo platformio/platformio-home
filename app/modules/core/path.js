@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+export const ROOT_DIR = '/';
+
 export const PARENT_DIR = '..';
 export const sep = navigator && navigator.platform && navigator.platform.startsWith('Win')? '\\' : '/';
 
@@ -99,4 +101,11 @@ export function ensureTrailingSlash(path) {
     return '';
   }
   return ensureNoTrailingSlash(path) + '/';
+}
+
+export function ensureLeadingSlash(path) {
+  if (path[0] === '/') {
+    return path;
+  }
+  return `/${path}`;
 }

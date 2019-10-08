@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import * as actions from '../actions';
 import * as pathlib from '@core/path';
 
 import { MemoryExplorer } from '../components/memory-explorer';
@@ -22,6 +21,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
+import { requestContent } from '@core/actions';
 import { selectSizeDataForPath } from '../selectors';
 
 /**
@@ -95,24 +95,29 @@ class UniqueFilter {
 }
 
 
-class MemoryExplorerPage extends React.PureComponent {
+class FileExplorerPage extends React.PureComponent {
 
   static propTypes = {
-    saveTmpDatasize: PropTypes.func.isRequired,
+    requestContent: PropTypes.func.isRequired,
     files: PropTypes.arrayOf(PropTypes.shape({
-      flashSize: PropTypes.int,
+      flash: PropTypes.int,
       isDir: PropTypes.bool,
       path: PropTypes.string.isRequired,
-      ramSize: PropTypes.int,
-    }))
+      ram: PropTypes.int,
+    })),
+
   }
 
   constructor(...args) {
     super(...args);
 
     this.state = {
-      cwd: ''
+      cwd: pathlib.ROOT_DIR
     };
+
+    this.props.requestContent({
+      uri: 'http://dl.platformio.org/tmp/sizedata-tasmota.json'
+    });
   }
 
   getItemsAtPath(cwd) {
@@ -130,19 +135,19 @@ class MemoryExplorerPage extends React.PureComponent {
     const result = allFiles
       // Left children
       .filter(x => x.path.startsWith(cwd))
-      .map(({path, isDir, ramSize, flashSize}) => {
+      .map(({path, isDir, ram, flash}) => {
           // Convert path to relative
           const relativePath = path.substring(cwd.length);
           const relativePathParts = pathlib.split(relativePath);
           const name = relativePathParts[0];
 
           dirUnfolder.remember(relativePathParts, isDir);
-          aggregator.increment(name, { flashSize, ramSize });
+          aggregator.increment(name, { flash, ram });
 
           return {
             isDir: relativePathParts.length !== 1 || isDir,
-            flashSize,
-            ramSize,
+            flash,
+            ram,
             relativePath: name,
           };
       })
@@ -152,23 +157,9 @@ class MemoryExplorerPage extends React.PureComponent {
         aggregator.assign(x, x.relativePath);
         x.relativePath = dirUnfolder.unfold(x.relativePath);
         return x;
-      })
-      // Dir first order
-      .sort((a, b) => b.isDir - a.isDir);
-
+      });
 
     return result;
-  }
-
-  handleTextAreaChange = (e) => {
-    try {
-      const json = JSON.parse(e.target.value);
-      this.props.saveTmpDatasize(json);
-    } catch (e) {
-      if (!(e instanceof SyntaxError)) {
-        throw e;
-      }
-    }
   }
 
   onDirChange = (cwd) => {
@@ -191,10 +182,6 @@ class MemoryExplorerPage extends React.PureComponent {
           dir={cwd}
           items={items}
           onDirChange={this.onDirChange} />)}
-
-        <textarea style={{marginTop: 20}} rows="10" cols="80"
-          onChange={this.handleTextAreaChange}
-          ></textarea>
       </div>
       );
   }
@@ -208,4 +195,4 @@ function mapStateToProps(state) {
 }
 
 
-export default connect(mapStateToProps, actions)(MemoryExplorerPage);
+export default connect(mapStateToProps, {requestContent})(FileExplorerPage);
