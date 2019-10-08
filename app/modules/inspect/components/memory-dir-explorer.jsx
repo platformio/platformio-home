@@ -77,7 +77,7 @@ function multiSort(...sorters) {
 
 }
 
-export class MemoryExplorer extends React.PureComponent {
+export class MemoryDirExplorer extends React.PureComponent {
 
   static propTypes = {
     dir: PropTypes.string.isRequired,
