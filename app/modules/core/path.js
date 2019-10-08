@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-export const sep = navigator && navigator.platform && navigator.platform.startsWith('Win')? '\\' : '/';
+import { IS_WINDOWS } from '../../config';
+
+
+export const sep = IS_WINDOWS? '\\' : '/';
 
 export function join(...paths) {
   return paths.map((item, index) => item.endsWith(sep) || index === (paths.length - 1)? item : `${item}${sep}`).join('');
