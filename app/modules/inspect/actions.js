@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { createAction } from '../../store/actions';
+import { createAction } from "../../store/actions";
 
+export const LOAD_PROJECT_SIZE_DATA = "LOAD_PROJECT_SIZE_DATA";
 
-export const LOAD_PROJECT_SIZE_DATA = 'LOAD_PROJECT_SIZE_DATA';
-
-export const loadProjectSizeData = (projectDir) =>
-  createAction(LOAD_PROJECT_SIZE_DATA, {projectDir});
+export const loadProjectSizeData = projectDir =>
+  createAction(LOAD_PROJECT_SIZE_DATA, { projectDir });

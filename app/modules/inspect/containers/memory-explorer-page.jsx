@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import * as pathlib from '@core/path';
+import * as pathlib from "@core/path";
 
-import { MemoryExplorer } from '../components/memory-explorer';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Spin } from 'antd';
-import { connect } from 'react-redux';
-import { requestContent } from '@core/actions';
-import { selectSizeDataForPath } from '../selectors';
+import { MemoryExplorer } from "../components/memory-explorer";
+import PropTypes from "prop-types";
+import React from "react";
+import { Spin } from "antd";
+import { connect } from "react-redux";
+import { requestContent } from "@core/actions";
+import { selectSizeDataForPath } from "../selectors";
 
 /**
  * Remember parent/children for all intermediate paths
@@ -31,18 +31,18 @@ class DirectoryUnfolder {
   children = new Map();
 
   remember(parts, isDir) {
-    let parentPath = '';
+    let parentPath = "";
     for (let i = 0; i < parts.length; i++) {
       if (!this.children.has(parentPath)) {
         this.children.set(parentPath, {
           dirs: new Set(),
-          files: new Set(),
+          files: new Set()
         });
       }
 
       const { files, dirs } = this.children.get(parentPath);
-      const childPath = pathlib.join(...parts.slice(0, i+1));
-      const childIsDir = (i + 1 !== parts.length) || isDir;
+      const childPath = pathlib.join(...parts.slice(0, i + 1));
+      const childIsDir = i + 1 !== parts.length || isDir;
 
       if (childIsDir) {
         dirs.add(childPath);
@@ -56,9 +56,11 @@ class DirectoryUnfolder {
     // Concatenate child dirs with single subdir
     let current = path;
     let next;
-    while ((next = this.children.get(current)) &&
-        next.dirs.size == 1 &&
-        next.files.size == 0) {
+    while (
+      (next = this.children.get(current)) &&
+      next.dirs.size == 1 &&
+      next.files.size == 0
+    ) {
       current = next.dirs.values().next().value;
     }
     return current;
@@ -74,7 +76,7 @@ class AggregatorMap {
       return;
     }
     const aggr = this.map.get(key);
-    Object.entries(valuesMap).forEach(([k, v]) => aggr[k] += v);
+    Object.entries(valuesMap).forEach(([k, v]) => (aggr[k] += v));
   }
 
   assign(obj, key) {
@@ -94,19 +96,18 @@ class UniqueFilter {
   }
 }
 
-
 class FileExplorerPage extends React.PureComponent {
-
   static propTypes = {
     requestContent: PropTypes.func.isRequired,
-    files: PropTypes.arrayOf(PropTypes.shape({
-      flash: PropTypes.int,
-      isDir: PropTypes.bool,
-      path: PropTypes.string.isRequired,
-      ram: PropTypes.int,
-    })),
-
-  }
+    files: PropTypes.arrayOf(
+      PropTypes.shape({
+        flash: PropTypes.int,
+        isDir: PropTypes.bool,
+        path: PropTypes.string.isRequired,
+        ram: PropTypes.int
+      })
+    )
+  };
 
   constructor(...args) {
     super(...args);
@@ -116,13 +117,13 @@ class FileExplorerPage extends React.PureComponent {
     };
 
     this.props.requestContent({
-      uri: 'http://dl.platformio.org/tmp/sizedata-tasmota.json'
+      uri: "http://dl.platformio.org/tmp/sizedata-tasmota.json"
     });
   }
 
   getItemsAtPath(cwd) {
     cwd = pathlib.ensureTrailingSlash(cwd);
-    const {files: allFiles} = this.props;
+    const { files: allFiles } = this.props;
 
     if (allFiles === undefined) {
       return undefined;
@@ -135,23 +136,23 @@ class FileExplorerPage extends React.PureComponent {
     const result = allFiles
       // Left children
       .filter(x => x.path.startsWith(cwd))
-      .map(({path, isDir, ram, flash}) => {
-          // Convert path to relative
-          const relativePath = path.substring(cwd.length);
-          const relativePathParts = pathlib.split(relativePath);
-          const name = relativePathParts[0];
+      .map(({ path, isDir, ram, flash }) => {
+        // Convert path to relative
+        const relativePath = path.substring(cwd.length);
+        const relativePathParts = pathlib.split(relativePath);
+        const name = relativePathParts[0];
 
-          dirUnfolder.remember(relativePathParts, isDir);
-          aggregator.increment(name, { flash, ram });
+        dirUnfolder.remember(relativePathParts, isDir);
+        aggregator.increment(name, { flash, ram });
 
-          return {
-            isDir: relativePathParts.length !== 1 || isDir,
-            flash,
-            ram,
-            relativePath: name,
-          };
+        return {
+          isDir: relativePathParts.length !== 1 || isDir,
+          flash,
+          ram,
+          relativePath: name
+        };
       })
-      .filter(({relativePath})  => uniqueFilter.filter(relativePath))
+      .filter(({ relativePath }) => uniqueFilter.filter(relativePath))
       // Override with aggregated values
       .map(x => {
         aggregator.assign(x, x.relativePath);
@@ -162,28 +163,33 @@ class FileExplorerPage extends React.PureComponent {
     return result;
   }
 
-  onDirChange = (cwd) => {
+  onDirChange = cwd => {
     this.setState({
       cwd
     });
-  }
+  };
 
   render() {
     const { cwd } = this.state;
     const items = this.getItemsAtPath(cwd);
 
     return (
-      <div className='page-container'>
-        {items === undefined && (<div className='text-center'>
-          <Spin tip='Loading...' size='large' />
-        </div>)}
+      <div className="page-container">
+        {items === undefined && (
+          <div className="text-center">
+            <Spin tip="Loading..." size="large" />
+          </div>
+        )}
 
-        {items && (<MemoryExplorer
-          dir={cwd}
-          items={items}
-          onDirChange={this.onDirChange} />)}
+        {items && (
+          <MemoryExplorer
+            dir={cwd}
+            items={items}
+            onDirChange={this.onDirChange}
+          />
+        )}
       </div>
-      );
+    );
   }
 }
 
@@ -194,5 +200,7 @@ function mapStateToProps(state) {
   };
 }
 
-
-export default connect(mapStateToProps, {requestContent})(FileExplorerPage);
+export default connect(
+  mapStateToProps,
+  { requestContent }
+)(FileExplorerPage);

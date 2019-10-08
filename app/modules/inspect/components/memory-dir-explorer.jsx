@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import * as pathlib from '@core/path';
+import * as pathlib from "@core/path";
 
-import { Breadcrumb, Icon, Table } from 'antd';
+import { Breadcrumb, Icon, Table } from "antd";
 
-import PropTypes from 'prop-types';
-import React from 'react';
-import humanize  from 'humanize';
+import PropTypes from "prop-types";
+import React from "react";
+import humanize from "humanize";
 
 const PARENT_ITEM_IDX = -1;
 const PARENT_ITEM = Object.freeze({
   idx: PARENT_ITEM_IDX,
   isDir: true,
-  relativePath: pathlib.PARENT_DIR,
+  relativePath: pathlib.PARENT_DIR
 });
 
 const FileItemType = PropTypes.shape({
@@ -38,21 +38,18 @@ const FileItemType = PropTypes.shape({
 
 export const FileItemsType = PropTypes.arrayOf(FileItemType);
 
-const formatSize = size => humanize.filesize(
-  size,
-  1024,
-  size % 1024 === 0 || size < 1024 ? 0 : 1
-);
-const safeFormatSize = size => size !== undefined ? formatSize(size) : '';
+const formatSize = size =>
+  humanize.filesize(size, 1024, size % 1024 === 0 || size < 1024 ? 0 : 1);
+const safeFormatSize = size => (size !== undefined ? formatSize(size) : "");
 
 function compareNumber(a, b) {
   return a - b;
 }
 
-function compareString(a ,b) {
+function compareString(a, b) {
   return String(a).localeCompare(b, undefined, {
-    caseFirst: 'upper',
-    numeric: true,
+    caseFirst: "upper",
+    numeric: true
   });
 }
 
@@ -74,66 +71,67 @@ function multiSort(...sorters) {
     }
     return 0;
   };
-
 }
 
 export class MemoryDirExplorer extends React.PureComponent {
-
   static propTypes = {
     dir: PropTypes.string.isRequired,
     items: FileItemsType,
     onDirChange: PropTypes.func.isRequired
-  }
+  };
 
   renderIcon(isDir) {
-    return (<Icon type={isDir ? 'folder-open' : 'file-text'} />);
+    return <Icon type={isDir ? "folder-open" : "file-text"} />;
   }
 
   getTableColumns() {
     return [
       {
-        title: 'Name',
-        dataIndex: 'relativePath',
-        defaultSortOrder: 'ascend',
+        title: "Name",
+        dataIndex: "relativePath",
+        defaultSortOrder: "ascend",
         render: (path, item) => {
           const { isDir } = item;
           const icon = this.renderIcon(isDir);
           if (isDir) {
-            return <a>{icon} {path}</a>;
+            return (
+              <a>
+                {icon} {path}
+              </a>
+            );
           }
-          return <span>{icon} {path}</span>;
+          return (
+            <span>
+              {icon} {path}
+            </span>
+          );
         },
-        sorter: multiSort(
-          sortDirFirst,
-          (a, b) => compareString(a.relativePath, b.relativePath)
-        ),
+        sorter: multiSort(sortDirFirst, (a, b) =>
+          compareString(a.relativePath, b.relativePath)
+        )
       },
       {
-        title: 'Flash',
-        dataIndex: 'flash',
+        title: "Flash",
+        dataIndex: "flash",
         render: safeFormatSize,
-        sorter: multiSort(
-          sortDirFirst,
-          (a, b) => compareNumber(a.flash, b.flash)
+        sorter: multiSort(sortDirFirst, (a, b) =>
+          compareNumber(a.flash, b.flash)
         ),
         width: 100
       },
       {
-        title: 'RAM',
-        dataIndex: 'ram',
+        title: "RAM",
+        dataIndex: "ram",
         render: safeFormatSize,
-        sorter: multiSort(
-          sortDirFirst,
-          (a, b) => compareNumber(a.ram, b.ram)
-        ),
+        sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.ram, b.ram)),
         width: 100
       }
     ];
   }
 
-  handleRowClick = (e) => {
+  handleRowClick = e => {
     e.preventDefault();
-    const tr = e.target.closest('tr');
+    const tr = e.target.closest("tr");
     if (!tr) {
       return;
     }
@@ -147,106 +145,107 @@ export class MemoryDirExplorer extends React.PureComponent {
       }
     } else {
       const item = items[idx];
-      if (!item.isDir)  {
+      if (!item.isDir) {
         return;
       }
       path = pathlib.join(dir, item.relativePath);
     }
     onDirChange(path);
-   }
+  };
 
-   handleBreadCrumbItemClick = (e) => {
-     e.preventDefault();
-     const a = e.target.closest('a');
-     if (!a) {
-       return;
-     }
-     const { dir, onDirChange} = this.props;
-     const idx = parseInt(a.dataset.idx);
-     if (idx === 0) {
-       onDirChange(pathlib.ROOT_DIR);
-       return;
-     }
+  handleBreadCrumbItemClick = e => {
+    e.preventDefault();
+    const a = e.target.closest("a");
+    if (!a) {
+      return;
+    }
+    const { dir, onDirChange } = this.props;
+    const idx = parseInt(a.dataset.idx);
+    if (idx === 0) {
+      onDirChange(pathlib.ROOT_DIR);
+      return;
+    }
 
     const path = pathlib.join(...pathlib.split(dir).slice(0, idx));
     onDirChange(path);
-   }
+  };
 
   render() {
     const { items } = this.props;
 
     if (items.length === 0) {
       return (
-        <ul className='background-message text-center'>
-          <li>
-            No Items
-          </li>
+        <ul className="background-message text-center">
+          <li>No Items</li>
         </ul>
-        );
+      );
     }
     return (
-      <div className='page-container'>
+      <div className="page-container">
         {this.renderBreadCrumb()}
         {this.renderList()}
-      </div>
-      );
-  }
-
-  renderBreadCrumb() {
-    return (<Breadcrumb className="block">
-          <Breadcrumb.Item key={0} >
-            <a
-              title={pathlib.ROOT_DIR}
-              data-idx={0}
-              onClick={this.handleBreadCrumbItemClick}
-            >
-              <Icon type="book"/>
-            </a>
-          </Breadcrumb.Item>
-          {
-            pathlib.split(this.props.dir)
-              .map((name, i) => (
-                <Breadcrumb.Item key={i+1}>
-                  <a
-                    data-idx={i+1}
-                    onClick={this.handleBreadCrumbItemClick}
-                  >{name}</a>
-                </Breadcrumb.Item>))
-          }
-        </Breadcrumb>);
-  }
-
-  getRowProps = () =>  ({ onClick: this.handleRowClick })
-
-  renderFooter = (ds) => {
-    const { ram, flash } = ds.reduce((acc, { ram, flash }) => {
-      acc.ram += ram | 0;
-      acc.flash += flash | 0;
-      return acc;
-    }, { ram: 0, flash: 0 });
-    return (
-      <div style={{textAlign: 'right'}}>
-        {`Total: ${formatSize(flash)} Flash, ${formatSize(ram)} RAM`}
       </div>
     );
   }
 
-  renderList() {
-    const {dir} = this.props;
-    const indexedItems = this.props.items
-      .map((x, i) => ({...x, idx: i}));
-    const ds = dir === pathlib.ROOT_DIR ? indexedItems : [PARENT_ITEM, ...indexedItems];
+  renderBreadCrumb() {
+    return (
+      <Breadcrumb className="block">
+        <Breadcrumb.Item key={0}>
+          <a
+            title={pathlib.ROOT_DIR}
+            data-idx={0}
+            onClick={this.handleBreadCrumbItemClick}
+          >
+            <Icon type="book" />
+          </a>
+        </Breadcrumb.Item>
+        {pathlib.split(this.props.dir).map((name, i) => (
+          <Breadcrumb.Item key={i + 1}>
+            <a data-idx={i + 1} onClick={this.handleBreadCrumbItemClick}>
+              {name}
+            </a>
+          </Breadcrumb.Item>
+        ))}
+      </Breadcrumb>
+    );
+  }
 
-    return (<Table
-        childrenColumnName='_'
-        columns={ this.getTableColumns() }
+  getRowProps = () => ({ onClick: this.handleRowClick });
+
+  renderFooter = ds => {
+    const { ram, flash } = ds.reduce(
+      (acc, { ram, flash }) => {
+        acc.ram += ram | 0;
+        acc.flash += flash | 0;
+        return acc;
+      },
+      { ram: 0, flash: 0 }
+    );
+    return (
+      <div style={{ textAlign: "right" }}>
+        {`Total: ${formatSize(flash)} Flash, ${formatSize(ram)} RAM`}
+      </div>
+    );
+  };
+
+  renderList() {
+    const { dir } = this.props;
+    const indexedItems = this.props.items.map((x, i) => ({ ...x, idx: i }));
+    const ds =
+      dir === pathlib.ROOT_DIR ? indexedItems : [PARENT_ITEM, ...indexedItems];
+
+    return (
+      <Table
+        childrenColumnName="_"
+        columns={this.getTableColumns()}
         dataSource={ds}
         footer={this.renderFooter}
         onRow={this.getRowProps}
         pagination={false}
-        rowKey='idx'
-        size='middle'
-        />
-      );
+        rowKey="idx"
+        size="middle"
+      />
+    );
   }
 }

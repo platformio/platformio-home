@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-import MultiPage from '@core/components/multipage';
-import React from 'react';
-import routes from './routes';
-
+import MultiPage from "@core/components/multipage";
+import React from "react";
+import routes from "./routes";
 
 export default class InspectPage extends React.Component {
-
   render() {
     return (
-      <section className='memory-inspect-module'>
-        <MultiPage routes={ routes } />
+      <section className="memory-inspect-module">
+        <MultiPage routes={routes} />
       </section>
     );
   }

@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-import * as pathlib from '@core/path';
+import * as pathlib from "@core/path";
 
-import {selectRequestedContent} from '@core/selectors';
+import { selectRequestedContent } from "@core/selectors";
 
 function selectProjectSizeData(state) {
   // return state.entities.projectSizeData || {};
-  return JSON.parse(selectRequestedContent(state, 'http://dl.platformio.org/tmp/sizedata-tasmota.json')) || {};
+  return (
+    JSON.parse(
+      selectRequestedContent(
+        state,
+        "http://dl.platformio.org/tmp/sizedata-tasmota.json"
+      )
+    ) || {}
+  );
 }
 
-export function selectSizeDataForPath(state, dirPath='') {
+export function selectSizeDataForPath(state, dirPath = "") {
   const files = (selectProjectSizeData(state).memory || {}).files;
   if (files === undefined) {
     return undefined;
