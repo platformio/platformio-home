@@ -24,6 +24,78 @@ import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { selectSizeDataForPath } from '../selectors';
 
+/**
+ * Remember parent/children for all intermediate paths
+ */
+class DirectoryUnfolder {
+  children = new Map();
+
+  remember(parts, isDir) {
+    let parentPath = '';
+    for (let i = 0; i < parts.length; i++) {
+      if (!this.children.has(parentPath)) {
+        this.children.set(parentPath, {
+          dirs: new Set(),
+          files: new Set(),
+        });
+      }
+
+      const { files, dirs } = this.children.get(parentPath);
+      const childPath = pathlib.join(...parts.slice(0, i+1));
+      const childIsDir = (i + 1 !== parts.length) || isDir;
+
+      if (childIsDir) {
+        dirs.add(childPath);
+      } else {
+        files.add(childPath);
+      }
+      parentPath = childPath;
+    }
+  }
+  unfold(path) {
+    // Concatenate child dirs with single subdir
+    let current = path;
+    let next;
+    while ((next = this.children.get(current)) &&
+        next.dirs.size == 1 &&
+        next.files.size == 0) {
+      current = next.dirs.values().next().value;
+    }
+    return current;
+  }
+}
+
+class AggregatorMap {
+  map = new Map();
+
+  increment(key, valuesMap) {
+    if (!this.map.has(key)) {
+      this.map.set(key, valuesMap);
+      return;
+    }
+    const aggr = this.map.get(key);
+    for (const k in Object.keys(valuesMap)) {
+      aggr[k] += valuesMap[k];
+    }
+  }
+
+  assign(obj, key) {
+    return Object.assign(obj, this.map.get(key));
+  }
+}
+
+class UniqueFilter {
+  values = new Set();
+
+  filter(value) {
+    if (this.values.has(value)) {
+      return false;
+    }
+    this.values.add(value);
+    return true;
+  }
+}
+
 
 class MemoryExplorerPage extends React.PureComponent {
 
@@ -48,13 +120,14 @@ class MemoryExplorerPage extends React.PureComponent {
   getItemsAtPath(cwd) {
     cwd = pathlib.ensureTrailingSlash(cwd);
     const {files: allFiles} = this.props;
+
     if (allFiles === undefined) {
       return undefined;
     }
-    // const cwdParts = pathlib.split(cwd);
-    const aggregateByPath = new Map();
-    const paths = new Set();
-    // const children = new Map();
+
+    const uniqueFilter = new UniqueFilter();
+    const aggregator = new AggregatorMap();
+    const dirUnfolder = new DirectoryUnfolder();
 
     const result = allFiles
       // Left children
@@ -63,65 +136,36 @@ class MemoryExplorerPage extends React.PureComponent {
           // Convert path to relative
           const relativePath = path.substring(cwd.length);
           const relativePathParts = pathlib.split(relativePath);
+          const name = relativePathParts[0];
+
+          dirUnfolder.remember(relativePathParts, isDir);
+          aggregator.increment(name, { flashSize, ramSize });
 
           if (relativePathParts.length === 1) {
             return {
-              relativePath: relativePathParts[0],
               isDir,
+              flashSize,
               ramSize,
-              flashSize
+              relativePath: name,
             };
           }
-
           // Construct intermediate virtual directory
           return {
             isDir: true,
-            relativePath: relativePathParts[0],
+            flashSize,
             ramSize,
-              flashSize
+            relativePath: name,
           };
       })
-      .filter(x  => {
-        const { flashSize, ramSize } = x;
-        // Left unique and calculate aggregate values
-        if (paths.has(x.relativePath)) {
-          const aggr = aggregateByPath.get(x.relativePath);
-          aggr.flashSize += flashSize;
-          aggr.ramSize += ramSize;
-          return false;
-        }
-        paths.add(x.relativePath);
-        aggregateByPath.set(x.relativePath, { flashSize, ramSize });
-        return true;
-      })
+      .filter(({relativePath})  => uniqueFilter.filter(relativePath))
       // Override with aggregated values
       .map(x => {
-        const aggr = aggregateByPath.get(x.relativePath);
-        Object.assign(x, aggr);
+        aggregator.assign(x, x.relativePath);
+        x.relativePath = dirUnfolder.unfold(x.relativePath);
         return x;
       })
-      // // Dir first order
+      // Dir first order
       .sort((a, b) => b.isDir - a.isDir);
-      // .map(x => {
-      //   if (!x.isDir) {
-      //     return x;
-      //   }
-      //   const subDirs = [];
-      //   let currentItems;
-      //   let currentPath = x.path;
-      //   while ((currentItems = this.getItemsAtPath(currentPath)) &&
-      //       currentItems.length === 1 && currentItems[0].isDir) {
-
-      //     currentPath = currentItems[0].path;
-      //     console.warn('adding', currentItems[0]);
-      //     subDirs.push(pathlib.basename(currentPath));
-      //   }
-      //   if (subDirs.length) {
-      //     console.log('found additional subdirs', subDirs);
-      //     x.path = pathlib.join(x.path, ...subDirs);
-      //   }
-      //   return x;
-      // })
 
     return result;
   }
