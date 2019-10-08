@@ -85,24 +85,23 @@ export class MemoryExplorer extends React.PureComponent {
     onDirChange: PropTypes.func.isRequired
   }
 
+  renderIcon(isDir) {
+    return (<Icon type={isDir ? 'folder-open' : 'file-text'} />);
+  }
+
   getTableColumns() {
     return [
-      {
-        title: '',
-        dataIndex: 'isDir',
-        render: (children) => <Icon type={children ? 'folder-open' : 'file-text'}/>,
-        // 14px icon + 8px*2 padding
-        width: 30
-      },
       {
         title: 'Name',
         dataIndex: 'relativePath',
         defaultSortOrder: 'ascend',
         render: (path, item) => {
-          if (item.isDir || name == pathlib.PARENT_DIR) {
-            return <a>{path}</a>;
+          const { isDir } = item;
+          const icon = this.renderIcon(isDir);
+          if (isDir) {
+            return <a>{icon} {path}</a>;
           }
-          return path;
+          return <span>{icon} {path}</span>;
         },
         sorter: multiSort(
           sortDirFirst,
@@ -225,7 +224,11 @@ export class MemoryExplorer extends React.PureComponent {
       acc.flash += flash | 0;
       return acc;
     }, { ram: 0, flash: 0 });
-    return `Total: ${formatSize(flash)} Flash, ${formatSize(ram)} RAM`;
+    return (
+      <div style={{textAlign: 'right'}}>
+        {`Total: ${formatSize(flash)} Flash, ${formatSize(ram)} RAM`}
+      </div>
+    );
   }
 
   renderList() {
