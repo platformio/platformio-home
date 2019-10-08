@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
+import { IS_WINDOWS } from '@app/config';
 import { JSON_URL } from './containers/memory-explorer-page';
 import { selectRequestedContent } from '@core/selectors';
-
-const IS_WINDOWS =
-  navigator && navigator.platform && navigator.platform.startsWith('Win');
-
 
 function selectProjectSizeData(state) {
   // return state.entities.projectSizeData || {};

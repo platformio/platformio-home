@@ -18,12 +18,12 @@ import * as pathlib from '@core/path';
 
 import { Breadcrumb, Icon, Table } from 'antd';
 
+import { IS_WINDOWS } from '@app/config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import humanize from 'humanize';
 
-export const IS_WINDOWS =
-  navigator && navigator.platform && navigator.platform.startsWith('Win');
+
 export const ROOT_DIR = IS_WINDOWS ? '' : '/';
 export const PARENT_DIR = '..';
 

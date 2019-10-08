@@ -32,6 +32,7 @@ module.exports = {
   outputDir: path.join(rootDir, 'dist'),
   resolve: {
     alias: {
+      '@app': path.resolve(__dirname, '../app/'),
       '@core': path.resolve(__dirname, '../app/modules/core/'),
       '@store': path.resolve(__dirname, '../app/store/'),
     }
