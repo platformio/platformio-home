@@ -22,7 +22,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import humanize from 'humanize';
 
-const IS_WINDOWS =
+export const IS_WINDOWS =
   navigator && navigator.platform && navigator.platform.startsWith('Win');
 export const ROOT_DIR = IS_WINDOWS ? '' : '/';
 export const PARENT_DIR = '..';

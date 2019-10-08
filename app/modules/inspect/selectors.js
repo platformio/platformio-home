@@ -17,6 +17,10 @@
 import { JSON_URL } from './containers/memory-explorer-page';
 import { selectRequestedContent } from '@core/selectors';
 
+const IS_WINDOWS =
+  navigator && navigator.platform && navigator.platform.startsWith('Win');
+
+
 function selectProjectSizeData(state) {
   // return state.entities.projectSizeData || {};
   return JSON.parse(selectRequestedContent(state, JSON_URL)) || {};
@@ -36,7 +40,7 @@ export function selectSizeDataForPath(state, dirPath = '') {
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: v.path,
+    path: !IS_WINDOWS && v.path[0] !== '/' ? `/${v.path}` : v.path,
     ram: v.ram_size
   }));
 }
