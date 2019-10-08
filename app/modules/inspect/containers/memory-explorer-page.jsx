@@ -74,9 +74,7 @@ class AggregatorMap {
       return;
     }
     const aggr = this.map.get(key);
-    for (const k in Object.keys(valuesMap)) {
-      aggr[k] += valuesMap[k];
-    }
+    Object.entries(valuesMap).forEach(([k, v]) => aggr[k] += v);
   }
 
   assign(obj, key) {
