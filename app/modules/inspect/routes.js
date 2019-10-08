@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import FileExplorerPage from "./containers/file-explorer-page";
+import FileExplorerPage from './containers/memory-explorer-page';
 
 const routes = [
   {
-    path: "/inspect",
-    icon: "cluster",
-    label: "File Explorer",
+    path: '/inspect',
+    icon: 'cluster',
+    label: 'File Explorer',
     component: FileExplorerPage
   }
 ];

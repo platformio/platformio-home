@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-export const ROOT_DIR = '/';
-
-export const PARENT_DIR = '..';
 export const sep = navigator && navigator.platform && navigator.platform.startsWith('Win')? '\\' : '/';
 
 export function join(...paths) {
@@ -90,22 +87,4 @@ export function commonprefix(paths) {
 
 export function split(path) {
   return path.split(sep).filter(item => item.length);
-}
-
-export function ensureNoTrailingSlash(path) {
-  return path.replace(/\/+$/, '');
-}
-
-export function ensureTrailingSlash(path) {
-  if (!path.length) {
-    return '';
-  }
-  return ensureNoTrailingSlash(path) + '/';
-}
-
-export function ensureLeadingSlash(path) {
-  if (path[0] === '/') {
-    return path;
-  }
-  return `/${path}`;
 }

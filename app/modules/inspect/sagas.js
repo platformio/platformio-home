@@ -16,34 +16,17 @@
 
 /* eslint-disable no-constant-condition */
 
-import * as actions from "./actions";
+import * as actions from './actions';
 
-import { call, put, takeLatest } from "redux-saga/effects";
+import { put, takeLatest } from 'redux-saga/effects';
 
-import { apiFetchData } from "@store/api";
-import jsonrpc from "jsonrpc-lite";
-import { notifyError } from "../core/actions";
-import { updateEntity } from "@store/actions";
+import { updateEntity } from '@store/actions';
 
 function* watchLoadProjectSizeData() {
   yield takeLatest(actions.LOAD_PROJECT_SIZE_DATA, function*({ projectDir }) {
     let data;
-    try {
-      data = yield call(apiFetchData, {
-        query: "core.call",
-        params: [["@TODO"]]
-      });
-    } catch (err) {
-      if (
-        !(
-          err instanceof jsonrpc.JsonRpcError &&
-          err.data.includes("`pio account login`")
-        )
-      ) {
-        yield put(notifyError("Could not load PIO Account information", err));
-      }
-    }
-    yield put(updateEntity("projectSizeData", data || {}));
+    // TODO: implement
+    yield put(updateEntity('projectSizeData', data || {}));
   });
 }
 

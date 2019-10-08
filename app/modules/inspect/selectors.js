@@ -14,31 +14,29 @@
  * limitations under the License.
  */
 
-import * as pathlib from "@core/path";
-
-import { selectRequestedContent } from "@core/selectors";
+import { JSON_URL } from './containers/memory-explorer-page';
+import { selectRequestedContent } from '@core/selectors';
 
 function selectProjectSizeData(state) {
   // return state.entities.projectSizeData || {};
-  return (
-    JSON.parse(
-      selectRequestedContent(
-        state,
-        "http://dl.platformio.org/tmp/sizedata-tasmota.json"
-      )
-    ) || {}
-  );
+  return JSON.parse(selectRequestedContent(state, JSON_URL)) || {};
 }
 
-export function selectSizeDataForPath(state, dirPath = "") {
-  const files = (selectProjectSizeData(state).memory || {}).files;
+export function selectSizeDataForPath(state, dirPath = '') {
+  let files = (selectProjectSizeData(state).memory || {}).files;
   if (files === undefined) {
     return undefined;
+  }
+  if (!files.length) {
+    files = Object.entries(files).map(([k, v]) => ({
+      ...v,
+      path: k.replace(/\//g, '\\')
+    }));
   }
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: pathlib.ensureLeadingSlash(v.path),
+    path: v.path,
     ram: v.ram_size
   }));
 }

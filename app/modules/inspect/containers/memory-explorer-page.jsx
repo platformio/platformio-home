@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import * as pathlib from "@core/path";
+import * as pathlib from '@core/path';
 
-import { MemoryExplorer } from "../components/memory-explorer";
-import PropTypes from "prop-types";
-import React from "react";
-import { Spin } from "antd";
-import { connect } from "react-redux";
-import { requestContent } from "@core/actions";
-import { selectSizeDataForPath } from "../selectors";
+import { MemoryDirExplorer, ROOT_DIR } from '../components/memory-dir-explorer';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Spin } from 'antd';
+import { connect } from 'react-redux';
+import { requestContent } from '@core/actions';
+import { selectSizeDataForPath } from '../selectors';
+
+// FIXME: load dynamically via API
+export const JSON_URL = 'http://dl.platformio.org/tmp/sizedata-tasmota.json';
 
 /**
  * Remember parent/children for all intermediate paths
@@ -31,7 +35,7 @@ class DirectoryUnfolder {
   children = new Map();
 
   remember(parts, isDir) {
-    let parentPath = "";
+    let parentPath = '';
     for (let i = 0; i < parts.length; i++) {
       if (!this.children.has(parentPath)) {
         this.children.set(parentPath, {
@@ -101,10 +105,10 @@ class FileExplorerPage extends React.PureComponent {
     requestContent: PropTypes.func.isRequired,
     files: PropTypes.arrayOf(
       PropTypes.shape({
-        flash: PropTypes.int,
-        isDir: PropTypes.bool,
+        flash: PropTypes.number.isRequired,
+        isDir: PropTypes.bool.isRequired,
         path: PropTypes.string.isRequired,
-        ram: PropTypes.int
+        ram: PropTypes.number.isRequired
       })
     )
   };
@@ -113,18 +117,16 @@ class FileExplorerPage extends React.PureComponent {
     super(...args);
 
     this.state = {
-      cwd: pathlib.ROOT_DIR
+      cwd: ROOT_DIR
     };
 
     this.props.requestContent({
-      uri: "http://dl.platformio.org/tmp/sizedata-tasmota.json"
+      uri: JSON_URL
     });
   }
 
   getItemsAtPath(cwd) {
-    cwd = pathlib.ensureTrailingSlash(cwd);
     const { files: allFiles } = this.props;
-
     if (allFiles === undefined) {
       return undefined;
     }
@@ -132,6 +134,10 @@ class FileExplorerPage extends React.PureComponent {
     const uniqueFilter = new UniqueFilter();
     const aggregator = new AggregatorMap();
     const dirUnfolder = new DirectoryUnfolder();
+
+    if (cwd.length && cwd[cwd.length - 1] !== pathlib.sep) {
+      cwd = cwd + pathlib.sep;
+    }
 
     const result = allFiles
       // Left children
@@ -182,11 +188,7 @@ class FileExplorerPage extends React.PureComponent {
         )}
 
         {items && (
-          <MemoryExplorer
-            dir={cwd}
-            items={items}
-            onDirChange={this.onDirChange}
-          />
+          <MemoryDirExplorer dir={cwd} items={items} onDirChange={this.onDirChange} />
         )}
       </div>
     );
