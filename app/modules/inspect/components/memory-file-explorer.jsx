@@ -17,7 +17,7 @@
 // import * as pathlib from '@core/path';
 
 import { Icon, Table, Tag } from 'antd';
-import { compareNumber, compareString, formatHex, formatSize } from '@inspect/helpers';
+import { compareNumber, compareString, formatHex, formatSize, multiSort } from '@inspect/helpers';
 
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
@@ -42,6 +42,15 @@ const FileItemType = PropTypes.shape({
   flash: PropTypes.number,
   symbols: PropTypes.arrayOf(SymbolType)
 });
+
+const typeToOrder = {
+  STT_FUNC: 1,
+  STT_OBJECT: 2
+};
+
+function sortFunctionsFirst(a, b) {
+  return compareNumber(typeToOrder[a.type] || 0, typeToOrder[b.type] || 0);
+}
 
 export class MemoryFileExplorer extends React.PureComponent {
   static propTypes = {
@@ -74,7 +83,10 @@ export class MemoryFileExplorer extends React.PureComponent {
         dataIndex: 'displayName',
         defaultSortOrder: 'ascend',
         render: this.renderDisplayName,
-        sorter: (a, b) => compareString(a.displayName, b.displayName)
+        sorter: multiSort(
+          sortFunctionsFirst,
+          (a, b) => compareString(a.displayName, b.displayName)
+        )
       },
       {
         align: 'right',
