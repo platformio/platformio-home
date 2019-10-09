@@ -146,14 +146,15 @@ class FileExplorerPage extends React.PureComponent {
         // Relative path in this case has stripped drive,
         // if drives have same relative path then overlapping occures
         // const fullRelativePath
+        const displayName = !cwd && root ? pathlib.join(root, name) : name;
         dirUnfolder.remember(relativePathParts, isDir);
-        aggregator.increment(name, { flash, ram });
+        aggregator.increment(displayName, { flash, ram });
 
         const result = {
           isDir: relativePathParts.length !== 1 || isDir,
           flash,
           ram,
-          relativePath: !cwd && root ? pathlib.join(root, name) : name
+          relativePath: displayName
           // relativePath: name # missed device when listing root!
           // relativePath: pathlib.join(root, name) // abs path to dir, not relative!
         };
