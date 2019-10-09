@@ -16,13 +16,20 @@
 
 import * as pathlib from '@core/path';
 
-import { Breadcrumb, Icon, Table } from 'antd';
+import { Icon, Table } from 'antd';
+import {
+  compareBool,
+  compareNumber,
+  compareString,
+  formatSize,
+  multiSort,
+  safeFormatSize
+} from '@inspect/helpers';
 
 import { IS_WINDOWS } from '@app/config';
+import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
-import humanize from 'humanize';
-
 
 export const ROOT_DIR = IS_WINDOWS ? '' : '/';
 export const PARENT_DIR = '..';
@@ -43,46 +50,16 @@ const FileItemType = PropTypes.shape({
 
 export const FileItemsType = PropTypes.arrayOf(FileItemType);
 
-const formatSize = size =>
-  humanize.filesize(size, 1024, size % 1024 === 0 || size < 1024 ? 0 : 1);
-const safeFormatSize = size => (size !== undefined ? formatSize(size) : '');
-
-function compareNumber(a, b) {
-  return a - b;
-}
-
-function compareString(a, b) {
-  return String(a).localeCompare(b, undefined, {
-    caseFirst: 'upper',
-    numeric: true
-  });
-}
-
-function compareBool(a, b) {
-  return a - b;
-}
-
 function sortDirFirst(a, b) {
   return compareBool(b.isDir, a.isDir);
-}
-
-function multiSort(...sorters) {
-  return function(a, b) {
-    for (let i = 0; i < sorters.length; i++) {
-      const result = sorters[i](a, b);
-      if (result !== 0) {
-        return result;
-      }
-    }
-    return 0;
-  };
 }
 
 export class MemoryDirExplorer extends React.PureComponent {
   static propTypes = {
     dir: PropTypes.string.isRequired,
     items: FileItemsType,
-    onDirChange: PropTypes.func.isRequired
+    onDirChange: PropTypes.func.isRequired,
+    onFileClick: PropTypes.func
   };
 
   renderIcon(isDir) {
@@ -116,6 +93,7 @@ export class MemoryDirExplorer extends React.PureComponent {
         )
       },
       {
+        align: 'right',
         title: 'Flash',
         dataIndex: 'flash',
         render: safeFormatSize,
@@ -123,6 +101,7 @@ export class MemoryDirExplorer extends React.PureComponent {
         width: 100
       },
       {
+        align: 'right',
         title: 'RAM',
         dataIndex: 'ram',
         render: safeFormatSize,
@@ -148,37 +127,25 @@ export class MemoryDirExplorer extends React.PureComponent {
       }
     } else {
       const item = items[idx];
-      if (!item.isDir) {
-        return;
-      }
       if (dir.length) {
         path = pathlib.join(dir, item.relativePath);
       } else {
         path = item.relativePath;
       }
+      if (!item.isDir) {
+        this.props.onFileClick(path);
+        return;
+      }
     }
     onDirChange(path);
   };
 
-  handleBreadCrumbItemClick = e => {
-    e.preventDefault();
-    const a = e.target.closest('a');
-    if (!a) {
-      return;
-    }
-    const { dir, onDirChange } = this.props;
-    const idx = parseInt(a.dataset.idx);
-    if (idx === 0) {
-      onDirChange(ROOT_DIR);
-      return;
-    }
-
-    const path = pathlib.join(...pathlib.split(dir).slice(0, idx));
-    onDirChange(path);
+  handleBreadcrumbChange = path => {
+    this.props.onDirChange(path);
   };
 
   render() {
-    const { items } = this.props;
+    const { items, dir } = this.props;
 
     if (items.length === 0) {
       return (
@@ -189,28 +156,9 @@ export class MemoryDirExplorer extends React.PureComponent {
     }
     return (
       <div className="page-container">
-        {this.renderBreadCrumb()}
+        <PathBreadcrumb path={dir} onChange={this.handleBreadcrumbChange} />
         {this.renderList()}
       </div>
-    );
-  }
-
-  renderBreadCrumb() {
-    return (
-      <Breadcrumb className="block">
-        <Breadcrumb.Item key={0}>
-          <a title={ROOT_DIR} data-idx={0} onClick={this.handleBreadCrumbItemClick}>
-            <Icon type="book" />
-          </a>
-        </Breadcrumb.Item>
-        {pathlib.split(this.props.dir).map((name, i) => (
-          <Breadcrumb.Item key={i + 1}>
-            <a data-idx={i + 1} onClick={this.handleBreadCrumbItemClick}>
-              {name}
-            </a>
-          </Breadcrumb.Item>
-        ))}
-      </Breadcrumb>
     );
   }
 

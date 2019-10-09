@@ -17,6 +17,7 @@
 import * as pathlib from '@core/path';
 
 import { MemoryDirExplorer, ROOT_DIR } from '../components/memory-dir-explorer';
+import { MemoryFileExplorer } from '../components/memory-file-explorer.jsx';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -117,7 +118,7 @@ class FileExplorerPage extends React.PureComponent {
     super(...args);
 
     this.state = {
-      cwd: ROOT_DIR
+      path: ROOT_DIR
     };
 
     this.props.requestContent({
@@ -125,7 +126,7 @@ class FileExplorerPage extends React.PureComponent {
     });
   }
 
-  getItemsAtPath(cwd) {
+  listDir(cwd) {
     const { files: allFiles } = this.props;
     if (allFiles === undefined) {
       return undefined;
@@ -169,26 +170,44 @@ class FileExplorerPage extends React.PureComponent {
     return result;
   }
 
-  onDirChange = cwd => {
+  getFileByPath(path) {
+    const { files } = this.props;
+    if (path === undefined || !files) {
+      return;
+    }
+    const item = files.filter(x => x.path === path)[0];
+    return item && !item.isDir ? item : undefined;
+  }
+
+  handlePathChange = path => {
     this.setState({
-      cwd
+      path: path !== undefined ? path : ROOT_DIR
     });
   };
 
   render() {
-    const { cwd } = this.state;
-    const items = this.getItemsAtPath(cwd);
+    const { path } = this.state;
+
+    const selectedFile = this.getFileByPath(path);
+    const dirList = selectedFile ? [] : this.listDir(path);
 
     return (
       <div className="page-container">
-        {items === undefined && (
+        {!dirList && (
           <div className="text-center">
             <Spin tip="Loading..." size="large" />
           </div>
         )}
-
-        {items && (
-          <MemoryDirExplorer dir={cwd} items={items} onDirChange={this.onDirChange} />
+        {dirList && !selectedFile && (
+          <MemoryDirExplorer
+            dir={path}
+            items={dirList}
+            onDirChange={this.handlePathChange}
+            onFileClick={this.handlePathChange}
+          />
+        )}
+        {selectedFile && (
+          <MemoryFileExplorer file={selectedFile} onDirChange={this.handlePathChange} />
         )}
       </div>
     );

@@ -38,6 +38,10 @@ export function selectSizeDataForPath(state, dirPath = '') {
     flash: v.flash_size,
     isDir: false,
     path: !IS_WINDOWS && v.path[0] !== '/' ? `/${v.path}` : v.path,
-    ram: v.ram_size
+    ram: v.ram_size,
+    symbols: v.symbols.map(s => ({
+      ...s,
+      displayName: s.demangled_name !== undefined ? s.demangled_name : s.name
+    }))
   }));
 }
