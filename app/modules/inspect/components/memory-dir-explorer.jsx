@@ -26,12 +26,10 @@ import {
   safeFormatSize
 } from '@inspect/helpers';
 
-import { IS_WINDOWS } from '@app/config';
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export const ROOT_DIR = IS_WINDOWS ? '' : '/';
 export const PARENT_DIR = '..';
 
 const PARENT_ITEM_IDX = -1;
@@ -56,7 +54,7 @@ function sortDirFirst(a, b) {
 
 export class MemoryDirExplorer extends React.PureComponent {
   static propTypes = {
-    dir: PropTypes.string.isRequired,
+    dir: PropTypes.string,
     items: FileItemsType,
     onDirChange: PropTypes.func.isRequired,
     onFileClick: PropTypes.func
@@ -117,13 +115,14 @@ export class MemoryDirExplorer extends React.PureComponent {
     if (!tr) {
       return;
     }
-    const { onDirChange, items, dir } = this.props;
+    const { onDirChange, items, dir = '' } = this.props;
     const idx = parseInt(tr.dataset.rowKey);
     let path;
     if (idx === PARENT_ITEM_IDX) {
       path = pathlib.dirname(dir);
       if (path === dir) {
-        path = ROOT_DIR;
+        // ROOT dir
+        path = undefined;
       }
     } else {
       const item = items[idx];
@@ -181,9 +180,9 @@ export class MemoryDirExplorer extends React.PureComponent {
   };
 
   renderList() {
-    const { dir } = this.props;
+    const { dir = '' } = this.props;
     const indexedItems = this.props.items.map((x, i) => ({ ...x, idx: i }));
-    const ds = dir === ROOT_DIR ? indexedItems : [PARENT_ITEM, ...indexedItems];
+    const ds = dir.length ? [PARENT_ITEM, ...indexedItems] : indexedItems;
 
     return (
       <Table

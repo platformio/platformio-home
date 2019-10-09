@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { IS_WINDOWS } from '@app/config';
 import { JSON_URL } from './containers/memory-explorer-page';
 import { selectRequestedContent } from '@core/selectors';
 
@@ -37,9 +36,9 @@ export function selectSizeDataForPath(state, dirPath = '') {
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: !IS_WINDOWS && v.path[0] !== '/' ? `/${v.path}` : v.path,
+    path: v.path,
     ram: v.ram_size,
-    symbols: v.symbols.map(s => ({
+    symbols: (v.symbols || []).map(s => ({
       ...s,
       displayName: s.demangled_name !== undefined ? s.demangled_name : s.name
     }))

@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { MemoryDirExplorer, ROOT_DIR } from '../components/memory-dir-explorer';
+import { MemoryDirExplorer } from '../components/memory-dir-explorer';
 import { MemoryFileExplorer } from '../components/memory-file-explorer.jsx';
 
 import PropTypes from 'prop-types';
@@ -117,9 +117,7 @@ class FileExplorerPage extends React.PureComponent {
   constructor(...args) {
     super(...args);
 
-    this.state = {
-      path: ROOT_DIR
-    };
+    this.state = {};
 
     this.props.requestContent({
       uri: JSON_URL
@@ -136,28 +134,30 @@ class FileExplorerPage extends React.PureComponent {
     const aggregator = new AggregatorMap();
     const dirUnfolder = new DirectoryUnfolder();
 
-    if (cwd.length && cwd[cwd.length - 1] !== pathlib.sep) {
-      cwd = cwd + pathlib.sep;
-    }
-
-    const result = allFiles
-      // Left children
-      .filter(x => x.path.startsWith(cwd))
+    const result = (this.props.files || [])
+      .filter(item => !cwd || item.path.startsWith(cwd))
       .map(({ path, isDir, ram, flash }) => {
-        // Convert path to relative
-        const relativePath = path.substring(cwd.length);
+        const root = cwd || path.substring(0, path.indexOf(pathlib.sep) + 1);
+        const relativePath = path.substring(root.length);
         const relativePathParts = pathlib.split(relativePath);
         const name = relativePathParts[0];
 
+        // FIXME: seems like there can be problems if cwd=undefined
+        // Relative path in this case has stripped drive,
+        // if drives have same relative path then overlapping occures
+        // const fullRelativePath
         dirUnfolder.remember(relativePathParts, isDir);
         aggregator.increment(name, { flash, ram });
 
-        return {
+        const result = {
           isDir: relativePathParts.length !== 1 || isDir,
           flash,
           ram,
-          relativePath: name
+          relativePath: !cwd && root ? pathlib.join(root, name) : name
+          // relativePath: name # missed device when listing root!
+          // relativePath: pathlib.join(root, name) // abs path to dir, not relative!
         };
+        return result;
       })
       .filter(({ relativePath }) => uniqueFilter.filter(relativePath))
       // Override with aggregated values
@@ -181,7 +181,7 @@ class FileExplorerPage extends React.PureComponent {
 
   handlePathChange = path => {
     this.setState({
-      path: path !== undefined ? path : ROOT_DIR
+      path
     });
   };
 

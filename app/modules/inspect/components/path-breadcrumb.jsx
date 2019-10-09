@@ -47,8 +47,12 @@ export class PathBreadcrumb extends React.PureComponent {
 
   splitPath(path) {
     const sepIdx = path.indexOf(pathlib.sep);
+    if (sepIdx === -1) {
+      return [path];
+    }
     const device = path.substring(0, sepIdx + 1);
     const devicePathParts = pathlib.split(path.substring(device.length));
+
     return [device, ...devicePathParts];
   }
 
@@ -63,7 +67,7 @@ export class PathBreadcrumb extends React.PureComponent {
       lastName = parts.pop();
     }
     return (
-      <Breadcrumb className="block">
+      <Breadcrumb className="block" separator={pathlib.sep}>
         <Breadcrumb.Item key={0}>
           <a data-idx={0} onClick={this.handleItemClick}>
             <Icon type="book" />
