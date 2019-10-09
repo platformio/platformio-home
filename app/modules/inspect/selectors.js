@@ -65,3 +65,11 @@ export function selectSectionsSizeData(state) {
     name
   }));
 }
+
+export function selectSymbolsSizeData(state) {
+  const files = selectSizeDataForPath(state) || [];
+  return files
+    .map(({ symbols }) => symbols)
+    .filter(x => x && x.length)
+    .flat();
+}

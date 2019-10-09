@@ -17,13 +17,20 @@
 import * as pathlib from '@core/path';
 
 import {
+  MemoryFileSymbolsExplorer,
+  SymbolType
+} from '@inspect/components/memory-file-explorer.jsx';
+import {
   MemorySectionsExplorer,
   SectionsType
 } from '@inspect/components/memory-sections-explorer.jsx';
-import { selectSectionsSizeData, selectSizeDataForPath } from '@inspect/selectors';
+import {
+  selectSectionsSizeData,
+  selectSizeDataForPath,
+  selectSymbolsSizeData
+} from '@inspect/selectors';
 
 import { MemoryDirExplorer } from '@inspect/components/memory-dir-explorer';
-import { MemoryFileExplorer } from '@inspect/components/memory-file-explorer.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
@@ -116,7 +123,8 @@ class FileExplorerPage extends React.PureComponent {
         ram: PropTypes.number.isRequired
       })
     ),
-    sections: SectionsType
+    sections: SectionsType,
+    symbols: PropTypes.arrayOf(SymbolType)
   };
 
   constructor(...args) {
@@ -193,7 +201,7 @@ class FileExplorerPage extends React.PureComponent {
 
   render() {
     const { path } = this.state;
-    const { sections } = this.props;
+    const { sections, symbols } = this.props;
     const selectedFile = this.getFileByPath(path);
     const dirList = selectedFile ? [] : this.listDir(path);
 
@@ -213,9 +221,14 @@ class FileExplorerPage extends React.PureComponent {
           />
         )}
         {selectedFile && (
-          <MemoryFileExplorer file={selectedFile} onDirChange={this.handlePathChange} />
+          <MemoryFileSymbolsExplorer
+            file={selectedFile.name}
+            symbols={selectedFile.symbols}
+            onDirChange={this.handlePathChange}
+          />
         )}
         {sections && <MemorySectionsExplorer sections={sections} />}
+        {symbols && <MemoryFileSymbolsExplorer symbols={symbols} />}
       </div>
     );
   }
@@ -225,7 +238,8 @@ class FileExplorerPage extends React.PureComponent {
 function mapStateToProps(state) {
   return {
     files: selectSizeDataForPath(state),
-    sections: selectSectionsSizeData(state)
+    sections: selectSectionsSizeData(state),
+    symbols: selectSymbolsSizeData(state)
   };
 }
 

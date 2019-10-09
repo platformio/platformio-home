@@ -29,7 +29,7 @@ import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const SymbolType = PropTypes.shape({
+export const SymbolType = PropTypes.shape({
   addr: PropTypes.number.isRequired,
   bind: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
@@ -41,14 +41,6 @@ const SymbolType = PropTypes.shape({
   type: PropTypes.string.isRequired
 });
 
-const FileItemType = PropTypes.shape({
-  path: PropTypes.string.isRequired,
-  isDir: PropTypes.bool,
-  ram: PropTypes.number,
-  flash: PropTypes.number,
-  symbols: PropTypes.arrayOf(SymbolType)
-});
-
 const typeToOrder = {
   STT_FUNC: 1,
   STT_OBJECT: 2
@@ -58,9 +50,10 @@ function sortFunctionsFirst(a, b) {
   return compareNumber(typeToOrder[a.type] || 0, typeToOrder[b.type] || 0);
 }
 
-export class MemoryFileExplorer extends React.PureComponent {
+export class MemoryFileSymbolsExplorer extends React.PureComponent {
   static propTypes = {
-    file: FileItemType,
+    file: PropTypes.string,
+    symbols: PropTypes.arrayOf(SymbolType),
     onDirChange: PropTypes.func
   };
 
@@ -84,7 +77,7 @@ export class MemoryFileExplorer extends React.PureComponent {
   }
 
   renderIcon(type) {
-    const icon = MemoryFileExplorer.iconsMap[type];
+    const icon = MemoryFileSymbolsExplorer.iconsMap[type];
     return icon && <Icon type={icon} />;
   }
 
@@ -146,12 +139,15 @@ export class MemoryFileExplorer extends React.PureComponent {
   }
 
   getSearchResults() {
-    const { file } = this.props;
+    const { symbols } = this.props;
     const { search } = this.state;
+
     if (!search.length) {
-      return file.symbols;
+      return symbols;
     }
+
     const stopWords = ['0', '0x'];
+    const textFields = ['name', 'demangled_name', 'section'];
     const tokens = search
       .match(/\S+/g)
       .filter(token => !stopWords.includes(token))
@@ -162,9 +158,7 @@ export class MemoryFileExplorer extends React.PureComponent {
         return token;
       });
 
-    const textFields = ['name', 'demangled_name', 'section'];
-
-    return file.symbols.filter(symbol => {
+    return symbols.filter(symbol => {
       for (const token of tokens) {
         let foundToken = false;
         if (!isNaN(token)) {
@@ -213,12 +207,14 @@ export class MemoryFileExplorer extends React.PureComponent {
             // onChange={this.handleSearch}
             onSearch={this.handleSearch}
             placeholder='Search, for ex. "init 0x80 bss"'
-            ref={(el) => { this.searchEl = el; }}
+            ref={el => {
+              this.searchEl = el;
+            }}
             size="large"
             title="Looks inside name, section; start/end of address"
           />
         </div>
-        <PathBreadcrumb path={file.path} onChange={this.handleBreadcrumbChange} />
+        {file && <PathBreadcrumb path={file} onChange={this.handleBreadcrumbChange} />}
         <Table
           childrenColumnName="_"
           columns={this.getTableColumns()}
