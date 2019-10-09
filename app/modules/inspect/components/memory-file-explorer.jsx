@@ -16,8 +16,14 @@
 
 // import * as pathlib from '@core/path';
 
-import { Icon, Table, Tag } from 'antd';
-import { compareNumber, compareString, formatHex, formatSize, multiSort } from '@inspect/helpers';
+import { Icon, Input, Table, Tag } from 'antd';
+import {
+  compareNumber,
+  compareString,
+  formatHex,
+  formatSize,
+  multiSort
+} from '@inspect/helpers';
 
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
@@ -63,6 +69,20 @@ export class MemoryFileExplorer extends React.PureComponent {
     STT_OBJECT: 'tag'
   });
 
+  constructor(...args) {
+    super(...args);
+
+    this.state = {
+      search: ''
+    };
+  }
+
+  componentDidMount() {
+    if (this.searchEl) {
+      this.searchEl.focus();
+    }
+  }
+
   renderIcon(type) {
     const icon = MemoryFileExplorer.iconsMap[type];
     return icon && <Icon type={icon} />;
@@ -83,9 +103,8 @@ export class MemoryFileExplorer extends React.PureComponent {
         dataIndex: 'displayName',
         defaultSortOrder: 'ascend',
         render: this.renderDisplayName,
-        sorter: multiSort(
-          sortFunctionsFirst,
-          (a, b) => compareString(a.displayName, b.displayName)
+        sorter: multiSort(sortFunctionsFirst, (a, b) =>
+          compareString(a.displayName, b.displayName)
         )
       },
       {
@@ -126,18 +145,79 @@ export class MemoryFileExplorer extends React.PureComponent {
     return maxAddr.toString(16).length;
   }
 
+  getSearchResults() {
+    const { file } = this.props;
+    const { search } = this.state;
+    if (!search.length) {
+      return file.symbols;
+    }
+    const stopWords = ['0', '0x'];
+    const tokens = search
+      .match(/\S+/g)
+      .filter(token => !stopWords.includes(token))
+      .map(token => {
+        if (!isNaN(token)) {
+          return token.toLowerCase();
+        }
+        return token;
+      });
+
+    const textFields = ['name', 'demangled_name', 'section'];
+
+    return file.symbols.filter(symbol => {
+      for (const token of tokens) {
+        let foundToken = false;
+        if (!isNaN(token)) {
+          const hexAddr = formatHex(symbol.addr).toLowerCase();
+          if (hexAddr.startsWith(token) || hexAddr.endsWith(token.replace('0x', ''))) {
+            foundToken = true;
+          }
+        } else {
+          for (const name of textFields) {
+            if (symbol[name] && symbol[name].includes(token)) {
+              foundToken = true;
+              break;
+            }
+          }
+        }
+        if (!foundToken) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
   handleBreadcrumbChange = path => {
     this.props.onDirChange(path);
   };
 
+  handleSearch = search => {
+    this.setState({
+      search
+    });
+  };
+
   render() {
     const { file } = this.props;
-    const ds = file.symbols.map((x, i) => ({ ...x, idx: i }));
 
+    const ds = this.getSearchResults().map((x, i) => ({ ...x, idx: i }));
     this.addressWidth = this.getMaxAddressWidth(ds);
 
     return (
       <div className="page-container">
+        <div className="block">
+          <Input.Search
+            enterButton
+            // FIXME: need debounce to enable
+            // onChange={this.handleSearch}
+            onSearch={this.handleSearch}
+            placeholder='Search, for ex. "init 0x80 bss"'
+            ref={(el) => { this.searchEl = el; }}
+            size="large"
+            title="Looks inside name, section; start/end of address"
+          />
+        </div>
         <PathBreadcrumb path={file.path} onChange={this.handleBreadcrumbChange} />
         <Table
           childrenColumnName="_"
