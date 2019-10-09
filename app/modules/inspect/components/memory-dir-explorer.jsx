@@ -70,22 +70,12 @@ export class MemoryDirExplorer extends React.PureComponent {
         title: 'Name',
         dataIndex: 'relativePath',
         defaultSortOrder: 'ascend',
-        render: (path, item) => {
-          const { isDir } = item;
-          const icon = this.renderIcon(isDir);
-          if (isDir) {
-            return (
-              <a>
-                {icon} {path}
-              </a>
-            );
-          }
-          return (
-            <span>
-              {icon} {path}
-            </span>
-          );
-        },
+        render: (path, item) => (
+          <a>
+            {this.renderIcon(item.isDir)} {path}
+          </a>
+        ),
+
         sorter: multiSort(sortDirFirst, (a, b) =>
           compareString(a.relativePath, b.relativePath)
         )
