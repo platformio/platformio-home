@@ -132,7 +132,7 @@ export class MemoryFileExplorer extends React.PureComponent {
 
   render() {
     const { file } = this.props;
-    const ds = file.symbols;
+    const ds = file.symbols.map((x, i) => ({ ...x, idx: i }));
 
     this.addressWidth = this.getMaxAddressWidth(ds);
 
