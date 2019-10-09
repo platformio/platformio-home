@@ -45,3 +45,23 @@ export function selectSizeDataForPath(state, dirPath = '') {
     }))
   }));
 }
+
+export function selectSectionsSizeData(state) {
+  let { memory: { total: { sections } = {} } = {} } = selectProjectSizeData(state);
+  if (sections === undefined) {
+    return undefined;
+  }
+  if (!sections.length) {
+    sections = Object.entries(sections).map(([k, v]) => ({
+      ...v,
+      name: k
+    }));
+  }
+  return sections.map(({ flags, size, type, start_addr: startAddr, name }) => ({
+    flags,
+    size,
+    type,
+    startAddr,
+    name
+  }));
+}

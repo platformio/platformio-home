@@ -31,6 +31,9 @@ export function safeFormatSize(size) {
 }
 
 export function formatHex(addr, options) {
+  if (typeof addr !== 'number') {
+    return;
+  }
   const { width } = options || {};
   let result = addr.toString(16).toUpperCase();
   if (width) {

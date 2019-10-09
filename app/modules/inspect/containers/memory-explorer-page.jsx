@@ -16,15 +16,19 @@
 
 import * as pathlib from '@core/path';
 
-import { MemoryDirExplorer } from '../components/memory-dir-explorer';
-import { MemoryFileExplorer } from '../components/memory-file-explorer.jsx';
+import {
+  MemorySectionsExplorer,
+  SectionsType
+} from '@inspect/components/memory-sections-explorer.jsx';
+import { selectSectionsSizeData, selectSizeDataForPath } from '@inspect/selectors';
 
+import { MemoryDirExplorer } from '@inspect/components/memory-dir-explorer';
+import { MemoryFileExplorer } from '@inspect/components/memory-file-explorer.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { requestContent } from '@core/actions';
-import { selectSizeDataForPath } from '../selectors';
 
 // FIXME: load dynamically via API
 export const JSON_URL = 'http://dl.platformio.org/tmp/sizedata-tasmota.json';
@@ -111,7 +115,8 @@ class FileExplorerPage extends React.PureComponent {
         path: PropTypes.string.isRequired,
         ram: PropTypes.number.isRequired
       })
-    )
+    ),
+    sections: SectionsType
   };
 
   constructor(...args) {
@@ -188,7 +193,7 @@ class FileExplorerPage extends React.PureComponent {
 
   render() {
     const { path } = this.state;
-
+    const { sections } = this.props;
     const selectedFile = this.getFileByPath(path);
     const dirList = selectedFile ? [] : this.listDir(path);
 
@@ -210,6 +215,7 @@ class FileExplorerPage extends React.PureComponent {
         {selectedFile && (
           <MemoryFileExplorer file={selectedFile} onDirChange={this.handlePathChange} />
         )}
+        {sections && <MemorySectionsExplorer sections={sections} />}
       </div>
     );
   }
@@ -218,7 +224,8 @@ class FileExplorerPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    files: selectSizeDataForPath(state)
+    files: selectSizeDataForPath(state),
+    sections: selectSectionsSizeData(state)
   };
 }
 
