@@ -18,19 +18,18 @@ import * as pathlib from '@core/path';
 
 import { Icon, Table } from 'antd';
 import {
+  PARENT_DIR,
   compareBool,
   compareNumber,
   compareString,
   formatSize,
-  multiSort,
-  safeFormatSize
-} from '@inspect/helpers';
+  multiSort
+, safeFormatSize } from '@inspect/helpers';
+
 
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-export const PARENT_DIR = '..';
 
 const PARENT_ITEM_IDX = -1;
 const PARENT_ITEM = Object.freeze({

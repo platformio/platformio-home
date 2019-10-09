@@ -15,6 +15,7 @@
  */
 
 import { JSON_URL } from './containers/memory-explorer-page';
+import { fixPath } from '@inspect/helpers';
 import { selectRequestedContent } from '@core/selectors';
 
 function selectProjectSizeData(state) {
@@ -30,13 +31,13 @@ export function selectSizeDataForPath(state, dirPath = '') {
   if (!files.length) {
     files = Object.entries(files).map(([k, v]) => ({
       ...v,
-      path: k.replace(/\//g, '\\')
+      path: k
     }));
   }
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: v.path,
+    path: fixPath(v.path),
     ram: v.ram_size,
     symbols: (v.symbols || []).map(s => ({
       ...s,
