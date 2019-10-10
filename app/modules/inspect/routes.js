@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import FileExplorerPage from './containers/memory-explorer-page';
+import FileExplorerPage from '@inspect/containers/memory-explorer-page';
+import SectionsExplorerPage from '@inspect/containers/memory-sections-page';
+import SymbolsExplorerPage from '@inspect/containers/memory-symbols-page';
 
 const routes = [
   {
@@ -22,6 +24,18 @@ const routes = [
     icon: 'cluster',
     label: 'File Explorer',
     component: FileExplorerPage
+  },
+  {
+    path: '/inspect/symbols',
+    icon: 'tags',
+    label: 'Symbols Explorer',
+    component: SymbolsExplorerPage
+  },
+  {
+    path: '/inspect/sections',
+    icon: 'database',
+    label: 'Sections Explorer',
+    component: SectionsExplorerPage
   }
 ];
 

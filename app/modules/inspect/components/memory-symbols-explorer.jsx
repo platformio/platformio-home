@@ -50,7 +50,7 @@ function sortFunctionsFirst(a, b) {
   return compareNumber(typeToOrder[a.type] || 0, typeToOrder[b.type] || 0);
 }
 
-export class MemoryFileSymbolsExplorer extends React.PureComponent {
+export class MemorySymbolsExplorer extends React.PureComponent {
   static propTypes = {
     file: PropTypes.string,
     symbols: PropTypes.arrayOf(SymbolType),
@@ -77,7 +77,7 @@ export class MemoryFileSymbolsExplorer extends React.PureComponent {
   }
 
   renderIcon(type) {
-    const icon = MemoryFileSymbolsExplorer.iconsMap[type];
+    const icon = MemorySymbolsExplorer.iconsMap[type];
     return icon && <Icon type={icon} />;
   }
 
@@ -94,7 +94,8 @@ export class MemoryFileSymbolsExplorer extends React.PureComponent {
       {
         title: 'Name',
         dataIndex: 'displayName',
-        defaultSortOrder: 'ascend',
+        // Commented because it's very slow on big projects
+        // defaultSortOrder: 'ascend',
         render: this.renderDisplayName,
         sorter: multiSort(sortFunctionsFirst, (a, b) =>
           compareString(a.displayName, b.displayName)
@@ -195,7 +196,7 @@ export class MemoryFileSymbolsExplorer extends React.PureComponent {
   render() {
     const { file } = this.props;
 
-    const ds = this.getSearchResults().map((x, i) => ({ ...x, idx: i }));
+    const ds = this.getSearchResults().map((x, i) => ({ ...x, idx: i })).sort(sortFunctionsFirst);
     this.addressWidth = this.getMaxAddressWidth(ds);
 
     return (
