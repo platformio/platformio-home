@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-// import { Breadcrumb } from 'antd';
-// import { Link } from 'react-router';
-
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import childRoutes from './routes';
+import { connect } from 'react-redux';
+import { selectProjectInspectionMeta } from '@inspect/selectors';
+import { selectProjects } from '@project/selectors';
 
-export default class InspectionResultPage extends React.Component {
+class InspectionResultPage extends React.Component {
   static propTypes = {
-    location: PropTypes.object.isRequired
+    location: PropTypes.object.isRequired,
+    projectName: PropTypes.string
   };
 
   renderBreadcrumb() {
     const breadcrumbMap = {
       '/inspect': 'Projects',
-      '/inspect/result': '<Project Name>'
+      '/inspect/result': this.props.projectName
     };
 
     const parts = this.props.location.pathname.split('/');
@@ -61,3 +62,15 @@ export default class InspectionResultPage extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  const meta = selectProjectInspectionMeta(state);
+  const project =
+    meta && selectProjects(state).filter(x => x.path === meta.projectDir)[0];
+
+  return {
+    projectName: project ? project.name : ''
+  };
+}
+
+export default connect(mapStateToProps)(InspectionResultPage);
