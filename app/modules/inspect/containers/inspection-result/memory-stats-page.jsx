@@ -62,7 +62,6 @@ class MemoryStatisticsPage extends React.PureComponent {
     const { filesCount, symbolsCount, sectionsCount, pioCheck } = stats;
     return (
       <div>
-        <h1>Inspection Statistics</h1>
         <Row gutter={16}>
           <Col span={4}>
             <Card hoverable onClick={this.handleFileClick}>

@@ -29,19 +29,19 @@ const routes = [
   {
     path: '/inspect/result/files',
     icon: 'cluster',
-    label: 'File Explorer',
+    label: 'Memory Explorer',
     component: FileExplorerPage
   },
   {
     path: '/inspect/result/symbols',
     icon: 'tags',
-    label: 'Symbols Explorer',
+    label: 'Symbols',
     component: SymbolsExplorerPage
   },
   {
     path: '/inspect/result/sections',
     icon: 'database',
-    label: 'Sections Explorer',
+    label: 'Sections',
     component: SectionsExplorerPage
   }
 ];

@@ -32,11 +32,7 @@ export default class InspectionResultPage extends React.Component {
   renderBreadcrumb() {
     const breadcrumbMap = {
       '/inspect': 'Projects',
-      '/inspect/result': '<Project Name>',
-      '/inspect/result/stats': 'Stats',
-      '/inspect/result/files': 'Files',
-      '/inspect/result/symbols': 'Symbols',
-      '/inspect/result/sections': 'Sections'
+      '/inspect/result': '<Project Name>'
     };
 
     const parts = this.props.location.pathname.split('/');
