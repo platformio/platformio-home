@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
+import { INSPECTION_KEY } from '@inspect/constants';
 import MultiPage from '@core/components/multipage';
+import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import { deleteEntity } from '@store/actions';
 import routes from './routes';
 
-export default class InspectPage extends React.Component {
+class InspectPage extends React.Component {
+  static propTypes = {
+    deleteEntity: PropTypes.func.isRequired
+  };
+
+  componentWillUnmount() {
+    this.props.deleteEntity(new RegExp(`^${INSPECTION_KEY}`));
+  }
+
   render() {
     return (
       <section className="memory-inspect-module">
@@ -27,3 +39,12 @@ export default class InspectPage extends React.Component {
     );
   }
 }
+
+const mapDispatchToProps = {
+  deleteEntity
+};
+
+export default connect(
+  undefined,
+  mapDispatchToProps
+)(InspectPage);
