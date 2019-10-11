@@ -89,14 +89,14 @@ export default class FrameworksList extends React.Component {
       >
         <div className="block">{item.description}</div>
         <div className="inline-buttons">
-          {(item.platforms || []).map(item => (
+          {(item.platforms || []).map(platform => (
             <Button
-              key={item.title}
+              key={platform.title}
               icon="appstore"
               size="small"
-              onClick={e => this.onDidPlatform(e, item.name)}
+              onClick={e => this.onDidPlatform(e, platform.name)}
             >
-              {item.title}
+              {platform.title}
             </Button>
           ))}
         </div>

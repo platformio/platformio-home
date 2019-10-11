@@ -54,7 +54,7 @@ export function selectSearchResult(state, query, page = 1) {
   if (!items) {
     return null;
   }
-  const item = items.find(item => item.key === selectStoreSearchKey(query, page));
+  const item = items.find(x => x.key === selectStoreSearchKey(query, page));
   return item ? item.result : null;
 }
 

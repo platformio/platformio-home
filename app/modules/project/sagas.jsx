@@ -112,8 +112,8 @@ function* watchOpenProject() {
             query: 'ide.open_project',
             params: [projectDir]
           });
-        } catch (err) {
-          console.warn(err);
+        } catch (err2) {
+          console.warn(err2);
         }
       }
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as path from '../core/path';
+import * as pathlib from '../core/path';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
 
@@ -43,7 +43,7 @@ export class LibraryStorage {
 
   set items(items) {
     if (items && items.length && !this.path) {
-      this.path = path.dirname(items[0].__pkg_dir);
+      this.path = pathlib.dirname(items[0].__pkg_dir);
     }
     this._items = items;
   }

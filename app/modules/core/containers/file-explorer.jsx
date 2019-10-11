@@ -303,8 +303,8 @@ class FileExplorer extends React.Component {
       lastPath = parent && parent !== lastPath ? parent : null;
     }
 
-    const itemRender = (route, params, routes) => {
-      if (routes[routes.length - 1].path === route.path) {
+    const itemRender = (route, params, routes2) => {
+      if (routes2[routes2.length - 1].path === route.path) {
         return <span>{route.name}</span>;
       }
       return <a onClick={() => this.onDidChangeRoot(route.path)}>{route.name}</a>;

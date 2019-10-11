@@ -98,11 +98,11 @@ class ProjectNewModal extends React.Component {
             : this.state.projectLocation,
           values.name
         ),
-        (err, location) => {
+        (err2, location) => {
           this.setState({
             inProgress: false
           });
-          if (!err) {
+          if (!err2) {
             this.props.addProject(location);
             this.props.openProject(location);
             this.onDidCancel();

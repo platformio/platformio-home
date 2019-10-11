@@ -193,11 +193,11 @@ function* watchLoadInstalledPlatforms() {
     }
     yield call(function*() {
       try {
-        const items = yield call(apiFetchData, {
+        const platforms = yield call(apiFetchData, {
           query: 'core.call',
           params: [['platform', 'list', '--json-output']]
         });
-        yield put(updateEntity('installedPlatforms', items));
+        yield put(updateEntity('installedPlatforms', platforms));
       } catch (err) {
         yield put(notifyError('Could not load installed platforms', err));
       }

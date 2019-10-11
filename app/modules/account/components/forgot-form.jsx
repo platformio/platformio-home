@@ -45,11 +45,11 @@ export default class AccountForgotForm extends React.Component {
       this.setState({
         loading: true
       });
-      this.props.forgotAccountPassword(values.username, err => {
+      this.props.forgotAccountPassword(values.username, err2 => {
         this.setState({
           loading: false
         });
-        if (!err) {
+        if (!err2) {
           this.props.showLoginPage();
         }
       });

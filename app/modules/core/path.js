@@ -30,28 +30,28 @@ export function dirname(path) {
   if (!path || !path.includes(sep) || path === sep) {
     return path;
   }
-  let dirname = path.substr(0, path.lastIndexOf(sep));
-  while (dirname.endsWith(sep)) {
-    dirname = dirname.substr(0, dirname.length - 1);
+  let result = path.substr(0, path.lastIndexOf(sep));
+  while (result.endsWith(sep)) {
+    result = result.substr(0, result.length - 1);
   }
-  return dirname;
+  return result;
 }
 
 export function basename(path, ext = undefined) {
   if (!path) {
     return path;
   }
-  let basename = path;
+  let result = path;
   if (path.includes(sep) && path !== sep) {
-    basename = path.substr(path.lastIndexOf(sep));
-    while (basename.startsWith(sep)) {
-      basename = basename.substr(1);
+    result = path.substr(path.lastIndexOf(sep));
+    while (result.startsWith(sep)) {
+      result = result.substr(1);
     }
   }
-  if (ext && basename.endsWith(ext)) {
-    return basename.substr(0, basename.length - ext.length);
+  if (ext && result.endsWith(ext)) {
+    return result.substr(0, result.length - ext.length);
   }
-  return basename;
+  return result;
 }
 
 export function extname(path) {

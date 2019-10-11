@@ -55,9 +55,10 @@ function mapStateToProps(state, ownProps) {
   return {
     name,
     data: selectFrameworkData(state, name),
-    showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: platform =>
+      goTo(ownProps.history, '/platforms/embedded/show', { name: platform }),
+    showFramework: framework =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name: framework })
   };
 }
 
