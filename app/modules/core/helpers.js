@@ -17,8 +17,7 @@
 import ReactGA from 'react-ga';
 import qs from 'querystringify';
 
-
-export function inIframe () {
+export function inIframe() {
   try {
     return window.self !== window.top;
   } catch (err) {
@@ -26,7 +25,7 @@ export function inIframe () {
   }
 }
 
-export function reportException(description, fatal=false) {
+export function reportException(description, fatal = false) {
   if (description instanceof ErrorEvent) {
     description = [
       description.message,
@@ -58,10 +57,14 @@ export function getSessionId() {
   return parseInt(sessionId || 0);
 }
 
-export function goTo(history, path, state, redirect=false) {
+export function goTo(history, path, state, redirect = false) {
   if (history.length) {
     const lastEntry = history.entries[history.index];
-    if (redirect || (lastEntry.pathname === path && JSON.stringify(lastEntry.state) === JSON.stringify(state))) {
+    if (
+      redirect ||
+      (lastEntry.pathname === path &&
+        JSON.stringify(lastEntry.state) === JSON.stringify(state))
+    ) {
       return history.replace(path, state);
     }
   }
@@ -78,7 +81,10 @@ export function title(str) {
 }
 
 export function lastLine(text) {
-  return text.trim().split('\n').slice(-1)[0];
+  return text
+    .trim()
+    .split('\n')
+    .slice(-1)[0];
 }
 
 export function cmpSort(a, b) {

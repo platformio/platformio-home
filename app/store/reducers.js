@@ -18,7 +18,6 @@ import * as ActionTypes from './actions';
 
 import { combineReducers } from 'redux';
 
-
 export function copyWithoutMatchingKeys(obj, re) {
   const newObj = Object.assign({}, obj);
   Object.keys(newObj).forEach(key => {

@@ -18,13 +18,11 @@ import MultiPage from '../core/components/multipage';
 import React from 'react';
 import routes from './routes';
 
-
 export default class LibraryIndex extends React.Component {
-
   render() {
     return (
-      <section className='libraries-module'>
-        <MultiPage routes={ routes } />
+      <section className="libraries-module">
+        <MultiPage routes={routes} />
       </section>
     );
   }

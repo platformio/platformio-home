@@ -25,14 +25,12 @@ import { connect } from 'react-redux';
 import { osFsGlob } from '../../core/actions';
 import { selectOsFSGlob } from '../../core/selectors';
 
-
 class PlatformProjectExamples extends React.Component {
-
   static propTypes = {
     pkgDir: PropTypes.string.isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
     osFsGlob: PropTypes.func.isRequired
-  }
+  };
 
   static getGlobPatterns() {
     const patterns = [];
@@ -77,18 +75,18 @@ class PlatformProjectExamples extends React.Component {
           }
         });
         return pei;
-    });
+      });
   }
 
   render() {
     if (!this.props.uris) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' size='large' />
+        <div className="text-center">
+          <Spin tip="Loading..." size="large" />
         </div>
-        );
+      );
     }
-    return <ProjectExamples items={ this.getItems() } />;
+    return <ProjectExamples items={this.getItems()} />;
   }
 }
 
@@ -96,8 +94,15 @@ class PlatformProjectExamples extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    uris: selectOsFSGlob(state, PlatformProjectExamples.getGlobPatterns(), ownProps.pkgDir)
+    uris: selectOsFSGlob(
+      state,
+      PlatformProjectExamples.getGlobPatterns(),
+      ownProps.pkgDir
+    )
   };
 }
 
-export default connect(mapStateToProps, { osFsGlob })(PlatformProjectExamples);
+export default connect(
+  mapStateToProps,
+  { osFsGlob }
+)(PlatformProjectExamples);

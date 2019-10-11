@@ -21,7 +21,6 @@ import HomePage from './modules/home/containers/home-page';
 import LibraryIndex from './modules/library/index';
 import PlatformPage from './modules/platform/index';
 
-
 const routes = [
   {
     path: '/',

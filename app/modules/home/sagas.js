@@ -25,9 +25,8 @@ import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import { apiFetchData } from '../../store/api';
 import { selectStorageItem } from '../../store/selectors';
 
-
 function* watchLoadLatestTweets() {
-  yield takeLatest(actions.LOAD_LATEST_TWEETS, function*({username}) {
+  yield takeLatest(actions.LOAD_LATEST_TWEETS, function*({ username }) {
     let items = yield select(selectors.selectLatestTweets);
     if (items) {
       return;
@@ -50,6 +49,4 @@ function* watchLoadLatestTweets() {
   });
 }
 
-export default [
-  watchLoadLatestTweets
-];
+export default [watchLoadLatestTweets];

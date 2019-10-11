@@ -19,11 +19,20 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../platform/actions';
+import {
+  INSTALL_PLATFORM,
+  UNINSTALL_PLATFORM,
+  UPDATE_PLATFORM
+} from '../platform/actions';
 import { Modal, message } from 'antd';
 import { OS_RENAME_FILE, notifyError, notifySuccess } from '../core/actions';
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
-import { deleteEntity, saveState, updateEntity, updateStorageItem } from '../../store/actions';
+import {
+  deleteEntity,
+  saveState,
+  updateEntity,
+  updateStorageItem
+} from '../../store/actions';
 
 import React from 'react';
 import ReactGA from 'react-ga';
@@ -32,14 +41,15 @@ import { getSessionId } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { selectStorageItem } from '../../store/selectors';
 
-
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
 function* watchAddProject() {
-  yield takeEvery(actions.ADD_PROJECT, function*({projectDir}) {
+  yield takeEvery(actions.ADD_PROJECT, function*({ projectDir }) {
     const result = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     if (!result.includes(projectDir)) {
-      yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, projectDir]));
+      yield put(
+        updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, projectDir])
+      );
       yield put(saveState()); // force state saving when new project is opening in new window (VSCode issue)
     }
     yield put(deleteEntity(/^projects/));
@@ -48,24 +58,38 @@ function* watchAddProject() {
 }
 
 function* watchHideProject() {
-  yield takeEvery(actions.HIDE_PROJECT, function*({projectDir}) {
-    const storageItems = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
+  yield takeEvery(actions.HIDE_PROJECT, function*({ projectDir }) {
+    const storageItems =
+      (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     const entityItems = (yield select(selectors.selectProjects)) || [];
-    yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== projectDir)));
-    yield put(updateEntity('projects', entityItems.filter(item => item.path !== projectDir)));
+    yield put(
+      updateStorageItem(
+        RECENT_PROJECTS_STORAGE_KEY,
+        storageItems.filter(item => item !== projectDir)
+      )
+    );
+    yield put(
+      updateEntity('projects', entityItems.filter(item => item.path !== projectDir))
+    );
   });
 }
 
 function* watchProjectRename() {
-  yield takeEvery(OS_RENAME_FILE, function*({src, dst}) {
-    const storageItems = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
+  yield takeEvery(OS_RENAME_FILE, function*({ src, dst }) {
+    const storageItems =
+      (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     if (!storageItems.includes(src)) {
       return;
     }
     if (!storageItems.includes(dst)) {
       storageItems.push(dst);
     }
-    yield put(updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, storageItems.filter(item => item !== src)));
+    yield put(
+      updateStorageItem(
+        RECENT_PROJECTS_STORAGE_KEY,
+        storageItems.filter(item => item !== src)
+      )
+    );
     if (yield select(selectors.selectProjects)) {
       yield put(deleteEntity(/^projects/));
       yield put(actions.loadProjects());
@@ -74,7 +98,7 @@ function* watchProjectRename() {
 }
 
 function* watchOpenProject() {
-  yield takeEvery(actions.OPEN_PROJECT, function*({projectDir}) {
+  yield takeEvery(actions.OPEN_PROJECT, function*({ projectDir }) {
     try {
       return yield call(apiFetchData, {
         query: 'ide.open_project',
@@ -96,10 +120,14 @@ function* watchOpenProject() {
     Modal.success({
       title: 'Open Project...',
       content: (
-      <div style={ { wordBreak: 'break-all' } }>
-        <div className='block'>Project has been successfully configured and is located by this path: <code>{ projectDir }</code>.</div>
-        You can open it with your favourite IDE or process with <kbd>platformio run</kbd> command.
-      </div>
+        <div style={{ wordBreak: 'break-all' }}>
+          <div className="block">
+            Project has been successfully configured and is located by this path:{' '}
+            <code>{projectDir}</code>.
+          </div>
+          You can open it with your favourite IDE or process with{' '}
+          <kbd>platformio run</kbd> command.
+        </div>
       )
     });
   });
@@ -175,12 +203,13 @@ function* watchImportProject() {
         label: projectDir
       });
 
-      yield put(notifySuccess('Project has been successfully imported', `Location: ${result}`));
+      yield put(
+        notifySuccess('Project has been successfully imported', `Location: ${result}`)
+      );
     } catch (_err) {
       err = _err;
       yield put(notifyError('Could not import project', err));
-    }
-    finally {
+    } finally {
       if (onEnd) {
         yield call(onEnd, err, result);
       }
@@ -208,12 +237,16 @@ function* watchInitProject() {
         label: board
       });
 
-      yield put(notifySuccess('Project has been successfully initialized', `Board: ${board}, framework: ${framework}, location: ${result}`));
+      yield put(
+        notifySuccess(
+          'Project has been successfully initialized',
+          `Board: ${board}, framework: ${framework}, location: ${result}`
+        )
+      );
     } catch (_err) {
       err = _err;
       yield put(notifyError('Could not initialize project', err));
-    }
-    finally {
+    } finally {
       if (onEnd) {
         yield call(onEnd, err, result);
       }
@@ -223,7 +256,9 @@ function* watchInitProject() {
 
 function* watchImportArduinoProject() {
   while (true) {
-    const { board, useArduinoLibs, arduinoProjectDir, onEnd } = yield take(actions.IMPORT_ARDUINO_PROJECT);
+    const { board, useArduinoLibs, arduinoProjectDir, onEnd } = yield take(
+      actions.IMPORT_ARDUINO_PROJECT
+    );
     let err,
       result = null;
     try {
@@ -241,16 +276,26 @@ function* watchImportArduinoProject() {
         label: board
       });
 
-      yield put(notifySuccess('Project has been successfully imported', `Board: ${board}, new location: ${result}`));
+      yield put(
+        notifySuccess(
+          'Project has been successfully imported',
+          `Board: ${board}, new location: ${result}`
+        )
+      );
     } catch (_err) {
       err = _err;
-      if (err instanceof jsonrpc.JsonRpcError && err.message.includes('Not an Arduino project')) {
-        message.error(`${err.message} (Project should countain .ino or .pde file with the same name as project folder)`, 10);
+      if (
+        err instanceof jsonrpc.JsonRpcError &&
+        err.message.includes('Not an Arduino project')
+      ) {
+        message.error(
+          `${err.message} (Project should countain .ino or .pde file with the same name as project folder)`,
+          10
+        );
       } else {
         yield put(notifyError('Could not import Arduino project', err));
       }
-    }
-    finally {
+    } finally {
       if (onEnd) {
         yield call(onEnd, err, result);
       }

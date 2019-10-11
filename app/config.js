@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-export const IS_WINDOWS = navigator && navigator.platform && navigator.platform.startsWith('Win');
+export const IS_WINDOWS =
+  navigator && navigator.platform && navigator.platform.startsWith('Win');
 export const INPUT_FILTER_DELAY = 300; // ms, dalay before filtering projects, libs, platorms
 export const PLATFORMIO_API_ENDPOINT = 'http://api.platformio.org';
 

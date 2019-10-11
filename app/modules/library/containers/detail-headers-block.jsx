@@ -24,9 +24,7 @@ import { connect } from 'react-redux';
 import { osFsGlob } from '../../core/actions';
 import { selectOsFSGlob } from '../../core/selectors';
 
-
 class LibraryDetailHeadersBlock extends React.Component {
-
   static propTypes = {
     data: PropTypes.shape({
       headers: PropTypes.arrayOf(PropTypes.string),
@@ -34,7 +32,7 @@ class LibraryDetailHeadersBlock extends React.Component {
     }).isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
     osFsGlob: PropTypes.func.isRequired
-  }
+  };
 
   static getGlobPatterns() {
     const result = [];
@@ -50,7 +48,10 @@ class LibraryDetailHeadersBlock extends React.Component {
   constructor() {
     super(...arguments);
     if (this.props.data.__pkg_dir && !this.props.uris) {
-      this.props.osFsGlob(LibraryDetailHeadersBlock.getGlobPatterns(), this.props.data.__pkg_dir);
+      this.props.osFsGlob(
+        LibraryDetailHeadersBlock.getGlobPatterns(),
+        this.props.data.__pkg_dir
+      );
     }
   }
 
@@ -71,25 +72,34 @@ class LibraryDetailHeadersBlock extends React.Component {
 
   render() {
     if (!this.props.data.__pkg_dir) {
-      return <LibraryDetailHeaders items={ this.props.data.headers } />;
+      return <LibraryDetailHeaders items={this.props.data.headers} />;
     }
     if (!this.props.uris) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' size='large' />
-        </div>);
+        <div className="text-center">
+          <Spin tip="Loading..." size="large" />
+        </div>
+      );
     }
-    return <LibraryDetailHeaders items={ this.getUniqueFilenames(this.props.uris) } />;
+    return <LibraryDetailHeaders items={this.getUniqueFilenames(this.props.uris)} />;
   }
-
 }
 
 // Redux
 
 function mapStateToProps(state, ownProps) {
   return {
-    uris: ownProps.data.__pkg_dir ? selectOsFSGlob(state, LibraryDetailHeadersBlock.getGlobPatterns(), ownProps.data.__pkg_dir) : undefined
+    uris: ownProps.data.__pkg_dir
+      ? selectOsFSGlob(
+          state,
+          LibraryDetailHeadersBlock.getGlobPatterns(),
+          ownProps.data.__pkg_dir
+        )
+      : undefined
   };
 }
 
-export default connect(mapStateToProps, { osFsGlob })(LibraryDetailHeadersBlock);
+export default connect(
+  mapStateToProps,
+  { osFsGlob }
+)(LibraryDetailHeadersBlock);

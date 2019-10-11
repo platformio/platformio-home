@@ -20,7 +20,6 @@ import { createAction } from './actions';
 import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
 
-
 export const actions = {
   API_CONNECTED: 'API_CONNECTED',
   API_DISCONNECTED: 'API_DISCONNECTED',
@@ -30,11 +29,12 @@ export const actions = {
   API_RESULT_ERROR: 'API_RESULT_ERROR'
 };
 
-actions.apiRequest = (id, query, params) => createAction(actions.API_REQUEST, {
-  id,
-  query,
-  params
-});
+actions.apiRequest = (id, query, params) =>
+  createAction(actions.API_REQUEST, {
+    id,
+    query,
+    params
+  });
 
 export function* apiFetchData({ query, params = [] }) {
   const id = Math.random().toString();
@@ -53,14 +53,14 @@ export function* apiFetchData({ query, params = [] }) {
 }
 
 export function apiMiddleware(options) {
-  return (store) => {
+  return store => {
     let socket = null;
     let messageQueue = [];
     const reconnect = {
       timer: null,
       loading: null,
-      delay: 500,  // msec
-      maxDelay: 10000,  // msec
+      delay: 500, // msec
+      maxDelay: 10000, // msec
       retries: 0
     };
 
@@ -72,7 +72,10 @@ export function apiMiddleware(options) {
       try {
         sock = new WebSocket(endpoint);
       } catch (err) {
-        return message.error('Communication Error: This browser does not support WebSocket protocol', 0);
+        return message.error(
+          'Communication Error: This browser does not support WebSocket protocol',
+          0
+        );
       }
 
       sock.onopen = () => {
@@ -96,7 +99,7 @@ export function apiMiddleware(options) {
 
         reconnect.retries++;
         reconnect.interval = setTimeout(
-          () => socket = newSocket(endpoint),
+          () => (socket = newSocket(endpoint)),
           Math.min(reconnect.delay * reconnect.retries, reconnect.maxDelay)
         );
       };
@@ -106,9 +109,13 @@ export function apiMiddleware(options) {
           const result = jsonrpc.parse(event.data);
           switch (result.type) {
             case 'success':
-              return store.dispatch(createAction(actions.API_RESULT_SUCCESS, result.payload));
+              return store.dispatch(
+                createAction(actions.API_RESULT_SUCCESS, result.payload)
+              );
             case 'error':
-              return store.dispatch(createAction(actions.API_RESULT_ERROR, result.payload));
+              return store.dispatch(
+                createAction(actions.API_RESULT_ERROR, result.payload)
+              );
           }
         } catch (err) {
           store.dispatch(createAction(actions.API_ERRORED, err));
@@ -123,11 +130,12 @@ export function apiMiddleware(options) {
     }
     return next => action => {
       if (action && action.type === actions.API_REQUEST) {
-        const msg = JSON.stringify(jsonrpc.request(action.id, action.query, action.params));
+        const msg = JSON.stringify(
+          jsonrpc.request(action.id, action.query, action.params)
+        );
         return socket.readyState === 1 ? socket.send(msg) : messageQueue.push(msg);
       }
       return next(action);
     };
   };
 }
-

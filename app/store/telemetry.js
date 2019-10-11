@@ -18,9 +18,23 @@
 
 import * as path from '../modules/core/path';
 
-import { HIDE_PROJECT, IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, OPEN_PROJECT } from '../modules/project/actions';
-import { INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY } from '../modules/library/actions';
-import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../modules/platform/actions';
+import {
+  HIDE_PROJECT,
+  IMPORT_ARDUINO_PROJECT,
+  IMPORT_PROJECT,
+  INIT_PROJECT,
+  OPEN_PROJECT
+} from '../modules/project/actions';
+import {
+  INSTALL_LIBRARY,
+  UNINSTALL_LIBRARY,
+  UPDATE_LIBRARY
+} from '../modules/library/actions';
+import {
+  INSTALL_PLATFORM,
+  UNINSTALL_PLATFORM,
+  UPDATE_PLATFORM
+} from '../modules/platform/actions';
 import { OS_OPEN_URL, SHOW_AT_STARTUP } from '../modules/core/actions';
 import { select, takeEvery, takeLatest } from 'redux-saga/effects';
 
@@ -32,7 +46,12 @@ import { selectStorage } from './selectors';
 function* watchActivateGA() {
   yield takeLatest(STORE_READY, function*() {
     const storage = yield select(selectStorage);
-    if (!storage.cid || (storage.coreSettings && storage.coreSettings.enable_telemetry && !storage.coreSettings.enable_telemetry.value)) {
+    if (
+      !storage.cid ||
+      (storage.coreSettings &&
+        storage.coreSettings.enable_telemetry &&
+        !storage.coreSettings.enable_telemetry.value)
+    ) {
       return;
     }
     ReactGA.initialize('UA-1768265-9', {
@@ -71,14 +90,18 @@ function* watchActivateGA() {
 
 function* watchPackageActions() {
   const actions = [
-    INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY,
-    INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM];
-  yield takeEvery(actions, function (action) {
+    INSTALL_LIBRARY,
+    UNINSTALL_LIBRARY,
+    UPDATE_LIBRARY,
+    INSTALL_PLATFORM,
+    UNINSTALL_PLATFORM,
+    UPDATE_PLATFORM
+  ];
+  yield takeEvery(actions, function(action) {
     let label = '';
     if (action.type.endsWith('_LIBRARY')) {
       label = action.lib || (action.pkgDir ? path.basename(action.pkgDir) : '');
-    }
-    else if (action.type.endsWith('_PLATFORM')) {
+    } else if (action.type.endsWith('_PLATFORM')) {
       label = action.platform || (action.pkgDir ? path.basename(action.pkgDir) : '');
     }
     ReactGA.event({
@@ -90,17 +113,23 @@ function* watchPackageActions() {
 }
 
 function* watchProjectActions() {
-  yield takeEvery([IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT], function(action) {
-    let label = action.board || undefined;
-    if (!label && action.projectDir) {
-      label = path.join(path.basename(path.dirname(action.projectDir)), path.basename(action.projectDir));
+  yield takeEvery(
+    [IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT],
+    function(action) {
+      let label = action.board || undefined;
+      if (!label && action.projectDir) {
+        label = path.join(
+          path.basename(path.dirname(action.projectDir)),
+          path.basename(action.projectDir)
+        );
+      }
+      ReactGA.event({
+        category: 'Project',
+        action: action.type.toLowerCase(),
+        label
+      });
     }
-    ReactGA.event({
-      category: 'Project',
-      action: action.type.toLowerCase(),
-      label
-    });
-  });
+  );
 }
 
 function* watchOutboundLinks() {

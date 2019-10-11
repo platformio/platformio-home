@@ -16,7 +16,6 @@
 
 import { createAction } from '../../store/actions';
 
-
 export const LOAD_BOARDS = 'LOAD_BOARDS';
 export const LOAD_REGISTRY_PLATFORMS = 'LOAD_REGISTRY_PLATFORMS';
 export const LOAD_REGISTRY_FRAMEWORKS = 'LOAD_REGISTRY_FRAMEWORKS';
@@ -29,7 +28,6 @@ export const INSTALL_PLATFORM = 'INSTALL_PLATFORM';
 export const UNINSTALL_PLATFORM = 'UNINSTALL_PLATFORM';
 export const UPDATE_PLATFORM = 'UPDATE_PLATFORM';
 
-
 export const loadBoards = () => createAction(LOAD_BOARDS);
 export const loadRegistryPlatforms = () => createAction(LOAD_REGISTRY_PLATFORMS);
 export const loadRegistryFrameworks = () => createAction(LOAD_REGISTRY_FRAMEWORKS);
@@ -38,6 +36,9 @@ export const loadFrameworkData = name => createAction(LOAD_FRAMEWORK_DATA, { nam
 export const loadInstalledPlatforms = () => createAction(LOAD_INSTALLED_PLATFORMS);
 export const loadPlatformUpdates = () => createAction(LOAD_PLATFORM_UPDATES);
 
-export const installPlatform = (platform, onEnd=undefined) => createAction(INSTALL_PLATFORM, { platform, onEnd });
-export const uninstallPlatform = (pkgDir, onEnd=undefined) => createAction(UNINSTALL_PLATFORM, { pkgDir, onEnd });
-export const updatePlatform = (pkgDir, onEnd=undefined) => createAction(UPDATE_PLATFORM, { pkgDir, onEnd });
+export const installPlatform = (platform, onEnd = undefined) =>
+  createAction(INSTALL_PLATFORM, { platform, onEnd });
+export const uninstallPlatform = (pkgDir, onEnd = undefined) =>
+  createAction(UNINSTALL_PLATFORM, { pkgDir, onEnd });
+export const updatePlatform = (pkgDir, onEnd = undefined) =>
+  createAction(UPDATE_PLATFORM, { pkgDir, onEnd });

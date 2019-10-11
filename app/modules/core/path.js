@@ -16,11 +16,14 @@
 
 import { IS_WINDOWS } from '../../config';
 
-
-export const sep = IS_WINDOWS? '\\' : '/';
+export const sep = IS_WINDOWS ? '\\' : '/';
 
 export function join(...paths) {
-  return paths.map((item, index) => item.endsWith(sep) || index === (paths.length - 1)? item : `${item}${sep}`).join('');
+  return paths
+    .map((item, index) =>
+      item.endsWith(sep) || index === paths.length - 1 ? item : `${item}${sep}`
+    )
+    .join('');
 }
 
 export function dirname(path) {
@@ -34,7 +37,7 @@ export function dirname(path) {
   return dirname;
 }
 
-export function basename(path, ext=undefined) {
+export function basename(path, ext = undefined) {
   if (!path) {
     return path;
   }

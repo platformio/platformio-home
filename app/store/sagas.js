@@ -83,14 +83,14 @@ function* autoSaveState() {
 }
 
 function* watchLazyUpdateInputValue() {
-  yield takeLatest(actions.LAZY_UPDATE_INPUT_VALUE, function*({key, value}) {
+  yield takeLatest(actions.LAZY_UPDATE_INPUT_VALUE, function*({ key, value }) {
     yield call(asyncDelay, INPUT_FILTER_DELAY);
     yield put(actions.updateInputValue(key, value));
   });
 }
 
 export default function* root() {
-  yield[
+  yield [
     watchLoadStore,
     autoSaveState,
     watchLazyUpdateInputValue,

@@ -19,13 +19,11 @@ import { Button, Input } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 export default class LibrarySearchForm extends React.Component {
-
   static propTypes = {
     searchLibrary: PropTypes.func.isRequired,
     defaultSearch: PropTypes.string
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -52,56 +50,72 @@ export default class LibrarySearchForm extends React.Component {
 
   render() {
     return (
-      <div className='lib-search-from'>
-        <Input.Search key={ this.props.defaultSearch }
+      <div className="lib-search-from">
+        <Input.Search
+          key={this.props.defaultSearch}
           enterButton
-          placeholder='Search libraries...'
-          defaultValue={ this.props.defaultSearch }
-          size='large'
-          onChange={ (e) => this.onQueryChange(e.target.value)}
-          onSearch={ ::this.onDidSearch }
-          ref={ elm => this._searchInputElement = elm } />
-        <div className='block search-tips'>
-          <Button size='small'
-            icon='search'
-            onClick={ () => this.props.searchLibrary('tft display') }
-            title='Search in "library.json" fields'>
+          placeholder="Search libraries..."
+          defaultValue={this.props.defaultSearch}
+          size="large"
+          onChange={e => this.onQueryChange(e.target.value)}
+          onSearch={::this.onDidSearch}
+          ref={elm => (this._searchInputElement = elm)}
+        />
+        <div className="block search-tips">
+          <Button
+            size="small"
+            icon="search"
+            onClick={() => this.props.searchLibrary('tft display')}
+            title='Search in "library.json" fields'
+          >
             tft display
           </Button>
-          <Button size='small'
-            icon='search'
-            onClick={ () => this.props.searchLibrary('dht*') }
-            title='Search for libraries that support DHT ICs (DHT11, DHT22)'>
+          <Button
+            size="small"
+            icon="search"
+            onClick={() => this.props.searchLibrary('dht*')}
+            title="Search for libraries that support DHT ICs (DHT11, DHT22)"
+          >
             dht*
           </Button>
-          <Button size='small'
-            icon='search'
-            onClick={ () => this.props.searchLibrary('header:RH_ASK.h') }
-            title='Search by header files (#inculde)'>
+          <Button
+            size="small"
+            icon="search"
+            onClick={() => this.props.searchLibrary('header:RH_ASK.h')}
+            title="Search by header files (#inculde)"
+          >
             header:RH_ASK.h
           </Button>
-          <Button size='small'
-            icon='search'
-            onClick={ () => this.props.searchLibrary('keyword:mqtt') }
-            title='Filter libraries by keyword'>
+          <Button
+            size="small"
+            icon="search"
+            onClick={() => this.props.searchLibrary('keyword:mqtt')}
+            title="Filter libraries by keyword"
+          >
             keyword:mqtt
           </Button>
-          <Button size='small'
-            icon='search'
-            onClick={ () => this.props.searchLibrary('framework:mbed') }
-            title='ARM mbed based libraries'>
+          <Button
+            size="small"
+            icon="search"
+            onClick={() => this.props.searchLibrary('framework:mbed')}
+            title="ARM mbed based libraries"
+          >
             framework:mbed
           </Button>
-          <Button size='small'
-            icon='search'
-            onClick={ () => this.props.searchLibrary('platform:espressif8266') }
-            className='btn btn-default btn-xs icon icon-search'
-            title='Search for Espressif 8266 compatible libraries'>
+          <Button
+            size="small"
+            icon="search"
+            onClick={() => this.props.searchLibrary('platform:espressif8266')}
+            className="btn btn-default btn-xs icon icon-search"
+            title="Search for Espressif 8266 compatible libraries"
+          >
             platform:espressif8266
           </Button>
-          <a href='http://docs.platformio.org/page/userguide/lib/cmd_search.html'>more...</a>
+          <a href="http://docs.platformio.org/page/userguide/lib/cmd_search.html">
+            more...
+          </a>
         </div>
       </div>
-      );
+    );
   }
 }

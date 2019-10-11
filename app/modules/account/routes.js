@@ -21,7 +21,6 @@ import AccountRegistrationPage from './containers/registration-page';
 import PasswordPage from './containers/password-page';
 import TokenPage from './containers/token-page';
 
-
 const routes = [
   {
     path: '/account',

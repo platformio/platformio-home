@@ -26,26 +26,21 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { selectLibraryData } from '../selectors';
 
-
 class LibraryDetailPage extends React.Component {
-
   static contextTypes = {
     router: PropTypes.object.isRequired
   };
 
   static propTypes = {
     data: PropTypes.object,
-    idOrManifest: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.object
-    ]),
+    idOrManifest: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
     osOpenUrl: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired,
     loadLibraryData: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showInstalledLibraries: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -54,16 +49,16 @@ class LibraryDetailPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container libraries-detail'>
-        { this.props.data ? (
-          <LibraryDetailMain { ...this.props } />
-          ) : (
-          <div className='text-center'>
-            <Spin tip='Loading...' size='large' />
+      <div className="page-container libraries-detail">
+        {this.props.data ? (
+          <LibraryDetailMain {...this.props} />
+        ) : (
+          <div className="text-center">
+            <Spin tip="Loading..." size="large" />
           </div>
-          ) }
+        )}
       </div>
-      );
+    );
   }
 }
 
@@ -74,9 +69,13 @@ function mapStateToProps(state, ownProps) {
   return {
     data: selectLibraryData(state, idOrManifest),
     idOrManifest,
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showInstalledLibraries: () => goTo(ownProps.history, '/libraries/installed'),
+    searchLibrary: (query, page) =>
+      goTo(ownProps.history, '/libraries/registry/search', { query, page }),
+    showInstalledLibraries: () => goTo(ownProps.history, '/libraries/installed')
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl, osRevealFile })(LibraryDetailPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl, osRevealFile }
+)(LibraryDetailPage);

@@ -16,7 +16,6 @@
 
 import { selectEntity } from '../../store/selectors';
 
-
 export function selectLatestTweets(state) {
   return selectEntity(state, 'latestTweets');
 }

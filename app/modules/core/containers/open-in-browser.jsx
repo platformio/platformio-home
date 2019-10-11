@@ -21,12 +21,10 @@ import { connect } from 'react-redux';
 import { inIframe } from '../helpers';
 import { osOpenUrl } from '../actions';
 
-
 class OpenInBrowser extends React.Component {
-
   static propTypes = {
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   onDidOpen() {
     this.props.osOpenUrl(window.location.href);
@@ -36,12 +34,21 @@ class OpenInBrowser extends React.Component {
     if (!inIframe()) {
       return null;
     }
-    return <Button icon='arrows-alt' title='Open in browser' onClick={ () => this.onDidOpen() }></Button>;
+    return (
+      <Button
+        icon="arrows-alt"
+        title="Open in browser"
+        onClick={() => this.onDidOpen()}
+      ></Button>
+    );
   }
 }
 
 // Redux
 
-export default connect(null, {
-  osOpenUrl
-})(OpenInBrowser);
+export default connect(
+  null,
+  {
+    osOpenUrl
+  }
+)(OpenInBrowser);

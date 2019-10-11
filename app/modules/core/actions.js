@@ -16,7 +16,6 @@
 
 import { createAction } from '../../store/actions';
 
-
 export const NOTIFY_ERROR = 'NOTIFY_ERROR';
 export const NOTIFY_SUCCESS = 'NOTIFY_SUCCESS';
 
@@ -39,22 +38,32 @@ export const RESET_FS_ITEMS = 'RESET_FS_ITEMS';
 export const TOGGLE_FAVORITE_FOLDER = 'TOGGLE_FAVORITE_FOLDER';
 
 export const notifyError = (title, err) => createAction(NOTIFY_ERROR, { title, err });
-export const notifySuccess = (title, result) => createAction(NOTIFY_SUCCESS, { title, result });
+export const notifySuccess = (title, result) =>
+  createAction(NOTIFY_SUCCESS, { title, result });
 
-export const updateRouteBadge = (path, count) => createAction(UPDATE_ROUTE_BADGE, { path, count });
-export const showAtStartup = (value) => createAction(SHOW_AT_STARTUP, { value });
+export const updateRouteBadge = (path, count) =>
+  createAction(UPDATE_ROUTE_BADGE, { path, count });
+export const showAtStartup = value => createAction(SHOW_AT_STARTUP, { value });
 
-export const osOpenUrl = (url) => createAction(OS_OPEN_URL, { url });
-export const osRevealFile = (path) => createAction(OS_REVEAL_FILE, { path });
+export const osOpenUrl = url => createAction(OS_OPEN_URL, { url });
+export const osRevealFile = path => createAction(OS_REVEAL_FILE, { path });
 export const osRenameFile = (src, dst) => createAction(OS_RENAME_FILE, { src, dst });
 export const osCopyFile = (src, dst) => createAction(OS_COPY_FILE, { src, dst });
-export const osMakeDirs = (path) => createAction(OS_MAKE_DIRS, { path });
-export const osListDir = (path) => createAction(OS_LIST_DIR, { path });
-export const osIsFile = (path) => createAction(OS_IS_FILE, { path });
-export const osIsDir = (path) => createAction(OS_IS_DIR, { path });
-export const osFsGlob = (pathnames, rootDir=undefined) => createAction(OS_FS_GLOB, { pathnames, rootDir });
+export const osMakeDirs = path => createAction(OS_MAKE_DIRS, { path });
+export const osListDir = path => createAction(OS_LIST_DIR, { path });
+export const osIsFile = path => createAction(OS_IS_FILE, { path });
+export const osIsDir = path => createAction(OS_IS_DIR, { path });
+export const osFsGlob = (pathnames, rootDir = undefined) =>
+  createAction(OS_FS_GLOB, { pathnames, rootDir });
 
-export const requestContent = ({ uri, data=undefined, headers=undefined, cacheValid=undefined }) => createAction(REQUEST_CONTENT, { uri, data, headers, cacheValid });
-export const loadLogicalDevices = (force=false) => createAction(LOAD_LOGICAL_DEVICES, { force });
+export const requestContent = ({
+  uri,
+  data = undefined,
+  headers = undefined,
+  cacheValid = undefined
+}) => createAction(REQUEST_CONTENT, { uri, data, headers, cacheValid });
+export const loadLogicalDevices = (force = false) =>
+  createAction(LOAD_LOGICAL_DEVICES, { force });
 export const resetFSItems = () => createAction(RESET_FS_ITEMS);
-export const toggleFavoriteFolder = (path) => createAction(TOGGLE_FAVORITE_FOLDER, { path });
+export const toggleFavoriteFolder = path =>
+  createAction(TOGGLE_FAVORITE_FOLDER, { path });

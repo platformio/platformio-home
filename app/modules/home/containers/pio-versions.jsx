@@ -21,35 +21,38 @@ import { connect } from 'react-redux';
 import { osOpenUrl } from '../../core/actions';
 import { selectStorageItem } from '../../../store/selectors';
 
-
 class PioVersions extends React.Component {
-
   static propTypes = {
     coreVersion: PropTypes.string,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   renderCoreVersion() {
     if (this.props.coreVersion) {
-      return <code>{ this.props.coreVersion }</code>;
+      return <code>{this.props.coreVersion}</code>;
     }
-    return (
-      <Spin size='small' />
-    );
+    return <Spin size="small" />;
   }
 
   render() {
     return (
-      <div className='versions'>
-        <ul className='list-inline'>
+      <div className="versions">
+        <ul className="list-inline">
           <li>
-            Home <code>{ APP_VERSION }</code>
+            Home <code>{APP_VERSION}</code>
           </li>
+          <li>·</li>
           <li>
-            ·
-          </li>
-          <li>
-            Core <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio/blob/develop/HISTORY.rst') }>{ this.renderCoreVersion() }</a>
+            Core{' '}
+            <a
+              onClick={() =>
+                this.props.osOpenUrl(
+                  'https://github.com/platformio/platformio/blob/develop/HISTORY.rst'
+                )
+              }
+            >
+              {this.renderCoreVersion()}
+            </a>
           </li>
         </ul>
       </div>
@@ -65,4 +68,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { osOpenUrl })(PioVersions);
+export default connect(
+  mapStateToProps,
+  { osOpenUrl }
+)(PioVersions);

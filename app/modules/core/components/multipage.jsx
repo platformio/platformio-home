@@ -20,9 +20,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import RoutedMenu from '../containers/routed-menu';
 
-
 export default class MultiPage extends React.Component {
-
   static contextTypes = {
     router: PropTypes.object.isRequired
   };
@@ -30,27 +28,41 @@ export default class MultiPage extends React.Component {
   static propTypes = {
     routes: PropTypes.arrayOf(PropTypes.object).isRequired,
     disableMenu: PropTypes.bool
-  }
+  };
 
   render() {
     return (
       <div>
-        { !this.props.disableMenu && <RoutedMenu router={ this.context.router } routes={ this.props.routes } mode='horizontal' /> }
+        {!this.props.disableMenu && (
+          <RoutedMenu
+            router={this.context.router}
+            routes={this.props.routes}
+            mode="horizontal"
+          />
+        )}
         <Switch>
-          { this.props.routes.slice(0).reverse().map(item => typeof item.component === 'function' ? (
-              <Route path={ item.path }
-                key={ item.path }
-                exact={ item.exact }
-                component={ item.component } />
+          {this.props.routes
+            .slice(0)
+            .reverse()
+            .map(item =>
+              typeof item.component === 'function' ? (
+                <Route
+                  path={item.path}
+                  key={item.path}
+                  exact={item.exact}
+                  component={item.component}
+                />
               ) : (
-              <Route path={ item.path }
-                key={ item.path }
-                exact={ item.exact }
-                render={ () => item.component } />
-              )) }
+                <Route
+                  path={item.path}
+                  key={item.path}
+                  exact={item.exact}
+                  render={() => item.component}
+                />
+              )
+            )}
         </Switch>
       </div>
     );
   }
-
 }

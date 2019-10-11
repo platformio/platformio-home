@@ -26,16 +26,14 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 
-
 class AccountTokenPage extends React.Component {
-
   static propTypes = {
     userLogged: PropTypes.bool,
     token: PropTypes.string,
     showAccountToken: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   render() {
     if (!this.props.userLogged) {
@@ -44,12 +42,11 @@ class AccountTokenPage extends React.Component {
     }
     const WrappedForm = Form.create()(AccountTokenForm);
     return (
-      <div className='page-container token-page'>
+      <div className="page-container token-page">
         <WrappedForm {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -62,4 +59,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountTokenPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(AccountTokenPage);

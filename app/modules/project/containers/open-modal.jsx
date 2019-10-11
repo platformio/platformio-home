@@ -26,9 +26,7 @@ import { connect } from 'react-redux';
 import { osIsFile } from '../../core/actions';
 import { selectOsIsFileItems } from '../../core/selectors';
 
-
 class ProjectOpenModal extends React.Component {
-
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -37,7 +35,7 @@ class ProjectOpenModal extends React.Component {
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     osIsFile: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -71,7 +69,9 @@ class ProjectOpenModal extends React.Component {
     });
 
     if (!osIsFileItems[this.state.platformioIni]) {
-      return message.error('This is not PlatformIO Project (should contain "platformio.ini" file).');
+      return message.error(
+        'This is not PlatformIO Project (should contain "platformio.ini" file).'
+      );
     }
     this.props.addProject(this.state.projectDir);
     this.props.openProject(this.state.projectDir);
@@ -98,34 +98,38 @@ class ProjectOpenModal extends React.Component {
 
   render() {
     return (
-      <Modal visible={ this.props.visible }
-        className='project-open-modal'
-        width={ 600 }
-        title='Open PlatformIO Project'
-        onOk={ ::this.onDidOpen }
-        onCancel={ ::this.onDidCancel }
-        footer={ this.renderFooter() }>
-        <FileExplorer ask='directory' onSelect={ ::this.onDidSelect } />
+      <Modal
+        visible={this.props.visible}
+        className="project-open-modal"
+        width={600}
+        title="Open PlatformIO Project"
+        onOk={::this.onDidOpen}
+        onCancel={::this.onDidCancel}
+        footer={this.renderFooter()}
+      >
+        <FileExplorer ask="directory" onSelect={::this.onDidSelect} />
       </Modal>
-      );
+    );
   }
 
   renderFooter() {
     return [
-      <Button key='cancel' size='large' onClick={ ::this.onDidCancel }>
+      <Button key="cancel" size="large" onClick={::this.onDidCancel}>
         Cancel
       </Button>,
-      <Button key='submit'
-        type='primary'
-        size='large'
-        disabled={ !this.state.projectDir || this.state.checking }
-        loading={ this.state.checking }
-        onClick={ ::this.onDidOpen }>
-        { 'Open' + (this.state.projectDir ? ` "${ path.basename(this.state.projectDir) }"` : '') }
+      <Button
+        key="submit"
+        type="primary"
+        size="large"
+        disabled={!this.state.projectDir || this.state.checking}
+        loading={this.state.checking}
+        onClick={::this.onDidOpen}
+      >
+        {'Open' +
+          (this.state.projectDir ? ` "${path.basename(this.state.projectDir)}"` : '')}
       </Button>
     ];
   }
-
 }
 
 // Redux
@@ -136,8 +140,11 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {
-  addProject,
-  openProject,
-  osIsFile
-})(ProjectOpenModal);
+export default connect(
+  mapStateToProps,
+  {
+    addProject,
+    openProject,
+    osIsFile
+  }
+)(ProjectOpenModal);

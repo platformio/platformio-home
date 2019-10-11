@@ -31,27 +31,27 @@ const messages = {
 
 export default {
   name: 'aceinna',
-  title: 'Aceinna\'s OpenIMU Platform',
+  title: "Aceinna's OpenIMU Platform",
   menuIgnorePatterns: [
     /^\/boards/,
     /^\/libraries\/builtin/,
     /^\/platforms\/(embedded|desktop|frameworks)/,
     /^\/device\//
   ],
-  ignoreQuickAccessButtons: [
-    'new-project',
-    'import-arduino-project'
-  ],
+  ignoreQuickAccessButtons: ['new-project', 'import-arduino-project'],
   filterProjectExample: item => item.platform.title === 'Aceinna IMU',
   filterPlatformCard: item => item.title === 'Aceinna IMU',
   companyLogoSrc: require('./aceinna_logo.png'),
   companyLogoHomeHeight: '150px',
   footerQuickLinks: [
-    { title: 'Web', url: urls.home},
-    { title: 'Open Source', url: urls.github},
-    { title: 'Documentation', url: 'https://www.aceinna.com/support/technical-documentation.cfm'},
-    { title: 'News', url: urls.twitter},
-    { title: 'Contact', url: 'https://www.aceinna.com/about-aceinna/contact.cfm'},
+    { title: 'Web', url: urls.home },
+    { title: 'Open Source', url: urls.github },
+    {
+      title: 'Documentation',
+      url: 'https://www.aceinna.com/support/technical-documentation.cfm'
+    },
+    { title: 'News', url: urls.twitter },
+    { title: 'Contact', url: 'https://www.aceinna.com/about-aceinna/contact.cfm' }
   ],
   remapCustomIcons: {
     calculator: 'axis'

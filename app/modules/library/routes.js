@@ -21,7 +21,6 @@ import LibrarySearchPage from './containers/search-page';
 import LibraryStatsPage from './containers/stats-page';
 import LibraryUpdatesPage from './containers/updates-page';
 
-
 const routes = [
   {
     path: '/libraries',

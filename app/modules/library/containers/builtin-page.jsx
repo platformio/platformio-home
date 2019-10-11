@@ -16,7 +16,11 @@
 
 import * as actions from '../actions';
 
-import { BUILTIN_INPUT_FILTER_KEY, selectBuiltinFilter, selectVisibletBuiltinLibs } from '../selectors';
+import {
+  BUILTIN_INPUT_FILTER_KEY,
+  selectBuiltinFilter,
+  selectVisibletBuiltinLibs
+} from '../selectors';
 
 import { Alert } from 'antd';
 import LibraryStoragesList from '../components/storages-list';
@@ -28,9 +32,7 @@ import { goTo } from '../../core/helpers';
 import { lazyUpdateInputValue } from '../../../store/actions';
 import { osRevealFile } from '../../core/actions';
 
-
 class LibraryBuiltinPage extends React.Component {
-
   static propTypes = {
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -46,7 +48,7 @@ class LibraryBuiltinPage extends React.Component {
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -55,17 +57,24 @@ class LibraryBuiltinPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container'>
-        <Alert className='block' showIcon message={
-          <span>
-            A list of built-in libraries in the installed <a onClick={ () => this.props.showInstalledPlatforms() }>frameworks and development platforms</a>.
-          </span>
-        } />
+      <div className="page-container">
+        <Alert
+          className="block"
+          showIcon
+          message={
+            <span>
+              A list of built-in libraries in the installed{' '}
+              <a onClick={() => this.props.showInstalledPlatforms()}>
+                frameworks and development platforms
+              </a>
+              .
+            </span>
+          }
+        />
         <LibraryStoragesList {...this.props} />
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -74,16 +83,25 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibletBuiltinLibs(state),
     filterValue: selectBuiltinFilter(state),
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest => goTo(ownProps.history, '/libraries/builtin/show', { idOrManifest }),
+    searchLibrary: (query, page) =>
+      goTo(ownProps.history, '/libraries/registry/search', { query, page }),
+    showLibrary: idOrManifest =>
+      goTo(ownProps.history, '/libraries/builtin/show', { idOrManifest }),
     showInstalledPlatforms: () => goTo(ownProps.history, '/platforms/installed')
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Object.assign({}, actions, {
-    osRevealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(BUILTIN_INPUT_FILTER_KEY, value))
-  }), dispatch);
+  return bindActionCreators(
+    Object.assign({}, actions, {
+      osRevealFile,
+      setFilter: value =>
+        dispatch(lazyUpdateInputValue(BUILTIN_INPUT_FILTER_KEY, value))
+    }),
+    dispatch
+  );
 }
-export default connect(mapStateToProps, mapDispatchToProps)(LibraryBuiltinPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LibraryBuiltinPage);

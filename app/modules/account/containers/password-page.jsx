@@ -24,14 +24,12 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { selectIsUserLogged } from '../selectors';
 
-
 class AccountPasswordPage extends React.Component {
-
   static propTypes = {
     userLogged: PropTypes.bool,
     changeAccountPassword: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired
-  }
+  };
 
   render() {
     if (!this.props.userLogged) {
@@ -40,12 +38,11 @@ class AccountPasswordPage extends React.Component {
     }
     const WrappedForm = Form.create()(AccountPasswordForm);
     return (
-      <div className='page-container password-page'>
+      <div className="page-container password-page">
         <WrappedForm {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -58,4 +55,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, actions)(AccountPasswordPage);
+export default connect(
+  mapStateToProps,
+  actions
+)(AccountPasswordPage);

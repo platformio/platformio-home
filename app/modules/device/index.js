@@ -18,13 +18,11 @@ import MultiPage from '../core/components/multipage';
 import React from 'react';
 import routes from './routes';
 
-
 export default class DevicePage extends React.Component {
-
   render() {
     return (
-      <section className='device-module'>
-        <MultiPage routes={ routes } />
+      <section className="device-module">
+        <MultiPage routes={routes} />
       </section>
     );
   }
