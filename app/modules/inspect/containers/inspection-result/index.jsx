@@ -30,7 +30,7 @@ export default class InspectionResultPage extends React.Component {
   };
 
   renderBreadcrumb() {
-    const breadcrumpMap = {
+    const breadcrumbMap = {
       '/inspect': 'Projects',
       '/inspect/result': '<Project Name>',
       '/inspect/result/stats': 'Stats',
@@ -43,13 +43,13 @@ export default class InspectionResultPage extends React.Component {
     const items = parts
       .filter((_name, i) => i)
       .map((_name, i) => parts.slice(0, i + 2).join('/'))
-      .filter(url => breadcrumpMap[url]);
+      .filter(url => breadcrumbMap[url]);
 
     return (
       <Breadcrumb>
         {items.map((url, i) => (
           <Breadcrumb.Item key={i}>
-            <Link to={url}>{breadcrumpMap[url]}</Link>
+            <Link to={url}>{breadcrumbMap[url]}</Link>
           </Breadcrumb.Item>
         ))}
       </Breadcrumb>
