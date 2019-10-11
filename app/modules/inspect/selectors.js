@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-import { JSON_URL } from './containers/memory-explorer-page';
+import { INSPECTION_KEY } from '@inspect/constants';
 import { fixPath } from '@inspect/helpers';
-import { selectRequestedContent } from '@core/selectors';
 
-function selectProjectSizeData(state) {
-  // return state.entities.projectSizeData || {};
-  return JSON.parse(selectRequestedContent(state, JSON_URL)) || {};
+export function selectProjectInspectionMeta(state) {
+  return (state.entities[INSPECTION_KEY] || {}).meta;
 }
 
-export function selectSizeDataForPath(state, dirPath = '') {
-  let files = (selectProjectSizeData(state).memory || {}).files;
-  if (files === undefined) {
-    return undefined;
+function selectProjectInspectionData(state) {
+  return (state.entities[INSPECTION_KEY] || {}).data;
+}
+
+export function selectExplorerSizeData(state) {
+  const data = selectProjectInspectionData(state) || {};
+  let files = (data.memory || {}).files;
+  if (!files) {
+    return;
   }
+
   if (!files.length) {
+    // Autofix Object format into Array
     files = Object.entries(files).map(([k, v]) => ({
       ...v,
       path: k
@@ -47,9 +52,10 @@ export function selectSizeDataForPath(state, dirPath = '') {
 }
 
 export function selectSectionsSizeData(state) {
-  let { memory: { total: { sections } = {} } = {} } = selectProjectSizeData(state);
-  if (sections === undefined) {
-    return undefined;
+  const data = selectProjectInspectionData(state);
+  let { memory: { total: { sections } = {} } = {} } = data || {};
+  if (!sections) {
+    return;
   }
   if (!sections.length) {
     sections = Object.entries(sections).map(([k, v]) => ({
@@ -67,9 +73,25 @@ export function selectSectionsSizeData(state) {
 }
 
 export function selectSymbolsSizeData(state) {
-  const files = selectSizeDataForPath(state) || [];
+  const files = selectExplorerSizeData(state);
+  if (!files) {
+    return;
+  }
   return files
     .map(({ symbols }) => symbols)
     .filter(x => x && x.length)
     .flat();
+}
+
+export function selectSizeStats(state) {
+  const data = selectProjectInspectionData(state);
+  if (!data) {
+    return;
+  }
+  const { memory: { files = [], total: { sections = [] } = {} } = {} } = data;
+  return {
+    filesCount: files.length,
+    symbolsCount: files.reduce((total, { symbols = [] }) => total + symbols.length, 0),
+    sectionsCount: Object.keys(sections).length
+  };
 }

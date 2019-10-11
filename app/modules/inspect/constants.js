@@ -14,15 +14,4 @@
  * limitations under the License.
  */
 
-import { createAction } from '@store/actions';
-
-export const INSPECT_PROJECT = 'INSPECT_PROJECT';
-
-export function inspectProject(
-  projectDir,
-  environments,
-  inspectCode = false,
-  force = true
-) {
-  return createAction(INSPECT_PROJECT, { projectDir, environments, inspectCode, force });
-}
+export const INSPECTION_KEY = 'projectInspection';

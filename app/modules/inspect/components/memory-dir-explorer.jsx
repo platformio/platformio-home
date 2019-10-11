@@ -153,7 +153,7 @@ export class MemoryDirExplorer extends React.PureComponent {
   getRowProps = () => ({ onClick: this.handleRowClick });
 
   renderFooter = ds => {
-    const { ram, flash } = ds.reduce(
+    const total = ds.reduce(
       (acc, { ram, flash }) => {
         acc.ram += ram | 0;
         acc.flash += flash | 0;
@@ -163,7 +163,7 @@ export class MemoryDirExplorer extends React.PureComponent {
     );
     return (
       <div style={{ textAlign: 'right' }}>
-        {`Total: ${formatSize(flash)} Flash, ${formatSize(ram)} RAM`}
+        {`Total: ${formatSize(total.flash)} Flash, ${formatSize(total.ram)} RAM`}
       </div>
     );
   };

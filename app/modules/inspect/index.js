@@ -16,13 +16,13 @@
 
 import MultiPage from '@core/components/multipage';
 import React from 'react';
-import routes from './routes';
+ import routes from './routes';
 
 export default class InspectPage extends React.Component {
   render() {
     return (
       <section className="memory-inspect-module">
-        <MultiPage routes={routes} />
+        <MultiPage routes={routes} disableMenu />
       </section>
     );
   }

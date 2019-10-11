@@ -15,47 +15,31 @@
  */
 
 import {
-  MemorySymbolsExplorer,
-  SymbolType
-} from '@inspect/components/memory-symbols-explorer.jsx';
+  MemorySectionsExplorer,
+  SectionsType
+} from '@inspect/components/memory-sections-explorer.jsx';
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { requestContent } from '@core/actions';
-import { selectSymbolsSizeData } from '@inspect/selectors';
+import { selectSectionsSizeData } from '@inspect/selectors';
 
-// FIXME: load dynamically via API
-export const JSON_URL = 'http://dl.platformio.org/tmp/sizedata-tasmota.json';
-
-class SymbolsExplorerPage extends React.PureComponent {
+class SectionsExplorerPage extends React.PureComponent {
   static propTypes = {
-    requestContent: PropTypes.func.isRequired,
-    symbols: PropTypes.arrayOf(SymbolType)
+    sections: SectionsType
   };
 
-  constructor(...args) {
-    super(...args);
-
-    this.state = {};
-
-    this.props.requestContent({
-      uri: JSON_URL
-    });
-  }
-
   render() {
-    const { symbols } = this.props;
+    const { sections } = this.props;
 
     return (
       <div className="page-container">
-        {!symbols && (
+        {!sections && (
           <div className="text-center">
             <Spin tip="Loading..." size="large" />
           </div>
         )}
-        {symbols && <MemorySymbolsExplorer symbols={symbols} />}
+        {sections && <MemorySectionsExplorer sections={sections} />}
       </div>
     );
   }
@@ -64,11 +48,8 @@ class SymbolsExplorerPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    symbols: selectSymbolsSizeData(state)
+    sections: selectSectionsSizeData(state)
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { requestContent }
-)(SymbolsExplorerPage);
+export default connect(mapStateToProps)(SectionsExplorerPage);

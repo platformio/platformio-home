@@ -16,18 +16,69 @@
 
 /* eslint-disable no-constant-condition */
 
-import * as actions from './actions';
+import * as pathlib from '@core/path';
 
-import { put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
+import { INSPECTION_KEY } from '@inspect/constants';
+import { INSPECT_PROJECT } from './actions';
+import { apiFetchData } from '@store/api';
 import { updateEntity } from '@store/actions';
 
-function* watchLoadProjectSizeData() {
-  yield takeLatest(actions.LOAD_PROJECT_SIZE_DATA, function*({ projectDir }) {
-    let data;
-    // TODO: implement
-    yield put(updateEntity('projectSizeData', data || {}));
+function* watchInspectProject() {
+  yield takeLatest(INSPECT_PROJECT, function*({
+    projectDir,
+    environments,
+    inspectCode,
+    force
+  }) {
+    const env = environments[0];
+    const meta = {
+      projectDir,
+      env
+    };
+    try {
+      if (force) {
+        yield put(
+          updateEntity(INSPECTION_KEY, { meta: { ...meta, state: 'generating' } })
+        );
+        const runResult = yield call(apiFetchData, {
+          query: 'core.call',
+          params: [['run', '-d', projectDir, '-e', env, '-t', 'sizedata']]
+        });
+      }
+      yield put(updateEntity(INSPECTION_KEY, { meta: { ...meta, state: 'reading' } }));
+      // TODO: setup passing router into saga context to access router from saga
+      // see https://github.com/ReactTraining/react-router/issues/3972#issuecomment-251189856
+      // yield put(push());
+
+      const uri = pathlib.join(projectDir, '.pio', 'build', env, 'sizedata.json');
+      const jsonContent = yield call(apiFetchData, {
+        query: 'os.request_content',
+        params: [uri]
+      });
+      const data = JSON.parse(jsonContent);
+      yield put(
+        updateEntity(INSPECTION_KEY, { data, meta: { ...meta, state: 'ready' } })
+      );
+
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        yield put(
+          updateEntity(INSPECTION_KEY, {
+            meta: { ...meta, state: 'error', error: 'Bad JSON' }
+          })
+        );
+      } else {
+        yield put(
+          updateEntity(INSPECTION_KEY, {
+            meta: { ...meta, state: 'error', error: 'Exception' }
+          })
+        );
+      }
+      console.error('Failed to run and get sizedata.json', err);
+    }
   });
 }
 
-export default [watchLoadProjectSizeData];
+export default [watchInspectProject];

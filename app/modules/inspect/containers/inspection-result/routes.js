@@ -14,22 +14,36 @@
  * limitations under the License.
  */
 
-import InspectionResultPage from '@inspect/containers/inspection-result';
-import ProjectListPage from '@inspect/containers/projects-list-page';
+import FileExplorerPage from './memory-explorer-page';
+import MemoryStatisticsPage from './memory-stats-page';
+import SectionsExplorerPage from './memory-sections-page';
+import SymbolsExplorerPage from './memory-symbols-page';
 
 const routes = [
   {
-    path: '/inspect',
+    path: '/inspect/result/stats',
     icon: 'line-chart',
-    label: 'Projects',
-    component: ProjectListPage
+    label: 'Statistics',
+    component: MemoryStatisticsPage
   },
   {
-    path: '/inspect/result',
+    path: '/inspect/result/files',
     icon: 'cluster',
     label: 'File Explorer',
-    component: InspectionResultPage
+    component: FileExplorerPage
   },
+  {
+    path: '/inspect/result/symbols',
+    icon: 'tags',
+    label: 'Symbols Explorer',
+    component: SymbolsExplorerPage
+  },
+  {
+    path: '/inspect/result/sections',
+    icon: 'database',
+    label: 'Sections Explorer',
+    component: SectionsExplorerPage
+  }
 ];
 
 export default routes;

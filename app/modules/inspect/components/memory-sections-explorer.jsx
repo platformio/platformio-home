@@ -22,7 +22,7 @@ import { compareNumber, compareString, formatHex, formatSize } from '@inspect/he
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const SectionsType = PropTypes.arrayOf(
+export const SectionsType = PropTypes.arrayOf(
   PropTypes.shape({
     name: PropTypes.string,
     flags: PropTypes.string,

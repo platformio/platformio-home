@@ -22,11 +22,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { requestContent } from '@core/actions';
-import { selectSizeDataForPath } from '@inspect/selectors';
-
-// FIXME: load dynamically via API
-export const JSON_URL = 'http://dl.platformio.org/tmp/sizedata-tasmota.json';
+import { selectExplorerSizeData } from '@inspect/selectors';
 
 /**
  * Remember parent/children for all intermediate paths
@@ -102,7 +98,6 @@ class UniqueFilter {
 
 class FileExplorerPage extends React.PureComponent {
   static propTypes = {
-    requestContent: PropTypes.func.isRequired,
     files: PropTypes.arrayOf(
       PropTypes.shape({
         flash: PropTypes.number.isRequired,
@@ -115,12 +110,7 @@ class FileExplorerPage extends React.PureComponent {
 
   constructor(...args) {
     super(...args);
-
     this.state = {};
-
-    this.props.requestContent({
-      uri: JSON_URL
-    });
   }
 
   listDir(cwd) {
@@ -149,7 +139,7 @@ class FileExplorerPage extends React.PureComponent {
         dirUnfolder.remember(relativePathParts, isDir);
         aggregator.increment(displayName, { flash, ram });
 
-        const result = {
+        return {
           isDir: relativePathParts.length !== 1 || isDir,
           flash,
           ram,
@@ -157,7 +147,6 @@ class FileExplorerPage extends React.PureComponent {
           // relativePath: name # missed device when listing root!
           // relativePath: pathlib.join(root, name) // abs path to dir, not relative!
         };
-        return result;
       })
       .filter(({ relativePath }) => uniqueFilter.filter(relativePath))
       // Override with aggregated values
@@ -207,7 +196,7 @@ class FileExplorerPage extends React.PureComponent {
         )}
         {selectedFile && (
           <MemorySymbolsExplorer
-            file={selectedFile.name}
+            file={selectedFile.path}
             symbols={selectedFile.symbols}
             onDirChange={this.handlePathChange}
           />
@@ -220,11 +209,8 @@ class FileExplorerPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    files: selectSizeDataForPath(state)
+    files: selectExplorerSizeData(state)
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { requestContent }
-)(FileExplorerPage);
+export default connect(mapStateToProps)(FileExplorerPage);
