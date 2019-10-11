@@ -4,5 +4,11 @@
     "javascript",
     "javascriptreact"
   ],
+  "[javascript]": {
+    "editor.rulers": [88]
+  },
+  "[javascriptreact]": {
+    "editor.rulers": [88]
+  },
   "eslint.autoFixOnSave": true,
 }
