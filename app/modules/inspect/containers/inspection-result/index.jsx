@@ -58,7 +58,7 @@ export default class InspectionResultPage extends React.Component {
 
   render() {
     return (
-      <div style={{marginTop:12}}>
+      <div style={{ marginTop: 12 }}>
         {this.renderBreadcrumb()}
         <MultiPage routes={childRoutes} />
       </div>

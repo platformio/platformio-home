@@ -23,9 +23,9 @@ import {
   compareNumber,
   compareString,
   formatSize,
-  multiSort
-, safeFormatSize } from '@inspect/helpers';
-
+  multiSort,
+  safeFormatSize
+} from '@inspect/helpers';
 
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';

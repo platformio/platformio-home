@@ -29,7 +29,7 @@ const routes = [
     icon: 'cluster',
     label: 'File Explorer',
     component: InspectionResultPage
-  },
+  }
 ];
 
 export default routes;

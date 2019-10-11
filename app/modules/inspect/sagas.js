@@ -61,7 +61,6 @@ function* watchInspectProject() {
       yield put(
         updateEntity(INSPECTION_KEY, { data, meta: { ...meta, state: 'ready' } })
       );
-
     } catch (err) {
       if (err instanceof SyntaxError) {
         yield put(

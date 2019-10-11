@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Row,
-} from 'antd';
+import { Button, Card, Checkbox, Col, Row } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { TagSelect } from './tag-select';
@@ -111,7 +105,10 @@ export class ProjectCard extends React.PureComponent {
           <Col sm={24}>
             <span>Environments: </span>
             <TagSelect
-              items={envs.map(env => ({ name: env, checked: selectedEnvs.includes(env) }))}
+              items={envs.map(env => ({
+                name: env,
+                checked: selectedEnvs.includes(env)
+              }))}
               onChange={this.handleEnvChange}
             />
           </Col>

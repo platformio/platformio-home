@@ -196,7 +196,9 @@ export class MemorySymbolsExplorer extends React.PureComponent {
   render() {
     const { file } = this.props;
 
-    const ds = this.getSearchResults().map((x, i) => ({ ...x, idx: i })).sort(sortFunctionsFirst);
+    const ds = this.getSearchResults()
+      .map((x, i) => ({ ...x, idx: i }))
+      .sort(sortFunctionsFirst);
     this.addressWidth = this.getMaxAddressWidth(ds);
 
     return (

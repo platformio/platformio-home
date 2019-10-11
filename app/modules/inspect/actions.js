@@ -24,5 +24,10 @@ export function inspectProject(
   inspectCode = false,
   force = true
 ) {
-  return createAction(INSPECT_PROJECT, { projectDir, environments, inspectCode, force });
+  return createAction(INSPECT_PROJECT, {
+    projectDir,
+    environments,
+    inspectCode,
+    force
+  });
 }
