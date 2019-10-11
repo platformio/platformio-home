@@ -83,6 +83,7 @@ module.exports = {
     ],
     "import/no-named-as-default-member": [
       "off"
-    ]
+    ],
+    "no-shadow": ["error", { "builtinGlobals": false, "hoist": "functions", "allow": [] }]
   }
 };
