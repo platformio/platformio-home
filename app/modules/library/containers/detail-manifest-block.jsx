@@ -22,9 +22,7 @@ import CodeBeautifier from '../../core/containers/code-beautifier';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 export default class LibraryDetailManifestBlock extends React.Component {
-
   static propTypes = {
     data: PropTypes.shape({
       confurl: PropTypes.string,
@@ -32,41 +30,85 @@ export default class LibraryDetailManifestBlock extends React.Component {
     }).isRequired,
     manifestContent: PropTypes.string,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   onDidEdit(url) {
     if (url.startsWith('https://raw.githubusercontent.com')) {
-      const matches = url.match(new RegExp('content\.com/([^/]+/[^/]+)/(.+)$'));
+      const matches = url.match(new RegExp('content.com/([^/]+/[^/]+)/(.+)$'));
       if (matches) {
-        return this.props.osOpenUrl(`https://github.com/${matches[1]}/blob/${matches[2]}`);
+        return this.props.osOpenUrl(
+          `https://github.com/${matches[1]}/blob/${matches[2]}`
+        );
       }
     }
     this.props.osOpenUrl(url);
   }
 
   render() {
-    const uri = this.props.data.confurl || path.join(this.props.data.__pkg_dir, '.library.json');
-    const content = this.props.data.confurl ? undefined : JSON.stringify(this.props.data, null, 2);
-    const lang = this.props.data.confurl && this.props.data.confurl.endsWith('.ini') ? 'ini' : 'json';
+    const uri =
+      this.props.data.confurl || path.join(this.props.data.__pkg_dir, '.library.json');
+    const content = this.props.data.confurl
+      ? undefined
+      : JSON.stringify(this.props.data, null, 2);
+    const lang =
+      this.props.data.confurl && this.props.data.confurl.endsWith('.ini')
+        ? 'ini'
+        : 'json';
     return (
-      <div className='lib-manifest'>
-        <Row className='block'>
-          <Col xs={ 18 }>
-            <span className='inline-block-tight'>Specification for manifests:</span>
-            <span className='inline-block-tight'><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/config.html') }>library.json</a>,</span>
-            <span className='inline-block-tight'><a onClick={ () => this.props.osOpenUrl('https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification') }>library.properties</a>,</span>
-            <span className='inline-block-tight'><a onClick={ () => this.props.osOpenUrl('http://yottadocs.mbed.com/reference/module.html') }>module.json</a></span>
+      <div className="lib-manifest">
+        <Row className="block">
+          <Col xs={18}>
+            <span className="inline-block-tight">Specification for manifests:</span>
+            <span className="inline-block-tight">
+              <a
+                onClick={() =>
+                  this.props.osOpenUrl(
+                    'http://docs.platformio.org/page/librarymanager/config.html'
+                  )
+                }
+              >
+                library.json
+              </a>
+              ,
+            </span>
+            <span className="inline-block-tight">
+              <a
+                onClick={() =>
+                  this.props.osOpenUrl(
+                    'https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification'
+                  )
+                }
+              >
+                library.properties
+              </a>
+              ,
+            </span>
+            <span className="inline-block-tight">
+              <a
+                onClick={() =>
+                  this.props.osOpenUrl(
+                    'http://yottadocs.mbed.com/reference/module.html'
+                  )
+                }
+              >
+                module.json
+              </a>
+            </span>
           </Col>
-          <Col xs={ 6 } className='text-right'>
-            { this.props.data.confurl &&
-              <Button size='small' icon='edit' onClick={ () => this.onDidEdit(this.props.data.confurl) }>
+          <Col xs={6} className="text-right">
+            {this.props.data.confurl && (
+              <Button
+                size="small"
+                icon="edit"
+                onClick={() => this.onDidEdit(this.props.data.confurl)}
+              >
                 Edit Manifest
-              </Button> }
+              </Button>
+            )}
           </Col>
         </Row>
-        <CodeBeautifier uri={ uri } content={ content } language={ lang } toggle />
+        <CodeBeautifier uri={uri} content={content} language={lang} toggle />
       </div>
-      );
+    );
   }
-
 }

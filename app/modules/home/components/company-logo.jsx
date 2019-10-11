@@ -19,17 +19,18 @@ import * as workspaceSettings from '../../../workspace/settings';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 export default class CompanyLogo extends React.Component {
-
   static propTypes = {
     width: PropTypes.string,
     height: PropTypes.string
-  }
+  };
 
   render() {
     return (
-      <img src={ workspaceSettings.get('companyLogoSrc') } height={ this.props.height || '200px' } />
-      );
+      <img
+        src={workspaceSettings.get('companyLogoSrc')}
+        height={this.props.height || '200px'}
+      />
+    );
   }
 }

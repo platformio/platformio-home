@@ -16,7 +16,11 @@
 
 import * as actions from '../actions';
 
-import { UPDATES_INPUT_FILTER_KEY, selectUpdatesFilter, selectVisibleLibUpdates } from '../selectors';
+import {
+  UPDATES_INPUT_FILTER_KEY,
+  selectUpdatesFilter,
+  selectVisibleLibUpdates
+} from '../selectors';
 
 import { LibraryStorage } from '../storage';
 import LibraryStoragesList from '../components/storages-list';
@@ -28,13 +32,9 @@ import { goTo } from '../../core/helpers';
 import { lazyUpdateInputValue } from '../../../store/actions';
 import { osRevealFile } from '../../core/actions';
 
-
 class LibraryUpdatesPage extends React.Component {
-
   static propTypes = {
-    items: PropTypes.arrayOf(
-      PropTypes.instanceOf(LibraryStorage).isRequired
-    ),
+    items: PropTypes.arrayOf(PropTypes.instanceOf(LibraryStorage).isRequired),
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     loadLibUpdates: PropTypes.func.isRequired,
@@ -42,7 +42,7 @@ class LibraryUpdatesPage extends React.Component {
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     updateLibrary: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -51,12 +51,11 @@ class LibraryUpdatesPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container'>
+      <div className="page-container">
         <LibraryStoragesList {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -65,16 +64,25 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleLibUpdates(state),
     filterValue: selectUpdatesFilter(state),
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest => goTo(ownProps.history, '/libraries/installed/show', { idOrManifest })
+    searchLibrary: (query, page) =>
+      goTo(ownProps.history, '/libraries/registry/search', { query, page }),
+    showLibrary: idOrManifest =>
+      goTo(ownProps.history, '/libraries/installed/show', { idOrManifest })
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Object.assign({}, actions, {
-    osRevealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
-  }), dispatch);
+  return bindActionCreators(
+    Object.assign({}, actions, {
+      osRevealFile,
+      setFilter: value =>
+        dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
+    }),
+    dispatch
+  );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LibraryUpdatesPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LibraryUpdatesPage);

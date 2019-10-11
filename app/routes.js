@@ -22,7 +22,6 @@ import InspectPage from './modules/inspect';
 import LibraryIndex from './modules/library/index';
 import PlatformPage from './modules/platform/index';
 
-
 const routes = [
   {
     path: '/',

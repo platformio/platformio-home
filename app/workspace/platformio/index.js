@@ -20,7 +20,7 @@ const urls = {
   facebook: 'https://www.facebook.com/platformio',
   linkedin: 'https://www.linkedin.com/company/platformio',
   github: 'https://github.com/platformio',
-  community: 'https://community.platformio.org',
+  community: 'https://community.platformio.org'
 };
 
 const messages = {
@@ -33,13 +33,13 @@ export default {
   companyLogoSrc: require('./platformio_logo.png'),
   showPIOVersions: true,
   footerQuickLinks: [
-    { title: 'Web', url: urls.home},
-    { title: 'Open Source', url: urls.github},
-    { title: 'Get Started', url: 'http://docs.platformio.org/page/ide/pioide.html'},
-    { title: 'Docs', url: 'http://docs.platformio.org'},
-    { title: 'News', url: urls.twitter},
-    { title: 'Community', url: urls.community},
-    { title: 'Contact Us', url: 'https://platformio.org/contact'},
+    { title: 'Web', url: urls.home },
+    { title: 'Open Source', url: urls.github },
+    { title: 'Get Started', url: 'http://docs.platformio.org/page/ide/pioide.html' },
+    { title: 'Docs', url: 'http://docs.platformio.org' },
+    { title: 'News', url: urls.twitter },
+    { title: 'Community', url: urls.community },
+    { title: 'Contact Us', url: 'https://platformio.org/contact' }
   ],
   urls,
   messages

@@ -25,13 +25,12 @@ import { Provider } from 'react-redux';
 import React from 'react';
 import { render } from 'react-dom';
 
-
 window.addEventListener('error', err => reportException(err, true));
 
 render(
   <AppContainer>
-    <Provider store={ store.getStore() }>
-      <MemoryRouter initialEntries={ [getStartLocation()] }>
+    <Provider store={store.getStore()}>
+      <MemoryRouter initialEntries={[getStartLocation()]}>
         <App />
       </MemoryRouter>
     </Provider>
@@ -45,7 +44,7 @@ if (module && module.hot) {
     const NewApp = require('./app.jsx').default;
     render(
       <AppContainer>
-        <Provider store={ newStoreModule.configureStore() }>
+        <Provider store={newStoreModule.configureStore()}>
           <MemoryRouter>
             <NewApp />
           </MemoryRouter>

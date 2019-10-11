@@ -22,7 +22,6 @@ import PlatformEmbeddedPage from './containers/embedded-page';
 import PlatformInstalledPage from './containers/installed-page';
 import PlatformUpdatesPage from './containers/updates-page';
 
-
 const routes = [
   {
     path: '/platforms',

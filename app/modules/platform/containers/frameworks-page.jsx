@@ -16,7 +16,11 @@
 
 import * as actions from '../actions';
 
-import { FRAMEWORKS_INPUT_FILTER_KEY, selectFrameworksFilter, selectVisibleFrameworks } from '../selectors';
+import {
+  FRAMEWORKS_INPUT_FILTER_KEY,
+  selectFrameworksFilter,
+  selectVisibleFrameworks
+} from '../selectors';
 
 import FrameworksList from '../components/frameworks-list';
 import PropTypes from 'prop-types';
@@ -26,19 +30,15 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { lazyUpdateInputValue } from '../../../store/actions';
 
-
 class FrameworksPage extends React.Component {
-
   static propTypes = {
-    items: PropTypes.arrayOf(
-      PropTypes.object.isRequired
-    ),
+    items: PropTypes.arrayOf(PropTypes.object.isRequired),
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     loadRegistryFrameworks: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -47,12 +47,11 @@ class FrameworksPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container'>
-        <FrameworksList { ...this.props } />
+      <div className="page-container">
+        <FrameworksList {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -62,14 +61,22 @@ function mapStateToProps(state, ownProps) {
     items: selectVisibleFrameworks(state),
     filterValue: selectFrameworksFilter(state),
     showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name => goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showFramework: name =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name })
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Object.assign({}, actions, {
-    setFilter: value => dispatch(lazyUpdateInputValue(FRAMEWORKS_INPUT_FILTER_KEY, value))
-  }), dispatch);
+  return bindActionCreators(
+    Object.assign({}, actions, {
+      setFilter: value =>
+        dispatch(lazyUpdateInputValue(FRAMEWORKS_INPUT_FILTER_KEY, value))
+    }),
+    dispatch
+  );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FrameworksPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FrameworksPage);

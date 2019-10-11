@@ -25,9 +25,7 @@ import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 import { selectAccountInfo } from '../selectors';
 
-
 class AccountLoginPage extends React.Component {
-
   static propTypes = {
     data: PropTypes.shape({
       username: PropTypes.string,
@@ -40,7 +38,7 @@ class AccountLoginPage extends React.Component {
     showRegistrationPage: PropTypes.func.isRequired,
     showForgotPage: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   render() {
     if (this.props.data && this.props.data.groups) {
@@ -49,12 +47,11 @@ class AccountLoginPage extends React.Component {
     }
     const WrappedForm = Form.create()(AccountLoginForm);
     return (
-      <div className='page-container login-page text-center'>
+      <div className="page-container login-page text-center">
         <WrappedForm {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -68,4 +65,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountLoginPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(AccountLoginPage);

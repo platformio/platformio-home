@@ -18,7 +18,6 @@ import { selectEntity, selectInputValue } from '../../store/selectors';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
 
-
 export const INPUT_FILTER_KEY = 'projectFilter';
 
 export function selectFilter(state) {
@@ -41,13 +40,14 @@ export function selectVisibleProjects(state) {
   } else if (!filterValue) {
     return items.sort((a, b) => b.modified - a.modified);
   }
-  return fuzzaldrin.filter(items.map(item => {
-    item._fuzzy = [
-      item.path,
-      JSON.stringify(item.boards)
-    ].join(' ');
-    return item;
-  }), filterValue, {
-    key: '_fuzzy'
-  });
+  return fuzzaldrin.filter(
+    items.map(item => {
+      item._fuzzy = [item.path, JSON.stringify(item.boards)].join(' ');
+      return item;
+    }),
+    filterValue,
+    {
+      key: '_fuzzy'
+    }
+  );
 }

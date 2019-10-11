@@ -25,9 +25,7 @@ import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 import { selectAccountInfo } from '../selectors';
 
-
 class AccountInformationPage extends React.Component {
-
   static propTypes = {
     data: PropTypes.shape({
       username: PropTypes.string,
@@ -40,7 +38,7 @@ class AccountInformationPage extends React.Component {
     logoutAccount: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -53,18 +51,17 @@ class AccountInformationPage extends React.Component {
       return null;
     }
     return (
-      <div className='page-container information-page'>
-        { !this.props.data || !this.props.data.groups ? (
-          <div className='text-center' style={{ paddingTop: '15px' }}>
-            <Spin tip='Loading...' size='large' />
+      <div className="page-container information-page">
+        {!this.props.data || !this.props.data.groups ? (
+          <div className="text-center" style={{ paddingTop: '15px' }}>
+            <Spin tip="Loading..." size="large" />
           </div>
-          ) : (
-          <AccountInformation { ...this.props } />
-          ) }
+        ) : (
+          <AccountInformation {...this.props} />
+        )}
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -76,4 +73,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountInformationPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(AccountInformationPage);

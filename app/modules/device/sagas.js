@@ -25,7 +25,6 @@ import { deleteEntity, updateEntity } from '../../store/actions';
 import { apiFetchData } from '../../store/api';
 import { notifyError } from '../core/actions';
 
-
 function* watchLoadSerialDevices() {
   while (true) {
     const { force } = yield take(actions.LOAD_SERIAL_DEVICES);
@@ -74,7 +73,4 @@ function* watchLoadMDNSDevices() {
   }
 }
 
-export default [
-  watchLoadSerialDevices,
-  watchLoadMDNSDevices
-];
+export default [watchLoadSerialDevices, watchLoadMDNSDevices];

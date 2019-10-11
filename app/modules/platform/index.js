@@ -18,13 +18,11 @@ import MultiPage from '../core/components/multipage';
 import React from 'react';
 import routes from './routes';
 
-
 export default class PlatformPage extends React.Component {
-
   render() {
     return (
-      <section className='platform-module'>
-        <MultiPage routes={ routes } />
+      <section className="platform-module">
+        <MultiPage routes={routes} />
       </section>
     );
   }

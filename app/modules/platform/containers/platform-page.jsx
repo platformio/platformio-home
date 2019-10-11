@@ -26,9 +26,7 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { selectPlatformData } from '../selectors';
 
-
 class PlatformDetailPage extends React.Component {
-
   static propTypes = {
     name: PropTypes.string.isRequired,
     data: PropTypes.object,
@@ -38,7 +36,7 @@ class PlatformDetailPage extends React.Component {
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -47,16 +45,16 @@ class PlatformDetailPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container pf-detail'>
-        { this.props.data ? (
-          <PlatformDetailMain { ...this.props } />
-          ) : (
-          <div className='text-center'>
-            <Spin tip='Loading...' size='large' />
+      <div className="page-container pf-detail">
+        {this.props.data ? (
+          <PlatformDetailMain {...this.props} />
+        ) : (
+          <div className="text-center">
+            <Spin tip="Loading..." size="large" />
           </div>
-          ) }
+        )}
       </div>
-      );
+    );
   }
 }
 
@@ -68,9 +66,13 @@ function mapStateToProps(state, ownProps) {
     name,
     data: selectPlatformData(state, name),
     showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name => goTo(ownProps.history, '/platforms/frameworks/show', { name }),
+    showFramework: name =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
     showInstalledPlatforms: () => goTo(ownProps.history, '/platforms/installed')
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl, osRevealFile })(PlatformDetailPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl, osRevealFile }
+)(PlatformDetailPage);

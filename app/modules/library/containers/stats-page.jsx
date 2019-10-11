@@ -26,16 +26,14 @@ import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 import { selectStats } from '../selectors';
 
-
 class LibraryStatsPage extends React.Component {
-
   static propTypes = {
     data: PropTypes.object,
     loadStats: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -51,18 +49,18 @@ class LibraryStatsPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container libraries-stats'>
-        <LibrarySearchForm searchLibrary={ this.props.searchLibrary } />
-        { this.props.data ? (
-          <LibraryStats { ...this.props } />
-          ) : (
-          <div className='text-center'>
-            <Spin tip='Loading...' size='large' />
-          </div> ) }
+      <div className="page-container libraries-stats">
+        <LibrarySearchForm searchLibrary={this.props.searchLibrary} />
+        {this.props.data ? (
+          <LibraryStats {...this.props} />
+        ) : (
+          <div className="text-center">
+            <Spin tip="Loading..." size="large" />
+          </div>
+        )}
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -70,9 +68,14 @@ class LibraryStatsPage extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     data: selectStats(state),
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest => goTo(ownProps.history, '/libraries/registry/show', { idOrManifest })
+    searchLibrary: (query, page) =>
+      goTo(ownProps.history, '/libraries/registry/search', { query, page }),
+    showLibrary: idOrManifest =>
+      goTo(ownProps.history, '/libraries/registry/show', { idOrManifest })
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(LibraryStatsPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(LibraryStatsPage);

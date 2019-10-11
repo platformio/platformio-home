@@ -27,32 +27,39 @@ import RoutedMenu from './modules/core/containers/routed-menu';
 import SocialButtons from './modules/core/containers/social-buttons';
 import routes from './routes';
 
-
 export default class App extends React.Component {
-
   static contextTypes = {
     router: PropTypes.object.isRequired
-  }
+  };
 
   renderHeader() {
     const router = this.context.router;
     return (
-      <div className='header-container'>
-        <table cellPadding='0' cellSpacing='0' width='100%'>
+      <div className="header-container">
+        <table cellPadding="0" cellSpacing="0" width="100%">
           <tbody>
             <tr>
               <td>
-                <ul className='list-inline'>
+                <ul className="list-inline">
                   <li>
                     <Button.Group>
-                      <Button icon='left'
-                        title='Go Back'
-                        disabled={ router.history.length < 1 || router.history.index === 0 }
-                        onClick={ () => router.history.goBack() }></Button>
-                      <Button icon='right'
-                        title='Go Forward'
-                        disabled={ router.history.length < 1 || router.history.index >= (router.history.length - 1) }
-                        onClick={ () => router.history.goForward() }></Button>
+                      <Button
+                        icon="left"
+                        title="Go Back"
+                        disabled={
+                          router.history.length < 1 || router.history.index === 0
+                        }
+                        onClick={() => router.history.goBack()}
+                      ></Button>
+                      <Button
+                        icon="right"
+                        title="Go Forward"
+                        disabled={
+                          router.history.length < 1 ||
+                          router.history.index >= router.history.length - 1
+                        }
+                        onClick={() => router.history.goForward()}
+                      ></Button>
                     </Button.Group>
                   </li>
                   <li>
@@ -63,46 +70,49 @@ export default class App extends React.Component {
                   </li>
                 </ul>
               </td>
-              <td className='account-bar text-right'>
-                { <AccountStatusBar router={ router } /> }
+              <td className="account-bar text-right">
+                {<AccountStatusBar router={router} />}
               </td>
             </tr>
           </tbody>
         </table>
-      </div>);
+      </div>
+    );
   }
 
   render() {
     return (
-      <Layout hasSider className='app-container'>
-        <Layout.Sider width={ 70 }>
-          <div className='logo'>
-            <Tooltip placement='right' title='Reload Home'>
-              <a href={ window.location.href }>
-                <CompanyLogo width='32px' height='32px' />
+      <Layout hasSider className="app-container">
+        <Layout.Sider width={70}>
+          <div className="logo">
+            <Tooltip placement="right" title="Reload Home">
+              <a href={window.location.href}>
+                <CompanyLogo width="32px" height="32px" />
               </a>
             </Tooltip>
           </div>
-          <RoutedMenu router={ this.context.router } routes={ routes } theme={ 'dark' } />
+          <RoutedMenu router={this.context.router} routes={routes} theme={'dark'} />
         </Layout.Sider>
-        <Layout className='main-container'>
-          <Layout.Header>
-            { this.renderHeader() }
-          </Layout.Header>
+        <Layout className="main-container">
+          <Layout.Header>{this.renderHeader()}</Layout.Header>
           <Layout.Content>
             <Switch>
-              { routes.slice(0).reverse().map(item => (
-                  <Route path={ item.path }
-                    key={ item.path }
-                    exact={ item.exact }
-                    component={ item.component } />
-                )) }
+              {routes
+                .slice(0)
+                .reverse()
+                .map(item => (
+                  <Route
+                    path={item.path}
+                    key={item.path}
+                    exact={item.exact}
+                    component={item.component}
+                  />
+                ))}
             </Switch>
           </Layout.Content>
           <AppFooter />
         </Layout>
       </Layout>
-      );
+    );
   }
-
 }

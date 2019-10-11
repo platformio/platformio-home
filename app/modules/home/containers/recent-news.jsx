@@ -26,9 +26,7 @@ import { loadLatestTweets } from '../actions';
 import { osOpenUrl } from '../../core/actions';
 import { selectLatestTweets } from '../selectors';
 
-
 class RecentNews extends React.Component {
-
   static propTypes = {
     items: PropTypes.oneOfType([
       PropTypes.array,
@@ -36,7 +34,7 @@ class RecentNews extends React.Component {
     ]),
     loadLatestTweets: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -54,49 +52,47 @@ class RecentNews extends React.Component {
 
   render() {
     return (
-      <div className='recent-news'>
+      <div className="recent-news">
         <Divider>
-          <a onClick={() => this.props.osOpenUrl(workspaceSettings.getUrl('twitter')) }>Recent News</a>
+          <a onClick={() => this.props.osOpenUrl(workspaceSettings.getUrl('twitter'))}>
+            Recent News
+          </a>
         </Divider>
-        { this.renderCarousel() }
+        {this.renderCarousel()}
       </div>
-      );
+    );
   }
 
   renderCarousel() {
     if (!this.props.items) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' />
+        <div className="text-center">
+          <Spin tip="Loading..." />
         </div>
-        );
-    }
-    else if (this.props.items instanceof jsonrpc.JsonRpcError) {
+      );
+    } else if (this.props.items instanceof jsonrpc.JsonRpcError) {
       return (
-        <div className='text-center'>
-          <Tooltip title={ this.props.items.message }>An error occurred loading the latest news. Try again later. <Icon type='info-circle-o' /></Tooltip>
+        <div className="text-center">
+          <Tooltip title={this.props.items.message}>
+            An error occurred loading the latest news. Try again later.{' '}
+            <Icon type="info-circle-o" />
+          </Tooltip>
         </div>
-        );
+      );
     }
     return (
-      <Carousel className='block'>
-        { [...Array(Math.ceil(this.props.items.length / 3)).keys()].map(rowNum => (
-            <div key={ rowNum }>
-              <Row gutter={ 18 }>
-                <Col span={ 8 }>
-                  { this.renderCard(rowNum * 3) }
-                </Col>
-                <Col span={ 8 }>
-                  { this.renderCard(rowNum * 3 + 1) }
-                </Col>
-                <Col span={ 8 }>
-                  { this.renderCard(rowNum * 3 + 2) }
-                </Col>
-              </Row>
-            </div>
-          )) }
+      <Carousel className="block">
+        {[...Array(Math.ceil(this.props.items.length / 3)).keys()].map(rowNum => (
+          <div key={rowNum}>
+            <Row gutter={18}>
+              <Col span={8}>{this.renderCard(rowNum * 3)}</Col>
+              <Col span={8}>{this.renderCard(rowNum * 3 + 1)}</Col>
+              <Col span={8}>{this.renderCard(rowNum * 3 + 2)}</Col>
+            </Row>
+          </div>
+        ))}
       </Carousel>
-      );
+    );
   }
 
   renderCard(itemIndex) {
@@ -109,28 +105,28 @@ class RecentNews extends React.Component {
       coverUrl = item.entries.photos[0];
     }
     const title = (
-    <ul className='list-inline'>
-      { item.isPinned && (
+      <ul className="list-inline">
+        {item.isPinned && (
+          <li>
+            <Icon type="pushpin" title="Pinned news" />
+          </li>
+        )}
+        <li>{item.timeFormatted}</li>
         <li>
-          <Icon type='pushpin' title='Pinned news' />
+          <Icon type="twitter" />
         </li>
-      )}
-      <li>
-        { item.timeFormatted }
-      </li>
-      <li>
-        <Icon type='twitter' />
-      </li>
-      <li>
-        { item.author }
-      </li>
-    </ul>);
-    const cover = <div style={ { backgroundImage: `url(${ coverUrl })` } } />;
+        <li>{item.author}</li>
+      </ul>
+    );
+    const cover = <div style={{ backgroundImage: `url(${coverUrl})` }} />;
     return (
-      <Card hoverable cover={ cover } onClick={ e => this.onClickItem(e, item) }>
-        <Card.Meta title={ title } description={ <span dangerouslySetInnerHTML={ { __html: item.text } } /> } />
+      <Card hoverable cover={cover} onClick={e => this.onClickItem(e, item)}>
+        <Card.Meta
+          title={title}
+          description={<span dangerouslySetInnerHTML={{ __html: item.text }} />}
+        />
       </Card>
-      );
+    );
   }
 }
 
@@ -142,7 +138,10 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {
-  loadLatestTweets,
-  osOpenUrl
-})(RecentNews);
+export default connect(
+  mapStateToProps,
+  {
+    loadLatestTweets,
+    osOpenUrl
+  }
+)(RecentNews);

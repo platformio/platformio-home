@@ -17,7 +17,6 @@
 import { selectStorageItem } from '../../store/selectors';
 import shajs from 'sha.js';
 
-
 export function selectShowAtStartup(state) {
   const caller = selectStorageItem(state, 'coreCaller');
   if (!caller) {
@@ -27,7 +26,7 @@ export function selectShowAtStartup(state) {
   return !data || !data.hasOwnProperty(caller) || data[caller];
 }
 
-export function getRequestContentKey(uri, data=undefined) {
+export function getRequestContentKey(uri, data = undefined) {
   const hash = shajs('sha1');
   hash.update(uri);
   if (data) {
@@ -40,7 +39,7 @@ export function selectRequestedContents(state) {
   return state.entities.requestedContents;
 }
 
-export function selectRequestedContent(state, uri, data=undefined) {
+export function selectRequestedContent(state, uri, data = undefined) {
   const items = selectRequestedContents(state) || [];
   for (const item of items) {
     if (item.key === getRequestContentKey(uri, data)) {
@@ -50,7 +49,7 @@ export function selectRequestedContent(state, uri, data=undefined) {
   return null;
 }
 
-export function selectOsFSGlobKey(pathnames, rootDir=undefined) {
+export function selectOsFSGlobKey(pathnames, rootDir = undefined) {
   const hash = shajs('sha1');
   hash.update(pathnames.join());
   if (rootDir) {
@@ -63,7 +62,7 @@ export function selectOsFSGlobs(state) {
   return state.entities.osFsGlob;
 }
 
-export function selectOsFSGlob(state, pathnames, rootDir=undefined) {
+export function selectOsFSGlob(state, pathnames, rootDir = undefined) {
   const globs = selectOsFSGlobs(state) || [];
   for (const glob of globs) {
     if (glob.key === selectOsFSGlobKey(pathnames, rootDir)) {
@@ -91,5 +90,5 @@ export function selectOsIsDirItems(state) {
 
 export function selectRouteBadges(state) {
   const items = selectStorageItem(state, 'routeBadges') || {};
-  return Object.keys(items).map(key => ({path: key, count: items[key]}));
+  return Object.keys(items).map(key => ({ path: key, count: items[key] }));
 }

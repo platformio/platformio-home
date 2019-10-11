@@ -16,7 +16,11 @@
 
 import * as actions from '../actions';
 
-import { UPDATES_INPUT_FILTER_KEY, selectUpdatesFilter, selectVisiblePlatformUpdates } from '../selectors';
+import {
+  UPDATES_INPUT_FILTER_KEY,
+  selectUpdatesFilter,
+  selectVisiblePlatformUpdates
+} from '../selectors';
 import { osOpenUrl, osRevealFile } from '../../core/actions';
 
 import PlatformsList from '../components/platforms-list';
@@ -27,13 +31,9 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { lazyUpdateInputValue } from '../../../store/actions';
 
-
 class PlatformUpdatesPage extends React.Component {
-
   static propTypes = {
-    items: PropTypes.arrayOf(
-      PropTypes.object.isRequired
-    ),
+    items: PropTypes.arrayOf(PropTypes.object.isRequired),
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     loadPlatformUpdates: PropTypes.func.isRequired,
@@ -42,7 +42,7 @@ class PlatformUpdatesPage extends React.Component {
     updatePlatform: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -51,12 +51,11 @@ class PlatformUpdatesPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container'>
-        <PlatformsList { ...this.props } actions={ ['reveal', 'update'] } />
+      <div className="page-container">
+        <PlatformsList {...this.props} actions={['reveal', 'update']} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -66,16 +65,24 @@ function mapStateToProps(state, ownProps) {
     items: selectVisiblePlatformUpdates(state),
     filterValue: selectUpdatesFilter(state),
     showPlatform: name => goTo(ownProps.history, '/platforms/installed/show', { name }),
-    showFramework: name => goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showFramework: name =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name })
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Object.assign({}, actions, {
-    osOpenUrl,
-    osRevealFile,
-    setFilter: value => dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
-  }), dispatch);
+  return bindActionCreators(
+    Object.assign({}, actions, {
+      osOpenUrl,
+      osRevealFile,
+      setFilter: value =>
+        dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
+    }),
+    dispatch
+  );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlatformUpdatesPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PlatformUpdatesPage);

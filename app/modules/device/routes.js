@@ -18,7 +18,6 @@ import DeviceLogicalPage from './containers/logical-page';
 import DeviceMDNSPage from './containers/mdns-page';
 import DeviceSerialPage from './containers/serial-page';
 
-
 const routes = [
   {
     path: '/device',

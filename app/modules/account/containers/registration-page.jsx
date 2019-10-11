@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- import * as actions from '../actions';
+import * as actions from '../actions';
 
 import AccountRegistrationForm from '../components/registration-form';
 import { Form } from 'antd';
@@ -24,23 +24,20 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 
-
 class AccountRegistrationPage extends React.Component {
-
   static propTypes = {
     registerAccount: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired
-  }
+  };
 
   render() {
     const WrappedForm = Form.create()(AccountRegistrationForm);
     return (
-      <div className='page-container registration-page text-center'>
+      <div className="page-container registration-page text-center">
         <WrappedForm {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -51,4 +48,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountRegistrationPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(AccountRegistrationPage);

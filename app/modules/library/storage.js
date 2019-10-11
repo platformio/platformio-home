@@ -18,15 +18,18 @@ import * as path from '../core/path';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
 
-
 export class LibraryStorage {
-
   static ACTION_REVEAL = 1;
   static ACTION_UNINSTALL = 2;
   static ACTION_UPDATE = 4;
   static ACTION_ALL = 8;
 
-  constructor(name, path = undefined, items = undefined, actions = LibraryStorage.ACTION_REVEAL) {
+  constructor(
+    name,
+    path = undefined,
+    items = undefined,
+    actions = LibraryStorage.ACTION_REVEAL
+  ) {
     this.name = name;
     this.path = path;
     this.initialPath = path;
@@ -54,7 +57,6 @@ export class LibraryStorage {
       this._actions = actions;
     }
   }
-
 }
 
 export function filterStorageItems(storages, filterValue) {

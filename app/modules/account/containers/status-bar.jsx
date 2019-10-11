@@ -21,20 +21,22 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 
 class AccountStatusBar extends React.Component {
-
   static propTypes = {
     router: PropTypes.object.isRequired,
     showInformationPage: PropTypes.func.isRequired
-  }
+  };
 
   render() {
-    return <Button type='default'
-             shape='circle'
-             icon='user'
-             title='PIO Account'
-             onClick={ () => this.props.showInformationPage() } />;
+    return (
+      <Button
+        type="default"
+        shape="circle"
+        icon="user"
+        title="PIO Account"
+        onClick={() => this.props.showInformationPage()}
+      />
+    );
   }
-
 }
 
 // Redux

@@ -19,8 +19,8 @@ import { Icon } from 'antd';
 import React from 'react';
 
 const workspaces = {
-  'platformio': require('./platformio/index').default,
-  'aceinna': require('./aceinna/index').default
+  platformio: require('./platformio/index').default,
+  aceinna: require('./aceinna/index').default
 };
 
 let workspace = workspaces['platformio'];
@@ -29,7 +29,7 @@ if (workspaces.hasOwnProperty(customWorkspaceName)) {
   workspace = workspaces[customWorkspaceName];
 }
 
-export function get(id, defaultValue=undefined) {
+export function get(id, defaultValue = undefined) {
   if (workspace.hasOwnProperty(id)) {
     return workspace[id];
   }
@@ -43,7 +43,7 @@ export function getMessage(id) {
   return id;
 }
 
-export function getUrl(id, defaultValue=undefined) {
+export function getUrl(id, defaultValue = undefined) {
   if (workspace.urls.hasOwnProperty(id)) {
     return workspace.urls[id];
   }
@@ -56,7 +56,7 @@ export function isBoardCertified(board) {
 
 export function getCustomIcon(type) {
   if (workspace.remapCustomIcons && workspace.remapCustomIcons.hasOwnProperty(type)) {
-    return <CustomIcon type={ workspace.remapCustomIcons[type] } />;
+    return <CustomIcon type={workspace.remapCustomIcons[type]} />;
   }
-  return <Icon type={ type } />;
+  return <Icon type={type} />;
 }

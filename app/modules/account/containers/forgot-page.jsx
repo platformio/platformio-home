@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- import * as actions from '../actions';
+import * as actions from '../actions';
 
 import AccountForgotForm from '../components/forgot-form';
 import { Form } from 'antd';
@@ -24,24 +24,21 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 
-
 class AccountForgotPage extends React.Component {
-
   static propTypes = {
     forgotAccountPassword: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired
-  }
+  };
 
   render() {
     const WrappedForm = Form.create()(AccountForgotForm);
     return (
-      <div className='page-container forgot-page text-center'>
+      <div className="page-container forgot-page text-center">
         <WrappedForm {...this.props} />
       </div>
     );
   }
-
 }
 
 // Redux
@@ -53,4 +50,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountForgotPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(AccountForgotPage);

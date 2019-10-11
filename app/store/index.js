@@ -24,7 +24,6 @@ import { crashReporterMiddleware } from './middlewares';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 
-
 let storeInstance = null;
 
 export function getStore() {

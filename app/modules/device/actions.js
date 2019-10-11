@@ -16,9 +16,10 @@
 
 import { createAction } from '../../store/actions';
 
-
 export const LOAD_SERIAL_DEVICES = 'LOAD_SERIAL_DEVICES';
 export const LOAD_MDNS_DEVICES = 'LOAD_MDNS_DEVICES';
 
-export const loadSerialDevices = (force=false) => createAction(LOAD_SERIAL_DEVICES, { force });
-export const loadMDNSDevices = (force=false) => createAction(LOAD_MDNS_DEVICES, { force });
+export const loadSerialDevices = (force = false) =>
+  createAction(LOAD_SERIAL_DEVICES, { force });
+export const loadMDNSDevices = (force = false) =>
+  createAction(LOAD_MDNS_DEVICES, { force });

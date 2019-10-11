@@ -21,14 +21,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export default class AccountForgotForm extends React.Component {
-
   static propTypes = {
     form: PropTypes.object.isRequired,
     forgotAccountPassword: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -46,51 +45,57 @@ export default class AccountForgotForm extends React.Component {
       this.setState({
         loading: true
       });
-      this.props.forgotAccountPassword(
-        values.username,
-        (err) => {
-          this.setState({
-            loading: false
-          });
-          if (!err) {
-            this.props.showLoginPage();
-          }
+      this.props.forgotAccountPassword(values.username, err => {
+        this.setState({
+          loading: false
+        });
+        if (!err) {
+          this.props.showLoginPage();
         }
-      );
+      });
     });
   }
 
   render() {
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={ ::this.onDidSubmit } className='account-form'>
+      <Form onSubmit={::this.onDidSubmit} className="account-form">
         <Form.Item>
           <br />
           <CompanyLogo />
         </Form.Item>
         <Form.Item>
-          { getFieldDecorator('username', {
-              rules: [{
+          {getFieldDecorator('username', {
+            rules: [
+              {
                 type: 'email',
                 required: true,
                 message: 'Please input your email'
-              }],
-            })(
-              <Input prefix={ <Icon type='user' style={ { fontSize: 13 } } /> } placeholder='Email' ref={ elm => elm.focus() } />
-            ) }
+              }
+            ]
+          })(
+            <Input
+              prefix={<Icon type="user" style={{ fontSize: 13 }} />}
+              placeholder="Email"
+              ref={elm => elm.focus()}
+            />
+          )}
         </Form.Item>
         <Form.Item>
-          <Button loading={ this.state.loading }
-            type='primary'
-            htmlType='submit'
-            className='block account-submit-button'>
+          <Button
+            loading={this.state.loading}
+            type="primary"
+            htmlType="submit"
+            className="block account-submit-button"
+          >
             Send reset email
           </Button>
           <div>
-            Need an Account? <a onClick={ () => this.props.showRegistrationPage() }>Create a new one.</a>
+            Need an Account?{' '}
+            <a onClick={() => this.props.showRegistrationPage()}>Create a new one.</a>
           </div>
         </Form.Item>
-      </Form>);
+      </Form>
+    );
   }
-
 }

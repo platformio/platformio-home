@@ -21,13 +21,9 @@ import LibraryStorageItems from './storage-items';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-
 export default class LibraryStoragesList extends React.Component {
-
   static propTypes = {
-    items: PropTypes.arrayOf(
-      PropTypes.instanceOf(LibraryStorage).isRequired
-    ),
+    items: PropTypes.arrayOf(PropTypes.instanceOf(LibraryStorage).isRequired),
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired,
@@ -35,7 +31,7 @@ export default class LibraryStoragesList extends React.Component {
     showLibrary: PropTypes.func.isRequired,
     uninstallLibrary: PropTypes.func.isRequired,
     updateLibrary: PropTypes.func.isRequired
-  }
+  };
 
   componentDidMount() {
     if (this._searchInputElement) {
@@ -50,41 +46,42 @@ export default class LibraryStoragesList extends React.Component {
   render() {
     if (!this.props.items) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' size='large' />
+        <div className="text-center">
+          <Spin tip="Loading..." size="large" />
         </div>
-        );
+      );
     }
     if (!this.props.items.length) {
       return (
-        <ul className='background-message text-center'>
-          <li>
-            No Results
-          </li>
+        <ul className="background-message text-center">
+          <li>No Results</li>
         </ul>
-        );
+      );
     }
     return (
-      <div className='lib-storages-list'>
-        <Input.Search className='block'
-          placeholder='Filter libraries by name...'
-          defaultValue={ this.props.filterValue }
-          size='large'
-          onChange={ e => this.onDidFilter(e.target.value) }
-          ref={ elm => this._searchInputElement = elm } />
+      <div className="lib-storages-list">
+        <Input.Search
+          className="block"
+          placeholder="Filter libraries by name..."
+          defaultValue={this.props.filterValue}
+          size="large"
+          onChange={e => this.onDidFilter(e.target.value)}
+          ref={elm => (this._searchInputElement = elm)}
+        />
         <div>
-          { this.props.items.map(item => (
-              <LibraryStorageItems item={ item }
-                key={ item.name }
-                osRevealFile={ this.props.osRevealFile }
-                searchLibrary={ this.props.searchLibrary }
-                showLibrary={ this.props.showLibrary }
-                uninstallLibrary={ this.props.uninstallLibrary }
-                updateLibrary={ this.props.updateLibrary } />
-            )) }
+          {this.props.items.map(item => (
+            <LibraryStorageItems
+              item={item}
+              key={item.name}
+              osRevealFile={this.props.osRevealFile}
+              searchLibrary={this.props.searchLibrary}
+              showLibrary={this.props.showLibrary}
+              uninstallLibrary={this.props.uninstallLibrary}
+              updateLibrary={this.props.updateLibrary}
+            />
+          ))}
         </div>
       </div>
-      );
+    );
   }
-
 }

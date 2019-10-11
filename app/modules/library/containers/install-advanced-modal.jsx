@@ -24,9 +24,7 @@ import { loadProjects } from '../../project/actions';
 import { osOpenUrl } from '../../core/actions';
 import { selectProjects } from '../../project/selectors';
 
-
 class LibraryInstallAdvancedModal extends React.Component {
-
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -37,7 +35,7 @@ class LibraryInstallAdvancedModal extends React.Component {
     installLibrary: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -84,18 +82,14 @@ class LibraryInstallAdvancedModal extends React.Component {
     this.setState({
       installing: true
     });
-    this.props.installLibrary(
-      this.state.storageDir,
-      this.state.library,
-      err => {
-        this.setState({
-          installing: false
-        });
-        if (!err) {
-          this.onDidCancel();
-        }
+    this.props.installLibrary(this.state.storageDir, this.state.library, err => {
+      this.setState({
+        installing: false
+      });
+      if (!err) {
+        this.onDidCancel();
       }
-    );
+    });
   }
 
   onDidCancel() {
@@ -114,85 +108,185 @@ class LibraryInstallAdvancedModal extends React.Component {
     }
     const projects = this.props.projects || [];
     return (
-      <Modal visible={ this.props.visible }
-        confirmLoading={ this.state.installing }
-        title='Advanced library installation'
-        width={ 600 }
-        okText='Install'
-        onOk={ ::this.onDidInstall }
-        onCancel={ ::this.onDidCancel }>
-        <div className='block'>
-          <Input placeholder='Library id, name, repository, requirements...'
-            size='large'
-            style={ { width: '100%' } }
-            value={ this.state.library }
-            onChange={ (e) => this.onDidLibraryChange(e.target.value) }
-            onPressEnter={ ::this.onDidInstall }
-            ref={ elm => this._inputElement = elm } />
+      <Modal
+        visible={this.props.visible}
+        confirmLoading={this.state.installing}
+        title="Advanced library installation"
+        width={600}
+        okText="Install"
+        onOk={::this.onDidInstall}
+        onCancel={::this.onDidCancel}
+      >
+        <div className="block">
+          <Input
+            placeholder="Library id, name, repository, requirements..."
+            size="large"
+            style={{ width: '100%' }}
+            value={this.state.library}
+            onChange={e => this.onDidLibraryChange(e.target.value)}
+            onPressEnter={::this.onDidInstall}
+            ref={elm => (this._inputElement = elm)}
+          />
         </div>
-        <div className='block'>
-          <Select defaultValue=''
-            style={ { width: '100%' } }
-            size='large'
-            onChange={ ::this.onDidStorage }>
-            <Select.Option value=''>
-              Global storage
-            </Select.Option>
-            <Select.OptGroup label='Projects'>
-              { projects.map(item => (
-                <Select.Option key={ item.path } value={ item.path } title={ item.path }>
-                  { item.name }
+        <div className="block">
+          <Select
+            defaultValue=""
+            style={{ width: '100%' }}
+            size="large"
+            onChange={::this.onDidStorage}
+          >
+            <Select.Option value="">Global storage</Select.Option>
+            <Select.OptGroup label="Projects">
+              {projects.map(item => (
+                <Select.Option key={item.path} value={item.path} title={item.path}>
+                  {item.name}
                 </Select.Option>
               ))}
             </Select.OptGroup>
-            <Select.OptGroup label='Custom storage'>
-              { projects.map(p => p.extraLibStorages.map(item => (
-                <Select.Option key={ item.path } value={ item.path } title={ item.path }>
-                  { item.name }
-                </Select.Option>
-              )))}
+            <Select.OptGroup label="Custom storage">
+              {projects.map(p =>
+                p.extraLibStorages.map(item => (
+                  <Select.Option key={item.path} value={item.path} title={item.path}>
+                    {item.name}
+                  </Select.Option>
+                ))
+              )}
             </Select.OptGroup>
           </Select>
         </div>
 
         <Divider>Information</Divider>
         <Collapse>
-          <Collapse.Panel header='Project dependencies in "platformio.ini"' key='lib_deps'>
+          <Collapse.Panel
+            header='Project dependencies in "platformio.ini"'
+            key="lib_deps"
+          >
             <div>
-              PlatformIO Core has built-in powerful <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/index.html') }>Library Manager</a> that allows you to specify project dependencies in <b>configuration file &quot;platformio.ini&quot;</b> using <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps') }>lib_deps</a> option. The dependent libraries will be installed automatically on the first build of a project. <b>NO NEED TO INSTALL THEM MANUALLY.</b>
+              PlatformIO Core has built-in powerful{' '}
+              <a
+                onClick={() =>
+                  this.props.osOpenUrl(
+                    'http://docs.platformio.org/page/librarymanager/index.html'
+                  )
+                }
+              >
+                Library Manager
+              </a>{' '}
+              that allows you to specify project dependencies in{' '}
+              <b>configuration file &quot;platformio.ini&quot;</b> using{' '}
+              <a
+                onClick={() =>
+                  this.props.osOpenUrl(
+                    'http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps'
+                  )
+                }
+              >
+                lib_deps
+              </a>{' '}
+              option. The dependent libraries will be installed automatically on the
+              first build of a project. <b>NO NEED TO INSTALL THEM MANUALLY.</b>
             </div>
           </Collapse.Panel>
-          <Collapse.Panel header='Storage types' key='storage'>
-            <ul className='list-styled'>
-              <li><b>Global storage</b> – libraries are visible for all projects</li>
-              <li><b>Project storage</b> – libraries are visible only for the specified project</li>
-              <li><b>Custom storage</b> – libraries are visible for project via <a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/projectconf/section_env_library.html#projectconf-lib-extra-dirs') }>lib_extra_dirs</a> option.</li>
-              <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/librarymanager/ldf.html#storage') }>More storages...</a></li>
+          <Collapse.Panel header="Storage types" key="storage">
+            <ul className="list-styled">
+              <li>
+                <b>Global storage</b> – libraries are visible for all projects
+              </li>
+              <li>
+                <b>Project storage</b> – libraries are visible only for the specified
+                project
+              </li>
+              <li>
+                <b>Custom storage</b> – libraries are visible for project via{' '}
+                <a
+                  onClick={() =>
+                    this.props.osOpenUrl(
+                      'http://docs.platformio.org/page/projectconf/section_env_library.html#projectconf-lib-extra-dirs'
+                    )
+                  }
+                >
+                  lib_extra_dirs
+                </a>{' '}
+                option.
+              </li>
+              <li>
+                <a
+                  onClick={() =>
+                    this.props.osOpenUrl(
+                      'http://docs.platformio.org/page/librarymanager/ldf.html#storage'
+                    )
+                  }
+                >
+                  More storages...
+                </a>
+              </li>
             </ul>
           </Collapse.Panel>
-          <Collapse.Panel header='Installation format' key='format'>
-            <ul className='list-styled'>
-              <li><code>&lt;id&gt;</code> - 12345</li>
-              <li><code>id=&lt;id&gt;</code> - id=12345</li>
-              <li><code>&lt;id&gt;@&lt;version&gt;</code> - 12345@1.2.3 or 12345@^1.2.3 (<a onClick={ () => this.props.osOpenUrl('http://semver.org/') }>Semantic Versioning</a>)</li>
-              <li><code>&lt;id&gt;@&lt;version range&gt;</code> - 12345@&gt;0.1.0,!=0.2.0,&lt;0.3.0</li>
-              <li><code>&lt;name&gt;</code> - Foo</li>
-              <li><code>&lt;name&gt;@&lt;version&gt;</code> - Foo@1.2.3 or Foo@~1.2.3</li>
-              <li><code>&lt;name&gt;@&lt;version range&gt;</code>  - Foo@!=1.2.0</li>
-              <li><code>&lt;zip or tarball url&gt;</code></li>
-              <li><code>file://&lt;zip or tarball file&gt;</code></li>
-              <li><code>file://&lt;folder&gt;</code></li>
-              <li><code>&lt;repository&gt;</code></li>
-              <li><code>&lt;name&gt;=&lt;repository&gt;</code> (name it should have locally)</li>
-              <li><code>&lt;repository#tag&gt;</code> (&quot;tag&quot; can be commit, branch or tag)</li>
-              <li><a onClick={ () => this.props.osOpenUrl('http://docs.platformio.org/page/userguide/lib/cmd_install.html') }>more in docs...</a></li>
+          <Collapse.Panel header="Installation format" key="format">
+            <ul className="list-styled">
+              <li>
+                <code>&lt;id&gt;</code> - 12345
+              </li>
+              <li>
+                <code>id=&lt;id&gt;</code> - id=12345
+              </li>
+              <li>
+                <code>&lt;id&gt;@&lt;version&gt;</code> - 12345@1.2.3 or 12345@^1.2.3 (
+                <a onClick={() => this.props.osOpenUrl('http://semver.org/')}>
+                  Semantic Versioning
+                </a>
+                )
+              </li>
+              <li>
+                <code>&lt;id&gt;@&lt;version range&gt;</code> -
+                12345@&gt;0.1.0,!=0.2.0,&lt;0.3.0
+              </li>
+              <li>
+                <code>&lt;name&gt;</code> - Foo
+              </li>
+              <li>
+                <code>&lt;name&gt;@&lt;version&gt;</code> - Foo@1.2.3 or Foo@~1.2.3
+              </li>
+              <li>
+                <code>&lt;name&gt;@&lt;version range&gt;</code> - Foo@!=1.2.0
+              </li>
+              <li>
+                <code>&lt;zip or tarball url&gt;</code>
+              </li>
+              <li>
+                <code>file://&lt;zip or tarball file&gt;</code>
+              </li>
+              <li>
+                <code>file://&lt;folder&gt;</code>
+              </li>
+              <li>
+                <code>&lt;repository&gt;</code>
+              </li>
+              <li>
+                <code>&lt;name&gt;=&lt;repository&gt;</code> (name it should have
+                locally)
+              </li>
+              <li>
+                <code>&lt;repository#tag&gt;</code> (&quot;tag&quot; can be commit,
+                branch or tag)
+              </li>
+              <li>
+                <a
+                  onClick={() =>
+                    this.props.osOpenUrl(
+                      'http://docs.platformio.org/page/userguide/lib/cmd_install.html'
+                    )
+                  }
+                >
+                  more in docs...
+                </a>
+              </li>
             </ul>
           </Collapse.Panel>
         </Collapse>
       </Modal>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -203,8 +297,11 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {
-  installLibrary,
-  loadProjects,
-  osOpenUrl
-})(LibraryInstallAdvancedModal);
+export default connect(
+  mapStateToProps,
+  {
+    installLibrary,
+    loadProjects,
+    osOpenUrl
+  }
+)(LibraryInstallAdvancedModal);

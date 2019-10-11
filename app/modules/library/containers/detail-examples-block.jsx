@@ -25,20 +25,15 @@ import { connect } from 'react-redux';
 import { osFsGlob } from '../../core/actions';
 import { selectOsFSGlob } from '../../core/selectors';
 
-
 class LibraryDetailExamplesBlock extends React.Component {
-
   static propTypes = {
     data: PropTypes.shape({
-      examples: PropTypes.oneOfType([
-        PropTypes.array,
-        PropTypes.string
-      ]),
+      examples: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
       __pkg_dir: PropTypes.string
     }).isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
     osFsGlob: PropTypes.func.isRequired
-  }
+  };
 
   static getGlobPatterns(custom) {
     if (custom) {
@@ -86,7 +81,9 @@ class LibraryDetailExamplesBlock extends React.Component {
     const prefix = path.commonprefix(this.props.uris);
     for (const uri of this.props.uris) {
       const name = path.dirname(uri.substr(prefix.length + 1));
-      const item = candidates.has(name) ? candidates.get(name) : new ProjectExampleItem(name);
+      const item = candidates.has(name)
+        ? candidates.get(name)
+        : new ProjectExampleItem(name);
       item.addSource(uri);
       candidates.set(name, item);
     }
@@ -101,18 +98,20 @@ class LibraryDetailExamplesBlock extends React.Component {
     if (!this.props.uris.length) {
       return [];
     }
-    return this.props.uris[0].startsWith('http') ? this.getRemoteItems() : this.getLocalItems();
+    return this.props.uris[0].startsWith('http')
+      ? this.getRemoteItems()
+      : this.getLocalItems();
   }
 
   render() {
     if (!this.props.uris) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' size='large' />
+        <div className="text-center">
+          <Spin tip="Loading..." size="large" />
         </div>
-        );
+      );
     }
-    return <ProjectExamples items={ this.getItems() } />;
+    return <ProjectExamples items={this.getItems()} />;
   }
 }
 
@@ -133,6 +132,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, {
-  osFsGlob
-})(LibraryDetailExamplesBlock);
+export default connect(
+  mapStateToProps,
+  {
+    osFsGlob
+  }
+)(LibraryDetailExamplesBlock);

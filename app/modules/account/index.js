@@ -21,17 +21,15 @@ import { connect } from 'react-redux';
 import routes from './routes';
 import { selectIsUserLogged } from './selectors';
 
-
 class AccountIndex extends React.Component {
-
   static propTypes = {
     userLogged: PropTypes.bool
-  }
+  };
 
   render() {
     return (
-      <section className='account-module'>
-        <MultiPage routes={ routes } disableMenu={ !this.props.userLogged  } />
+      <section className="account-module">
+        <MultiPage routes={routes} disableMenu={!this.props.userLogged} />
       </section>
     );
   }

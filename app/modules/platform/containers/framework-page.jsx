@@ -24,9 +24,7 @@ import { goTo } from '../../core/helpers';
 import { osOpenUrl } from '../../core/actions';
 import { selectFrameworkData } from '../selectors';
 
-
 class FrameworkDetailPage extends React.Component {
-
   static propTypes = {
     name: PropTypes.string.isRequired,
     data: PropTypes.object,
@@ -34,7 +32,7 @@ class FrameworkDetailPage extends React.Component {
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -43,12 +41,11 @@ class FrameworkDetailPage extends React.Component {
 
   render() {
     return (
-      <div className='page-container pf-detail'>
-        <FrameworkDetailMain { ...this.props } />
+      <div className="page-container pf-detail">
+        <FrameworkDetailMain {...this.props} />
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -59,8 +56,12 @@ function mapStateToProps(state, ownProps) {
     name,
     data: selectFrameworkData(state, name),
     showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name => goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showFramework: name =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name })
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(FrameworkDetailPage);
+export default connect(
+  mapStateToProps,
+  { ...actions, osOpenUrl }
+)(FrameworkDetailPage);

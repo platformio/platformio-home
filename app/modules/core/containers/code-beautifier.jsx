@@ -25,9 +25,7 @@ import hljs from 'highlight.js';
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
 
-
 class CodeBeautifier extends React.Component {
-
   static propTypes = {
     title: PropTypes.string,
     uri: PropTypes.string,
@@ -36,7 +34,7 @@ class CodeBeautifier extends React.Component {
     className: PropTypes.string,
     toggle: PropTypes.bool,
     requestContent: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -71,40 +69,51 @@ class CodeBeautifier extends React.Component {
 
   renderToggler() {
     return (
-      <Icon type='up-circle-o'
-        className='source-code-toggler'
-        title='Show/Hide source code'
-        onClick={ (e) => this.onDidToggle(e) } />
-      );
+      <Icon
+        type="up-circle-o"
+        className="source-code-toggler"
+        title="Show/Hide source code"
+        onClick={e => this.onDidToggle(e)}
+      />
+    );
   }
 
   renderFileContent() {
     if (!this.props.content) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' />
+        <div className="text-center">
+          <Spin tip="Loading..." />
         </div>
-        );
+      );
     }
     return (
-      <pre><code ref={ code => this._codeElement = code } className={ this.props.language || 'c' }>{ this.props.content }</code></pre>
+      <pre>
+        <code
+          ref={code => (this._codeElement = code)}
+          className={this.props.language || 'c'}
+        >
+          {this.props.content}
+        </code>
+      </pre>
     );
   }
 
   render() {
     if (!this.props.toggle) {
-      return <div className={ this.props.className }>{ this.renderFileContent() }</div>;
+      return <div className={this.props.className}>{this.renderFileContent()}</div>;
     }
     return (
-      <div className={ this.props.className }>
-        <h3><Icon type='file' /> { this.props.title || path.basename(this.props.uri) } { this.renderToggler() }</h3>
-        <div ref={ item => this._codeTogglePlaceholder = item }>
-          { this.renderFileContent() }
+      <div className={this.props.className}>
+        <h3>
+          <Icon type="file" /> {this.props.title || path.basename(this.props.uri)}{' '}
+          {this.renderToggler()}
+        </h3>
+        <div ref={item => (this._codeTogglePlaceholder = item)}>
+          {this.renderFileContent()}
         </div>
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -118,4 +127,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { requestContent })(CodeBeautifier);
+export default connect(
+  mapStateToProps,
+  { requestContent }
+)(CodeBeautifier);

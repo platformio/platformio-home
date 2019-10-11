@@ -15,11 +15,14 @@
  */
 
 import { LibraryStorage, filterStorageItems } from './storage';
-import { expandFrameworksOrPlatforms, selectRegistryFrameworks, selectRegistryPlatforms } from '../platform/selectors';
+import {
+  expandFrameworksOrPlatforms,
+  selectRegistryFrameworks,
+  selectRegistryPlatforms
+} from '../platform/selectors';
 import { selectInputValue } from '../../store/selectors';
 
 import { selectProjects } from '../project/selectors';
-
 
 // Data Filters
 export const BUILTIN_INPUT_FILTER_KEY = 'libBuiltinFilter';
@@ -37,7 +40,6 @@ export function selectInstalledFilter(state) {
 export function selectUpdatesFilter(state) {
   return selectInputValue(state, UPDATES_INPUT_FILTER_KEY);
 }
-
 
 export function selectStoreSearchKey(query, page = 0) {
   return [query, page].join();
@@ -82,7 +84,11 @@ export function selectLibraryData(state, idOrManifest) {
   const data = Object.assign({}, idOrManifest);
   // fix platforms and frameworks
   for (const key of ['platforms', 'frameworks']) {
-    if (!data.hasOwnProperty(key) || data[key].length === 0 || (typeof data[key][0] === 'object' && data[key][0].name)) {
+    if (
+      !data.hasOwnProperty(key) ||
+      data[key].length === 0 ||
+      (typeof data[key][0] === 'object' && data[key][0].name)
+    ) {
       continue;
     }
     data[key] = expandFrameworksOrPlatforms(state, key, data[key]);
@@ -112,7 +118,9 @@ export function selectVisibletBuiltinLibs(state) {
   if (!items) {
     return null;
   }
-  items = items.filter(data => data.items.length).map(data => new LibraryStorage(data.name, data.path, data.items));
+  items = items
+    .filter(data => data.items.length)
+    .map(data => new LibraryStorage(data.name, data.path, data.items));
   if (!filterValue) {
     return items;
   }
@@ -125,7 +133,9 @@ export function selectLibraryStorages(state) {
   projects.forEach(project => {
     if (project.envLibStorages) {
       project.envLibStorages.forEach(storage => {
-        items.push(new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path));
+        items.push(
+          new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path)
+        );
       });
     }
     project.extraLibStorages.forEach(storage => {
