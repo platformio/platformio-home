@@ -18,7 +18,7 @@
 
 import * as actions from './actions';
 
-import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { INPUT_FILTER_DELAY } from '../config';
 import accountSagas from '../modules/account/sagas';
@@ -90,17 +90,19 @@ function* watchLazyUpdateInputValue() {
 }
 
 export default function* root() {
-  yield [
-    watchLoadStore,
-    autoSaveState,
-    watchLazyUpdateInputValue,
-    ...telemetrySagas,
-    ...accountSagas,
-    ...coreSagas,
-    ...deviceSagas,
-    ...homeSagas,
-    ...librarySagas,
-    ...projectSagas,
-    ...platformSagas
-  ].map(item => fork(item));
+  yield all(
+    [
+      watchLoadStore,
+      autoSaveState,
+      watchLazyUpdateInputValue,
+      ...telemetrySagas,
+      ...accountSagas,
+      ...coreSagas,
+      ...deviceSagas,
+      ...homeSagas,
+      ...librarySagas,
+      ...projectSagas,
+      ...platformSagas
+    ].map(s => s())
+  );
 }

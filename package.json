@@ -31,10 +31,10 @@
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "redux": "^4.0.0",
-    "redux-saga": "^0.16.0",
     "sha.js": "^2.4.8",
     "superagent": "^5.0.2",
     "url-parse": "^1.1.9"
+    "redux-saga": "^1.1.1",
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
