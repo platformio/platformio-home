@@ -3,8 +3,8 @@
   "version": "2.3.3",
   "description": "PlatformIO Home",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/platformio/platformio-home.git"
+    "type": "git",
+    "url": "https://github.com/platformio/platformio-home.git"
   },
   "main": "''",
   "scripts": {
@@ -16,7 +16,7 @@
   "homepage": "https://platformio.org",
   "license": "Apache-2.0",
   "dependencies": {
-    "antd": "~3.10.9",
+    "antd": "3.23.6",
     "clipboard": "^2.0.0",
     "fuzzaldrin-plus": "^0.6.0",
     "highlight.js": "^9.12.0",
@@ -60,7 +60,7 @@
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.8.0",
     "less-loader": "^4.0.4",
-    "prettier": "1.18.2",
+    "prettier": "^1.18.2",
     "react-hot-loader": "^4.3.3",
     "redux-logger": "^3.0.6",
     "style-loader": "^0.23.1",
@@ -93,12 +93,14 @@
     "dark": {
       "hljs-theme": "monokai-sublime",
       "@icon-url": "'/fonts/iconfont'",
+      "@light": "#fff",
       "@body-background": "#1E1E1E",
       "@component-background": "#252526",
       "@layout-header-background": "#323232",
       "@layout-body-background": "@body-background",
       "@background-color-base": "#181818",
       "@background-color-light": "#2D2D2D",
+      "@shadow-color-inverse": "@light",
       "@primary-color": "#4080d0",
       "@info-color": "none",
       "@error-color": "#E74C3C",
@@ -110,7 +112,7 @@
       "@border-color-base": "#6c6c6c",
       "@border-color-split": "#414141",
       "@menu-bg": "@body-background",
-      "@menu-highlight-color": "#fff",
+      "@menu-highlight-color": "@light",
       "@btn-font-size-sm": "12px",
       "@btn-default-bg": "@background-color-base",
       "@input-bg": "@background-color-light",
@@ -132,7 +134,8 @@
       "@tag-code-color": "@body-background",
       "@tag-code-bg": "@text-color",
       "@tag-kbd-color": "@body-background",
-      "@tag-kbd-bg": "@text-color"
+      "@tag-kbd-bg": "@text-color",
+      "@badge-text-color": "@light"
     }
   },
   "workspaces": {

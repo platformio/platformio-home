@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-@import '../../../node_modules/antd/es/style/index.less';
-@import "../../../node_modules/highlight.js/styles/@{hljs-theme}.css";
+ /**
+  Temporary hoos for Ant Design.
+  Please check them when upgrading Ant Design framework
+ */
 
-.ant-carousel .slick-dots li button {
-    background: @primary-color !important;
+// Hook #1. When button group contains non only-icon buttons, layout is broken
+.social-buttons .ant-btn {
+  font-size: 16px !important;
+  > span {
+    font-size: 14px;
+  }
 }
-
-@import 'app';
-@import 'common';
-@import 'modules/account';
-@import 'modules/core';
-@import 'modules/custom-icons';
-@import 'modules/home';
-@import 'modules/library';
-@import 'modules/platform';
-@import 'modules/project';
-@import 'hooks';
