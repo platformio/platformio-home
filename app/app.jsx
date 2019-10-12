@@ -15,7 +15,7 @@
  */
 
 import { Button, Layout, Tooltip } from 'antd';
-import { Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
 
 import AccountStatusBar from './modules/account/containers/status-bar';
 import AppFooter from './footer';
