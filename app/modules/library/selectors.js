@@ -85,7 +85,7 @@ export function selectLibraryData(state, idOrManifest) {
   // fix platforms and frameworks
   for (const key of ['platforms', 'frameworks']) {
     if (
-      !data.hasOwnProperty(key) ||
+      !data[key] ||
       data[key].length === 0 ||
       (typeof data[key][0] === 'object' && data[key][0].name)
     ) {
@@ -101,9 +101,7 @@ export function selectLibraryData(state, idOrManifest) {
 
   // missed fields
   for (const key of ['authors', 'frameworks', 'platforms', 'keywords']) {
-    if (!data.hasOwnProperty(key)) {
-      data[key] = [];
-    }
+    data[key] = data[key] || [];
   }
   return data;
 }
@@ -150,7 +148,7 @@ export function selectLibraryStorages(state) {
 export function selectInstalledLibs(state) {
   return selectLibraryStorages(state).map(storage => {
     const key = `installedLibs${storage.initialPath}`;
-    if (state.entities.hasOwnProperty(key)) {
+    if (state.entities[key]) {
       storage.items = state.entities[key];
     }
     storage.actions = LibraryStorage.ACTION_REVEAL | LibraryStorage.ACTION_UNINSTALL;
@@ -172,7 +170,7 @@ export function selectVisibleInstalledLibs(state) {
 export function selectLibUpdates(state) {
   return selectLibraryStorages(state).map(storage => {
     const key = `libUpdates${storage.initialPath}`;
-    if (state.entities.hasOwnProperty(key)) {
+    if (state.entities[key]) {
       storage.items = state.entities[key];
     }
     storage.actions = LibraryStorage.ACTION_REVEAL | LibraryStorage.ACTION_UPDATE;

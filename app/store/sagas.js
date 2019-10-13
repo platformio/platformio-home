@@ -39,7 +39,7 @@ function* watchLoadStore() {
       const newState = yield call(apiFetchData, {
         query: 'app.get_state'
       });
-      if (newState.hasOwnProperty('inputValues')) {
+      if (newState['inputValues']) {
         delete newState['inputValues'];
       }
       yield put(actions.updateStore(newState));

@@ -15,19 +15,11 @@
  */
 
 export function selectEntity(state, key) {
-  const items = state.entities || {};
-  if (!items.hasOwnProperty(key)) {
-    return null;
-  }
-  return items[key];
+  return (state.entities || {})[key];
 }
 
 export function selectInputValue(state, key) {
-  const data = state.inputValues || {};
-  if (!data.hasOwnProperty(key)) {
-    return null;
-  }
-  return data[key];
+  return (state.inputValues || {})[key];
 }
 
 export function selectStorage(state) {
@@ -35,9 +27,5 @@ export function selectStorage(state) {
 }
 
 export function selectStorageItem(state, key) {
-  const items = selectStorage(state);
-  if (!items.hasOwnProperty(key)) {
-    return null;
-  }
-  return items[key];
+  return selectStorage(state)[key];
 }

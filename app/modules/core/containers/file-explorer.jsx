@@ -150,8 +150,7 @@ class FileExplorer extends React.Component {
       return null;
     } else if (
       this.state.rootDir &&
-      (!this.props.osDirItems ||
-        !this.props.osDirItems.hasOwnProperty(this.state.rootDir))
+      (!this.props.osDirItems || !this.props.osDirItems[this.state.rootDir])
     ) {
       return null;
     }

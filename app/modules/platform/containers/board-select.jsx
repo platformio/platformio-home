@@ -53,7 +53,7 @@ class BoardSelect extends React.Component {
       )
       .forEach(item => {
         const group = item.platform.title;
-        const candidates = data.hasOwnProperty(group) ? data[group] : [];
+        const candidates = data[group] || [];
         candidates.push(item);
         data[group] = candidates;
       });

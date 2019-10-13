@@ -54,7 +54,7 @@ class ProjectOpenModal extends React.Component {
   }
 
   validateProjectDir(osIsFileItems) {
-    if (!osIsFileItems || !osIsFileItems.hasOwnProperty(this.state.platformioIni)) {
+    if (!osIsFileItems || !osIsFileItems[this.state.platformioIni]) {
       if (!this.state.checking) {
         this.props.osIsFile(this.state.platformioIni);
       }
