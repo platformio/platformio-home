@@ -37,10 +37,10 @@ export function configureStore(initialState) {
   const sagaMiddleware = createSagaMiddleware();
   const middlewares = [
     crashReporterMiddleware,
-    sagaMiddleware,
     apiMiddleware({
       endpoint: BACKEND_ENDPOINT
-    })
+    }),
+    sagaMiddleware
   ];
 
   if (process.env.NODE_ENV !== 'production') {

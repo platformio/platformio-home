@@ -23,31 +23,19 @@ const workspaces = {
   aceinna: require('./aceinna/index').default
 };
 
-let workspace = workspaces['platformio'];
 const customWorkspaceName = getQueryVariable('workspace');
-if (workspaces.hasOwnProperty(customWorkspaceName)) {
-  workspace = workspaces[customWorkspaceName];
-}
+const workspace = workspaces[customWorkspaceName] || workspaces['platformio'];
 
 export function get(id, defaultValue = undefined) {
-  if (workspace.hasOwnProperty(id)) {
-    return workspace[id];
-  }
-  return defaultValue;
+  return workspace[id] || defaultValue;
 }
 
 export function getMessage(id) {
-  if (workspace.messages.hasOwnProperty(id)) {
-    return workspace.messages[id];
-  }
-  return id;
+  return workspace.messages[id] || id;
 }
 
 export function getUrl(id, defaultValue = undefined) {
-  if (workspace.urls.hasOwnProperty(id)) {
-    return workspace.urls[id];
-  }
-  return defaultValue;
+  return workspace.urls[id] || defaultValue;
 }
 
 export function isBoardCertified(board) {
@@ -55,7 +43,7 @@ export function isBoardCertified(board) {
 }
 
 export function getCustomIcon(type) {
-  if (workspace.remapCustomIcons && workspace.remapCustomIcons.hasOwnProperty(type)) {
+  if (workspace.remapCustomIcons && workspace.remapCustomIcons[type]) {
     return <CustomIcon type={workspace.remapCustomIcons[type]} />;
   }
   return <Icon type={type} />;

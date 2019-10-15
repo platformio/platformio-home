@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-export function selectEntity(state, key) {
-  return (state.entities || {})[key];
-}
+ /**
+  Temporary hoos for Ant Design.
+  Please check them when upgrading Ant Design framework
+ */
 
-export function selectInputValue(state, key) {
-  return (state.inputValues || {})[key];
-}
-
-export function selectStorage(state) {
-  return state.storage || {};
-}
-
-export function selectStorageItem(state, key) {
-  return selectStorage(state)[key];
+// Hook #1. When button group contains non only-icon buttons, layout is broken
+.social-buttons .ant-btn {
+  font-size: 16px !important;
+  > span {
+    font-size: 14px;
+  }
 }

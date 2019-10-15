@@ -327,7 +327,7 @@ function* watchLoadLogicalDevices() {
 function* watchOsListDir() {
   yield takeEvery(actions.OS_LIST_DIR, function*({ path }) {
     let items = yield select(selectors.selectOsDirItems);
-    if (items && items.hasOwnProperty(path)) {
+    if (items && items[path]) {
       return;
     } else if (!items) {
       items = {};
@@ -349,7 +349,7 @@ function* watchOsListDir() {
 function* watchOsIsFile() {
   yield takeEvery(actions.OS_IS_FILE, function*({ path }) {
     let items = yield select(selectors.selectOsIsFileItems);
-    if (items && items.hasOwnProperty(path)) {
+    if (items && items[path]) {
       return;
     } else if (!items) {
       items = {};
@@ -371,7 +371,7 @@ function* watchOsIsFile() {
 function* watchOsIsDir() {
   yield takeEvery(actions.OS_IS_DIR, function*({ path }) {
     let items = yield select(selectors.selectOsIsDirItems);
-    if (items && items.hasOwnProperty(path)) {
+    if (items && items[path]) {
       return;
     } else if (!items) {
       items = {};

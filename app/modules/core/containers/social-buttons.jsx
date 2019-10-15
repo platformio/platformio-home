@@ -29,7 +29,7 @@ class SocialButtons extends React.Component {
 
   render() {
     return (
-      <Button.Group>
+      <Button.Group className="social-buttons">
         <Button
           icon="twitter"
           title="Follow us on Twitter"

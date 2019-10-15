@@ -507,7 +507,7 @@ export default class Boards extends React.Component {
     return (
       <span>
         <p>
-          PlatformIO currently supports over 500 boards from leading manufacturers, and
+          PlatformIO currently supports over 700 boards from leading manufacturers, and
           we are constantly adding new ones.
         </p>
         You can be part of the process by letting us know what board you wish to see

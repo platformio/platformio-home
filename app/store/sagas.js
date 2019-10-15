@@ -18,7 +18,7 @@
 
 import * as actions from './actions';
 
-import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { INPUT_FILTER_DELAY } from '../config';
 import accountSagas from '../modules/account/sagas';
@@ -40,7 +40,7 @@ function* watchLoadStore() {
       const newState = yield call(apiFetchData, {
         query: 'app.get_state'
       });
-      if (newState.hasOwnProperty('inputValues')) {
+      if (newState['inputValues']) {
         delete newState['inputValues'];
       }
       yield put(actions.updateStore(newState));
@@ -91,18 +91,20 @@ function* watchLazyUpdateInputValue() {
 }
 
 export default function* root() {
-  yield [
-    watchLoadStore,
-    autoSaveState,
-    watchLazyUpdateInputValue,
-    ...telemetrySagas,
-    ...accountSagas,
-    ...coreSagas,
-    ...deviceSagas,
-    ...homeSagas,
-    ...librarySagas,
-    ...projectSagas,
-    ...platformSagas,
-    ...inspectSagas
-  ].map(item => fork(item));
+  yield all(
+    [
+      watchLoadStore,
+      autoSaveState,
+      watchLazyUpdateInputValue,
+      ...telemetrySagas,
+      ...accountSagas,
+      ...coreSagas,
+      ...deviceSagas,
+      ...homeSagas,
+      ...librarySagas,
+      ...projectSagas,
+      ...platformSagas,
+     ...inspectSagas
+    ].map(s => s())
+  );
 }

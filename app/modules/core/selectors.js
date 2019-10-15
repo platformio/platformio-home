@@ -23,7 +23,7 @@ export function selectShowAtStartup(state) {
     return true;
   }
   const data = selectStorageItem(state, 'showOnStartup');
-  return !data || !data.hasOwnProperty(caller) || data[caller];
+  return !data || !Object.prototype.hasOwnProperty.call(data, caller) || data[caller];
 }
 
 export function getRequestContentKey(uri, data = undefined) {
