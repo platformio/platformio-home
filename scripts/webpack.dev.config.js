@@ -14,7 +14,6 @@ const common = require('./webpack.common');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-
 module.exports = {
   mode: 'development',
   entry: [
@@ -58,7 +57,7 @@ module.exports = {
   devServer: {
     contentBase: './dist',
     // do not print bundle build stats
-    noInfo: true,
+    // noInfo: true,
     // enable HMR
     hot: true,
     // embed the webpack-dev-server runtime into the bundle

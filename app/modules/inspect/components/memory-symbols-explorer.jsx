@@ -28,6 +28,7 @@ import {
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { SYMBOL_ICON_BY_TYPE } from '@inspect/constants';
 
 export const SymbolType = PropTypes.shape({
   addr: PropTypes.number.isRequired,
@@ -57,11 +58,6 @@ export class MemorySymbolsExplorer extends React.PureComponent {
     onDirChange: PropTypes.func
   };
 
-  static iconsMap = Object.freeze({
-    STT_FUNC: 'profile',
-    STT_OBJECT: 'tag'
-  });
-
   constructor(...args) {
     super(...args);
 
@@ -77,7 +73,7 @@ export class MemorySymbolsExplorer extends React.PureComponent {
   }
 
   renderIcon(type) {
-    const icon = MemorySymbolsExplorer.iconsMap[type];
+    const icon = SYMBOL_ICON_BY_TYPE[type];
     return icon && <Icon type={icon} />;
   }
 

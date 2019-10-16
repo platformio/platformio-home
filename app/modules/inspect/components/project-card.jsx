@@ -21,6 +21,7 @@ import { TagSelect } from './tag-select';
 import humanize from 'humanize';
 
 export const ACTION_INSPECT = 'inspect';
+export const ACTION_VIEW = 'view';
 
 export const ProjectType = PropTypes.shape({
   name: PropTypes.string.isRequired,
@@ -43,6 +44,7 @@ export const ProjectType = PropTypes.shape({
 export class ProjectCard extends React.PureComponent {
   static propTypes = {
     data: ProjectType.isRequired,
+    inspectionStatus: PropTypes.string,
     onAction: PropTypes.func
   };
 
@@ -69,6 +71,16 @@ export class ProjectCard extends React.PureComponent {
     });
   };
 
+  handleViewAction = () => {
+    const { onAction } = this.props;
+    if (!onAction) {
+      return;
+    }
+    onAction({
+      name: ACTION_VIEW
+    });
+  };
+
   handleEnvChange = selectedEnvs => {
     this.setState({
       selectedEnvs
@@ -82,9 +94,12 @@ export class ProjectCard extends React.PureComponent {
   };
 
   render() {
-    const { name, path, modified, envLibStorages = [] } = this.props.data;
-    const { selectedEnvs } = this.state;
+    const { data, inspectionStatus } = this.props;
+    const inspectionReady = inspectionStatus && inspectionStatus === 'ready';
+    const { name, path, modified, envLibStorages = [] } = data;
     const envs = envLibStorages.map(({ name: x }) => x);
+    const { selectedEnvs } = this.state;
+    const buttonsMinWidth = 120;
 
     const header = (
       <div className="clearfix">
@@ -99,6 +114,7 @@ export class ProjectCard extends React.PureComponent {
         </div>
       </div>
     );
+
     return (
       <Card hoverable title={header} className="list-item-card">
         <Row className="block">
@@ -120,16 +136,33 @@ export class ProjectCard extends React.PureComponent {
         </Row>
         <Row className="block">
           <Col sm={24}>
-            <Button
-              size="large"
-              icon="copy"
-              key="inspect"
-              data-path={path}
-              type="primary"
-              onClick={this.handleInspectAction}
-            >
-              Inspect
-            </Button>
+            <div className="inline-buttons">
+              <Button
+                loading={inspectionStatus && inspectionStatus.endsWith('ing')}
+                size="large"
+                icon="caret-right"
+                key="inspect"
+                data-path={path}
+                type={inspectionReady ? 'default' : 'primary'}
+                onClick={this.handleInspectAction}
+                style={{ minWidth: buttonsMinWidth }}
+              >
+                Inspect
+              </Button>
+
+              <Button
+                disabled={!inspectionReady}
+                size="large"
+                icon="monitor"
+                key="view"
+                data-path={path}
+                type="primary"
+                onClick={this.handleViewAction}
+                style={{ minWidth: buttonsMinWidth }}
+              >
+                View
+              </Button>
+            </div>
           </Col>
         </Row>
       </Card>

@@ -18,11 +18,13 @@
 
 import * as pathlib from '@core/path';
 
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { INSPECTION_KEY } from '@inspect/constants';
 import { INSPECT_PROJECT } from './actions';
 import { apiFetchData } from '@store/api';
+import { goTo } from '@core/helpers';
+import { notifyError } from '@core/actions';
 import { updateEntity } from '@store/actions';
 
 function* watchInspectProject() {
@@ -38,44 +40,73 @@ function* watchInspectProject() {
       env
     };
     try {
+      let codeCheckResult;
       if (force) {
         yield put(
-          updateEntity(INSPECTION_KEY, { meta: { ...meta, state: 'generating' } })
+          updateEntity(INSPECTION_KEY, {
+            meta: { ...meta, status: 'generating' },
+            data: undefined
+          })
         );
-        const runResult = yield call(apiFetchData, {
+        yield call(apiFetchData, {
           query: 'core.call',
           params: [['run', '-d', projectDir, '-e', env, '-t', 'sizedata']]
         });
-      }
-      yield put(updateEntity(INSPECTION_KEY, { meta: { ...meta, state: 'reading' } }));
-      // TODO: setup passing router into saga context to access router from saga
-      // see https://github.com/ReactTraining/react-router/issues/3972#issuecomment-251189856
-      // yield put(push());
 
-      const uri = pathlib.join(projectDir, '.pio', 'build', env, 'sizedata.json');
+        if (inspectCode) {
+          const codeCheckResults = yield call(apiFetchData, {
+            query: 'core.call',
+            params: [['check', '-d', projectDir, '-e', env, '--json-output']]
+          });
+          if (codeCheckResults && codeCheckResults.length) {
+            codeCheckResult = codeCheckResults[0];
+          }
+        }
+      }
+
+      const buildDir = yield call(apiFetchData, {
+        query: 'project.config_call',
+        params: [
+          pathlib.join(projectDir, 'platformio.ini'),
+          'get_optional_dir',
+          'build'
+        ]
+      });
+      const uri = pathlib.join(buildDir, env, 'sizedata.json');
+      yield put(updateEntity(INSPECTION_KEY, { meta: { ...meta, status: 'reading' } }));
+
       const jsonContent = yield call(apiFetchData, {
         query: 'os.request_content',
         params: [uri]
       });
       const data = JSON.parse(jsonContent);
+      if (codeCheckResult) {
+        data.codeCheck = codeCheckResult;
+      }
+
       yield put(
-        updateEntity(INSPECTION_KEY, { data, meta: { ...meta, state: 'ready' } })
+        updateEntity(INSPECTION_KEY, { data, meta: { ...meta, status: 'ready' } })
       );
+
+      const state = yield select();
+      if (state.router) {
+        goTo(state.router.history, '/inspect/result/stats', undefined, true);
+      }
     } catch (err) {
       if (err instanceof SyntaxError) {
         yield put(
           updateEntity(INSPECTION_KEY, {
-            meta: { ...meta, state: 'error', error: 'Bad JSON' }
+            meta: { ...meta, status: 'error', error: 'Bad JSON' }
           })
         );
       } else {
         yield put(
           updateEntity(INSPECTION_KEY, {
-            meta: { ...meta, state: 'error', error: 'Exception' }
+            meta: { ...meta, status: 'error', error: 'Exception' }
           })
         );
       }
-      console.error('Failed to run and get sizedata.json', err);
+      yield put(notifyError('Sorry, error encountered during Inspection', err));
     }
   });
 }

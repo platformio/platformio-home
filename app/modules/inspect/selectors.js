@@ -83,15 +83,70 @@ export function selectSymbolsSizeData(state) {
     .flat();
 }
 
+const levelsBySeverity = {
+  high: 1,
+  medium: 2,
+  low: 3
+};
+
 export function selectSizeStats(state) {
   const data = selectProjectInspectionData(state);
   if (!data) {
     return;
   }
-  const { memory: { files = [], total: { sections = [] } = {} } = {} } = data;
+  const {
+    codeCheck: { defects = [] } = {},
+    memory: {
+      files = [],
+      total: { ram_size: ram, flash_size: flash, sections = [] } = {}
+    } = {}
+  } = data;
+
+  const allSymbols = selectSymbolsSizeData(state);
+
   return {
+    ram,
+    flash,
     filesCount: files.length,
     symbolsCount: files.reduce((total, { symbols = [] }) => total + symbols.length, 0),
-    sectionsCount: Object.keys(sections).length
+    sectionsCount: Object.keys(sections).length,
+    topSymbols: allSymbols
+      .sort((a, b) => b.size - a.size)
+      .slice(0, 5)
+      .map(({ displayName, size, type }) => ({ displayName, size, type })),
+    topFiles: files
+      .map(({ flash_size, path }) => ({ flash: flash_size, path }))
+      .sort((a, b) => b.flash - a.flash)
+      .slice(0, 5),
+    defectsCountTotal: defects.length,
+    defectsCountBySeverity: {
+      low: defects.filter(({ severity }) => severity === 'low').length,
+      medium: defects.filter(({ severity }) => severity === 'medium').length,
+      high: defects.filter(({ severity }) => severity === 'high').length
+    },
+    topDefects: defects
+      .map(d => ({ ...d, level: levelsBySeverity[d.severity] }))
+      .sort((a, b) => a.severity - b.severity)
+      .slice(0, 5)
   };
+}
+
+export function selectCodeCheckData(state) {
+  const data = selectProjectInspectionData(state) || {};
+  if (!data.codeCheck || !data.codeCheck.defects) {
+    return;
+  }
+  const { codeCheck } = data;
+  return codeCheck.defects.map(
+    ({ category, column, file, id, line, message, severity }) => ({
+      category,
+      column,
+      file,
+      id,
+      line,
+      message,
+      severity,
+      tool: codeCheck.tool
+    })
+  );
 }

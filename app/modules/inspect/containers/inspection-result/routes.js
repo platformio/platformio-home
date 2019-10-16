@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import CodeDefectsPage from './code-defects-page';
 import FileExplorerPage from './memory-explorer-page';
 import MemoryStatisticsPage from './memory-stats-page';
 import SectionsExplorerPage from './memory-sections-page';
@@ -29,7 +30,7 @@ const routes = [
   {
     path: '/inspect/result/files',
     icon: 'cluster',
-    label: 'Memory Explorer',
+    label: 'Explorer',
     component: FileExplorerPage
   },
   {
@@ -43,6 +44,12 @@ const routes = [
     icon: 'database',
     label: 'Sections',
     component: SectionsExplorerPage
+  },
+  {
+    path: '/inspect/result/defects',
+    icon: 'bug',
+    label: 'Defects',
+    component: CodeDefectsPage
   }
 ];
 

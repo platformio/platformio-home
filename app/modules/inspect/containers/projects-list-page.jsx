@@ -16,6 +16,7 @@
 
 import {
   ACTION_INSPECT,
+  ACTION_VIEW,
   ProjectCard,
   ProjectType
 } from '@inspect/components/project-card';
@@ -23,15 +24,22 @@ import {
 import { Badge, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
 import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
+import { selectProjectInspectionMeta } from '@inspect/selectors';
 import { selectVisibleProjects } from '@project/selectors';
+
+const InspectionMetaType = PropTypes.shape({
+  error: PropTypes.string,
+  projectDir: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired
+});
 
 class ProjectsListPage extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(ProjectType),
+    inspectionMeta: InspectionMetaType,
     loadProjects: PropTypes.func.isRequired,
     inspectProject: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired
@@ -44,16 +52,16 @@ class ProjectsListPage extends React.Component {
   }
 
   handleProjectAction = action => {
-    if (action.name !== ACTION_INSPECT) {
-      return;
+    if (action.name === ACTION_INSPECT) {
+      const { path, environments, inspectCode } = action;
+      this.props.inspectProject(path, environments, inspectCode, true);
+    } else if (action.name === ACTION_VIEW) {
+      this.props.history.push('/inspect/result/stats');
     }
-    const { path, environments, inspectCode } = action;
-    this.props.inspectProject(path, environments, inspectCode, true);
-    this.props.history.push('/inspect/result/stats');
   };
 
   render() {
-    const { items } = this.props;
+    const { items, inspectionMeta } = this.props;
     return (
       <div style={{ paddingTop: 12 }}>
         <div>
@@ -71,6 +79,11 @@ class ProjectsListPage extends React.Component {
           items.map(item => (
             <ProjectCard
               key={item.path}
+              inspectionStatus={
+                inspectionMeta && inspectionMeta.projectDir === item.path
+                  ? inspectionMeta.status
+                  : undefined
+              }
               data={item}
               onAction={this.handleProjectAction}
             />
@@ -82,7 +95,8 @@ class ProjectsListPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectVisibleProjects(state)
+    items: selectVisibleProjects(state),
+    inspectionMeta: selectProjectInspectionMeta(state)
   };
 }
 

@@ -104,7 +104,7 @@ export default function* root() {
       ...librarySagas,
       ...projectSagas,
       ...platformSagas,
-     ...inspectSagas
+      ...inspectSagas
     ].map(s => s())
   );
 }
