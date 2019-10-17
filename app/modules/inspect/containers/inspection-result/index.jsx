@@ -14,63 +14,82 @@
  * limitations under the License.
  */
 
-import { Breadcrumb } from 'antd';
-import { Link } from 'react-router-dom';
+import { Button } from 'antd';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Redirect } from 'react-router';
 import childRoutes from './routes';
 import { connect } from 'react-redux';
+import { generateProjectNameFromPath } from '@inspect/helpers';
+import { inspectProject } from '@inspect/actions';
 import { selectProjectInspectionMeta } from '@inspect/selectors';
-import { selectProjects } from '@project/selectors';
 
-class InspectionResultPage extends React.Component {
+class InspectionResultComponent extends React.Component {
   static propTypes = {
-    location: PropTypes.object.isRequired,
-    projectName: PropTypes.string
+    meta: PropTypes.shape({
+      flags: PropTypes.shape({
+        code: PropTypes.bool,
+        memory: PropTypes.bool
+      }),
+      projectDir: PropTypes.string,
+      env: PropTypes.string,
+      status: PropTypes.string
+    }),
+    onInspect: PropTypes.func.isRequired
   };
 
-  renderBreadcrumb() {
-    const breadcrumbMap = {
-      '/inspect': 'Projects',
-      '/inspect/result': this.props.projectName
-    };
-
-    const parts = this.props.location.pathname.split('/');
-    const items = parts
-      .filter((_name, i) => i)
-      .map((_name, i) => parts.slice(0, i + 2).join('/'))
-      .filter(url => breadcrumbMap[url]);
-
-    return (
-      <Breadcrumb>
-        {items.map((url, i) => (
-          <Breadcrumb.Item key={i}>
-            <Link to={url}>{breadcrumbMap[url]}</Link>
-          </Breadcrumb.Item>
-        ))}
-      </Breadcrumb>
-    );
-  }
+  handleRefreshClick = () => {
+    const { onInspect, meta } = this.props;
+    const { env, projectDir, flags } = meta;
+    onInspect(projectDir, env, flags, true);
+  };
 
   render() {
+    const { meta } = this.props;
+    const { status = '', projectDir } = meta;
+
+    const routes = ['common', 'memory', 'code']
+      .filter(flag => flag === 'common' || (meta.flags && meta.flags[flag]))
+      .map(flag => childRoutes[flag])
+      .flat();
+
+    if (!routes.length) {
+      // Result is no available or no tabs to show
+      return <Redirect to="/inspect/form" />;
+    }
+
     return (
       <div style={{ marginTop: 12 }}>
-        {this.renderBreadcrumb()}
-        <MultiPage routes={childRoutes} />
+        <h1 style={{ marginBottom: 0, position: 'relative' }}>
+          {generateProjectNameFromPath(projectDir)}
+          <Button
+            icon="reload"
+            loading={status.endsWith('ing')}
+            style={{ position: 'absolute', right: 0, top: 0 }}
+            onClick={this.handleRefreshClick}
+          >
+            Refresh
+          </Button>
+        </h1>
+        <small>{projectDir}</small>
+        <MultiPage routes={routes} />
       </div>
     );
   }
 }
 
 function mapStateToProps(state) {
-  const meta = selectProjectInspectionMeta(state);
-  const project =
-    meta && selectProjects(state).filter(x => x.path === meta.projectDir)[0];
-
   return {
-    projectName: project ? project.name : ''
+    meta: selectProjectInspectionMeta(state) || {}
   };
 }
 
-export default connect(mapStateToProps)(InspectionResultPage);
+const dispatchProps = {
+  onInspect: inspectProject
+};
+
+export const InspectionResultPage = connect(
+  mapStateToProps,
+  dispatchProps
+)(InspectionResultComponent);

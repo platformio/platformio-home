@@ -27,7 +27,8 @@ export default class MultiPage extends React.Component {
 
   static propTypes = {
     routes: PropTypes.arrayOf(PropTypes.object).isRequired,
-    disableMenu: PropTypes.bool
+    disableMenu: PropTypes.bool,
+    children: PropTypes.object
   };
 
   render() {
@@ -61,6 +62,7 @@ export default class MultiPage extends React.Component {
                 />
               )
             )}
+          {this.props.children}
         </Switch>
       </div>
     );

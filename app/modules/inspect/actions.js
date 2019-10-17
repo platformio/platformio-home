@@ -17,17 +17,25 @@
 import { createAction } from '@store/actions';
 
 export const INSPECT_PROJECT = 'INSPECT_PROJECT';
+export const LOAD_PROJECT_ENVS = 'LOAD_PROJECTS_ENVS';
 
-export function inspectProject(
-  projectDir,
-  environments,
-  inspectCode = false,
-  force = true
-) {
+export const SAVE_INSPECT_FORM = 'SAVE_INSPECT_FORM';
+
+export function inspectProject(projectDir, env, flags, force = true) {
   return createAction(INSPECT_PROJECT, {
     projectDir,
-    environments,
-    inspectCode,
+    env,
+    flags,
     force
   });
+}
+
+export function loadProjectEnvironments(projectPath) {
+  return createAction(LOAD_PROJECT_ENVS, {
+    projectPath
+  });
+}
+
+export function saveInspectForm(data) {
+  return createAction(SAVE_INSPECT_FORM, { data });
 }

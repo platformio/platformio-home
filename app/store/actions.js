@@ -27,6 +27,7 @@ export const RESET_STORE = 'RESET_STORE';
 export const SAVE_STATE = 'SAVE_STATE';
 
 export const UPDATE_ENTITY = 'UPDATE_ENTITY';
+export const PATCH_ENTITY = 'PATCH_ENTITY';
 export const DELETE_ENTITY = 'DELETE_ENTITY';
 export const UPDATE_INPUT_VALUE = 'UPDATE_INPUT_VALUE';
 export const LAZY_UPDATE_INPUT_VALUE = 'LAZY_UPDATE_INPUT_VALUE';
@@ -43,6 +44,9 @@ export const resetStore = () => createAction(RESET_STORE);
 export const saveState = () => createAction(SAVE_STATE);
 
 export const updateEntity = (key, data) => createAction(UPDATE_ENTITY, { key, data });
+export const patchEntity = (key, data, meta) =>
+  createAction(PATCH_ENTITY, { key, data, meta });
+
 export const deleteEntity = re => createAction(DELETE_ENTITY, { re });
 export const updateInputValue = (key, value) =>
   createAction(UPDATE_INPUT_VALUE, { key, value });

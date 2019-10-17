@@ -22,7 +22,7 @@ import {
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
-import { selectCodeCheckData } from '@inspect/selectors';
+import { selectCodeCheckDefects } from '@inspect/selectors';
 
 class SectionsExplorerPage extends React.PureComponent {
   static propTypes = {
@@ -48,7 +48,7 @@ class SectionsExplorerPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    defects: selectCodeCheckData(state)
+    defects: selectCodeCheckDefects(state)
   };
 }
 

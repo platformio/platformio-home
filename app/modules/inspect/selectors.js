@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-import { INSPECTION_KEY } from '@inspect/constants';
+import { ENVS_KEY, FORM_KEY, RESULT_KEY } from '@inspect/constants';
 import { fixPath } from '@inspect/helpers';
+import { selectEntity } from '../../store/selectors';
+
+export function selectInspectionResult(state) {
+  const key = selectEntity(state, RESULT_KEY);
+  if (!key) {
+    return;
+  }
+  return selectEntity(state, key);
+}
 
 export function selectProjectInspectionMeta(state) {
-  return (state.entities[INSPECTION_KEY] || {}).meta;
+  const entity = selectInspectionResult(state) || {};
+  return entity.meta;
 }
 
 function selectProjectInspectionData(state) {
-  return (state.entities[INSPECTION_KEY] || {}).data;
+  const entity = selectInspectionResult(state) || {};
+  return entity.data;
 }
 
 export function selectExplorerSizeData(state) {
@@ -94,44 +105,59 @@ export function selectSizeStats(state) {
   if (!data) {
     return;
   }
-  const {
-    codeCheck: { defects = [] } = {},
-    memory: {
+  const { memory } = data;
+  let memoryStats;
+  if (memory) {
+    const {
       files = [],
       total: { ram_size: ram, flash_size: flash, sections = [] } = {}
-    } = {}
-  } = data;
+    } = memory;
+    const allSymbols = selectSymbolsSizeData(state);
 
-  const allSymbols = selectSymbolsSizeData(state);
+    memoryStats = {
+      ram,
+      flash,
+      filesCount: files.length,
+      symbolsCount: files.reduce(
+        (total, { symbols = [] }) => total + symbols.length,
+        0
+      ),
+      sectionsCount: Object.keys(sections).length,
+      topSymbols: allSymbols
+        .sort((a, b) => b.size - a.size)
+        .slice(0, 5)
+        .map(({ displayName, size, type }) => ({ displayName, size, type })),
+      topFiles: files
+        .map(({ flash_size, path }) => ({ flash: flash_size, path }))
+        .sort((a, b) => b.flash - a.flash)
+        .slice(0, 5)
+    };
+  }
 
+  const defects = selectCodeCheckDefects(state);
+  let codeStats;
+
+  if (defects) {
+    codeStats = {
+      defectsCountTotal: defects.length,
+      defectsCountBySeverity: {
+        low: defects.filter(({ severity }) => severity === 'low').length,
+        medium: defects.filter(({ severity }) => severity === 'medium').length,
+        high: defects.filter(({ severity }) => severity === 'high').length
+      },
+      topDefects: defects
+        .map(d => ({ ...d, level: levelsBySeverity[d.severity] }))
+        .sort((a, b) => a.severity - b.severity)
+        .slice(0, 5)
+    };
+  }
   return {
-    ram,
-    flash,
-    filesCount: files.length,
-    symbolsCount: files.reduce((total, { symbols = [] }) => total + symbols.length, 0),
-    sectionsCount: Object.keys(sections).length,
-    topSymbols: allSymbols
-      .sort((a, b) => b.size - a.size)
-      .slice(0, 5)
-      .map(({ displayName, size, type }) => ({ displayName, size, type })),
-    topFiles: files
-      .map(({ flash_size, path }) => ({ flash: flash_size, path }))
-      .sort((a, b) => b.flash - a.flash)
-      .slice(0, 5),
-    defectsCountTotal: defects.length,
-    defectsCountBySeverity: {
-      low: defects.filter(({ severity }) => severity === 'low').length,
-      medium: defects.filter(({ severity }) => severity === 'medium').length,
-      high: defects.filter(({ severity }) => severity === 'high').length
-    },
-    topDefects: defects
-      .map(d => ({ ...d, level: levelsBySeverity[d.severity] }))
-      .sort((a, b) => a.severity - b.severity)
-      .slice(0, 5)
+    memory: memoryStats,
+    code: codeStats
   };
 }
 
-export function selectCodeCheckData(state) {
+export function selectCodeCheckDefects(state) {
   const data = selectProjectInspectionData(state) || {};
   if (!data.codeCheck || !data.codeCheck.defects) {
     return;
@@ -140,13 +166,25 @@ export function selectCodeCheckData(state) {
   return codeCheck.defects.map(
     ({ category, column, file, id, line, message, severity }) => ({
       category,
-      column,
+      column: parseInt(column, 10),
       file,
       id,
-      line,
+      line: parseInt(line, 10),
       message,
       severity,
       tool: codeCheck.tool
     })
   );
+}
+
+export function selectProjectEnvironments(state) {
+  return state.entities[ENVS_KEY];
+}
+
+export function selectFormState(state) {
+  return selectEntity(state, FORM_KEY);
+}
+
+export function selectResultKey(state) {
+  return selectEntity(state, RESULT_KEY);
 }

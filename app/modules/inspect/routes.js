@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import InspectionResultPage from '@inspect/containers/inspection-result';
-import ProjectListPage from '@inspect/containers/projects-list-page';
+import { InspectionForm } from '@inspect/containers/form';
+import { InspectionResultPage } from '@inspect/containers/inspection-result';
 
 const routes = [
   {
-    path: '/inspect',
-    icon: 'line-chart',
-    label: 'Projects',
-    component: ProjectListPage
+    path: '/inspect/form',
+    icon: 'cluster',
+    label: 'Inspection Configuration',
+    component: InspectionForm
   },
   {
     path: '/inspect/result',

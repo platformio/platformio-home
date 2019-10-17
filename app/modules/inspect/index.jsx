@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { INSPECTION_KEY } from '@inspect/constants';
+import { Redirect, Route } from 'react-router';
+
 import MultiPage from '@core/components/multipage';
+import { PREFIX } from '@inspect/constants';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -28,13 +30,20 @@ class InspectPage extends React.Component {
   };
 
   componentWillUnmount() {
-    this.props.deleteEntity(new RegExp(`^${INSPECTION_KEY}`));
+    // Delete all entities containing inspection results
+    // But keep saved form
+    this.props.deleteEntity(new RegExp(`^${PREFIX}:`));
   }
 
   render() {
     return (
       <section className="memory-inspect-module">
-        <MultiPage routes={routes} disableMenu />
+        <MultiPage routes={routes} disableMenu>
+          <Route exact path="/inspect">
+            {/* Use redirect to prevent rendering form on the results page */}
+            <Redirect to="/inspect/form" />
+          </Route>
+        </MultiPage>
       </section>
     );
   }

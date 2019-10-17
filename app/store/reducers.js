@@ -36,11 +36,23 @@ function router(state = null, action) {
 }
 
 function entities(state = {}, action) {
+  /* eslint-disable  no-case-declarations */
   switch (action.type) {
     case ActionTypes.UPDATE_ENTITY:
       return Object.assign({}, state, {
         [action.key]: action.data
       });
+
+    case ActionTypes.PATCH_ENTITY:
+      const old = state[action.key] || {};
+      const { data = {}, meta = {} } = old;
+      return {
+        ...state,
+        [action.key]: {
+          meta: action.meta !== undefined ? { ...meta, ...action.meta } : undefined,
+          data: action.data !== undefined ? { ...data, ...action.data } : undefined
+        }
+      };
 
     case ActionTypes.DELETE_ENTITY:
       return copyWithoutMatchingKeys(state, action.re);

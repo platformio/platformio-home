@@ -20,13 +20,16 @@ import MemoryStatisticsPage from './memory-stats-page';
 import SectionsExplorerPage from './memory-sections-page';
 import SymbolsExplorerPage from './memory-symbols-page';
 
-const routes = [
+const common = [
   {
-    path: '/inspect/result/stats',
+    path: '/inspect/result',
     icon: 'line-chart',
     label: 'Statistics',
     component: MemoryStatisticsPage
-  },
+  }
+];
+
+const memory = [
   {
     path: '/inspect/result/files',
     icon: 'cluster',
@@ -44,7 +47,10 @@ const routes = [
     icon: 'database',
     label: 'Sections',
     component: SectionsExplorerPage
-  },
+  }
+];
+
+const code = [
   {
     path: '/inspect/result/defects',
     icon: 'bug',
@@ -53,4 +59,8 @@ const routes = [
   }
 ];
 
-export default routes;
+export default {
+  common,
+  memory,
+  code
+};

@@ -17,6 +17,7 @@
 import * as pathlib from '@core/path';
 
 import { IS_WINDOWS } from '@app/config';
+import { RESULT_KEY } from '@inspect/constants';
 import humanize from 'humanize';
 
 export const PARENT_DIR = '..';
@@ -101,4 +102,15 @@ export function resolveRelativePathSegments(path, sep = pathlib.sep) {
     resolved.push(part);
   }
   return resolved.join(sep);
+}
+
+export function generateInspectionResultKey(path, env, memory, code) {
+  return [RESULT_KEY, path, env, memory, code].join(':');
+}
+
+export function generateProjectNameFromPath(path) {
+  if (!path) {
+    return path;
+  }
+  return pathlib.join(...pathlib.split(path).slice(-3));
 }
