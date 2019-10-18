@@ -61,6 +61,9 @@ function* _inspectMemory({ projectDir, env }) {
     query: 'os.request_content',
     params: [uri]
   });
+  if (!jsonContent) {
+    throw new Error('sizedata.json file not found. Build error?');
+  }
   const memoryData = JSON.parse(jsonContent);
   return memoryData.memory;
 }

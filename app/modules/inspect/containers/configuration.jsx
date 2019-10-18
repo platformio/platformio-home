@@ -144,7 +144,6 @@ class InspectionFormComponent extends React.Component {
       <Select
         loading={projectDir && !this.props.envs}
         disabled={!projectDir}
-        showSearch
         style={{ width: '100%' }}
         size="large"
         placeholder={this.props.envs ? 'Select environment' : ''}
