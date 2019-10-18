@@ -25,7 +25,7 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
-import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
 import { PLATFORMIO_API_ENDPOINT } from '../../config';
@@ -73,7 +73,7 @@ export function* checkRegistryPlatformsAndFrameworks(silent) {
   if (!(yield select(selectors.selectRegistryFrameworks))) {
     tasks.push(call(_loadRegistryFrameworks, silent));
   }
-  yield tasks;
+  yield all(tasks);
 }
 
 function* checkBoards() {
