@@ -55,9 +55,7 @@ class ProjectSelectComponent extends React.PureComponent {
           showSearch
           style={{ width: '100%' }}
           size="large"
-          placeholder={
-            items ? `Select a project (${items.length} available)` : 'Loading…'
-          }
+          placeholder={items ? 'Select a project' : 'Loading…'}
           optionFilterProp="children"
           filterOption={this.handleFilterOption}
           onChange={this.handleChange}
