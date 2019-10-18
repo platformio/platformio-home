@@ -20,14 +20,10 @@ import { InspectionResultPage } from '@inspect/containers/inspection-result';
 const routes = [
   {
     path: '/inspect/form',
-    icon: 'cluster',
-    label: 'Inspection Configuration',
     component: InspectionForm
   },
   {
     path: '/inspect/result',
-    icon: 'cluster',
-    label: 'File Explorer',
     component: InspectionResultPage
   }
 ];

@@ -87,9 +87,9 @@ class ProjectEnvSelectComponent extends React.PureComponent {
 
 // Redux
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   return {
-    items: selectProjectEnvironments(state)
+    items: selectProjectEnvironments(state, ownProps.project)
   };
 }
 

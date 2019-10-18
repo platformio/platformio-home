@@ -15,11 +15,11 @@
  */
 
 //  Prefix for names of entities
-export const PREFIX = 'projectInspection';
+export const PREFIX = 'inspect';
 export const RESULT_KEY = PREFIX + 'Result';
 // Entity name to save list of environments
 export const ENVS_KEY = PREFIX + 'Envs';
-export const FORM_KEY = PREFIX + 'Form';
+export const CONFIG_KEY = PREFIX + 'Configuration';
 export const SYMBOL_ICON_BY_TYPE = Object.freeze({
   STT_FUNC: 'profile',
   STT_OBJECT: 'tag'

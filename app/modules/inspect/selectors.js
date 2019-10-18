@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-import { ENVS_KEY, FORM_KEY, RESULT_KEY } from '@inspect/constants';
-import { fixPath } from '@inspect/helpers';
-import { selectEntity } from '../../store/selectors';
+import { CONFIG_KEY, ENVS_KEY, RESULT_KEY } from '@inspect/constants';
+import { fixPath, shallowCompare } from '@inspect/helpers';
+import { selectEntity } from '@store/selectors';
 
 export function selectInspectionResult(state) {
-  const key = selectEntity(state, RESULT_KEY);
-  if (!key) {
-    return;
-  }
-  return selectEntity(state, key);
+  return selectEntity(state, RESULT_KEY);
 }
 
 export function selectProjectInspectionMeta(state) {
@@ -177,14 +173,20 @@ export function selectCodeCheckDefects(state) {
   );
 }
 
-export function selectProjectEnvironments(state) {
-  return state.entities[ENVS_KEY];
+export function selectProjectEnvironments(state, projectPath) {
+  return (selectEntity(state, ENVS_KEY) || {})[projectPath];
 }
 
-export function selectFormState(state) {
-  return selectEntity(state, FORM_KEY);
+export function selectSavedConfiguration(state, defaults) {
+  if (!defaults) {
+    defaults = {
+      memory: true,
+      code: true
+    };
+  }
+  return selectEntity(state, CONFIG_KEY) || defaults;
 }
 
-export function selectResultKey(state) {
-  return selectEntity(state, RESULT_KEY);
+export function selectIsConfigurationDifferent(state, newConfiguration) {
+  return !shallowCompare(newConfiguration, selectSavedConfiguration(state));
 }

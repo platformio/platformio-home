@@ -15,16 +15,18 @@
  */
 
 import { Button, Col, Form, Row, Switch } from 'antd';
-import { inspectProject, saveInspectForm } from '@inspect/actions';
+import {
+  selectProjectInspectionMeta,
+  selectSavedConfiguration
+} from '@inspect/selectors';
 
+import { ConfigurationType } from '@inspect/types';
 import { ProjectEnvSelect } from '@inspect/containers/project-env-select';
 import { ProjectSelect } from '@project/containers/project-select';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { generateInspectionResultKey } from '../helpers';
-import { goTo } from '@core/helpers';
-import { selectFormState } from '@inspect/selectors';
+import { inspectProject } from '@inspect/actions';
 
 class InspectionFormComponent extends React.Component {
   static propTypes = {
@@ -32,71 +34,43 @@ class InspectionFormComponent extends React.Component {
     // Antd generated Form
     form: PropTypes.object,
     // Saved Redux form state
-    formState: PropTypes.object,
-    history: PropTypes.object.isRequired,
-    entities: PropTypes.object,
-    onChange: PropTypes.func.isRequired,
+    savedConfiguration: ConfigurationType,
+    meta: PropTypes.shape({
+      status: PropTypes.string,
+      error: PropTypes.string
+    }),
     onInspect: PropTypes.func.isRequired
   };
 
   constructor(...args) {
     super(...args);
-    this.state = { submitted: false };
+    this.state = {};
   }
 
-  componentDidUpdate() {
-    const { history } = this.props;
-    const { submitted } = this.state;
-    const redirectPath = '/inspect/result';
-    if (
-      submitted &&
-      this.getStatus() === 'ready' &&
-      history.location.pathname !== redirectPath
-    ) {
-      this.setState({ submitted: false });
-      goTo(history, redirectPath);
-    }
+  componentDidMount() {
+    const { form, savedConfiguration } = this.props;
+    form.setFieldsValue(savedConfiguration);
   }
 
-  getStatus() {
-    const { project, env, memory, code } = this.props.form.getFieldsValue();
-    if (!project || !env) {
-      return '';
-    }
-    const key = generateInspectionResultKey(project, env, memory, code);
-    const entity = this.props.entities[key] || {};
-    return (entity.meta || {}).status || '';
+  isValid() {
+    const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
+    return projectDir && projectDir.length && env && env.length && (memory || code);
   }
 
   handleSubmit = e => {
-    const { form } = this.props;
-
     e.preventDefault();
-    form.validateFields((err, values) => {
-      const { project, env, memory, code } = values;
-      if (!(memory || code)) {
-        const error = new Error('Please check memory or code');
-        form.setFields({
-          memory: {
-            errors: [error]
-          },
-          code: {
-            errors: [error]
-          }
-        });
-        return;
-      }
-      if (err) {
-        return;
-      }
-      this.setState({ submitted: true });
-      this.props.onInspect(project, env, { memory, code }, true);
-    });
+    if (!this.isValid()) {
+      return;
+    }
+    const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
+    const configuration = { projectDir, env, memory, code };
+    this.props.onInspect(configuration, true);
   };
 
   render() {
-    const { form } = this.props;
+    const { form, meta } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
+    const { status = '', error } = meta;
 
     const labelSpan = 3;
     const wrapperSpan = 13;
@@ -121,58 +95,37 @@ class InspectionFormComponent extends React.Component {
         </Row>
         <Form layout="horizontal" onSubmit={this.handleSubmit}>
           <Form.Item label="Project" {...itemLayout}>
-            {getFieldDecorator('project', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please select project'
-                }
-              ]
-            })(<ProjectSelect onChange={this.handleProjectChange} />)}
+            {getFieldDecorator('projectDir')(<ProjectSelect />)}
           </Form.Item>
 
           <Form.Item label="Environment" {...itemLayout}>
-            {getFieldDecorator('env', {
-              rules: [
-                {
-                  required: true,
-                  message: 'Please select environment'
-                }
-              ]
-            })(
-              <ProjectEnvSelect
-                project={getFieldValue('project')}
-                onChange={this.handleEnvChange}
-              />
+            {getFieldDecorator('env')(
+              <ProjectEnvSelect project={getFieldValue('projectDir')} />
             )}
           </Form.Item>
 
-          <Form.Item {...buttonsLayout}>
-            <Button type="link">Advanced Settings…</Button>
+          <Form.Item wrapperCol={{ span: 14, offset: labelSpan }}>
+            <span className="ant-form-item-label" style={{ marginRight: 15 }}>
+              <label>Inspect Memory</label>
+              {getFieldDecorator('memory', {
+                valuePropName: 'checked',
+                initialValue: true
+              })(<Switch onChange={this.handleMemorySwitch} />)}
+            </span>
+            <span className="ant-form-item-label">
+              <label>Check Code</label>
+              {getFieldDecorator('code', {
+                valuePropName: 'checked',
+                initialValue: true
+              })(<Switch onChange={this.handleCodeSwitch} />)}
+            </span>
           </Form.Item>
-          <div style={{ display: 'block' }}>
-            <Form.Item wrapperCol={{ span: 14, offset: labelSpan }}>
-              <span className="ant-form-item-label" style={{ marginRight: 15 }}>
-                <label>Memory</label>
-                {getFieldDecorator('memory', {
-                  valuePropName: 'checked',
-                  initialValue: true
-                })(<Switch onChange={this.handleMemorySwitch} />)}
-              </span>
-              <span className="ant-form-item-label">
-                <label>Code</label>
-                {getFieldDecorator('code', {
-                  valuePropName: 'checked',
-                  initialValue: true
-                })(<Switch onChange={this.handleCodeSwitch} />)}
-              </span>
-            </Form.Item>
-          </div>
 
           <Form.Item {...buttonsLayout}>
             <Button
               htmlType="submit"
-              loading={this.getStatus().endsWith('ing')}
+              disabled={!this.isValid()}
+              loading={status.endsWith('ing')}
               size="large"
               icon="caret-right"
               type="primary"
@@ -181,29 +134,22 @@ class InspectionFormComponent extends React.Component {
             </Button>
           </Form.Item>
         </Form>
+        {error && <textarea value={error} />}
       </div>
     );
   }
 }
 
-const WrappedInspectionForm = Form.create({
-  // mapPropsToFields(props) {
-  //   Form.createFormField()
-  // }
-  onFieldsChange(props, _patch, data) {
-    props.onChange(data);
-  }
-})(InspectionFormComponent);
+const WrappedInspectionForm = Form.create()(InspectionFormComponent);
 
 function mapStateToProps(state) {
   return {
-    formState: selectFormState(state),
-    entities: state.entities
+    meta: selectProjectInspectionMeta(state) || {},
+    savedConfiguration: selectSavedConfiguration(state)
   };
 }
 
 const dispatchProps = {
-  onChange: saveInspectForm,
   onInspect: inspectProject
 };
 

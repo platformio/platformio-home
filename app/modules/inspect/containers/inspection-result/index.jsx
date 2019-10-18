@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+import {
+  selectProjectInspectionMeta,
+  selectSavedConfiguration
+} from '@inspect/selectors';
+
 import { Button } from 'antd';
+import { ConfigurationType } from '@inspect/types';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -23,36 +29,30 @@ import childRoutes from './routes';
 import { connect } from 'react-redux';
 import { generateProjectNameFromPath } from '@inspect/helpers';
 import { inspectProject } from '@inspect/actions';
-import { selectProjectInspectionMeta } from '@inspect/selectors';
 
 class InspectionResultComponent extends React.Component {
   static propTypes = {
-    meta: PropTypes.shape({
-      flags: PropTypes.shape({
-        code: PropTypes.bool,
-        memory: PropTypes.bool
-      }),
-      projectDir: PropTypes.string,
-      env: PropTypes.string,
-      status: PropTypes.string
-    }),
+    status: PropTypes.string.isRequired,
+    currentConfiguration: ConfigurationType.isRequired,
     onInspect: PropTypes.func.isRequired
   };
 
   handleRefreshClick = () => {
-    const { onInspect, meta } = this.props;
-    const { env, projectDir, flags } = meta;
-    onInspect(projectDir, env, flags, true);
+    const { onInspect, currentConfiguration } = this.props;
+    onInspect(currentConfiguration, true);
   };
 
   render() {
-    const { meta } = this.props;
-    const { status = '', projectDir } = meta;
+    const { status, currentConfiguration } = this.props;
+    const { projectDir, memory, code } = currentConfiguration;
 
-    const routes = ['common', 'memory', 'code']
-      .filter(flag => flag === 'common' || (meta.flags && meta.flags[flag]))
-      .map(flag => childRoutes[flag])
-      .flat();
+    const routes = [...childRoutes.common];
+    if (memory) {
+      routes.push(...childRoutes.memory);
+    }
+    if (code) {
+      routes.push(...childRoutes.code);
+    }
 
     if (!routes.length) {
       // Result is no available or no tabs to show
@@ -81,7 +81,8 @@ class InspectionResultComponent extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    meta: selectProjectInspectionMeta(state) || {}
+    status: (selectProjectInspectionMeta(state) || {}).status || '',
+    currentConfiguration: selectSavedConfiguration(state)
   };
 }
 

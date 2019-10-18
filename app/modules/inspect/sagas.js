@@ -18,17 +18,16 @@
 
 import * as pathlib from '@core/path';
 
-import { ENVS_KEY, FORM_KEY, RESULT_KEY } from '@inspect/constants';
-import { INSPECT_PROJECT, LOAD_PROJECT_ENVS, SAVE_INSPECT_FORM } from './actions';
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { deleteEntity, patchEntity, updateEntity } from '@store/actions';
+import { CONFIG_KEY, ENVS_KEY, RESULT_KEY } from '@inspect/constants';
+import { INSPECT_PROJECT, LOAD_PROJECT_ENVS } from './actions';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { patchEntity, updateEntity } from '@store/actions';
 
 import { apiFetchData } from '@store/api';
-import { generateInspectionResultKey } from '@inspect/helpers';
-// import { goTo } from '@core/helpers';
-// import { notifyError } from '@core/actions';
+import { goTo } from '@core/helpers';
+import { selectIsConfigurationDifferent } from '@inspect/selectors';
 
-function* inspectMemory({ projectDir, env }, resultKey) {
+function* inspectMemory({ projectDir, env }) {
   yield call(apiFetchData, {
     query: 'core.call',
     params: [['run', '-d', projectDir, '-e', env, '-t', 'sizedata']]
@@ -52,10 +51,10 @@ function* inspectMemory({ projectDir, env }, resultKey) {
     params: [uri]
   });
   const memoryData = JSON.parse(jsonContent);
-  yield put(patchEntity(resultKey, { memory: memoryData.memory }, {}));
+  yield put(patchEntity(RESULT_KEY, { memory: memoryData.memory }, {}));
 }
 
-function* inspectCode({ projectDir, env }, resultKey) {
+function* inspectCode({ projectDir, env }) {
   const codeCheckResults = yield call(apiFetchData, {
     query: 'core.call',
     params: [['check', '-d', projectDir, '-e', env, '--json-output']]
@@ -64,66 +63,64 @@ function* inspectCode({ projectDir, env }, resultKey) {
   if (codeCheckResults && codeCheckResults.length) {
     codeCheck = codeCheckResults[0];
   }
-  yield put(patchEntity(resultKey, { codeCheck }, {}));
+  yield put(patchEntity(RESULT_KEY, { codeCheck }, {}));
 }
 
 function* watchInspectProject() {
-  yield takeLatest(INSPECT_PROJECT, function*(args) {
-    const { projectDir, env, flags, force } = args;
-    const resultKey = generateInspectionResultKey(
-      projectDir,
-      env,
-      flags.memory,
-      flags.code
-    );
+  yield takeLatest(INSPECT_PROJECT, function*({ configuration, force, onEnd }) {
+    const { memory, code } = configuration;
 
-    yield put(deleteEntity(new RegExp(`^${resultKey}$`)));
-    yield put(updateEntity(RESULT_KEY, resultKey));
-    yield put(patchEntity(resultKey, undefined, { ...args, status: 'generating' }));
+    if (!force) {
+      const same = yield select(selectIsConfigurationDifferent, configuration);
+      if (same) {
+        if (onEnd) {
+          onEnd();
+        }
+        return;
+      }
+    }
 
+    yield put(patchEntity(RESULT_KEY, undefined, { status: 'generating' }));
     try {
       const parallelTasks = [];
-      if (force && flags.memory) {
+      if (memory) {
         // parallelTasks.push(call(inspectMemory, args, resultKey));
-        yield call(inspectMemory, args, resultKey);
+        yield call(inspectMemory, configuration);
       }
-      if (force && flags.code) {
+      if (code) {
         // parallelTasks.push(call(inspectCode, args, resultKey));
-        yield call(inspectCode, args, resultKey);
+        yield call(inspectCode, configuration);
       }
       // FIXME: gives JsonRPC error 4003
       // yield all(parallelTasks);
       // FIXME: doesn't run at all
       // yield parallelTasks;
 
-      yield put(patchEntity(resultKey, {}, { status: 'ready' }));
-      // const state = yield select();
-      // if (state.router) {
-      //   goTo(state.router.history, '/inspect/result/stats', undefined, true);
-      // }
-    } catch (err) {
-      if (err instanceof SyntaxError) {
-        yield put(
-          patchEntity(
-            resultKey,
-            {},
-            {
-              status: 'error',
-              error: 'Bad JSON'
-            }
-          )
-        );
+      yield put(patchEntity(RESULT_KEY, {}, { status: 'ready' }));
+      yield put(updateEntity(CONFIG_KEY, configuration));
+      const state = yield select();
+      if (state.router) {
+        goTo(state.router.history, '/inspect/result/stats', undefined, true);
+      }
+      if (onEnd) {
+        onEnd();
+      }
+    } catch (e) {
+      let error;
+      if (e instanceof SyntaxError) {
+        error = {
+          status: 'error',
+          error: 'Bad JSON'
+        };
       } else {
-        yield put(
-          patchEntity(
-            resultKey,
-            {},
-            {
-              status: 'error',
-              error: 'Exception'
-            }
-          )
-        );
+        error = {
+          status: 'error',
+          error: 'Exception'
+        };
+      }
+      yield put(patchEntity(RESULT_KEY, {}, error));
+      if (onEnd) {
+        onEnd(undefined, e);
       }
       // yield put(notifyError('Sorry, error encountered during Inspection', err));
     }
@@ -136,14 +133,8 @@ function* watchLoadProjectEnvs() {
       query: 'project.config_call',
       params: [pathlib.join(projectPath, 'platformio.ini'), 'envs']
     });
-    yield put(updateEntity(ENVS_KEY, environments));
+    yield put(updateEntity(ENVS_KEY, { [projectPath]: environments }));
   });
 }
 
-function* watchSaveInspectForm() {
-  yield takeLatest(SAVE_INSPECT_FORM, function*({ data }) {
-    yield put(updateEntity(FORM_KEY, data));
-  });
-}
-
-export default [watchInspectProject, watchLoadProjectEnvs, watchSaveInspectForm];
+export default [watchInspectProject, watchLoadProjectEnvs];
