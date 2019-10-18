@@ -37,16 +37,8 @@ class ProjectSelectComponent extends React.PureComponent {
   handleFilterOption = (input, option) =>
     option.props.children.toLowerCase().includes(input.toLocaleLowerCase());
 
-  // FIXME: delete if we'll use select factory loader
-  renderLoader() {
-    return <Spin size="small" />;
-  }
-
   render() {
     const { items, value } = this.props;
-    // if (!items) {
-    //   return this.renderLoader();
-    // }
     const selectedIdx = items ? items.findIndex(x => x.path === value) : -1;
     return (
       <div>

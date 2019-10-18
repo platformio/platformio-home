@@ -30,7 +30,7 @@ class ProjectEnvSelectComponent extends React.PureComponent {
     }
 
     // Preselect single option when new items has been loaded
-    if (items !== prevProps.items && items.length === 1) {
+    if (items !== prevProps.items && items && items.length === 1) {
       const preselectValue = items[0];
       if (value !== preselectValue && onChange) {
         onChange(preselectValue);
