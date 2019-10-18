@@ -84,7 +84,9 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
 
   renderGauges() {
-    const totalSize = this.props.memory.ram + this.props.memory.flash;
+    const totalSize = this.props.memory
+      ? this.props.memory.ram + this.props.memory.flash
+      : 0;
 
     return (
       <Row gutter={16} className="block text-center">
