@@ -14,22 +14,34 @@
  * limitations under the License.
  */
 
-import { Button, Col, Form, Row, Switch } from 'antd';
+import { Button, Col, Form, Row, Select, Switch } from 'antd';
+import { inspectProject, loadProjectEnvironments } from '@inspect/actions';
+import {
+  selectProjectEnvironments,
+  selectSavedConfiguration
+} from '@inspect/selectors';
 
-import { ProjectEnvSelect } from '@inspect/containers/project-env-select';
-import { ProjectSelect } from '@inspect/containers/project-select';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { inspectProject } from '@inspect/actions';
-import { selectSavedConfiguration } from '@inspect/selectors';
+import { generateProjectNameFromPath } from '@inspect/helpers';
+import { loadProjects } from '@project/actions';
+import { selectProjects } from '@project/selectors';
 
 class InspectionFormComponent extends React.Component {
   static propTypes = {
     envs: PropTypes.arrayOf(PropTypes.string.isRequired),
     form: PropTypes.object,
-    savedConfiguration: PropTypes.object,
-    inspectProject: PropTypes.func.isRequired
+    inspectProject: PropTypes.func.isRequired,
+    loadProjects: PropTypes.func.isRequired,
+    loadProjectEnvironments: PropTypes.func.isRequired,
+    projects: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        path: PropTypes.string.isRequired
+      })
+    ),
+    savedConfiguration: PropTypes.object
   };
 
   constructor(...args) {
@@ -42,7 +54,22 @@ class InspectionFormComponent extends React.Component {
       memory: true,
       code: true
     };
+    this.props.loadProjects();
     this.props.form.setFieldsValue(this.props.savedConfiguration || defaults);
+  }
+
+  componentDidUpdate(prevProps) {
+    // Preselect single option when new envs have been loaded
+    if (
+      this.props.envs !== prevProps.envs &&
+      this.props.envs &&
+      this.props.envs.length === 1
+    ) {
+      const env = this.props.envs[0];
+      this.props.form.setFieldsValue({
+        env
+      });
+    }
   }
 
   isValid() {
@@ -62,6 +89,76 @@ class InspectionFormComponent extends React.Component {
       this.setState({ error });
     });
   };
+
+  handleProjectChange = projectDir => {
+    this.props.loadProjectEnvironments(projectDir);
+  };
+
+  handleFilterOption = (input, option) =>
+    option.props.children.toLowerCase().includes(input.toLocaleLowerCase());
+
+  renderProjectSelect() {
+    const value = this.props.form.getFieldValue('projectDir');
+    return (
+      <div>
+        {this.props.form.getFieldDecorator('projectDir')(
+          <Select
+            loading={!this.props.projects}
+            showSearch
+            style={{ width: '100%' }}
+            size="large"
+            placeholder={this.props.projects ? 'Select a project' : 'Loading…'}
+            optionFilterProp="children"
+            filterOption={this.handleFilterOption}
+            onChange={this.handleProjectChange}
+          >
+            {this.props.projects &&
+              this.props.projects
+                .map(x => ({
+                  ...x,
+                  name: generateProjectNameFromPath(x.path)
+                }))
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(({ name, path }) => (
+                  <Select.Option key={path} value={path}>
+                    {name}
+                  </Select.Option>
+                ))}
+          </Select>
+        )}
+        {value && (
+          <small style={{ display: 'block', lineHeight: 1, marginTop: 5 }}>
+            {value}
+          </small>
+        )}
+      </div>
+    );
+  }
+
+  renderEnvSelect() {
+    const projectDir = this.props.form.getFieldValue('projectDir');
+    return this.props.form.getFieldDecorator('env')(
+      <Select
+        loading={projectDir && !this.props.envs}
+        disabled={!projectDir}
+        showSearch
+        style={{ width: '100%' }}
+        size="large"
+        placeholder={this.props.envs ? 'Select environment' : ''}
+        optionFilterProp="children"
+        filterOption={this.handleFilterOption}
+      >
+        {this.props.envs &&
+          this.props.envs
+            .sort((a, b) => a.localeCompare(b))
+            .map(name => (
+              <Select.Option key={name} value={name}>
+                {name}
+              </Select.Option>
+            ))}
+      </Select>
+    );
+  }
 
   render() {
     const labelSpan = 3;
@@ -87,13 +184,11 @@ class InspectionFormComponent extends React.Component {
         </Row>
         <Form layout="horizontal" onSubmit={this.handleSubmit}>
           <Form.Item label="Project" {...itemLayout}>
-            {this.props.form.getFieldDecorator('projectDir')(<ProjectSelect />)}
+            {this.renderProjectSelect()}
           </Form.Item>
 
           <Form.Item label="Environment" {...itemLayout}>
-            {this.props.form.getFieldDecorator('env')(
-              <ProjectEnvSelect project={this.props.form.getFieldValue('projectDir')} />
-            )}
+            {this.renderEnvSelect()}
           </Form.Item>
 
           <Form.Item wrapperCol={{ span: 14, offset: labelSpan }}>
@@ -132,19 +227,23 @@ class InspectionFormComponent extends React.Component {
   }
 }
 
-const WrappedInspectionForm = Form.create()(InspectionFormComponent);
-
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   return {
+    envs: selectProjectEnvironments(state, ownProps.form.getFieldValue('projectDir')),
+    projects: selectProjects(state),
     savedConfiguration: selectSavedConfiguration(state)
   };
 }
 
 const dispatchProps = {
-  inspectProject
+  inspectProject,
+  loadProjects,
+  loadProjectEnvironments
 };
 
-export const InspectionForm = connect(
+const ConnectedInspectionForm = connect(
   mapStateToProps,
   dispatchProps
-)(WrappedInspectionForm);
+)(InspectionFormComponent);
+
+export const InspectionForm = Form.create()(ConnectedInspectionForm);
