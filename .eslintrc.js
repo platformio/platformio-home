@@ -10,13 +10,15 @@ module.exports = {
   },
   "plugins": [
     "import",
-    "react"
+    "react",
+    "prettier"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "prettier"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -29,15 +31,14 @@ module.exports = {
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": {
-          "resolve": {
-            "extensions": [".js", ".jsx"]
-          }
-        }
+        "config": "scripts/webpack.dev.config.js"
       }
     },
+    "import/ignore": [
+      "node_modules"
+    ],
     "react": {
-      "version": "detect"
+      "version": "detect",
     }
   },
   "rules": {
@@ -56,6 +57,7 @@ module.exports = {
       }
     ],
     "prefer-const": "error",
+    "prettier/prettier": ["error"],
     "quotes": [
       "error",
       "single",

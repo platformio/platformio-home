@@ -14,13 +14,18 @@ const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 const rootDir = path.resolve(__dirname, '..');
 const mediaDir = path.join(rootDir, 'app', 'media');
-const packageConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
+const packageConfig = JSON.parse(
+  fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8')
+);
 const workspace = process.env.PIOHOME_WORKSPACE || 'platformio';
 const theme = process.env.PIOHOME_THEME || 'dark';
-const themeModifyVars = Object.assign({}, packageConfig.themes[theme],
-  (packageConfig.workspaces[workspace].themes ? packageConfig.workspaces[workspace].themes[theme] : null) || {}
+const themeModifyVars = Object.assign(
+  {},
+  packageConfig.themes[theme],
+  (packageConfig.workspaces[workspace].themes
+    ? packageConfig.workspaces[workspace].themes[theme]
+    : null) || {}
 );
-
 
 module.exports = {
   workspace: workspace,
@@ -30,6 +35,15 @@ module.exports = {
   mediaDir: mediaDir,
   rootDir: rootDir,
   outputDir: path.join(rootDir, 'dist'),
+  resolve: {
+    alias: {
+      '@app': path.resolve(__dirname, '../app/'),
+      '@core': path.resolve(__dirname, '../app/modules/core/'),
+      '@inspect': path.resolve(__dirname, '../app/modules/inspect/'),
+      '@project': path.resolve(__dirname, '../app/modules/project/'),
+      '@store': path.resolve(__dirname, '../app/store/')
+    }
+  },
 
   rules: [
     {
@@ -37,9 +51,7 @@ module.exports = {
       exclude: /(node_modules|bower_components|public\/)/,
       loader: 'babel-loader',
       options: {
-        plugins: [
-          ['import', { libraryName: 'antd', style: true }]
-        ]
+        plugins: [['import', { libraryName: 'antd', style: true }]]
       }
     },
     {
@@ -89,8 +101,6 @@ module.exports = {
     new webpack.DefinePlugin({
       APP_VERSION: JSON.stringify(packageConfig.version)
     }),
-    new CopyWebpackPlugin([
-      { from: path.join(mediaDir, 'fonts'), to: 'fonts' }
-    ]),
+    new CopyWebpackPlugin([{ from: path.join(mediaDir, 'fonts'), to: 'fonts' }])
   ]
 };
