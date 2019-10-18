@@ -91,6 +91,9 @@ class InspectionFormComponent extends React.Component {
   };
 
   handleProjectChange = projectDir => {
+    this.props.form.setFieldsValue({
+      env: undefined
+    });
     this.props.loadProjectEnvironments(projectDir);
   };
 
