@@ -84,9 +84,9 @@ class InspectionFormComponent extends React.Component {
     }
     const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
     const configuration = { projectDir, env, memory, code };
-    this.setState({ running: true });
+    this.setState({ running: true, error: undefined });
     this.props.inspectProject(configuration, (_result, error) => {
-      this.setState({ error });
+      this.setState({ running: false, error });
     });
   };
 
@@ -224,7 +224,7 @@ class InspectionFormComponent extends React.Component {
             </Button>
           </Form.Item>
         </Form>
-        {this.state.error && <textarea value={this.state.error} />}
+        {this.state.error && <textarea readOnly value={this.state.error} />}
       </div>
     );
   }

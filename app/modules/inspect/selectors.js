@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { CONFIG_KEY, ENVS_KEY } from '@inspect/constants';
+import { CONFIG_KEY, ENVS_KEY, RESULT_KEY } from '@inspect/constants';
 import { selectEntity } from '@store/selectors';
+import { shallowCompare } from '@inspect/helpers';
 
 export function selectProjectEnvironments(state, projectPath) {
   return (selectEntity(state, ENVS_KEY) || {})[projectPath];
@@ -23,4 +24,12 @@ export function selectProjectEnvironments(state, projectPath) {
 
 export function selectSavedConfiguration(state) {
   return selectEntity(state, CONFIG_KEY);
+}
+
+export function selectIsConfigurationDifferent(state, newConfiguration) {
+  return !shallowCompare(newConfiguration, selectSavedConfiguration(state));
+}
+
+export function selectInspectionResult(state) {
+  return selectEntity(state, RESULT_KEY);
 }

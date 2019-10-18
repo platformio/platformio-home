@@ -22,3 +22,18 @@ export function generateProjectNameFromPath(path) {
   }
   return pathlib.join(...pathlib.split(path).slice(-3));
 }
+
+export function shallowCompare(a, b) {
+  if (a === b) {
+    return true;
+  }
+  if (a === undefined || b === undefined) {
+    return false;
+  }
+  return (
+    Object.keys(a).length === Object.keys(b).length &&
+    Object.keys(a).every(
+      key => Object.prototype.hasOwnProperty.call(b, key) && a[key] === b[key]
+    )
+  );
+}

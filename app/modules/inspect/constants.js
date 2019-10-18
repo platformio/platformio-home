@@ -20,3 +20,5 @@ export const PREFIX = 'inspect';
 // Entity name to save list of environments
 export const ENVS_KEY = PREFIX + 'Envs';
 export const CONFIG_KEY = PREFIX + 'Configuration';
+
+export const RESULT_KEY = PREFIX + 'Result';
