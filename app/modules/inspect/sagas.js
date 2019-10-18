@@ -26,6 +26,7 @@ import {
 } from '@inspect/selectors';
 
 import { apiFetchData } from '@store/api';
+import jsonrpc from 'jsonrpc-lite';
 // import { goTo } from '@core/helpers';
 
 const RUN_PARALLEL_INSPECT = false;
@@ -136,7 +137,12 @@ function* watchInspectProject() {
         return;
       }
       let error = 'Exception';
-      if (e instanceof SyntaxError) {
+      if (e instanceof jsonrpc.JsonRpcError) {
+        error = e.message;
+        if (e.data) {
+          error += ': ' + JSON.stringify(e.data);
+        }
+      } else if (e instanceof SyntaxError) {
         error = 'Bad JSON';
       }
       onEnd(undefined, error);
