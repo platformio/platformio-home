@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InspectionForm } from '@inspect/containers/form';
+import { InspectionForm } from '@app/modules/inspect/containers/configuration';
 
 const routes = [
   {

@@ -29,7 +29,7 @@ class InspectionFormComponent extends React.Component {
     envs: PropTypes.arrayOf(PropTypes.string.isRequired),
     form: PropTypes.object,
     savedConfiguration: PropTypes.object,
-    onInspect: PropTypes.func.isRequired
+    inspectProject: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -38,12 +38,11 @@ class InspectionFormComponent extends React.Component {
   }
 
   componentDidMount() {
-    const { form, savedConfiguration } = this.props;
     const defaults = {
       memory: true,
       code: true
     };
-    form.setFieldsValue(savedConfiguration || defaults);
+    this.props.form.setFieldsValue(this.props.savedConfiguration || defaults);
   }
 
   isValid() {
@@ -59,16 +58,12 @@ class InspectionFormComponent extends React.Component {
     const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
     const configuration = { projectDir, env, memory, code };
     this.setState({ running: true });
-    this.props.onInspect(configuration, true, (_result, error) => {
+    this.props.inspectProject(configuration, (_result, error) => {
       this.setState({ error });
     });
   };
 
   render() {
-    const { form } = this.props;
-    const { getFieldDecorator, getFieldValue } = form;
-    const { running, error } = this.state;
-
     const labelSpan = 3;
     const wrapperSpan = 13;
     const itemLayout = {
@@ -92,26 +87,26 @@ class InspectionFormComponent extends React.Component {
         </Row>
         <Form layout="horizontal" onSubmit={this.handleSubmit}>
           <Form.Item label="Project" {...itemLayout}>
-            {getFieldDecorator('projectDir')(<ProjectSelect />)}
+            {this.props.form.getFieldDecorator('projectDir')(<ProjectSelect />)}
           </Form.Item>
 
           <Form.Item label="Environment" {...itemLayout}>
-            {getFieldDecorator('env')(
-              <ProjectEnvSelect project={getFieldValue('projectDir')} />
+            {this.props.form.getFieldDecorator('env')(
+              <ProjectEnvSelect project={this.props.form.getFieldValue('projectDir')} />
             )}
           </Form.Item>
 
           <Form.Item wrapperCol={{ span: 14, offset: labelSpan }}>
             <span className="ant-form-item-label" style={{ marginRight: 15 }}>
               <label>Inspect Memory</label>
-              {getFieldDecorator('memory', {
+              {this.props.form.getFieldDecorator('memory', {
                 valuePropName: 'checked',
                 initialValue: true
               })(<Switch />)}
             </span>
             <span className="ant-form-item-label">
               <label>Check Code</label>
-              {getFieldDecorator('code', {
+              {this.props.form.getFieldDecorator('code', {
                 valuePropName: 'checked',
                 initialValue: true
               })(<Switch />)}
@@ -122,7 +117,7 @@ class InspectionFormComponent extends React.Component {
             <Button
               htmlType="submit"
               disabled={!this.isValid()}
-              loading={running}
+              loading={this.state.running}
               size="large"
               icon="caret-right"
               type="primary"
@@ -131,7 +126,7 @@ class InspectionFormComponent extends React.Component {
             </Button>
           </Form.Item>
         </Form>
-        {error && <textarea value={error} />}
+        {this.state.error && <textarea value={this.state.error} />}
       </div>
     );
   }
@@ -146,7 +141,7 @@ function mapStateToProps(state) {
 }
 
 const dispatchProps = {
-  onInspect: inspectProject
+  inspectProject
 };
 
 export const InspectionForm = connect(
