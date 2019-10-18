@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Redirect, Route } from 'react-router';
-
 import MultiPage from '@core/components/multipage';
 import { PREFIX } from '@inspect/constants';
 import PropTypes from 'prop-types';
