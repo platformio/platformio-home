@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-import { InspectionForm } from '@app/modules/inspect/containers/configuration';
-import { InspectionResultPage } from '@inspect/containers/inspection-result';
+import PropTypes from 'prop-types';
 
-const routes = [
-  {
-    path: '/inspect',
-    component: InspectionForm
-  },
-  {
-    path: '/inspect/result',
-    component: InspectionResultPage
-  }
-];
+export const ConfigurationType = PropTypes.shape({
+  code: PropTypes.bool,
+  env: PropTypes.string.isRequired,
+  memory: PropTypes.bool,
+  projectDir: PropTypes.string.isRequired
+});
 
-export default routes;
+export const DefectType = PropTypes.shape({
+  category: PropTypes.string.isRequired,
+  column: PropTypes.number.isRequired,
+  file: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  line: PropTypes.number.isRequired,
+  message: PropTypes.string.isRequired,
+  severity: PropTypes.string.isRequired,
+  tool: PropTypes.string.isRequired
+});

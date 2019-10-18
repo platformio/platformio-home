@@ -50,6 +50,7 @@ class InspectionFormComponent extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     const defaults = {
       memory: true,
       code: true
@@ -72,6 +73,10 @@ class InspectionFormComponent extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   isValid() {
     const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
     return projectDir && projectDir.length && env && env.length && (memory || code);
@@ -86,7 +91,9 @@ class InspectionFormComponent extends React.Component {
     const configuration = { projectDir, env, memory, code };
     this.setState({ running: true, error: undefined });
     this.props.inspectProject(configuration, (_result, error) => {
-      this.setState({ running: false, error });
+      if (this._isMounted) {
+        this.setState({ running: false, error });
+      }
     });
   };
 

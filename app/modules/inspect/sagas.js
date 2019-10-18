@@ -17,17 +17,23 @@
 import * as pathlib from '@core/path';
 
 import { CONFIG_KEY, ENVS_KEY, RESULT_KEY } from '@inspect/constants';
-import { INSPECT_PROJECT, LOAD_PROJECT_ENVS } from '@inspect/actions';
+import {
+  INSPECT_PROJECT,
+  LOAD_PROJECT_ENVS,
+  REINSPECT_PROJECT,
+  inspectProject
+} from '@inspect/actions';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '@store/actions';
 import {
   selectInspectionResult,
-  selectIsConfigurationDifferent
+  selectIsConfigurationDifferent,
+  selectSavedConfiguration
 } from '@inspect/selectors';
 
 import { apiFetchData } from '@store/api';
+import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
-// import { goTo } from '@core/helpers';
 
 const RUN_PARALLEL_INSPECT = false;
 
@@ -126,11 +132,10 @@ function* watchInspectProject() {
       yield put(updateEntity(CONFIG_KEY, configuration));
       yield put(updateEntity(RESULT_KEY, entity));
 
-      // FIXME: uncomment when page will be implemented
-      // const state = yield select();
-      // if (state.router) {
-      //   goTo(state.router.history, '/inspect/result/stats', undefined, true);
-      // }
+      const state = yield select();
+      if (state.router) {
+        goTo(state.router.history, '/inspect/result/stats', undefined, true);
+      }
       if (onEnd) {
         onEnd(entity);
       }
@@ -153,4 +158,15 @@ function* watchInspectProject() {
   });
 }
 
-export default [watchLoadProjectEnvs, watchInspectProject];
+function* watchReinspectProject() {
+  yield takeLatest(REINSPECT_PROJECT, function*({ onEnd }) {
+    const configuration = yield select(selectSavedConfiguration);
+    if (!configuration) {
+      throw new Error('No inspection configuration ro run reinspectProject');
+    }
+    yield put(deleteEntity(new RegExp(`^${RESULT_KEY}$`)));
+    yield put(inspectProject(configuration, onEnd));
+  });
+}
+
+export default [watchLoadProjectEnvs, watchInspectProject, watchReinspectProject];

@@ -16,6 +16,11 @@
 
 import * as pathlib from '@core/path';
 
+import { IS_WINDOWS } from '@app/config';
+import humanize from 'humanize';
+
+export const PARENT_DIR = '..';
+export const CURRENT_DIR = '.';
 export function generateProjectNameFromPath(path) {
   if (!path) {
     return path;
@@ -36,4 +41,42 @@ export function shallowCompare(a, b) {
       key => Object.prototype.hasOwnProperty.call(b, key) && a[key] === b[key]
     )
   );
+}
+
+export function formatSize(size) {
+  return humanize.filesize(size, 1024, size % 1024 === 0 || size < 1024 ? 0 : 1);
+}
+
+export function windowsToPosixPath(windowsPath) {
+  return windowsPath.replace(/\\/g, '/');
+}
+
+export function posixToWindowsPath(windowsPath) {
+  return windowsPath.replace(/\//g, '\\');
+}
+
+export function fixPathSeparators(path) {
+  return IS_WINDOWS ? posixToWindowsPath(path) : windowsToPosixPath(path);
+}
+
+export function fixPath(path) {
+  return resolveRelativePathSegments(fixPathSeparators(path));
+}
+
+export function resolveRelativePathSegments(path, sep = pathlib.sep) {
+  const resolved = [];
+  for (const part of path.split(sep)) {
+    if (part === CURRENT_DIR) {
+      continue;
+    }
+    if (part === PARENT_DIR) {
+      if (!resolved.length) {
+        throw new Error(`Relative path goes outside of root: ${path}`);
+      }
+      resolved.pop();
+      continue;
+    }
+    resolved.push(part);
+  }
+  return resolved.join(sep);
 }

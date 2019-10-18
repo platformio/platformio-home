@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import { InspectionForm } from '@app/modules/inspect/containers/configuration';
-import { InspectionResultPage } from '@inspect/containers/inspection-result';
+import MemoryStatisticsPage from './memory-stats-page';
 
-const routes = [
-  {
-    path: '/inspect',
-    component: InspectionForm
-  },
+const common = [
   {
     path: '/inspect/result',
-    component: InspectionResultPage
+    icon: 'line-chart',
+    label: 'Statistics',
+    component: MemoryStatisticsPage
   }
 ];
 
-export default routes;
+export default {
+  common
+};

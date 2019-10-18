@@ -17,11 +17,18 @@
 import { createAction } from '@store/actions';
 
 export const INSPECT_PROJECT = 'INSPECT_PROJECT';
+export const REINSPECT_PROJECT = 'REINSPECT_PROJECT';
 export const LOAD_PROJECT_ENVS = 'LOAD_PROJECTS_ENVS';
 
 export function inspectProject(configuration, onEnd) {
   return createAction(INSPECT_PROJECT, {
     configuration,
+    onEnd
+  });
+}
+
+export function reinspectProject(onEnd) {
+  return createAction(REINSPECT_PROJECT, {
     onEnd
   });
 }

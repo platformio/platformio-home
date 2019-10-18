@@ -22,3 +22,13 @@ export const ENVS_KEY = PREFIX + 'Envs';
 export const CONFIG_KEY = PREFIX + 'Configuration';
 
 export const RESULT_KEY = PREFIX + 'Result';
+
+export const SYMBOL_ICON_BY_TYPE = Object.freeze({
+  STT_FUNC: 'profile',
+  STT_OBJECT: 'tag'
+});
+
+export const SYMBOL_NAME_BY_TYPE = Object.freeze({
+  STT_FUNC: 'Function',
+  STT_OBJECT: 'Variable'
+});

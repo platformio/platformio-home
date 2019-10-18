@@ -25,7 +25,15 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
-import { all, call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  put,
+  select,
+  take,
+  takeEvery,
+  takeLatest
+} from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
 import { PLATFORMIO_API_ENDPOINT } from '../../config';
