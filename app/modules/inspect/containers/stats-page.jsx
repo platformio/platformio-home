@@ -85,18 +85,23 @@ class MemoryStatisticsPage extends React.PureComponent {
     ].join(' / ');
   }
 
-  getDefectsColor() {
-    const { high, medium, low } = this.props.code.defectsCountBySeverity;
+  getDefectsCls() {
+    const { high, medium } = this.props.code.defectsCountBySeverity;
     if (high) {
-      return '#f5222d';
+      return 'progress-error-stroke';
     }
     if (medium) {
-      return '#fadb14';
+      return 'progress-warning-stroke';
     }
-    if (low) {
-      return '#1890ff';
+  }
+
+  getGaugeCls(percent) {
+    if (percent >= 75) {
+      return 'progress-error-stroke';
     }
-    return '#52c41a';
+    if (percent > 50) {
+      return 'progress-warning-stroke';
+    }
   }
 
   handleFileClick() {
@@ -118,21 +123,27 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
 
   renderGauges() {
-    const totalSize = this.props.memory
-      ? this.props.memory.ram + this.props.memory.flash
-      : 0;
+    let totalSize;
+    let ramPercent;
+    let flashPercent;
+
+    if (this.props.memory) {
+      totalSize = this.props.memory.ram + this.props.memory.flash;
+      ramPercent = (this.props.memory.ram / totalSize) * 100;
+      flashPercent = (this.props.memory.flash / totalSize) * 100;
+    }
 
     return (
       <Row gutter={16} className="block text-center">
-        {this.props.memory && (
-          <Col xs={12} sm={8} lg={4}>
+        {ramPercent !== undefined && (
+          <Col xs={12} sm={8} lg={4} className={this.getGaugeCls(ramPercent)}>
             <Tooltip
               title={`${formatSize(this.props.memory.ram)} of ${formatSize(totalSize)}`}
             >
               <Progress
                 type="dashboard"
                 format={MemoryStatisticsPage.formatPercent}
-                percent={(this.props.memory.ram / totalSize) * 100}
+                percent={ramPercent}
                 width={120}
                 strokeColor="#1890ff"
               />
@@ -140,8 +151,8 @@ class MemoryStatisticsPage extends React.PureComponent {
             <h4>RAM</h4>
           </Col>
         )}
-        {this.props.memory && (
-          <Col xs={12} sm={8} lg={4}>
+        {flashPercent !== undefined && (
+          <Col xs={12} sm={8} lg={4} className={this.getGaugeCls(flashPercent)}>
             <Tooltip
               title={`${formatSize(this.props.memory.flash)} of ${formatSize(
                 totalSize
@@ -150,7 +161,7 @@ class MemoryStatisticsPage extends React.PureComponent {
               <Progress
                 type="dashboard"
                 format={MemoryStatisticsPage.formatPercent}
-                percent={(this.props.memory.flash / totalSize) * 100}
+                percent={flashPercent}
                 width={120}
                 strokeColor="#faad14" // #52c41a
               />
@@ -159,13 +170,12 @@ class MemoryStatisticsPage extends React.PureComponent {
           </Col>
         )}
         {this.props.code && (
-          <Col xs={12} sm={8} lg={4}>
+          <Col xs={12} sm={8} lg={4} className={this.getDefectsCls()}>
             <Tooltip title={this.getDefectsTooltip()}>
               <Progress
                 type="dashboard"
                 format={::this.formatDefects}
                 percent={100}
-                strokeColor={this.getDefectsColor()}
                 successPercent={0}
                 width={120}
               />
