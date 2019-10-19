@@ -15,26 +15,21 @@
  */
 
 import { Button, Col, Form, Row, Select, Switch } from 'antd';
-import { inspectProject, loadProjectEnvironments } from '@inspect/actions';
-import {
-  selectProjectEnvironments,
-  selectSavedConfiguration
-} from '@inspect/selectors';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { generateProjectNameFromPath } from '@inspect/helpers';
+import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
 import { selectProjects } from '@project/selectors';
+import { selectSavedConfiguration } from '@inspect/selectors';
 
 class InspectionFormComponent extends React.Component {
   static propTypes = {
-    envs: PropTypes.arrayOf(PropTypes.string.isRequired),
     form: PropTypes.object,
     inspectProject: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
-    loadProjectEnvironments: PropTypes.func.isRequired,
     projects: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -57,20 +52,6 @@ class InspectionFormComponent extends React.Component {
     };
     this.props.loadProjects();
     this.props.form.setFieldsValue(this.props.savedConfiguration || defaults);
-  }
-
-  componentDidUpdate(prevProps) {
-    // Preselect single option when new envs have been loaded
-    if (
-      this.props.envs !== prevProps.envs &&
-      this.props.envs &&
-      this.props.envs.length === 1
-    ) {
-      const env = this.props.envs[0];
-      this.props.form.setFieldsValue({
-        env
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -98,10 +79,10 @@ class InspectionFormComponent extends React.Component {
   };
 
   handleProjectChange = projectDir => {
+    const newEnvs = this._getProjectEnvs(projectDir);
     this.props.form.setFieldsValue({
-      env: undefined
+      env: newEnvs.length === 1 ? newEnvs[0] : undefined
     });
-    this.props.loadProjectEnvironments(projectDir);
   };
 
   handleFilterOption = (input, option) =>
@@ -145,26 +126,32 @@ class InspectionFormComponent extends React.Component {
     );
   }
 
+  _getProjectByPath(projectDir) {
+    return (this.props.projects || []).find(x => x.path === projectDir);
+  }
+
+  _getProjectEnvs(projectDir) {
+    const project = this._getProjectByPath(projectDir);
+    return ((project && project.envs) || []).sort((a, b) => a.localeCompare(b));
+  }
+
   renderEnvSelect() {
     const projectDir = this.props.form.getFieldValue('projectDir');
+    const items = this._getProjectEnvs(projectDir);
+
     return this.props.form.getFieldDecorator('env')(
       <Select
-        loading={projectDir && !this.props.envs}
+        loading={!this.props.projects}
         disabled={!projectDir}
         style={{ width: '100%' }}
         size="large"
-        placeholder={this.props.envs ? 'Select environment' : ''}
-        optionFilterProp="children"
-        filterOption={this.handleFilterOption}
+        placeholder={projectDir && items ? 'Select environment' : ''}
       >
-        {this.props.envs &&
-          this.props.envs
-            .sort((a, b) => a.localeCompare(b))
-            .map(name => (
-              <Select.Option key={name} value={name}>
-                {name}
-              </Select.Option>
-            ))}
+        {items.map(name => (
+          <Select.Option key={name} value={name}>
+            {name}
+          </Select.Option>
+        ))}
       </Select>
     );
   }
@@ -236,9 +223,8 @@ class InspectionFormComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   return {
-    envs: selectProjectEnvironments(state, ownProps.form.getFieldValue('projectDir')),
     projects: selectProjects(state),
     savedConfiguration: selectSavedConfiguration(state)
   };
@@ -246,8 +232,7 @@ function mapStateToProps(state, ownProps) {
 
 const dispatchProps = {
   inspectProject,
-  loadProjects,
-  loadProjectEnvironments
+  loadProjects
 };
 
 const ConnectedInspectionForm = connect(

@@ -16,13 +16,8 @@
 
 import * as pathlib from '@core/path';
 
-import { CONFIG_KEY, ENVS_KEY, RESULT_KEY } from '@inspect/constants';
-import {
-  INSPECT_PROJECT,
-  LOAD_PROJECT_ENVS,
-  REINSPECT_PROJECT,
-  inspectProject
-} from '@inspect/actions';
+import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
+import { INSPECT_PROJECT, REINSPECT_PROJECT, inspectProject } from '@inspect/actions';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '@store/actions';
 import {
@@ -36,16 +31,6 @@ import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 
 const RUN_PARALLEL_INSPECT = false;
-
-function* watchLoadProjectEnvs() {
-  yield takeLatest(LOAD_PROJECT_ENVS, function*({ projectPath }) {
-    const environments = yield call(apiFetchData, {
-      query: 'project.config_call',
-      params: [pathlib.join(projectPath, 'platformio.ini'), 'envs']
-    });
-    yield put(updateEntity(ENVS_KEY, { [projectPath]: environments }));
-  });
-}
 
 function* _inspectMemory({ projectDir, env }) {
   yield call(apiFetchData, {
@@ -173,4 +158,4 @@ function* watchReinspectProject() {
   });
 }
 
-export default [watchLoadProjectEnvs, watchInspectProject, watchReinspectProject];
+export default [watchInspectProject, watchReinspectProject];

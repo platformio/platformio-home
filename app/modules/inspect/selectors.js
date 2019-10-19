@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CONFIG_KEY, ENVS_KEY, RESULT_KEY } from '@inspect/constants';
+import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
 import { fixPath, shallowCompare } from '@inspect/helpers';
 
 import { selectEntity } from '@store/selectors';
@@ -24,10 +24,6 @@ const levelsBySeverity = Object.freeze({
   medium: 2,
   low: 3
 });
-
-export function selectProjectEnvironments(state, projectPath) {
-  return (selectEntity(state, ENVS_KEY) || {})[projectPath];
-}
 
 export function selectSavedConfiguration(state) {
   return selectEntity(state, CONFIG_KEY);
