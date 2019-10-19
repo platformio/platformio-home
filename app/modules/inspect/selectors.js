@@ -146,3 +146,24 @@ export function selectCodeStats(state) {
       .sort((a, b) => a.component.localeCompare(b.component))
   };
 }
+
+export function selectSectionsSizeData(state) {
+  const data = selectInspectionResult(state);
+  let { memory: { total: { sections } = {} } = {} } = data || {};
+  if (!sections) {
+    return;
+  }
+  if (!sections.length) {
+    sections = Object.entries(sections).map(([k, v]) => ({
+      ...v,
+      name: k
+    }));
+  }
+  return sections.map(({ flags, size, type, start_addr: startAddr, name }) => ({
+    flags,
+    size,
+    type,
+    startAddr,
+    name
+  }));
+}

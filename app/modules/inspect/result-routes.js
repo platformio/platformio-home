@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import MemoryStatisticsPage from '@inspect/containers/stats-page';
+import SectionsPage from '@inspect/containers/mem-sections';
+import StatisticsPage from '@inspect/containers/stats-page';
 import SymbolsPage from '@inspect/containers/mem-symbols';
 
 const common = [
@@ -22,7 +23,7 @@ const common = [
     path: '/inspect/result',
     icon: 'line-chart',
     label: 'Statistics',
-    component: MemoryStatisticsPage
+    component: StatisticsPage
   }
 ];
 
@@ -32,6 +33,12 @@ const memory = [
     icon: 'tags',
     label: 'Symbols',
     component: SymbolsPage
+  },
+  {
+    path: '/inspect/result/sections',
+    icon: 'database',
+    label: 'Sections',
+    component: SectionsPage
   }
 ];
 

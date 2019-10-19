@@ -45,3 +45,13 @@ export const SymbolType = PropTypes.shape({
   size: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired
 });
+
+export const SectionsType = PropTypes.arrayOf(
+  PropTypes.shape({
+    name: PropTypes.string,
+    flags: PropTypes.string,
+    size: PropTypes.number,
+    startAddr: PropTypes.number,
+    type: PropTypes.string
+  })
+);
