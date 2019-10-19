@@ -33,3 +33,15 @@ export const DefectType = PropTypes.shape({
   severity: PropTypes.string.isRequired,
   tool: PropTypes.string.isRequired
 });
+
+export const SymbolType = PropTypes.shape({
+  addr: PropTypes.number.isRequired,
+  bind: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  demangled_name: PropTypes.string,
+  location: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  section: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired
+});

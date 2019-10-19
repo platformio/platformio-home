@@ -41,6 +41,41 @@ export function formatSize(size) {
   return humanize.filesize(size, 1024, size % 1024 === 0 || size < 1024 ? 0 : 1);
 }
 
+export function formatHex(addr, options) {
+  if (typeof addr !== 'number') {
+    return;
+  }
+  const { width } = options || {};
+  let result = addr.toString(16).toUpperCase();
+  if (width) {
+    result = result.padStart(width, '0');
+  }
+  return `0x${result}`;
+}
+
+export function multiSort(...sorters) {
+  return function(a, b) {
+    for (let i = 0; i < sorters.length; i++) {
+      const result = sorters[i](a, b);
+      if (result !== 0) {
+        return result;
+      }
+    }
+    return 0;
+  };
+}
+
+export function compareNumber(a, b) {
+  return a - b;
+}
+
+export function compareString(a, b) {
+  return String(a).localeCompare(b, undefined, {
+    caseFirst: 'upper',
+    numeric: true
+  });
+}
+
 export function windowsToPosixPath(windowsPath) {
   return windowsPath.replace(/\\/g, '/');
 }

@@ -27,7 +27,6 @@ import {
 } from '@inspect/selectors';
 
 import { apiFetchData } from '@store/api';
-import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 
 const RUN_PARALLEL_INSPECT = false;
@@ -70,13 +69,9 @@ function* _inspectCode({ projectDir, env }) {
 function* watchInspectProject() {
   yield takeLatest(INSPECT_PROJECT, function*({ configuration, onEnd }) {
     if (!(yield select(selectIsConfigurationDifferent, configuration))) {
-      const state = yield select();
-      const currentResult = selectInspectionResult(state);
+      const currentResult = yield select(selectInspectionResult);
       if (currentResult) {
         // Result is already present
-        if (state.router) {
-          goTo(state.router.history, '/inspect/result/stats', undefined, true);
-        }
         if (onEnd) {
           onEnd(currentResult);
         }
@@ -117,10 +112,6 @@ function* watchInspectProject() {
       yield put(updateStorageItem(CONFIG_KEY, configuration));
       yield put(updateEntity(RESULT_KEY, entity));
 
-      const state = yield select();
-      if (state.router) {
-        goTo(state.router.history, '/inspect/result/stats', undefined, true);
-      }
       if (onEnd) {
         onEnd(entity);
       }

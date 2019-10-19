@@ -27,6 +27,8 @@ import { selectSavedConfiguration } from '@inspect/selectors';
 class InspectionResultComponent extends React.Component {
   static propTypes = {
     // data
+    code: PropTypes.bool,
+    memory: PropTypes.bool,
     projectName: PropTypes.string,
     // callbacks
     reinspectProject: PropTypes.func.isRequired
@@ -56,6 +58,9 @@ class InspectionResultComponent extends React.Component {
 
   render() {
     const routes = [...childRoutes.common];
+    if (this.props.memory) {
+      routes.push(...childRoutes.memory);
+    }
     return (
       <div style={{ marginTop: 12 }}>
         <h1 style={{ marginBottom: 0, position: 'relative' }}>
@@ -76,10 +81,12 @@ class InspectionResultComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { projectDir } = selectSavedConfiguration(state);
+  const { projectDir, memory, code } = selectSavedConfiguration(state);
   const project = selectProjectInfo(state, projectDir);
   return {
-    projectName: (project || {}).name
+    projectName: (project || {}).name,
+    memory,
+    code
   };
 }
 

@@ -19,6 +19,7 @@ import { Button, Col, Form, Row, Select, Switch } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { goTo } from '@core/helpers';
 import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
 import { selectProjects } from '@project/selectors';
@@ -27,7 +28,8 @@ import { selectSavedConfiguration } from '@inspect/selectors';
 class InspectionFormComponent extends React.Component {
   static propTypes = {
     // data
-    form: PropTypes.object,
+    form: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     projects: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -75,6 +77,7 @@ class InspectionFormComponent extends React.Component {
     this.props.inspectProject(configuration, (_result, error) => {
       if (this._isMounted) {
         this.setState({ running: false, error });
+        goTo(this.props.history, '/inspect/result/stats', undefined, true);
       }
     });
   }
