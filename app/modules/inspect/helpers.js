@@ -117,3 +117,13 @@ export function resolveRelativePathSegments(path, sep = pathlib.sep) {
   }
   return resolved.join(sep);
 }
+
+export function getFilterMenu(ds, dataindex) {
+  return [...new Set(ds.map(x => x[dataindex]))]
+    .sort()
+    .filter(x => x !== undefined && x !== '')
+    .map(value => ({
+      value,
+      text: value
+    }));
+}

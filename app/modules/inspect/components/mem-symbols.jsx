@@ -20,6 +20,7 @@ import {
   compareString,
   formatHex,
   formatSize,
+  getFilterMenu,
   multiSort
 } from '@inspect/helpers';
 
@@ -72,7 +73,7 @@ export class MemorySymbols extends React.PureComponent {
 
   renderAddress = addr => <code>{formatHex(addr, { width: this.addressWidth })}</code>;
 
-  getTableColumns() {
+  getTableColumns(ds) {
     return [
       {
         title: 'Name',
@@ -95,6 +96,8 @@ export class MemorySymbols extends React.PureComponent {
       {
         title: 'Section',
         dataIndex: 'section',
+        filters: getFilterMenu(ds, 'section'),
+        onFilter: (section, record) => record.section === section,
         render: section => <Tag>{section}</Tag>,
         sorter: (a, b) => compareString(a.section, b.section),
         width: 150
@@ -203,7 +206,7 @@ export class MemorySymbols extends React.PureComponent {
         {file && <PathBreadcrumb path={file} onChange={this.handleBreadcrumbChange} />}
         <Table
           childrenColumnName="_"
-          columns={this.getTableColumns()}
+          columns={this.getTableColumns(ds)}
           dataSource={ds}
           footer={this.renderFooter}
           pagination={{

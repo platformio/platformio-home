@@ -15,7 +15,13 @@
  */
 
 import { Table, Tag } from 'antd';
-import { compareNumber, compareString, formatHex, formatSize } from '@inspect/helpers';
+import {
+  compareNumber,
+  compareString,
+  formatHex,
+  formatSize,
+  getFilterMenu
+} from '@inspect/helpers';
 
 import React from 'react';
 import { SectionsType } from '@inspect/types';
@@ -35,7 +41,7 @@ export class MemorySections extends React.PureComponent {
 
   renderAddress = addr => <code>{formatHex(addr, { width: this.addressWidth })}</code>;
 
-  getTableColumns() {
+  getTableColumns(ds) {
     return [
       {
         title: 'Name',
@@ -46,6 +52,8 @@ export class MemorySections extends React.PureComponent {
       {
         title: 'Type',
         dataIndex: 'type',
+        filters: getFilterMenu(ds, 'type'),
+        onFilter: (value, record) => record.type === value,
         render: type => <Tag>{type}</Tag>,
         sorter: (a, b) => compareString(a.type, b.type),
         width: 150
@@ -53,6 +61,8 @@ export class MemorySections extends React.PureComponent {
       {
         title: 'Flags',
         dataIndex: 'flags',
+        filters: getFilterMenu(ds, 'flags'),
+        onFilter: (value, record) => record.flags === value,
         render: flags => flags.length !== 0 && <Tag>{flags}</Tag>,
         sorter: (a, b) => compareString(a.flags, b.flags),
         width: 100
@@ -99,7 +109,7 @@ export class MemorySections extends React.PureComponent {
       <div className="page-container">
         <Table
           childrenColumnName="_"
-          columns={this.getTableColumns()}
+          columns={this.getTableColumns(ds)}
           dataSource={ds}
           footer={::this.renderFooter}
           pagination={{
