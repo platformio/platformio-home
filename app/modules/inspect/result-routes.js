@@ -15,7 +15,7 @@
  */
 
 import MemoryStatisticsPage from '@inspect/containers/stats-page';
-import SymbolsExplorerPage from '@inspect/containers/mem-symbols';
+import SymbolsPage from '@inspect/containers/mem-symbols';
 
 const common = [
   {
@@ -31,7 +31,7 @@ const memory = [
     path: '/inspect/result/symbols',
     icon: 'tags',
     label: 'Symbols',
-    component: SymbolsExplorerPage
+    component: SymbolsPage
   }
 ];
 
