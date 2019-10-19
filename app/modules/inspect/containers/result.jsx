@@ -15,18 +15,20 @@
  */
 
 import { Button } from 'antd';
-import { ConfigurationType } from '@inspect/types';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import childRoutes from '@inspect/result-routes';
 import { connect } from 'react-redux';
 import { reinspectProject } from '@inspect/actions';
+import { selectProjectInfo } from '@project/selectors';
 import { selectSavedConfiguration } from '@inspect/selectors';
 
 class InspectionResultComponent extends React.Component {
   static propTypes = {
-    configuration: ConfigurationType.isRequired,
+    // data
+    projectName: PropTypes.string,
+    // callbacks
     reinspectProject: PropTypes.func.isRequired
   };
 
@@ -57,7 +59,7 @@ class InspectionResultComponent extends React.Component {
     return (
       <div style={{ marginTop: 12 }}>
         <h1 style={{ marginBottom: 0, position: 'relative' }}>
-          {this.props.configuration.projectDir}
+          {this.props.projectName}
           <Button
             icon="reload"
             loading={this.state.loading}
@@ -67,7 +69,6 @@ class InspectionResultComponent extends React.Component {
             Refresh
           </Button>
         </h1>
-        <small>{this.props.configuration.projectDir}</small>
         <MultiPage routes={routes} />
       </div>
     );
@@ -75,8 +76,10 @@ class InspectionResultComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
+  const { projectDir } = selectSavedConfiguration(state);
+  const project = selectProjectInfo(state, projectDir);
   return {
-    configuration: selectSavedConfiguration(state)
+    projectName: (project || {}).name
   };
 }
 

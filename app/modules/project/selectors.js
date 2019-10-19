@@ -51,3 +51,7 @@ export function selectVisibleProjects(state) {
     }
   );
 }
+
+export function selectProjectInfo(state, path) {
+  return (selectProjects(state) || []).find(item => item.path === path);
+}

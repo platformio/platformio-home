@@ -18,12 +18,6 @@ import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
 import { fixPath, shallowCompare } from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
 
-const levelsBySeverity = Object.freeze({
-  high: 1,
-  medium: 2,
-  low: 3
-});
-
 export function selectSavedConfiguration(state) {
   return selectStorageItem(state, CONFIG_KEY);
 }
@@ -36,12 +30,17 @@ export function selectInspectionResult(state) {
   return selectEntity(state, RESULT_KEY);
 }
 
-export function selectCodeCheckDefects(state) {
+export function selectCodeCheckResult(state) {
   const data = selectInspectionResult(state) || {};
-  if (!data.codeCheck || !data.codeCheck.defects) {
+  return data.codeCheck;
+}
+
+export function selectCodeCheckDefects(state) {
+  const codeCheck = selectCodeCheckResult(state) || {};
+  if (!codeCheck.defects) {
     return;
   }
-  return data.codeCheck.defects.map(
+  return codeCheck.defects.map(
     ({ category, column, file, id, line, message, severity }) => ({
       category,
       column: parseInt(column, 10),
@@ -50,7 +49,7 @@ export function selectCodeCheckDefects(state) {
       line: parseInt(line, 10),
       message,
       severity,
-      tool: data.codeCheck.tool
+      tool: codeCheck.tool
     })
   );
 }
@@ -121,10 +120,9 @@ export function selectMemoryStats(state) {
 }
 
 export function selectCodeStats(state) {
-  const defects = selectCodeCheckDefects(state);
-  if (!defects) {
-    return;
-  }
+  const defects = selectCodeCheckDefects(state) || [];
+  const codeCheck = selectCodeCheckResult(state) || {};
+
   return {
     defectsCountTotal: defects.length,
     defectsCountBySeverity: {
@@ -132,9 +130,16 @@ export function selectCodeStats(state) {
       medium: defects.filter(({ severity }) => severity === 'medium').length,
       high: defects.filter(({ severity }) => severity === 'high').length
     },
-    topDefects: defects
-      .map(d => ({ ...d, level: levelsBySeverity[d.severity] }))
-      .sort((a, b) => a.severity - b.severity)
-      .slice(0, 5)
+    stats: (codeCheck.stats || [])
+      .map(obj =>
+        Object.entries(obj).map(([component, { high = 0, medium = 0, low = 0 }]) => ({
+          component,
+          high,
+          medium,
+          low
+        }))
+      )
+      .flat()
+      .sort((a, b) => a.component.localeCompare(b.component))
   };
 }

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Card, Col, Icon, Progress, Row, Spin, Statistic } from 'antd';
+import { Card, Col, Icon, Progress, Row, Spin, Statistic, Tooltip } from 'antd';
 import { SYMBOL_ICON_BY_TYPE, SYMBOL_NAME_BY_TYPE } from '@inspect/constants';
 import { selectCodeStats, selectMemoryStats } from '@inspect/selectors';
 
-import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -55,7 +54,14 @@ class MemoryStatisticsPage extends React.PureComponent {
         medium: PropTypes.number,
         high: PropTypes.number
       }),
-      topDefects: PropTypes.arrayOf(DefectType)
+      stats: PropTypes.arrayOf(
+        PropTypes.shape({
+          component: PropTypes.string.isRequired,
+          high: PropTypes.number.isRequired,
+          medium: PropTypes.number.isRequired,
+          low: PropTypes.number.isRequired
+        })
+      )
     }),
     // callbacks
     onFileClick: PropTypes.func,
@@ -63,19 +69,45 @@ class MemoryStatisticsPage extends React.PureComponent {
     onSymbolClick: PropTypes.func
   };
 
-  formatSize = value => {
+  static formatPercent(value) {
     return value.toFixed(0) + '%';
-  };
+  }
 
-  handleFileClick = () => {
+  formatDefects() {
+    return this.props.code.defectsCountTotal;
+  }
+
+  getDefectsTooltip() {
+    return [
+      `${this.props.code.defectsCountBySeverity.high} High`,
+      `${this.props.code.defectsCountBySeverity.medium} Medium`,
+      `${this.props.code.defectsCountBySeverity.low} Low`
+    ].join(' / ');
+  }
+
+  getDefectsColor() {
+    const { high, medium, low } = this.props.code.defectsCountBySeverity;
+    if (high) {
+      return '#f5222d';
+    }
+    if (medium) {
+      return '#fadb14';
+    }
+    if (low) {
+      return '#1890ff';
+    }
+    return '#52c41a';
+  }
+
+  handleFileClick() {
     this.props.onFileClick();
-  };
-  handleSymbolClick = () => {
+  }
+  handleSymbolClick() {
     this.props.onSymbolClick();
-  };
-  handleSectionClick = () => {
+  }
+  handleSectionClick() {
     this.props.onSectionClick();
-  };
+  }
 
   renderLoader() {
     return (
@@ -94,46 +126,50 @@ class MemoryStatisticsPage extends React.PureComponent {
       <Row gutter={16} className="block text-center">
         {this.props.memory && (
           <Col xs={12} sm={8} lg={4}>
-            <Progress
-              type="dashboard"
-              format={this.formatSize}
-              percent={(this.props.memory.ram / totalSize) * 100}
-              width={120}
-              strokeColor="#1890ff"
-            />
+            <Tooltip
+              title={`${formatSize(this.props.memory.ram)} of ${formatSize(totalSize)}`}
+            >
+              <Progress
+                type="dashboard"
+                format={MemoryStatisticsPage.formatPercent}
+                percent={(this.props.memory.ram / totalSize) * 100}
+                width={120}
+                strokeColor="#1890ff"
+              />
+            </Tooltip>
             <h4>RAM</h4>
           </Col>
         )}
         {this.props.memory && (
           <Col xs={12} sm={8} lg={4}>
-            <Progress
-              type="dashboard"
-              format={this.formatSize}
-              percent={(this.props.memory.flash / totalSize) * 100}
-              width={120}
-              strokeColor="#faad14" // #52c41a
-            />
+            <Tooltip
+              title={`${formatSize(this.props.memory.flash)} of ${formatSize(
+                totalSize
+              )}`}
+            >
+              <Progress
+                type="dashboard"
+                format={MemoryStatisticsPage.formatPercent}
+                percent={(this.props.memory.flash / totalSize) * 100}
+                width={120}
+                strokeColor="#faad14" // #52c41a
+              />
+            </Tooltip>
             <h4>Flash</h4>
           </Col>
         )}
         {this.props.code && (
           <Col xs={12} sm={8} lg={4}>
-            <Progress
-              type="dashboard"
-              format={this.formatSize}
-              percent={
-                (this.props.code.defectsCountBySeverity.medium +
-                  this.props.code.defectsCountBySeverity.high) /
-                this.props.code.defectsCountTotal
-              }
-              width={120}
-              // successPercent={30}
-              strokeColor={{
-                '100%': '#52c41a', //'#108ee9',
-                '70%': '#fadb14',
-                '0%': '#f5222d'
-              }}
-            />
+            <Tooltip title={this.getDefectsTooltip()}>
+              <Progress
+                type="dashboard"
+                format={::this.formatDefects}
+                percent={100}
+                strokeColor={this.getDefectsColor()}
+                successPercent={0}
+                width={120}
+              />
+            </Tooltip>
             <h4>Defects</h4>
           </Col>
         )}
@@ -149,17 +185,17 @@ class MemoryStatisticsPage extends React.PureComponent {
     return (
       <Row gutter={16} className="block text-center">
         <Col xs={8} lg={4}>
-          <Card hoverable onClick={this.handleFileClick}>
+          <Card hoverable onClick={::this.handleFileClick}>
             <Statistic title="Files" value={filesCount} precision={0} />
           </Card>
         </Col>
         <Col xs={8} lg={4}>
-          <Card hoverable onClick={this.handleSymbolClick}>
+          <Card hoverable onClick={::this.handleSymbolClick}>
             <Statistic title="Symbols" value={symbolsCount} precision={0} />
           </Card>
         </Col>
         <Col xs={8} lg={4}>
-          <Card hoverable onClick={this.handleSectionClick}>
+          <Card hoverable onClick={::this.handleSectionClick}>
             <Statistic title="Sections" value={sectionsCount} precision={0} />
           </Card>
         </Col>
@@ -213,23 +249,34 @@ class MemoryStatisticsPage extends React.PureComponent {
 
   renderTopDefects() {
     return (
-      <Card title="Top 5 Defects" className="block">
-        <table className="inspect-stats-block">
-          <tbody>
-            {this.props.code.topDefects.map(
-              ({ severity, message, line, column, category, id }, i) => (
+      <Card title="Defects Summary" className="block">
+        {!this.props.code.stats.length && (
+          <ul className="background-message text-center">
+            <li>Defects Free</li>
+          </ul>
+        )}
+        {this.props.code.stats.length && (
+          <table className="inspect-stats-block">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>High</th>
+                <th>Medium</th>
+                <th>Low</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.props.code.stats.map(({ component, high, medium, low }, i) => (
                 <tr key={i}>
-                  <td>
-                    {category}/{id}
-                  </td>
-                  <td>
-                    {severity} [{line}:{column}] {message}
-                  </td>
+                  <td>{component}</td>
+                  <td className="text-right">{high}</td>
+                  <td className="text-right">{medium}</td>
+                  <td className="text-right">{low}</td>
                 </tr>
-              )
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
       </Card>
     );
   }
