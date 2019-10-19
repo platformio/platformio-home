@@ -64,17 +64,16 @@ class MemoryStatisticsPage extends React.PureComponent {
       )
     }),
     // callbacks
-    onFileClick: PropTypes.func,
-    onSectionClick: PropTypes.func,
-    onSymbolClick: PropTypes.func
+    onMemoryClick: PropTypes.func,
+    onCodeClick: PropTypes.func
   };
 
   static formatPercent(value) {
-    return value.toFixed(0) + '%';
+    return <a>{value.toFixed(0) + '%'}</a>;
   }
 
   formatDefects() {
-    return this.props.code.defectsCountTotal;
+    return <a>{this.props.code.defectsCountTotal}</a>;
   }
 
   getDefectsTooltip() {
@@ -104,14 +103,11 @@ class MemoryStatisticsPage extends React.PureComponent {
     }
   }
 
-  handleFileClick() {
-    this.props.onFileClick();
+  handleMemoryClick() {
+    this.props.onMemoryClick();
   }
-  handleSymbolClick() {
-    this.props.onSymbolClick();
-  }
-  handleSectionClick() {
-    this.props.onSectionClick();
+  handleCodeClick() {
+    this.props.onCodeClick();
   }
 
   renderLoader() {
@@ -143,6 +139,7 @@ class MemoryStatisticsPage extends React.PureComponent {
               <Progress
                 type="dashboard"
                 format={MemoryStatisticsPage.formatPercent}
+                onClick={::this.handleMemoryClick}
                 percent={ramPercent}
                 width={120}
                 strokeColor="#1890ff"
@@ -161,6 +158,7 @@ class MemoryStatisticsPage extends React.PureComponent {
               <Progress
                 type="dashboard"
                 format={MemoryStatisticsPage.formatPercent}
+                onClick={::this.handleMemoryClick}
                 percent={flashPercent}
                 width={120}
                 strokeColor="#faad14" // #52c41a
@@ -175,6 +173,7 @@ class MemoryStatisticsPage extends React.PureComponent {
               <Progress
                 type="dashboard"
                 format={::this.formatDefects}
+                onClick={::this.handleCodeClick}
                 percent={100}
                 successPercent={0}
                 width={120}
@@ -183,32 +182,6 @@ class MemoryStatisticsPage extends React.PureComponent {
             <h4>Defects</h4>
           </Col>
         )}
-      </Row>
-    );
-  }
-
-  renderTiles() {
-    if (!this.props.memory) {
-      return;
-    }
-    const { filesCount, symbolsCount, sectionsCount } = this.props.memory;
-    return (
-      <Row gutter={16} className="block text-center">
-        <Col xs={8} lg={4}>
-          <Card hoverable onClick={::this.handleFileClick}>
-            <Statistic title="Files" value={filesCount} precision={0} />
-          </Card>
-        </Col>
-        <Col xs={8} lg={4}>
-          <Card hoverable onClick={::this.handleSymbolClick}>
-            <Statistic title="Symbols" value={symbolsCount} precision={0} />
-          </Card>
-        </Col>
-        <Col xs={8} lg={4}>
-          <Card hoverable onClick={::this.handleSectionClick}>
-            <Statistic title="Sections" value={sectionsCount} precision={0} />
-          </Card>
-        </Col>
       </Row>
     );
   }
@@ -310,7 +283,6 @@ class MemoryStatisticsPage extends React.PureComponent {
         {
           <div>
             {this.renderGauges()}
-            {this.props.memory && this.renderTiles()}
             {this.props.memory && this.renderTopFiles()}
             {this.props.memory && this.renderTopSymbols()}
           </div>
@@ -325,9 +297,8 @@ function mapStateToProps(state, { history }) {
   return {
     code: selectCodeStats(state),
     memory: selectMemoryStats(state),
-    onFileClick: () => goTo(history, '/inspect/result/files'),
-    onSectionClick: () => goTo(history, '/inspect/result/sections'),
-    onSymbolClick: () => goTo(history, '/inspect/result/symbols')
+    onMemoryClick: () => goTo(history, '/inspect/result/files'),
+    onCodeClick: () => goTo(history, '/inspect/result/defects')
   };
 }
 
