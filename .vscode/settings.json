@@ -3,11 +3,9 @@
   "eslint.validate": ["javascript", "javascriptreact"],
   "eslint.autoFixOnSave": false,
   "[javascript]": {
-    "editor.formatOnSave": true,
     "editor.rulers": [88]
   },
   "[javascriptreact]": {
-    "editor.formatOnSave": true,
     "editor.rulers": [88]
   },
   "editor.codeActionsOnSave": {
