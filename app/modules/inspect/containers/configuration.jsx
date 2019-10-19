@@ -26,16 +26,18 @@ import { selectSavedConfiguration } from '@inspect/selectors';
 
 class InspectionFormComponent extends React.Component {
   static propTypes = {
+    // data
     form: PropTypes.object,
-    inspectProject: PropTypes.func.isRequired,
-    loadProjects: PropTypes.func.isRequired,
     projects: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
         path: PropTypes.string.isRequired
       })
     ),
-    savedConfiguration: PropTypes.object
+    savedConfiguration: PropTypes.object,
+    // callbacks
+    inspectProject: PropTypes.func.isRequired,
+    loadProjects: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -62,7 +64,7 @@ class InspectionFormComponent extends React.Component {
     return projectDir && projectDir.length && env && env.length && (memory || code);
   }
 
-  handleSubmit = e => {
+  handleSubmit(e) {
     e.preventDefault();
     if (!this.isValid()) {
       return;
@@ -75,17 +77,18 @@ class InspectionFormComponent extends React.Component {
         this.setState({ running: false, error });
       }
     });
-  };
+  }
 
-  handleProjectChange = projectDir => {
+  handleProjectChange(projectDir) {
     const newEnvs = this._getProjectEnvs(projectDir);
     this.props.form.setFieldsValue({
       env: newEnvs.length === 1 ? newEnvs[0] : undefined
     });
-  };
+  }
 
-  handleFilterOption = (input, option) =>
+  handleFilterOption(input, option) {
     option.props.children.toLowerCase().includes(input.toLocaleLowerCase());
+  }
 
   renderProjectSelect() {
     return this.props.form.getFieldDecorator('projectDir')(
@@ -96,8 +99,8 @@ class InspectionFormComponent extends React.Component {
         size="large"
         placeholder={this.props.projects ? 'Select a project' : 'Loading…'}
         optionFilterProp="children"
-        filterOption={this.handleFilterOption}
-        onChange={this.handleProjectChange}
+        filterOption={::this.handleFilterOption}
+        onChange={::this.handleProjectChange}
       >
         {(this.props.projects || [])
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -162,7 +165,7 @@ class InspectionFormComponent extends React.Component {
             </p>
           </Col>
         </Row>
-        <Form layout="horizontal" onSubmit={this.handleSubmit}>
+        <Form layout="horizontal" onSubmit={::this.handleSubmit}>
           <Form.Item label="Project" {...itemLayout}>
             {this.renderProjectSelect()}
           </Form.Item>

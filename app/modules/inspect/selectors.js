@@ -16,7 +16,7 @@
 
 import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
 import { fixPath, shallowCompare } from '@inspect/helpers';
-import { selectEntity, selectInputValue } from '@store/selectors';
+import { selectEntity, selectStorageItem } from '@store/selectors';
 
 const levelsBySeverity = Object.freeze({
   high: 1,
@@ -25,7 +25,7 @@ const levelsBySeverity = Object.freeze({
 });
 
 export function selectSavedConfiguration(state) {
-  return selectInputValue(state, CONFIG_KEY);
+  return selectStorageItem(state, CONFIG_KEY);
 }
 
 export function selectIsConfigurationDifferent(state, newConfiguration) {
