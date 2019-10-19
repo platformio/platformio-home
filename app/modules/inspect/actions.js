@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { createAction, updateInputValue } from '@store/actions';
-
-import { CONFIG_KEY } from '@inspect/constants';
+import { createAction } from '@store/actions';
 
 export const INSPECT_PROJECT = 'INSPECT_PROJECT';
 export const REINSPECT_PROJECT = 'REINSPECT_PROJECT';
@@ -32,8 +30,4 @@ export function reinspectProject(onEnd) {
   return createAction(REINSPECT_PROJECT, {
     onEnd
   });
-}
-
-export function saveConfiguration(values) {
-  return updateInputValue(CONFIG_KEY, values);
 }

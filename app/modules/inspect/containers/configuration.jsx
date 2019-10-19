@@ -15,11 +15,11 @@
  */
 
 import { Button, Col, Form, Row, Select, Switch } from 'antd';
-import { inspectProject, saveConfiguration } from '@inspect/actions';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
 import { selectProjects } from '@project/selectors';
 import { selectSavedConfiguration } from '@inspect/selectors';
@@ -35,8 +35,7 @@ class InspectionFormComponent extends React.Component {
         path: PropTypes.string.isRequired
       })
     ),
-    savedConfiguration: PropTypes.object,
-    saveConfiguration: PropTypes.func.isRequired
+    savedConfiguration: PropTypes.object
   };
 
   constructor(...args) {
@@ -71,7 +70,6 @@ class InspectionFormComponent extends React.Component {
     const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
     const configuration = { projectDir, env, memory, code };
     this.setState({ running: true, error: undefined });
-    this.props.saveConfiguration(configuration);
     this.props.inspectProject(configuration, (_result, error) => {
       if (this._isMounted) {
         this.setState({ running: false, error });
@@ -90,40 +88,25 @@ class InspectionFormComponent extends React.Component {
     option.props.children.toLowerCase().includes(input.toLocaleLowerCase());
 
   renderProjectSelect() {
-    const value = this.props.form.getFieldValue('projectDir');
-    return (
-      <div>
-        {this.props.form.getFieldDecorator('projectDir')(
-          <Select
-            loading={!this.props.projects}
-            showSearch
-            style={{ width: '100%' }}
-            size="large"
-            placeholder={this.props.projects ? 'Select a project' : 'Loading…'}
-            optionFilterProp="children"
-            filterOption={this.handleFilterOption}
-            onChange={this.handleProjectChange}
-          >
-            {(this.props.projects || [])
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map(({ description, name, path }) => (
-                <Select.Option key={path} value={path}>
-                  {name}
-                  {description && (
-                    <div>
-                      <small>{description}</small>
-                    </div>
-                  )}
-                </Select.Option>
-              ))}
-          </Select>
-        )}
-        {value && (
-          <small style={{ display: 'block', lineHeight: 1, marginTop: 5 }}>
-            {value}
-          </small>
-        )}
-      </div>
+    return this.props.form.getFieldDecorator('projectDir')(
+      <Select
+        loading={!this.props.projects}
+        showSearch
+        style={{ width: '100%' }}
+        size="large"
+        placeholder={this.props.projects ? 'Select a project' : 'Loading…'}
+        optionFilterProp="children"
+        filterOption={this.handleFilterOption}
+        onChange={this.handleProjectChange}
+      >
+        {(this.props.projects || [])
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(({ name, path }) => (
+            <Select.Option key={path} value={path}>
+              {name}
+            </Select.Option>
+          ))}
+      </Select>
     );
   }
 
@@ -233,8 +216,7 @@ function mapStateToProps(state) {
 
 const dispatchToProps = {
   inspectProject,
-  loadProjects,
-  saveConfiguration
+  loadProjects
 };
 
 const ConnectedInspectionForm = connect(
