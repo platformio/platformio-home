@@ -250,12 +250,8 @@ class MemoryStatisticsPage extends React.PureComponent {
   renderTopDefects() {
     return (
       <Card title="Defects Summary" className="block">
-        {!this.props.code.stats.length && (
-          <ul className="background-message text-center">
-            <li>Defects Free</li>
-          </ul>
-        )}
-        {this.props.code.stats.length && (
+        {this.props.code.stats.length === 0 && <div>Defects Free</div>}
+        {this.props.code.stats.length !== 0 && (
           <table className="inspect-stats-block">
             <thead>
               <tr>

@@ -9,6 +9,7 @@
   "main": "''",
   "scripts": {
     "start": "webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors",
+    "start:light": "PIOHOME_THEME=light webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors --port 9001",
     "build": "NODE_ENV=production webpack --config ./scripts/webpack.prod.config.js --progress --profile --colors",
     "lint": "eslint --ext js --ext jsx app",
     "format": "prettier --write \"app/**/*.js*\""
