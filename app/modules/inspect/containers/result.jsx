@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
 import childRoutes from '@inspect/result-routes';
 import { connect } from 'react-redux';
+import { osRevealFile } from '@core/actions';
 import { reinspectProject } from '@inspect/actions';
 import { selectProjectInfo } from '@project/selectors';
 import { selectSavedConfiguration } from '@inspect/selectors';
@@ -29,8 +30,10 @@ class InspectionResultComponent extends React.Component {
     // data
     code: PropTypes.bool,
     memory: PropTypes.bool,
+    projectDir: PropTypes.string,
     projectName: PropTypes.string,
     // callbacks
+    osRevealFile: PropTypes.func.isRequired,
     reinspectProject: PropTypes.func.isRequired
   };
 
@@ -46,6 +49,10 @@ class InspectionResultComponent extends React.Component {
   componentWillUnmount() {
     this._isMounted = false;
   }
+
+  handleRevealClick = () => {
+    this.props.osRevealFile(this.props.projectDir);
+  };
 
   handleRefreshClick = () => {
     this.setState({ loading: true });
@@ -64,15 +71,22 @@ class InspectionResultComponent extends React.Component {
     return (
       <div style={{ marginTop: 12 }}>
         <h1 style={{ marginBottom: 0, position: 'relative' }}>
-          {this.props.projectName}
-          <Button
-            icon="reload"
-            loading={this.state.loading}
+          <Tooltip title={this.props.projectDir}>{this.props.projectName}</Tooltip>
+          <div
+            className="inline-buttons"
             style={{ position: 'absolute', right: 0, top: 0 }}
-            onClick={this.handleRefreshClick}
           >
-            Refresh
-          </Button>
+            <Button icon="folder-open" onClick={this.handleRevealClick}>
+              Reveal
+            </Button>
+            <Button
+              icon="reload"
+              loading={this.state.loading}
+              onClick={this.handleRefreshClick}
+            >
+              Refresh
+            </Button>
+          </div>
         </h1>
         <MultiPage routes={routes} />
       </div>
@@ -84,6 +98,7 @@ function mapStateToProps(state) {
   const { projectDir, memory, code } = selectSavedConfiguration(state);
   const project = selectProjectInfo(state, projectDir);
   return {
+    projectDir,
     projectName: (project || {}).name,
     memory,
     code
@@ -91,6 +106,7 @@ function mapStateToProps(state) {
 }
 
 const dispatchProps = {
+  osRevealFile,
   reinspectProject
 };
 
