@@ -285,6 +285,7 @@ class MemoryStatisticsPage extends React.PureComponent {
           title={() => 'Defects Summary'}
           columns={columns}
           dataSource={this.props.code.stats}
+          rowKey="component"
           pagination={false}
           size="small"
         />
