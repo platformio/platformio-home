@@ -258,38 +258,46 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
 
   renderTopDefects() {
+    if (!this.props.code.stats.length) {
+      return;
+    }
     const columns = [
       {
         title: 'Component',
-        dataIndex: 'component'
+        dataIndex: 'component',
+        render: text => <b>{text}</b>,
+        fixed: true
       },
       {
         align: 'right',
         title: 'High',
-        dataIndex: 'high'
+        dataIndex: 'high',
+        fixed: true
       },
       {
         align: 'right',
         title: 'Medium',
-        dataIndex: 'medium'
+        dataIndex: 'medium',
+        fixed: true
       },
       {
         align: 'right',
         title: 'Low',
-        dataIndex: 'low'
+        dataIndex: 'low',
+        fixed: true
       }
     ];
     return (
-      this.props.code.stats.length !== 0 && (
+      <Card title="Defects Summary" className="block">
         <Table
-          title={() => 'Defects Summary'}
           columns={columns}
           dataSource={this.props.code.stats}
           rowKey="component"
           pagination={false}
+          tableLayout="fixed"
           size="small"
         />
-      )
+      </Card>
     );
   }
 
@@ -298,7 +306,7 @@ class MemoryStatisticsPage extends React.PureComponent {
       return this.renderLoader();
     }
     return (
-      <div>
+      <div className="inspect-stats-page">
         {
           <div>
             {this.renderGauges()}
