@@ -15,11 +15,11 @@
  */
 
 import { Button, Col, Form, Row, Select, Switch } from 'antd';
+import { inspectProject, saveConfiguration } from '@inspect/actions';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
 import { selectProjects } from '@project/selectors';
 import { selectSavedConfiguration } from '@inspect/selectors';
@@ -35,7 +35,8 @@ class InspectionFormComponent extends React.Component {
         path: PropTypes.string.isRequired
       })
     ),
-    savedConfiguration: PropTypes.object
+    savedConfiguration: PropTypes.object,
+    saveConfiguration: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -70,6 +71,7 @@ class InspectionFormComponent extends React.Component {
     const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
     const configuration = { projectDir, env, memory, code };
     this.setState({ running: true, error: undefined });
+    this.props.saveConfiguration(configuration);
     this.props.inspectProject(configuration, (_result, error) => {
       if (this._isMounted) {
         this.setState({ running: false, error });
@@ -229,14 +231,15 @@ function mapStateToProps(state) {
   };
 }
 
-const dispatchProps = {
+const dispatchToProps = {
   inspectProject,
-  loadProjects
+  loadProjects,
+  saveConfiguration
 };
 
 const ConnectedInspectionForm = connect(
   mapStateToProps,
-  dispatchProps
+  dispatchToProps
 )(InspectionFormComponent);
 
 export const InspectionForm = Form.create()(ConnectedInspectionForm);

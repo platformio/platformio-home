@@ -16,8 +16,12 @@
 
 import * as pathlib from '@core/path';
 
-import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
-import { INSPECT_PROJECT, REINSPECT_PROJECT, inspectProject } from '@inspect/actions';
+import {
+  INSPECT_PROJECT,
+  REINSPECT_PROJECT,
+  inspectProject,
+  saveConfiguration
+} from '@inspect/actions';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '@store/actions';
 import {
@@ -26,6 +30,7 @@ import {
   selectSavedConfiguration
 } from '@inspect/selectors';
 
+import { RESULT_KEY } from '@inspect/constants';
 import { apiFetchData } from '@store/api';
 import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
@@ -118,7 +123,7 @@ function* watchInspectProject() {
         }
       }
       const entity = { memory: memoryResult, codeCheck: codeCheckResult };
-      yield put(updateEntity(CONFIG_KEY, configuration));
+      yield put(saveConfiguration(configuration));
       yield put(updateEntity(RESULT_KEY, entity));
 
       const state = yield select();
