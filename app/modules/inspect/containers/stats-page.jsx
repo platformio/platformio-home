@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Card, Col, Icon, Progress, Row, Spin, Statistic, Table, Tooltip } from 'antd';
+import { Card, Col, Icon, Progress, Row, Spin, Table, Tooltip } from 'antd';
 import { SYMBOL_ICON_BY_TYPE, SYMBOL_NAME_BY_TYPE } from '@inspect/constants';
 import { selectCodeStats, selectMemoryStats } from '@inspect/selectors';
 
