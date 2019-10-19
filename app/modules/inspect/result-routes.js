@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import FileExplorerPage from '@inspect/containers/mem-explorer';
 import SectionsPage from '@inspect/containers/mem-sections';
 import StatisticsPage from '@inspect/containers/stats-page';
 import SymbolsPage from '@inspect/containers/mem-symbols';
@@ -28,6 +29,12 @@ const common = [
 ];
 
 const memory = [
+  {
+    path: '/inspect/result/files',
+    icon: 'cluster',
+    label: 'Explorer',
+    component: FileExplorerPage
+  },
   {
     path: '/inspect/result/symbols',
     icon: 'tags',

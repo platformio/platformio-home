@@ -41,6 +41,10 @@ export function formatSize(size) {
   return humanize.filesize(size, 1024, size % 1024 === 0 || size < 1024 ? 0 : 1);
 }
 
+export function safeFormatSize(size) {
+  return size !== undefined ? formatSize(size) : '';
+}
+
 export function formatHex(addr, options) {
   if (typeof addr !== 'number') {
     return;
@@ -74,6 +78,10 @@ export function compareString(a, b) {
     caseFirst: 'upper',
     numeric: true
   });
+}
+
+export function compareBool(a, b) {
+  return a - b;
 }
 
 export function windowsToPosixPath(windowsPath) {
