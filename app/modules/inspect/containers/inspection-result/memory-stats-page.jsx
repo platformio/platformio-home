@@ -27,6 +27,7 @@ import { goTo } from '@core/helpers';
 
 class MemoryStatisticsPage extends React.PureComponent {
   static propTypes = {
+    // data
     memory: PropTypes.shape({
       filesCount: PropTypes.number.isRequired,
       symbolsCount: PropTypes.number.isRequired,
@@ -56,6 +57,7 @@ class MemoryStatisticsPage extends React.PureComponent {
       }),
       topDefects: PropTypes.arrayOf(DefectType)
     }),
+    // callbacks
     onFileClick: PropTypes.func,
     onSectionClick: PropTypes.func,
     onSymbolClick: PropTypes.func
@@ -167,20 +169,15 @@ class MemoryStatisticsPage extends React.PureComponent {
 
   renderTopFiles() {
     return (
-      <Card title="Top 5 Files" className="block">
-        <table className="inspect__top-block__table">
+      <Card title="Top 5 Files" className="block ">
+        <table className="inspect-stats-block">
           <tbody>
             {this.props.memory.topFiles.map(({ flash, path }) => (
               <tr key={path}>
-                <td className="inspect__top-block__cell text-right inspect__top-block__cell_size">
-                  {formatSize(flash)}
+                <td className="text-right">
+                  <b>{formatSize(flash)}</b>
                 </td>
-                <td
-                  className="inspect__top-block__cell "
-                  style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                >
-                  {path}
-                </td>
+                <td style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>{path}</td>
               </tr>
             ))}
           </tbody>
@@ -192,14 +189,14 @@ class MemoryStatisticsPage extends React.PureComponent {
   renderTopSymbols() {
     return (
       <Card title="Top 5 Symbols" className="block">
-        <table className="inspect__top-block__table">
+        <table className="inspect-stats-block">
           <tbody>
             {this.props.memory.topSymbols.map(symbol => (
               <tr key={symbol.displayName}>
-                <td className="inspect__top-block__cell text-right inspect__top-block__cell_size">
-                  {formatSize(symbol.size)}{' '}
+                <td className="text-right">
+                  <b>{formatSize(symbol.size)}</b>
                 </td>
-                <td className="inspect__top-block__cell ">
+                <td>
                   <Icon
                     title={SYMBOL_NAME_BY_TYPE[symbol.type]}
                     type={SYMBOL_ICON_BY_TYPE[symbol.type]}
@@ -217,15 +214,15 @@ class MemoryStatisticsPage extends React.PureComponent {
   renderTopDefects() {
     return (
       <Card title="Top 5 Defects" className="block">
-        <table className="inspect__top-block__table">
+        <table className="inspect-stats-block">
           <tbody>
             {this.props.code.topDefects.map(
               ({ severity, message, line, column, category, id }, i) => (
                 <tr key={i}>
-                  <td className="inspect__top-block__cell">
+                  <td>
                     {category}/{id}
                   </td>
-                  <td className="inspect__top-block__cell ">
+                  <td>
                     {severity} [{line}:{column}] {message}
                   </td>
                 </tr>

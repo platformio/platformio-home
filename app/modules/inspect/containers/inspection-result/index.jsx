@@ -54,7 +54,6 @@ class InspectionResultComponent extends React.Component {
 
   render() {
     const routes = [...childRoutes.common];
-
     return (
       <div style={{ marginTop: 12 }}>
         <h1 style={{ marginBottom: 0, position: 'relative' }}>
