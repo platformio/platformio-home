@@ -89,9 +89,13 @@ function* _inspectCode({ projectDir, env }) {
 function* watchInspectProject() {
   yield takeLatest(INSPECT_PROJECT, function*({ configuration, onEnd }) {
     if (!(yield select(selectIsConfigurationDifferent, configuration))) {
-      const currentResult = yield select(selectInspectionResult);
+      const state = yield select();
+      const currentResult = selectInspectionResult(state);
       if (currentResult) {
         // Result is already present
+        if (state.router) {
+          goTo(state.router.history, '/inspect/result/stats', undefined, true);
+        }
         if (onEnd) {
           onEnd(currentResult);
         }
