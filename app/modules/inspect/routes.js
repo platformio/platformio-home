@@ -15,7 +15,7 @@
  */
 
 import { InspectionForm } from '@app/modules/inspect/containers/configuration';
-import { InspectionResultPage } from '@inspect/containers/inspection-result';
+import { InspectionResultPage } from '@inspect/containers/result';
 
 const routes = [
   {

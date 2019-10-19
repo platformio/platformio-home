@@ -19,7 +19,7 @@ import { ConfigurationType } from '@inspect/types';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
-import childRoutes from './routes';
+import childRoutes from '@inspect/result-routes';
 import { connect } from 'react-redux';
 import { reinspectProject } from '@inspect/actions';
 import { selectSavedConfiguration } from '@inspect/selectors';

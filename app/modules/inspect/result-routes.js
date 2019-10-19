@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import MemoryStatisticsPage from './memory-stats-page';
+import MemoryStatisticsPage from '@inspect/containers/stats-page';
 
 const common = [
   {

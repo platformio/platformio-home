@@ -38,19 +38,15 @@ function* _inspectMemory({ projectDir, env }) {
     params: [['run', '-d', projectDir, '-e', env, '-t', 'sizedata']]
   });
 
-  // FIXME: fails! invalid dir!
-  // const buildDir = yield call(apiFetchData, {
-  //   query: 'project.config_call',
-  //   params: [pathlib.join(projectDir, 'platformio.ini'), 'get_optional_dir', 'build']
-  // });
-  // const uri = pathlib.join(buildDir, env, 'sizedata.json');
-
-  // FIXME: build dir can be optional
-  const uri = pathlib.join(projectDir, '.pio', 'build', env, 'sizedata.json');
+  const buildDir = yield call(apiFetchData, {
+    query: 'project.config_call',
+    params: [pathlib.join(projectDir, 'platformio.ini'), 'get_optional_dir', 'build']
+  });
+  const sizedataPath = pathlib.join(buildDir, env, 'sizedata.json');
 
   const jsonContent = yield call(apiFetchData, {
     query: 'os.request_content',
-    params: [uri]
+    params: [sizedataPath]
   });
   if (!jsonContent) {
     throw new Error('sizedata.json file not found. Build error?');
