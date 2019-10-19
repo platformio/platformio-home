@@ -120,8 +120,11 @@ export function selectMemoryStats(state) {
 }
 
 export function selectCodeStats(state) {
+  const codeCheck = selectCodeCheckResult(state);
+  if (!codeCheck) {
+    return;
+  }
   const defects = selectCodeCheckDefects(state) || [];
-  const codeCheck = selectCodeCheckResult(state) || {};
 
   return {
     defectsCountTotal: defects.length,

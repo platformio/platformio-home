@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Card, Col, Icon, Progress, Row, Spin, Statistic, Tooltip } from 'antd';
+import { Card, Col, Icon, Progress, Row, Spin, Statistic, Table, Tooltip } from 'antd';
 import { SYMBOL_ICON_BY_TYPE, SYMBOL_NAME_BY_TYPE } from '@inspect/constants';
 import { selectCodeStats, selectMemoryStats } from '@inspect/selectors';
 
@@ -258,32 +258,37 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
 
   renderTopDefects() {
+    const columns = [
+      {
+        title: 'Component',
+        dataIndex: 'component'
+      },
+      {
+        align: 'right',
+        title: 'High',
+        dataIndex: 'high'
+      },
+      {
+        align: 'right',
+        title: 'Medium',
+        dataIndex: 'medium'
+      },
+      {
+        align: 'right',
+        title: 'Low',
+        dataIndex: 'low'
+      }
+    ];
     return (
-      <Card title="Defects Summary" className="block">
-        {this.props.code.stats.length === 0 && <div>Defects Free</div>}
-        {this.props.code.stats.length !== 0 && (
-          <table className="inspect-stats-block">
-            <thead>
-              <tr>
-                <th>Component</th>
-                <th>High</th>
-                <th>Medium</th>
-                <th>Low</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.props.code.stats.map(({ component, high, medium, low }, i) => (
-                <tr key={i}>
-                  <td>{component}</td>
-                  <td className="text-right">{high}</td>
-                  <td className="text-right">{medium}</td>
-                  <td className="text-right">{low}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </Card>
+      this.props.code.stats.length !== 0 && (
+        <Table
+          title={() => 'Defects Summary'}
+          columns={columns}
+          dataSource={this.props.code.stats}
+          pagination={false}
+          size="small"
+        />
+      )
     );
   }
 
