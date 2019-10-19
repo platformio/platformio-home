@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import childRoutes from './routes';
 import { connect } from 'react-redux';
-import { generateProjectNameFromPath } from '@inspect/helpers';
 import { reinspectProject } from '@inspect/actions';
 import { selectSavedConfiguration } from '@inspect/selectors';
 
@@ -59,7 +58,7 @@ class InspectionResultComponent extends React.Component {
     return (
       <div style={{ marginTop: 12 }}>
         <h1 style={{ marginBottom: 0, position: 'relative' }}>
-          {generateProjectNameFromPath(this.props.configuration.projectDir)}
+          {this.props.configuration.projectDir}
           <Button
             icon="reload"
             loading={this.state.loading}

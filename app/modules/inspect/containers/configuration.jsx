@@ -19,7 +19,6 @@ import { Button, Col, Form, Row, Select, Switch } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { generateProjectNameFromPath } from '@inspect/helpers';
 import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
 import { selectProjects } from '@project/selectors';
@@ -103,18 +102,18 @@ class InspectionFormComponent extends React.Component {
             filterOption={this.handleFilterOption}
             onChange={this.handleProjectChange}
           >
-            {this.props.projects &&
-              this.props.projects
-                .map(x => ({
-                  ...x,
-                  name: generateProjectNameFromPath(x.path)
-                }))
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(({ name, path }) => (
-                  <Select.Option key={path} value={path}>
-                    {name}
-                  </Select.Option>
-                ))}
+            {(this.props.projects || [])
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(({ description, name, path }) => (
+                <Select.Option key={path} value={path}>
+                  {name}
+                  {description && (
+                    <div>
+                      <small>{description}</small>
+                    </div>
+                  )}
+                </Select.Option>
+              ))}
           </Select>
         )}
         {value && (

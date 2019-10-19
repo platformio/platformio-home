@@ -21,12 +21,6 @@ import humanize from 'humanize';
 
 export const PARENT_DIR = '..';
 export const CURRENT_DIR = '.';
-export function generateProjectNameFromPath(path) {
-  if (!path) {
-    return path;
-  }
-  return pathlib.join(...pathlib.split(path).slice(-3));
-}
 
 export function shallowCompare(a, b) {
   if (a === b) {
