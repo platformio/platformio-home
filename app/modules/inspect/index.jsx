@@ -35,7 +35,7 @@ class InspectPage extends React.Component {
 
   render() {
     return (
-      <section className="inspect-module">
+      <section className="page-container inspect-module">
         <MultiPage routes={routes} disableMenu />
       </section>
     );
