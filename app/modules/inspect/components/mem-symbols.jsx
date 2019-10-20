@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Icon, Input, Table, Tag } from 'antd';
+import { Icon, Input, Table, Tag, Tooltip } from 'antd';
 import {
   compareNumber,
   compareString,
@@ -66,9 +66,9 @@ export class MemorySymbols extends React.PureComponent {
   }
 
   renderDisplayName = (displayName, item) => (
-    <span>
+    <Tooltip placement="right" title={item.type + ' -> ' + item.location}>
       {this.renderIcon(item.type)} {displayName}
-    </span>
+    </Tooltip>
   );
 
   renderAddress = addr => <code>{formatHex(addr, { width: this.addressWidth })}</code>;
