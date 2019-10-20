@@ -86,8 +86,8 @@ export class MemorySymbols extends React.PureComponent {
         )
       },
       {
-        align: 'right',
         title: 'Address',
+        align: 'center',
         dataIndex: 'addr',
         render: this.renderAddress,
         sorter: (a, b) => compareNumber(a.addr, b.addr),
@@ -95,6 +95,7 @@ export class MemorySymbols extends React.PureComponent {
       },
       {
         title: 'Section',
+        align: 'center',
         dataIndex: 'section',
         filters: getFilterMenu(ds, 'section'),
         onFilter: (section, record) => record.section === section,
@@ -103,8 +104,8 @@ export class MemorySymbols extends React.PureComponent {
         width: 150
       },
       {
-        align: 'right',
         title: 'Size',
+        align: 'right',
         dataIndex: 'size',
         render: formatSize,
         sorter: (a, b) => compareNumber(a.size, b.size),
