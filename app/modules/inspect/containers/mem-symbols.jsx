@@ -31,7 +31,7 @@ class SymbolsPage extends React.PureComponent {
     const { symbols } = this.props;
 
     return (
-      <div className="page-container">
+      <div>
         {!symbols && (
           <div className="text-center">
             <Spin tip="Loading..." size="large" />

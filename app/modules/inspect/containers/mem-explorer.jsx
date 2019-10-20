@@ -180,7 +180,7 @@ class FileExplorerPage extends React.PureComponent {
     const dirList = selectedFile ? [] : this.listDir(path);
 
     return (
-      <div className="page-container">
+      <div>
         {!dirList && (
           <div className="text-center">
             <Spin tip="Loading..." size="large" />

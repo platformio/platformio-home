@@ -189,7 +189,7 @@ export class MemorySymbols extends React.PureComponent {
     this.addressWidth = this.getMaxAddressWidth(ds);
 
     return (
-      <div className="page-container">
+      <div>
         <div className="block">
           <Input.Search
             enterButton

@@ -143,7 +143,7 @@ export class MemoryDirExplorer extends React.PureComponent {
       );
     }
     return (
-      <div className="page-container">
+      <div>
         <PathBreadcrumb path={dir} onChange={::this.handleBreadcrumbChange} />
         {this.renderList()}
       </div>

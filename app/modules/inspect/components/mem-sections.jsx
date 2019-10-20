@@ -106,7 +106,7 @@ export class MemorySections extends React.PureComponent {
     this.addressWidth = this.getMaxStartAddressWidth(ds);
 
     return (
-      <div className="page-container">
+      <div>
         <Table
           childrenColumnName="_"
           columns={this.getTableColumns(ds)}

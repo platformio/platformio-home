@@ -31,7 +31,7 @@ class SectionsExplorerPage extends React.PureComponent {
     const { sections } = this.props;
 
     return (
-      <div className="page-container">
+      <div>
         {!sections && (
           <div className="text-center">
             <Spin tip="Loading..." size="large" />
