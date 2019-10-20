@@ -69,25 +69,26 @@ class InspectionResultComponent extends React.Component {
       routes.push(...childRoutes.memory);
     }
     return (
-      <div style={{ marginTop: 12 }}>
-        <h1 style={{ marginBottom: 0, position: 'relative' }}>
+      <div>
+        <h1 style={{ marginTop: 10, marginBottom: 0 }}>
           <Tooltip title={this.props.projectDir}>{this.props.projectName}</Tooltip>
-          <div
-            className="inline-buttons"
-            style={{ position: 'absolute', right: 0, top: 0 }}
-          >
-            <Button icon="folder-open" onClick={this.handleRevealClick}>
-              Reveal
-            </Button>
-            <Button
-              icon="reload"
-              loading={this.state.loading}
-              onClick={this.handleRefreshClick}
-            >
-              Refresh
-            </Button>
+
+          <div className="pull-right">
+            <Button.Group>
+              <Button icon="folder-open" onClick={this.handleRevealClick}>
+                Reveal
+              </Button>
+              <Button
+                icon="reload"
+                loading={this.state.loading}
+                onClick={this.handleRefreshClick}
+              >
+                Refresh
+              </Button>
+            </Button.Group>
           </div>
         </h1>
+        <small> ATMEGA328P 16MHz, 2KB RAM, 31.50KB Flash</small>
         <MultiPage routes={routes} />
       </div>
     );
