@@ -95,10 +95,10 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
 
   getGaugeCls(percent) {
-    if (percent >= 75) {
+    if (percent >= 90) {
       return 'progress-error-stroke';
     }
-    if (percent > 50) {
+    if (percent >= 75) {
       return 'progress-warning-stroke';
     }
   }
