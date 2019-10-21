@@ -160,7 +160,7 @@ export class MemoryDirExplorer extends React.PureComponent {
       { ram: 0, flash: 0 }
     );
     return (
-      <div style={{ textAlign: 'right' }}>
+      <div className='text-right'>
         {`Total: ${formatSize(total.flash)} Flash, ${formatSize(total.ram)} RAM`}
       </div>
     );
