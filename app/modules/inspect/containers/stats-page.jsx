@@ -171,7 +171,7 @@ class MemoryStatisticsPage extends React.PureComponent {
             <h4>Flash</h4>
           </Col>
         )}
-        {this.props.code && (
+        {this.props.code && this.props.code.defectsCountTotal !== 0 && (
           <Col xs={12} sm={8} lg={4} className={this.getDefectsCls()}>
             <Tooltip title={this.getDefectsTooltip()}>
               <Progress
