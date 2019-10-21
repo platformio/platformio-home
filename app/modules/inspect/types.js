@@ -55,3 +55,11 @@ export const SectionsType = PropTypes.arrayOf(
     type: PropTypes.string
   })
 );
+
+export const DeviceType = PropTypes.shape({
+  cpu: PropTypes.string,
+  flash: PropTypes.number,
+  frequency: PropTypes.number,
+  mcu: PropTypes.string,
+  ram: PropTypes.number
+});

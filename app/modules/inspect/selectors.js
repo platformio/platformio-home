@@ -177,3 +177,13 @@ export function selectSectionsSizeData(state) {
     name
   }));
 }
+
+export function selectDeviceInfo(state) {
+  const result = (selectMemoryInspectionResult(state) || {}).device;
+  if (result) {
+    if (result.frequency && typeof result.frequency !== 'number') {
+      result.frequency = parseInt(result.frequency, 10);
+    }
+  }
+  return result;
+}

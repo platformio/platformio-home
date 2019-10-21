@@ -15,6 +15,10 @@
  */
 
 import { Button, Tooltip } from 'antd';
+import { formatFrequency, formatSize } from '@inspect/helpers';
+import { selectDeviceInfo, selectSavedConfiguration } from '@inspect/selectors';
+
+import { DeviceType } from '@inspect/types';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -23,12 +27,12 @@ import { connect } from 'react-redux';
 import { osRevealFile } from '@core/actions';
 import { reinspectProject } from '@inspect/actions';
 import { selectProjectInfo } from '@project/selectors';
-import { selectSavedConfiguration } from '@inspect/selectors';
 
 class InspectionResultComponent extends React.Component {
   static propTypes = {
     // data
     code: PropTypes.bool,
+    device: DeviceType,
     memory: PropTypes.bool,
     projectDir: PropTypes.string,
     projectName: PropTypes.string,
@@ -63,6 +67,20 @@ class InspectionResultComponent extends React.Component {
     });
   };
 
+  renderDeviceInfo() {
+    const { mcu, frequency, ram, flash } = this.props.device;
+    return (
+      <small>
+        {mcu.toUpperCase()}{' '}
+        {[
+          formatFrequency(frequency),
+          `${formatSize(ram)} RAM`,
+          `${formatSize(flash)} Flash`
+        ].join(', ')}{' '}
+      </small>
+    );
+  }
+
   render() {
     const routes = [...childRoutes.common];
     if (this.props.memory) {
@@ -88,7 +106,7 @@ class InspectionResultComponent extends React.Component {
             </Button.Group>
           </div>
         </h1>
-        <small> ATMEGA328P 16MHz, 2KB RAM, 31.50KB Flash</small>
+        {this.props.device && this.renderDeviceInfo()}
         <MultiPage routes={routes} />
       </div>
     );
@@ -102,7 +120,8 @@ function mapStateToProps(state) {
     projectDir,
     projectName: (project || {}).name,
     memory,
-    code
+    code,
+    device: selectDeviceInfo(state)
   };
 }
 
