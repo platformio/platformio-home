@@ -130,7 +130,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     }
 
     return (
-      <Row gutter={16} className="block text-center">
+      <Row gutter={16} className="block text-center inspect-dashboards">
         {ramPercent !== undefined && (
           <Col xs={12} sm={8} lg={4} className={this.getGaugeCls(ramPercent)}>
             <Tooltip
@@ -142,7 +142,6 @@ class MemoryStatisticsPage extends React.PureComponent {
                 onClick={::this.handleMemoryClick}
                 percent={ramPercent}
                 width={120}
-                strokeColor="#1890ff"
               />
             </Tooltip>
             <h4>RAM</h4>
@@ -161,7 +160,6 @@ class MemoryStatisticsPage extends React.PureComponent {
                 onClick={::this.handleMemoryClick}
                 percent={flashPercent}
                 width={120}
-                strokeColor="#faad14" // #52c41a
               />
             </Tooltip>
             <h4>Flash</h4>
