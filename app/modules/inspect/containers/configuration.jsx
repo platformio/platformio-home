@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Button, Col, Form, Row, Select, Switch } from 'antd';
+import { Button, Col, Form, Icon, Row, Select, Switch } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { goTo } from '@core/helpers';
 import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
+import { osOpenUrl } from '@core/actions';
 import { selectProjects } from '@project/selectors';
 import { selectSavedConfiguration } from '@inspect/selectors';
 
@@ -39,7 +40,8 @@ class InspectionFormComponent extends React.Component {
     savedConfiguration: PropTypes.object,
     // callbacks
     inspectProject: PropTypes.func.isRequired,
-    loadProjects: PropTypes.func.isRequired
+    loadProjects: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -160,11 +162,26 @@ class InspectionFormComponent extends React.Component {
       <div>
         <Row>
           <Col offset={labelSpan}>
-            <h1 style={{ marginTop: 12 }}>Inspection Configuration</h1>
+            <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
             <p style={{ maxWidth: '40em' }}>
-              This wizard allows you to create new PlatformIO project or update
-              existing. In the last case, you need to uncheck &quote;Use default
-              location&quote; and specify path to existing project.
+              A report after inspection includes a memory use information with a
+              detailed visual view of memory utilization, helps locate and improve parts
+              of the application like symbols or functions which have a significant
+              memory footprint. A static code analysis report helps spot and fix
+              software defects before debugging.
+            </p>
+            <p>
+              <Icon type="bulb" /> Building a project in{' '}
+              <a
+                onClick={() =>
+                  this.props.osOpenUrl(
+                    'http://docs.platformio.org/page/projectconf/build_configurations.html'
+                  )
+                }
+              >
+                debug mode
+              </a>{' '}
+              before an inspection can significantly reduce the processing time.
             </p>
           </Col>
         </Row>
@@ -222,7 +239,8 @@ function mapStateToProps(state) {
 
 const dispatchToProps = {
   inspectProject,
-  loadProjects
+  loadProjects,
+  osOpenUrl
 };
 
 const ConnectedInspectionForm = connect(
