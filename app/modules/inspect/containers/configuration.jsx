@@ -79,7 +79,9 @@ class InspectionFormComponent extends React.Component {
     this.props.inspectProject(configuration, (_result, error) => {
       if (this._isMounted) {
         this.setState({ running: false, error });
-        goTo(this.props.history, '/inspect/result/stats', undefined, true);
+        if (!error) {
+          goTo(this.props.history, '/inspect/result/stats', undefined, true);
+        }
       }
     });
   }
