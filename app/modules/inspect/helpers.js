@@ -84,6 +84,23 @@ export function compareBool(a, b) {
   return a - b;
 }
 
+export function columnSortFactory(type, dataIndex) {
+  switch (type) {
+    case 'string':
+      return function(a, b) {
+        return compareString(a[dataIndex], b[dataIndex]);
+      };
+
+    case 'number':
+      return function(a, b) {
+        return compareNumber(a[dataIndex], b[dataIndex]);
+      };
+
+    default:
+      throw new Error('Unsupported column sorter type');
+  }
+}
+
 export function windowsToPosixPath(windowsPath) {
   return windowsPath.replace(/\\/g, '/');
 }

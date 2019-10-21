@@ -86,6 +86,9 @@ class InspectionResultComponent extends React.Component {
     if (this.props.memory) {
       routes.push(...childRoutes.memory);
     }
+    if (this.props.code) {
+      routes.push(...childRoutes.code);
+    }
     return (
       <div>
         <h1 style={{ marginTop: 10, marginBottom: 0 }}>

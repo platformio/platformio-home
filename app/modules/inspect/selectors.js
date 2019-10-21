@@ -35,28 +35,27 @@ export function selectMemoryInspectionResult(state) {
   return data.memory;
 }
 
-export function selectCodeCheckResult(state) {
+export function selectCodeCheckResults(state) {
   const data = selectInspectionResult(state) || {};
-  return data.codeCheck;
+  return data.codeChecks;
 }
 
 export function selectCodeCheckDefects(state) {
-  const codeCheck = selectCodeCheckResult(state) || {};
-  if (!codeCheck.defects) {
-    return;
-  }
-  return codeCheck.defects.map(
-    ({ category, column, file, id, line, message, severity }) => ({
-      category,
-      column: parseInt(column, 10),
-      file,
-      id,
-      line: parseInt(line, 10),
-      message,
-      severity,
-      tool: codeCheck.tool
+  const codeChecks = selectCodeCheckResults(state) || [];
+  return codeChecks
+    .map(({ tool, defects }) => {
+      return defects.map(({ category, column, file, id, line, message, severity }) => ({
+        category,
+        column: parseInt(column, 10),
+        file,
+        id,
+        line: parseInt(line, 10),
+        message,
+        severity,
+        tool
+      }));
     })
-  );
+    .flat();
 }
 
 export function selectExplorerSizeData(state) {
@@ -129,12 +128,36 @@ export function selectMemoryStats(state) {
   };
 }
 
+const levelsBySeverity = {
+  high: 1,
+  medium: 2,
+  low: 3
+};
+
 export function selectCodeStats(state) {
-  const codeCheck = selectCodeCheckResult(state);
-  if (!codeCheck) {
+  const codeChecks = selectCodeCheckResults(state);
+  if (!codeChecks || !codeChecks.length) {
     return;
   }
   const defects = selectCodeCheckDefects(state) || [];
+
+  const statsByComponent = {};
+  for (const codeCheck of codeChecks) {
+    for (const statObject of codeCheck.stats) {
+      for (const [name, cmpStats] of Object.entries(statObject)) {
+        if (!statsByComponent[name]) {
+          statsByComponent[name] = {
+            high: 0,
+            medium: 0,
+            low: 0
+          };
+        }
+        statsByComponent[name].low += cmpStats.low || 0;
+        statsByComponent[name].medium += cmpStats.medium || 0;
+        statsByComponent[name].high += cmpStats.high || 0;
+      }
+    }
+  }
 
   return {
     defectsCountTotal: defects.length,
@@ -143,17 +166,14 @@ export function selectCodeStats(state) {
       medium: defects.filter(({ severity }) => severity === 'medium').length,
       high: defects.filter(({ severity }) => severity === 'high').length
     },
-    stats: (codeCheck.stats || [])
-      .map(obj =>
-        Object.entries(obj).map(([component, { high = 0, medium = 0, low = 0 }]) => ({
-          component,
-          high,
-          medium,
-          low
-        }))
-      )
-      .flat()
-      .sort((a, b) => a.component.localeCompare(b.component))
+    stats: Object.entries(statsByComponent)
+      .map(([component, stats]) => ({ ...stats, component }))
+      .sort((a, b) => a.component.localeCompare(b.component)),
+
+    topDefects: defects
+      .map(d => ({ ...d, level: levelsBySeverity[d.severity] }))
+      .sort((a, b) => a.severity - b.severity)
+      .slice(0, 5)
   };
 }
 

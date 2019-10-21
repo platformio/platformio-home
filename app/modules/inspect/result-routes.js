@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import CodePage from '@inspect/containers/code';
 import FileExplorerPage from '@inspect/containers/mem-explorer';
 import SectionsPage from '@inspect/containers/mem-sections';
 import StatisticsPage from '@inspect/containers/stats-page';
@@ -49,7 +50,17 @@ const memory = [
   }
 ];
 
+const code = [
+  {
+    path: '/inspect/result/defects',
+    icon: 'bug',
+    label: 'Defects',
+    component: CodePage
+  }
+];
+
 export default {
   common,
-  memory
+  memory,
+  code
 };

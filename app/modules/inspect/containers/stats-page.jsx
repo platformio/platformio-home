@@ -15,6 +15,7 @@
  */
 
 import { Card, Col, Icon, Progress, Row, Spin, Table, Tooltip } from 'antd';
+import { DefectType, DeviceType } from '@inspect/types';
 import { SYMBOL_ICON_BY_TYPE, SYMBOL_NAME_BY_TYPE } from '@inspect/constants';
 import { formatSize, limitPathLength } from '@inspect/helpers';
 import {
@@ -23,7 +24,6 @@ import {
   selectMemoryStats
 } from '@inspect/selectors';
 
-import { DeviceType } from '@inspect/types';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -66,7 +66,8 @@ class MemoryStatisticsPage extends React.PureComponent {
           medium: PropTypes.number.isRequired,
           low: PropTypes.number.isRequired
         })
-      )
+      ),
+      topDefects: PropTypes.arrayOf(DefectType)
     }),
     device: DeviceType,
     // callbacks
@@ -282,6 +283,43 @@ class MemoryStatisticsPage extends React.PureComponent {
     );
   }
 
+  renderTopDefects() {
+    if (!this.props.code.topDefects.length) {
+      return;
+    }
+    const columns = [
+      {
+        title: 'Level',
+        dataIndex: 'severity',
+        fixed: true
+      },
+      {
+        title: 'Message',
+        dataIndex: 'message',
+        fixed: true
+      },
+      {
+        title: 'Location',
+        dataIndex: 'file',
+        render: (file, { line, column }) =>
+          `${limitPathLength(file || '', 40)}:${line}:${column}`,
+        fixed: true
+      }
+    ];
+    return (
+      <Card title="Top Defects" className="block">
+        <Table
+          columns={columns}
+          dataSource={this.props.code.topDefects.map((x, idx) => ({ ...x, idx }))}
+          rowKey="idx"
+          pagination={false}
+          tableLayout="fixed"
+          size="small"
+        />
+      </Card>
+    );
+  }
+
   render() {
     if (!(this.props.memory || this.props.code)) {
       return this.renderLoader();
@@ -298,7 +336,7 @@ class MemoryStatisticsPage extends React.PureComponent {
         {this.props.code && (
           <Row gutter={12}>
             <Col sm={12}>{this.renderDefectsStats()}</Col>
-            <Col sm={12}>TODO, TOP 5 defects sorted by SEVERITY through all tools</Col>
+            <Col sm={12}>{this.renderTopDefects()}</Col>
           </Row>
         )}
       </div>

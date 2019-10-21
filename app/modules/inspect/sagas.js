@@ -54,13 +54,24 @@ function* _inspectMemory({ projectDir, env }) {
 }
 
 function* _inspectCode({ projectDir, env }) {
-  const codeCheckResults = yield call(apiFetchData, {
-    query: 'core.call',
-    params: [['check', '-d', projectDir, '-e', env, '--json-output']]
-  });
-
-  if (codeCheckResults && codeCheckResults.length) {
-    return codeCheckResults[0];
+  let codeCheckResults;
+  try {
+    codeCheckResults = yield call(apiFetchData, {
+      query: 'core.call',
+      params: [['check', '-d', projectDir, '-e', env, '--json-output']]
+    });
+    if (codeCheckResults && codeCheckResults.length) {
+      return codeCheckResults;
+    }
+  } catch (e) {
+    if (e instanceof jsonrpc.JsonRpcError) {
+      // Try to recover from error because of return code <> 0
+      codeCheckResults = JSON.parse(e.data);
+      if (codeCheckResults && codeCheckResults.length) {
+        return codeCheckResults;
+      }
+    }
+    throw e;
   }
   throw new Error('Unexpected code check result');
 }
@@ -107,7 +118,7 @@ function* watchInspectProject() {
           codeCheckResult = yield call(_inspectCode, configuration);
         }
       }
-      const entity = { memory: memoryResult, codeCheck: codeCheckResult };
+      const entity = { memory: memoryResult, codeChecks: codeCheckResult };
       yield put(updateStorageItem(CONFIG_KEY, configuration));
       yield put(updateEntity(RESULT_KEY, entity));
 
