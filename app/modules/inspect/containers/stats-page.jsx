@@ -172,7 +172,7 @@ class MemoryStatisticsPage extends React.PureComponent {
                 type="dashboard"
                 format={::this.formatDefects}
                 onClick={::this.handleCodeClick}
-                percent={100}
+                percent={this.props.code.defectsCountTotal === 0 ? 0 : 100}
                 successPercent={0}
                 width={120}
               />
