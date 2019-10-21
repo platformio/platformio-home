@@ -50,8 +50,7 @@ function* _inspectMemory({ projectDir, env }) {
   if (!jsonContent) {
     throw new Error('sizedata.json file not found. Build error?');
   }
-  const memoryData = JSON.parse(jsonContent);
-  return memoryData.memory;
+  return JSON.parse(jsonContent);
 }
 
 function* _inspectCode({ projectDir, env }) {

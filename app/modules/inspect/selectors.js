@@ -30,6 +30,11 @@ export function selectInspectionResult(state) {
   return selectEntity(state, RESULT_KEY);
 }
 
+export function selectMemoryInspectionResult(state) {
+  const data = selectInspectionResult(state) || {};
+  return data.memory;
+}
+
 export function selectCodeCheckResult(state) {
   const data = selectInspectionResult(state) || {};
   return data.codeCheck;
@@ -55,7 +60,7 @@ export function selectCodeCheckDefects(state) {
 }
 
 export function selectExplorerSizeData(state) {
-  const data = selectInspectionResult(state) || {};
+  const data = selectMemoryInspectionResult(state) || {};
   let files = (data.memory || {}).files;
   if (!files) {
     return;
@@ -92,7 +97,7 @@ export function selectSymbolsSizeData(state) {
 }
 
 export function selectMemoryStats(state) {
-  const memory = (selectInspectionResult(state) || {}).memory;
+  const memory = (selectMemoryInspectionResult(state) || {}).memory;
   if (!memory) {
     return;
   }
@@ -153,7 +158,7 @@ export function selectCodeStats(state) {
 }
 
 export function selectSectionsSizeData(state) {
-  const data = selectInspectionResult(state);
+  const data = selectMemoryInspectionResult(state);
   let { memory: { total: { sections } = {} } = {} } = data || {};
   if (!sections) {
     return;
