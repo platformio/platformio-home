@@ -16,12 +16,17 @@
 
 import { Card, Col, Icon, Progress, Row, Spin, Table, Tooltip } from 'antd';
 import { SYMBOL_ICON_BY_TYPE, SYMBOL_NAME_BY_TYPE } from '@inspect/constants';
-import { selectCodeStats, selectMemoryStats } from '@inspect/selectors';
+import { formatSize, limitPathLength } from '@inspect/helpers';
+import {
+  selectCodeStats,
+  selectDeviceInfo,
+  selectMemoryStats
+} from '@inspect/selectors';
 
+import { DeviceType } from '@inspect/types';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { formatSize } from '@inspect/helpers';
 import { goTo } from '@core/helpers';
 
 class MemoryStatisticsPage extends React.PureComponent {
@@ -63,6 +68,7 @@ class MemoryStatisticsPage extends React.PureComponent {
         })
       )
     }),
+    device: DeviceType,
     // callbacks
     onMemoryClick: PropTypes.func,
     onCodeClick: PropTypes.func
@@ -119,14 +125,12 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
 
   renderGauges() {
-    let totalSize;
     let ramPercent;
     let flashPercent;
 
     if (this.props.memory) {
-      totalSize = this.props.memory.ram + this.props.memory.flash;
-      ramPercent = (this.props.memory.ram / totalSize) * 100;
-      flashPercent = (this.props.memory.flash / totalSize) * 100;
+      ramPercent = (this.props.memory.ram / this.props.device.ram) * 100;
+      flashPercent = (this.props.memory.flash / this.props.device.flash) * 100;
     }
 
     return (
@@ -134,7 +138,9 @@ class MemoryStatisticsPage extends React.PureComponent {
         {ramPercent !== undefined && (
           <Col xs={12} sm={8} lg={4} className={this.getGaugeCls(ramPercent)}>
             <Tooltip
-              title={`${formatSize(this.props.memory.ram)} of ${formatSize(totalSize)}`}
+              title={`${formatSize(this.props.memory.ram)} of ${formatSize(
+                this.props.device.ram
+              )}`}
             >
               <Progress
                 type="dashboard"
@@ -151,7 +157,7 @@ class MemoryStatisticsPage extends React.PureComponent {
           <Col xs={12} sm={8} lg={4} className={this.getGaugeCls(flashPercent)}>
             <Tooltip
               title={`${formatSize(this.props.memory.flash)} of ${formatSize(
-                totalSize
+                this.props.device.flash
               )}`}
             >
               <Progress
@@ -195,7 +201,7 @@ class MemoryStatisticsPage extends React.PureComponent {
                   <b>{formatSize(flash)}</b>
                 </td>
                 <td>
-                  <Tooltip title={path}>{path.slice(-40)}</Tooltip>
+                  <Tooltip title={path}>{limitPathLength(path, 50)}</Tooltip>
                 </td>
               </tr>
             ))}
@@ -303,6 +309,7 @@ class MemoryStatisticsPage extends React.PureComponent {
 function mapStateToProps(state, { history }) {
   return {
     code: selectCodeStats(state),
+    device: selectDeviceInfo(state),
     memory: selectMemoryStats(state),
     onMemoryClick: () => goTo(history, '/inspect/result/files'),
     onCodeClick: () => goTo(history, '/inspect/result/defects')
