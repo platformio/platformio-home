@@ -164,11 +164,11 @@ class InspectionFormComponent extends React.Component {
           <Col offset={labelSpan}>
             <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
             <p style={{ maxWidth: '40em' }}>
-              A report after inspection includes a memory use information with a
-              detailed visual view of memory utilization, helps locate and improve parts
-              of the application like symbols or functions which have a significant
-              memory footprint. A static code analysis report helps spot and fix
-              software defects before debugging.
+              A report after inspection includes memory use information with a detailed
+              visual view of memory utilization, helps locate and improve parts of the
+              application like symbols or functions which have a significant memory
+              footprint. A static code analysis report helps spot and fix software
+              defects before debugging.
             </p>
             <p>
               <Icon type="bulb" /> Building a project in{' '}
