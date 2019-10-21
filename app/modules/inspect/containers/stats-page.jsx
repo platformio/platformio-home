@@ -194,7 +194,7 @@ class MemoryStatisticsPage extends React.PureComponent {
                 <td className="text-right">
                   <b>{formatSize(flash)}</b>
                 </td>
-                <td style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>{path}</td>
+                <td><Tooltip title={path}>{path.slice(-40)}</Tooltip></td>
               </tr>
             ))}
           </tbody>
@@ -281,8 +281,12 @@ class MemoryStatisticsPage extends React.PureComponent {
         {
           <div>
             {this.renderGauges()}
-            {this.props.memory && this.renderTopFiles()}
-            {this.props.memory && this.renderTopSymbols()}
+            {this.props.memory && (
+              <Row gutter={12}>
+                <Col sm={12}>{this.renderTopFiles()}</Col>
+                <Col sm={12}>{this.renderTopSymbols()}</Col>
+              </Row>
+            )}
           </div>
         }
         {this.props.code && <div>{this.renderTopDefects()}</div>}

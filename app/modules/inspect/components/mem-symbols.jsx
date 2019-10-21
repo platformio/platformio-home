@@ -226,9 +226,7 @@ export class MemorySymbols extends React.PureComponent {
       return total + size;
     }, 0);
     return (
-      <div className='text-right'>{`Total Size on Page: ${formatSize(
-        totalSize
-      )}`}</div>
+      <div className="text-right">{`Total Size on Page: ${formatSize(totalSize)}`}</div>
     );
   };
 }
