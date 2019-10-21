@@ -111,7 +111,12 @@ export function selectMemoryStats(state) {
     topSymbols: allSymbols
       .sort((a, b) => b.size - a.size)
       .slice(0, 5)
-      .map(({ displayName, size, type }) => ({ displayName, size, type })),
+      .map(({ displayName, size, type, location }) => ({
+        displayName,
+        size,
+        type,
+        location
+      })),
     topFiles: files
       .map(({ flash_size, path }) => ({ flash: flash_size, path }))
       .sort((a, b) => b.flash - a.flash)

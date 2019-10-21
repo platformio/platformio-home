@@ -216,11 +216,13 @@ class MemoryStatisticsPage extends React.PureComponent {
                   <b>{formatSize(symbol.size)}</b>
                 </td>
                 <td>
-                  <Icon
-                    title={SYMBOL_NAME_BY_TYPE[symbol.type]}
-                    type={SYMBOL_ICON_BY_TYPE[symbol.type]}
-                  />{' '}
-                  {symbol.displayName}
+                  <Tooltip title={symbol.type + ' -> ' + symbol.location}>
+                    <Icon
+                      title={SYMBOL_NAME_BY_TYPE[symbol.type]}
+                      type={SYMBOL_ICON_BY_TYPE[symbol.type]}
+                    />{' '}
+                    {symbol.displayName}
+                  </Tooltip>
                 </td>
               </tr>
             ))}
@@ -230,7 +232,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     );
   }
 
-  renderTopDefects() {
+  renderDefectsStats() {
     if (!this.props.code.stats.length) {
       return;
     }
@@ -280,18 +282,19 @@ class MemoryStatisticsPage extends React.PureComponent {
     }
     return (
       <div className="inspect-stats-page">
-        {
-          <div>
-            {this.renderGauges()}
-            {this.props.memory && (
-              <Row gutter={12}>
-                <Col sm={12}>{this.renderTopFiles()}</Col>
-                <Col sm={12}>{this.renderTopSymbols()}</Col>
-              </Row>
-            )}
-          </div>
-        }
-        {this.props.code && <div>{this.renderTopDefects()}</div>}
+        {this.renderGauges()}
+        {this.props.memory && (
+          <Row gutter={12}>
+            <Col sm={12}>{this.renderTopFiles()}</Col>
+            <Col sm={12}>{this.renderTopSymbols()}</Col>
+          </Row>
+        )}
+        {this.props.code && (
+          <Row gutter={12}>
+            <Col sm={12}>{this.renderDefectsStats()}</Col>
+            <Col sm={12}>TODO, TOP 5 defects sorted by SEVERITY through all tools</Col>
+          </Row>
+        )}
       </div>
     );
   }
