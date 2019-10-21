@@ -194,7 +194,9 @@ class MemoryStatisticsPage extends React.PureComponent {
                 <td className="text-right">
                   <b>{formatSize(flash)}</b>
                 </td>
-                <td><Tooltip title={path}>{path.slice(-40)}</Tooltip></td>
+                <td>
+                  <Tooltip title={path}>{path.slice(-40)}</Tooltip>
+                </td>
               </tr>
             ))}
           </tbody>
