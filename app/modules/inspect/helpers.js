@@ -127,3 +127,37 @@ export function getFilterMenu(ds, dataindex) {
       text: value
     }));
 }
+
+export function limitPathLength(path, maxLength) {
+  const len = path.length;
+  if (!maxLength || len <= maxLength) {
+    return path;
+  }
+  maxLength--;
+  const startIdx = Math.max(0, len - maxLength);
+  let result = path.substr(startIdx, maxLength);
+  if (path[startIdx - 1] !== pathlib.sep) {
+    const nextSepIdx = result.indexOf(pathlib.sep);
+    if (nextSepIdx !== -1) {
+      result = result.substr(nextSepIdx + 1);
+    }
+  }
+  return `…${result}`;
+}
+
+const FREQ_UNITS = ['Hz', 'kHz', 'MHz', 'GHz', 'THz'];
+export function formatFrequency(f, digitsAfterPoint = 1, hideZeroesAfterPoint = true) {
+  let order = 0;
+  while (f >= 1000 && order <= FREQ_UNITS.length - 1) {
+    f /= 1000;
+    ++order;
+  }
+  let value = f.toFixed(digitsAfterPoint);
+  if (hideZeroesAfterPoint) {
+    value = value.replace(/(?<=\.\d*)0+$/, '');
+    if (value.endsWith('.')) {
+      value = value.slice(0, -1);
+    }
+  }
+  return `${value}${FREQ_UNITS[order]}`;
+}
