@@ -71,7 +71,7 @@ export class MemoryDirExplorer extends React.PureComponent {
         defaultSortOrder: 'ascend',
         render: (path, item) => (
           <a>
-            {this.renderIcon(item.isDir)} {path}
+            {this.renderIcon(item.isDir)} {path.replace(/^\//, '')}
           </a>
         ),
 
