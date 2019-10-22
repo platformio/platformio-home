@@ -15,10 +15,10 @@
  */
 
 import { Button, Tooltip } from 'antd';
+import { ConfigurationType, DeviceType } from '@inspect/types';
 import { formatFrequency, formatSize } from '@inspect/helpers';
 import { selectDeviceInfo, selectSavedConfiguration } from '@inspect/selectors';
 
-import { DeviceType } from '@inspect/types';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -30,13 +30,10 @@ import { selectProjectInfo } from '@project/selectors';
 
 class InspectionResultComponent extends React.Component {
   static propTypes = {
-    // data
-    code: PropTypes.bool,
+    configuration: ConfigurationType,
     device: DeviceType,
-    memory: PropTypes.bool,
-    projectDir: PropTypes.string,
     projectName: PropTypes.string,
-    // callbacks
+
     osRevealFile: PropTypes.func.isRequired,
     reinspectProject: PropTypes.func.isRequired
   };
@@ -55,7 +52,7 @@ class InspectionResultComponent extends React.Component {
   }
 
   handleRevealClick = () => {
-    this.props.osRevealFile(this.props.projectDir);
+    this.props.osRevealFile(this.props.configuration.projectDir);
   };
 
   handleRefreshClick = () => {
@@ -68,14 +65,13 @@ class InspectionResultComponent extends React.Component {
   };
 
   renderDeviceInfo() {
-    const { mcu, frequency, ram, flash } = this.props.device;
     return (
       <small>
-        {mcu.toUpperCase()}{' '}
+        {this.props.device.mcu.toUpperCase()}{' '}
         {[
-          formatFrequency(frequency),
-          `${formatSize(ram)} RAM`,
-          `${formatSize(flash)} Flash`
+          formatFrequency(this.props.device.frequency),
+          `${formatSize(this.props.device.ram)} RAM`,
+          `${formatSize(this.props.device.flash)} Flash`
         ].join(', ')}{' '}
       </small>
     );
@@ -83,16 +79,22 @@ class InspectionResultComponent extends React.Component {
 
   render() {
     const routes = [...childRoutes.common];
-    if (this.props.memory) {
+    if (this.props.configuration.memory) {
       routes.push(...childRoutes.memory);
     }
-    if (this.props.code) {
+    if (this.props.configuration.code) {
       routes.push(...childRoutes.code);
     }
     return (
       <div>
         <h1 style={{ marginTop: 10, marginBottom: 0 }}>
-          <Tooltip title={this.props.projectDir}>{this.props.projectName}</Tooltip>
+          <Tooltip title={this.props.configuration.projectDir}>
+            {this.props.projectName}
+          </Tooltip>
+          <small>
+            {' '}
+            <b>env:{this.props.configuration.env}</b>
+          </small>
 
           <div className="pull-right">
             <Button.Group>
@@ -117,13 +119,11 @@ class InspectionResultComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { projectDir, memory, code } = selectSavedConfiguration(state);
-  const project = selectProjectInfo(state, projectDir);
+  const configuration = selectSavedConfiguration(state);
+  const project = selectProjectInfo(state, configuration.projectDir);
   return {
-    projectDir,
     projectName: (project || {}).name,
-    memory,
-    code,
+    configuration,
     device: selectDeviceInfo(state)
   };
 }
