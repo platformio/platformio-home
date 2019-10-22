@@ -41,10 +41,7 @@ export function selectCodeCheckResults(state) {
 }
 
 export function selectCodeCheckDefects(state) {
-  const codeChecks = selectCodeCheckResults(state);
-  if (!codeChecks) {
-    return;
-  }
+  const codeChecks = selectCodeCheckResults(state) || [];
   return codeChecks
     .map(({ tool, defects }) => {
       return defects.map(({ category, column, file, id, line, message, severity }) => ({
