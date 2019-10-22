@@ -71,8 +71,9 @@ class MemoryStatisticsPage extends React.PureComponent {
     }),
     device: DeviceType,
     // callbacks
-    onMemoryClick: PropTypes.func,
-    onCodeClick: PropTypes.func
+    onMemoryClick: PropTypes.func.isRequired,
+    onCodeClick: PropTypes.func.isRequired,
+    onSymbolsClick: PropTypes.func.isRequired
   };
 
   static formatPercent(value) {
@@ -115,6 +116,10 @@ class MemoryStatisticsPage extends React.PureComponent {
   }
   handleCodeClick() {
     this.props.onCodeClick();
+  }
+
+  handleSymbolsClick() {
+    this.props.onSymbolsClick();
   }
 
   renderLoader() {
@@ -197,7 +202,7 @@ class MemoryStatisticsPage extends React.PureComponent {
         <table className="inspect-stats-block">
           <tbody>
             {this.props.memory.topFiles.map(({ flash, path }) => (
-              <tr key={path}>
+              <tr key={path} onClick={::this.handleMemoryClick}>
                 <td className="text-right">
                   <b>{formatSize(flash)}</b>
                 </td>
@@ -218,7 +223,7 @@ class MemoryStatisticsPage extends React.PureComponent {
         <table className="inspect-stats-block">
           <tbody>
             {this.props.memory.topSymbols.map(symbol => (
-              <tr key={symbol.displayName}>
+              <tr key={symbol.displayName} onClick={::this.handleSymbolsClick}>
                 <td className="text-right">
                   <b>{formatSize(symbol.size)}</b>
                 </td>
@@ -268,8 +273,10 @@ class MemoryStatisticsPage extends React.PureComponent {
     return (
       <Card title="Defects Summary" className="block">
         <Table
+          className="inspect-stats-block"
           columns={columns}
           dataSource={this.props.code.stats}
+          onRow={() => ({ onClick: ::this.handleCodeClick })}
           rowKey="component"
           pagination={false}
           size="small"
@@ -300,8 +307,10 @@ class MemoryStatisticsPage extends React.PureComponent {
     return (
       <Card title="Top Defects" className="block">
         <Table
+          className="inspect-stats-block"
           columns={columns}
           dataSource={this.props.code.topDefects.map((x, idx) => ({ ...x, idx }))}
+          onRow={() => ({ onClick: ::this.handleCodeClick })}
           rowKey="idx"
           pagination={false}
           size="small"
@@ -340,7 +349,8 @@ function mapStateToProps(state, { history }) {
     device: selectDeviceInfo(state),
     memory: selectMemoryStats(state),
     onMemoryClick: () => goTo(history, '/inspect/result/files'),
-    onCodeClick: () => goTo(history, '/inspect/result/defects')
+    onCodeClick: () => goTo(history, '/inspect/result/defects'),
+    onSymbolsClick: () => goTo(history, '/inspect/result/symbols')
   };
 }
 
