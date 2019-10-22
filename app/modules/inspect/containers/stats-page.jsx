@@ -290,9 +290,12 @@ class MemoryStatisticsPage extends React.PureComponent {
       {
         title: 'Message',
         dataIndex: 'message',
-        render: (message, { file, line, column }) =>
-          (<Tooltip title={ `${limitPathLength(file || '', 40)}:${line}:${column}` }>{message}</Tooltip>)
-      },
+        render: (message, { file, line, column }) => (
+          <Tooltip title={`${limitPathLength(file || '', 40)}:${line}:${column}`}>
+            {message}
+          </Tooltip>
+        )
+      }
     ];
     return (
       <Card title="Top Defects" className="block">

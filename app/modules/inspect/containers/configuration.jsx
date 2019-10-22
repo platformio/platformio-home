@@ -169,14 +169,45 @@ class InspectionFormComponent extends React.Component {
   }
 
   render() {
-    const labelSpan = 3;
-    const wrapperSpan = 13;
     const itemLayout = {
-      labelCol: { span: labelSpan },
-      wrapperCol: { span: wrapperSpan }
+      labelCol: {
+        xs: {
+          span: 6
+        },
+        sm: { span: 5 },
+        md: { span: 4 },
+        lg: { span: 3 }
+      },
+      wrapperCol: {
+        xs: {
+          span: 18
+        },
+        sm: {
+          span: 19
+        },
+        md: { span: 20 },
+        lg: { span: 13 }
+      }
     };
     const buttonsLayout = {
-      wrapperCol: { span: wrapperSpan, offset: labelSpan }
+      wrapperCol: {
+        xs: {
+          ...itemLayout.wrapperCol.xs,
+          offset: itemLayout.labelCol.xs.span
+        },
+        sm: {
+          ...itemLayout.wrapperCol.sm,
+          offset: itemLayout.labelCol.sm.span
+        },
+        md: {
+          ...itemLayout.wrapperCol.md,
+          offset: itemLayout.labelCol.md.span
+        },
+        lg: {
+          ...itemLayout.wrapperCol.lg,
+          offset: itemLayout.labelCol.lg.span
+        }
+      }
     };
     return (
       <div className="inspect-configuration-page">
@@ -186,7 +217,7 @@ class InspectionFormComponent extends React.Component {
           onCancel={::this.handleOpenProjectCancel}
         />
         <Row>
-          <Col offset={labelSpan} span={wrapperSpan}>
+          <Col {...buttonsLayout}>
             <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
             <p style={{ maxWidth: '40em' }}>
               A report after inspection includes memory use information with a detailed
@@ -213,10 +244,10 @@ class InspectionFormComponent extends React.Component {
         <Form layout="horizontal" onSubmit={::this.handleSubmit}>
           <Form.Item label="Project" {...itemLayout}>
             <Row gutter={8}>
-              <Col xs={24} sm={24} md={16} lg={18}>
+              <Col xs={24} sm={24} md={18} lg={18}>
                 {this.renderProjectSelect()}
               </Col>
-              <Col xs={24} sm={10} md={8} lg={6}>
+              <Col xs={12} sm={8} md={6} lg={6}>
                 <Button
                   icon="folder"
                   size="large"
@@ -233,21 +264,21 @@ class InspectionFormComponent extends React.Component {
             {this.renderEnvSelect()}
           </Form.Item>
 
-          <Form.Item wrapperCol={{ span: 14, offset: labelSpan }}>
-            <span className="ant-form-item-label" style={{ marginRight: 15 }}>
-              <label>Inspect Memory</label>
+          <Form.Item {...buttonsLayout}>
+            <label className="switch-label">
               {this.props.form.getFieldDecorator('memory', {
                 valuePropName: 'checked',
                 initialValue: true
-              })(<Switch />)}
-            </span>
-            <span className="ant-form-item-label">
-              <label>Check Code</label>
+              })(<Switch />)}{' '}
+              Inspect Memory
+            </label>
+            <label className="switch-label">
               {this.props.form.getFieldDecorator('code', {
                 valuePropName: 'checked',
                 initialValue: true
-              })(<Switch />)}
-            </span>
+              })(<Switch />)}{' '}
+              Check Code
+            </label>
           </Form.Item>
 
           <Form.Item {...buttonsLayout}>
@@ -265,7 +296,7 @@ class InspectionFormComponent extends React.Component {
         </Form>
         {this.state.error && (
           <Row>
-            <Col offset={labelSpan} span={wrapperSpan}>
+            <Col {...buttonsLayout}>
               <div className="ant-form-item-label">
                 <label>Errors</label>
               </div>
