@@ -52,8 +52,7 @@ export class CodeDefects extends React.PureComponent {
         dataIndex: 'tool',
         filters: getFilterMenu(ds, 'tool'),
         onFilter: (value, record) => record.tool === value,
-        sorter: columnSortFactory('string', 'tool'),
-        width: 100
+        sorter: columnSortFactory('string', 'tool')
       },
       {
         align: 'center',
@@ -95,8 +94,7 @@ export class CodeDefects extends React.PureComponent {
           columnSortFactory('string', 'file'),
           columnSortFactory('number', 'line'),
           columnSortFactory('number', 'column')
-        ),
-        width: '25%'
+        )
       }
     ];
   }
