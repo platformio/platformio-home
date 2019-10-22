@@ -273,7 +273,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     return (
       <Card title="Defects Summary" className="block">
         <Table
-          className="inspect-stats-block"
+          className="inspect-stats-table"
           columns={columns}
           dataSource={this.props.code.stats}
           onRow={() => ({ onClick: ::this.handleCodeClick })}
@@ -307,7 +307,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     return (
       <Card title="Top Defects" className="block">
         <Table
-          className="inspect-stats-block"
+          className="inspect-stats-table"
           columns={columns}
           dataSource={this.props.code.topDefects.map((x, idx) => ({ ...x, idx }))}
           onRow={() => ({ onClick: ::this.handleCodeClick })}
