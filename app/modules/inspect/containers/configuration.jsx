@@ -16,6 +16,7 @@
 
 import { Button, Col, Form, Icon, Row, Select, Switch } from 'antd';
 
+import ProjectOpenModal from '@project/containers/open-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -93,6 +94,18 @@ class InspectionFormComponent extends React.Component {
     });
   }
 
+  handleOpenProjectCancel() {
+    this.setState({
+      openProjectVisible: false
+    });
+  }
+
+  handleOpenProjectClick() {
+    this.setState({
+      openProjectVisible: true
+    });
+  }
+
   handleFilterOption(input, option) {
     option.props.children.toLowerCase().includes(input.toLocaleLowerCase());
   }
@@ -162,6 +175,10 @@ class InspectionFormComponent extends React.Component {
     };
     return (
       <div className="inspect-configuration-page">
+        <ProjectOpenModal
+          visible={this.state.openProjectVisible}
+          onCancel={::this.handleOpenProjectCancel}
+        />
         <Row>
           <Col offset={labelSpan} span={wrapperSpan}>
             <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
@@ -189,7 +206,21 @@ class InspectionFormComponent extends React.Component {
         </Row>
         <Form layout="horizontal" onSubmit={::this.handleSubmit}>
           <Form.Item label="Project" {...itemLayout}>
-            {this.renderProjectSelect()}
+            <Row gutter={8}>
+              <Col xs={24} sm={24} md={16} lg={18}>
+                {this.renderProjectSelect()}
+              </Col>
+              <Col xs={24} sm={10} md={8} lg={6}>
+                <Button
+                  icon="folder"
+                  size="large"
+                  style={{ width: '100%' }}
+                  onClick={::this.handleOpenProjectClick}
+                >
+                  Other…
+                </Button>
+              </Col>
+            </Row>
           </Form.Item>
 
           <Form.Item label="Environment" {...itemLayout}>
