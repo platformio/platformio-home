@@ -18,9 +18,14 @@ import { CodeDefects } from '@inspect/components/code-defects.jsx';
 import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { selectCodeCheckDefects } from '@inspect/selectors';
+import { withAsyncData } from '@inspect/components/with-async-data';
+
+const CodeDefectsWithAsyncData = withAsyncData(CodeDefects, {
+  itemsProp: 'defects',
+  noData: 'Defects Free'
+});
 
 class CodePage extends React.PureComponent {
   static propTypes = {
@@ -32,12 +37,7 @@ class CodePage extends React.PureComponent {
 
     return (
       <div className="inspect-code-page">
-        {!defects && (
-          <div className="text-center">
-            <Spin tip="Loading..." size="large" />
-          </div>
-        )}
-        {defects && <CodeDefects defects={defects} />}
+        <CodeDefectsWithAsyncData defects={defects} />
       </div>
     );
   }
@@ -49,5 +49,4 @@ function mapStateToProps(state) {
     defects: selectCodeCheckDefects(state)
   };
 }
-
 export default connect(mapStateToProps)(CodePage);
