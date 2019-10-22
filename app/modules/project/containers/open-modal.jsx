@@ -26,14 +26,13 @@ import { connect } from 'react-redux';
 
 class ProjectOpenModal extends React.Component {
   static propTypes = {
+    // data
     skipOpenProject: PropTypes.bool,
-    visible: PropTypes.bool.isRequired,
+    visible: PropTypes.bool,
+    // callbacks
     onCancel: PropTypes.func.isRequired,
-
-    osIsFileItems: PropTypes.object,
-    addProject: PropTypes.func.isRequired,
-    openProject: PropTypes.func.isRequired,
-    osIsFile: PropTypes.func.isRequired
+    // dispatch
+    addProject: PropTypes.func.isRequired
   };
 
   constructor() {
