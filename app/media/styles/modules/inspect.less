@@ -52,20 +52,18 @@
   .severity-tag {
     &.severity-low {
       color: @btn-danger-color;
-      background-color: @info-color;
-      border-color: ~`colorPalette('@{info-color}', 3) `;
     }
 
     &.severity-medium {
-      color: @btn-danger-color;
+      color: @body-background;
       background-color: @warning-color;
-      border-color: ~`colorPalette('@{warning-color}', 3) `;
+      border-color: lighten(@warning-color, 30%);
     }
 
     &.severity-high {
       color: @btn-danger-color;
       background-color: @error-color;
-      border-color: ~`colorPalette('@{error-color}', 3) `;
+      border-color: lighten(@error-color, 30%);
     }
   }
 }

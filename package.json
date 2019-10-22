@@ -107,7 +107,7 @@
       "@shadow-color-inverse": "@light",
       "@primary-color": "#4080d0",
       "@info-color": "none",
-      "@error-color": "#E74C3C",
+      "@error-color": "#D42D35",
       "@primary-1": "#3F3F46",
       "@heading-color": "#CCCCCC",
       "@text-color": "#989898",
