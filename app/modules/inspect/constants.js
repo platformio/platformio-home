@@ -31,3 +31,15 @@ export const SYMBOL_NAME_BY_TYPE = Object.freeze({
   STT_FUNC: 'Function',
   STT_OBJECT: 'Variable'
 });
+
+export const SEVERITY_LEVEL = Object.freeze({
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3
+});
+
+export const SEVERITY_LEVEL_NAME = {
+  [SEVERITY_LEVEL.HIGH]: 'High',
+  [SEVERITY_LEVEL.MEDIUM]: 'Medium',
+  [SEVERITY_LEVEL.LOW]: 'Low'
+};

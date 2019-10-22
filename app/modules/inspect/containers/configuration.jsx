@@ -217,7 +217,7 @@ class InspectionFormComponent extends React.Component {
           onCancel={::this.handleOpenProjectCancel}
         />
         <Row>
-          <Col {...buttonsLayout}>
+          <Col {...buttonsLayout.wrapperCol}>
             <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
             <p style={{ maxWidth: '40em' }}>
               A report after inspection includes memory use information with a detailed
@@ -296,7 +296,7 @@ class InspectionFormComponent extends React.Component {
         </Form>
         {this.state.error && (
           <Row>
-            <Col {...buttonsLayout}>
+            <Col {...buttonsLayout.wrapperCol}>
               <div className="ant-form-item-label">
                 <label>Errors</label>
               </div>

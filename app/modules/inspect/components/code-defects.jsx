@@ -22,6 +22,7 @@ import { columnSortFactory, limitPathLength, multiSort } from '@inspect/helpers'
 import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { SEVERITY_LEVEL_NAME } from '@inspect/constants';
 
 export class CodeDefects extends React.PureComponent {
   static propTypes = {
@@ -36,10 +37,11 @@ export class CodeDefects extends React.PureComponent {
     };
   }
 
-  static renderSeverity(severity) {
+  static renderSeverityLevel(level) {
+    const name = SEVERITY_LEVEL_NAME[level];
     return (
-      <Tag className={`severity-tag severity-${severity.toLowerCase()}`}>
-        {severity.toUpperCase()}
+      <Tag className={`severity-tag severity-${name.toLowerCase()}`}>
+        {name.toUpperCase()}
       </Tag>
     );
   }
@@ -65,11 +67,10 @@ export class CodeDefects extends React.PureComponent {
       {
         align: 'center',
         title: 'Level',
-        dataIndex: 'severity',
+        dataIndex: 'level',
         defaultSortOrder: 'descend',
-        render: CodeDefects.renderSeverity,
-
-        sorter: columnSortFactory('string', 'severity'),
+        render: CodeDefects.renderSeverityLevel,
+        sorter: columnSortFactory('number', 'level'),
         width: 80
       },
       {

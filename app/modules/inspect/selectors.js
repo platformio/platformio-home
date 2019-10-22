@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
+import { CONFIG_KEY, RESULT_KEY, SEVERITY_LEVEL } from '@inspect/constants';
 import { fixPath, shallowCompare } from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
 
@@ -55,6 +55,7 @@ export function selectCodeCheckDefects(state) {
         line: parseInt(line, 10),
         message,
         severity,
+        level: SEVERITY_LEVEL[severity.toUpperCase()],
         tool
       }));
     })
@@ -131,12 +132,6 @@ export function selectMemoryStats(state) {
   };
 }
 
-const levelsBySeverity = {
-  high: 1,
-  medium: 2,
-  low: 3
-};
-
 export function selectCodeStats(state) {
   const codeChecks = selectCodeCheckResults(state);
   if (!codeChecks || !codeChecks.length) {
@@ -173,10 +168,7 @@ export function selectCodeStats(state) {
       .map(([component, stats]) => ({ ...stats, component }))
       .sort((a, b) => a.component.localeCompare(b.component)),
 
-    topDefects: defects
-      .map(d => ({ ...d, level: levelsBySeverity[d.severity] }))
-      .sort((a, b) => a.severity - b.severity)
-      .slice(0, 5)
+    topDefects: defects.sort((a, b) => a.severity - b.severity).slice(0, 5)
   };
 }
 
