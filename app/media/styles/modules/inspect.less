@@ -1,3 +1,12 @@
+.inspect-configuration-page {
+  .inspect-config-console {
+    background-color: @input-bg;
+    border: 1px solid @input-border-color;
+    border-radius: @border-radius-base;
+    padding: @input-padding-vertical-base @input-padding-horizontal;
+  }
+}
+
 .inspect-stats-page {
   .ant-card {
     min-height: 205px;
@@ -39,7 +48,7 @@
       border-color: ~`colorPalette('@{warning-color}', 3) `;
     }
 
-    &.severity-high{
+    &.severity-high {
       color: @btn-danger-color;
       background-color: @error-color;
       border-color: ~`colorPalette('@{error-color}', 3) `;

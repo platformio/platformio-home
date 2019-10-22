@@ -161,9 +161,9 @@ class InspectionFormComponent extends React.Component {
       wrapperCol: { span: wrapperSpan, offset: labelSpan }
     };
     return (
-      <div>
+      <div className="inspect-configuration-page">
         <Row>
-          <Col offset={labelSpan}>
+          <Col offset={labelSpan} span={wrapperSpan}>
             <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
             <p style={{ maxWidth: '40em' }}>
               A report after inspection includes memory use information with a detailed
@@ -226,7 +226,16 @@ class InspectionFormComponent extends React.Component {
             </Button>
           </Form.Item>
         </Form>
-        {this.state.error && <textarea readOnly value={this.state.error} />}
+        {this.state.error && (
+          <Row>
+            <Col offset={labelSpan} span={wrapperSpan}>
+              <div className="ant-form-item-label">
+                <label>Errors</label>
+              </div>
+              <div className="inspect-config-console">{this.state.error}</div>
+            </Col>
+          </Row>
+        )}
       </div>
     );
   }
