@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-// import * as pathlib from '@core/path';
-
-import { Table, Tag, Tooltip } from 'antd';
-import { columnSortFactory, limitPathLength, multiSort } from '@inspect/helpers';
+import { Table, Tag } from 'antd';
+import { columnSortFactory, multiSort } from '@inspect/helpers';
 
 import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
@@ -36,23 +34,6 @@ export class CodeDefects extends React.PureComponent {
     };
   }
 
-  static renderSeverity(severity) {
-    return (
-      <Tag className={`severity-tag severity-${severity.toLowerCase()}`}>
-        {severity.toUpperCase()}
-      </Tag>
-    );
-  }
-
-  static renderLocation(file, { line, column }) {
-    return (
-      <Tooltip title={`${file}:${line}:${column}`}>{`${limitPathLength(
-        file,
-        50
-      )}:${line}:${column}`}</Tooltip>
-    );
-  }
-
   getTableColumns() {
     return [
       {
@@ -64,13 +45,23 @@ export class CodeDefects extends React.PureComponent {
       },
       {
         align: 'center',
-        title: 'Level',
+        title: 'Severity',
         dataIndex: 'severity',
         defaultSortOrder: 'descend',
-        render: CodeDefects.renderSeverity,
-
-        sorter: columnSortFactory('string', 'severity'),
-        width: 80
+        render: severity => (
+          <Tag className={`severity-tag severity-${severity.toLowerCase()}`}>
+            {severity.toUpperCase()}
+          </Tag>
+        ),
+        sorter: columnSortFactory('string', 'severity')
+      },
+      {
+        align: 'center',
+        title: 'Category',
+        dataIndex: 'category',
+        defaultSortOrder: 'descend',
+        render: category => <Tag>{category.toUpperCase()}</Tag>,
+        sorter: columnSortFactory('string', 'category')
       },
       {
         title: 'Message',
@@ -80,7 +71,11 @@ export class CodeDefects extends React.PureComponent {
       {
         title: 'Location',
         dataIndex: 'file',
-        render: CodeDefects.renderLocation,
+        render: (file, { line, column }) => (
+          <span>
+            {file}:{line}:{column}
+          </span>
+        ),
         sorter: multiSort(
           columnSortFactory('string', 'file'),
           columnSortFactory('number', 'line'),
