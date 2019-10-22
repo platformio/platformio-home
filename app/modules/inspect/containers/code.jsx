@@ -37,7 +37,12 @@ class CodePage extends React.PureComponent {
             <Spin tip="Loading..." size="large" />
           </div>
         )}
-        {defects && <CodeDefects defects={defects} />}
+        {defects && defects.length === 0 && (
+          <ul className="background-message text-center">
+            <li>No Defects</li>
+          </ul>
+        )}
+        {defects && defects.length !== 0 && <CodeDefects defects={defects} />}
       </div>
     );
   }
