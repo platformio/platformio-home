@@ -100,7 +100,8 @@ class InspectionFormComponent extends React.Component {
     });
     if (projectDir) {
       this.props.form.setFieldsValue({
-        projectDir
+        projectDir,
+        env: undefined
       });
     }
   }
