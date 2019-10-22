@@ -168,7 +168,7 @@ export function selectCodeStats(state) {
       .map(([component, stats]) => ({ ...stats, component }))
       .sort((a, b) => a.component.localeCompare(b.component)),
 
-    topDefects: defects.sort((a, b) => a.severity - b.severity).slice(0, 5)
+    topDefects: defects.sort((a, b) => a.level - b.level).slice(0, 5)
   };
 }
 

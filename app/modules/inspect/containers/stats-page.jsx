@@ -244,15 +244,6 @@ class MemoryStatisticsPage extends React.PureComponent {
     );
   }
 
-  renderSummaryFooter() {
-    const text = [
-      this.props.code.defectsCountBySeverity.high,
-      this.props.code.defectsCountBySeverity.medium,
-      this.props.code.defectsCountBySeverity.low
-    ].join(' / ');
-    return <div className="text-right">Total: {text}</div>;
-  }
-
   renderDefectsStats() {
     if (!this.props.code.stats.length) {
       return;
@@ -279,14 +270,26 @@ class MemoryStatisticsPage extends React.PureComponent {
         dataIndex: 'low'
       }
     ];
+
+    const ds = [
+      ...this.props.code.stats,
+      { component: '\u00A0' },
+      {
+        component: 'Total',
+        ...this.props.code.defectsCountBySeverity
+      }
+    ];
+
     return (
       <Card title="Defects Summary" className="block">
         <Table
           className="inspect-stats-table"
           columns={columns}
-          dataSource={this.props.code.stats}
-          footer={::this.renderSummaryFooter}
-          onRow={() => ({ onClick: ::this.handleCodeClick })}
+          dataSource={ds}
+          onRow={({ component }) => ({
+            className: component === '\u00A0' ? 'empty-row' : '',
+            onClick: ::this.handleCodeClick
+          })}
           rowKey="component"
           pagination={false}
           size="small"
