@@ -15,7 +15,7 @@
  */
 
 import { Table, Tag } from 'antd';
-import { columnSortFactory, multiSort } from '@inspect/helpers';
+import { columnSortFactory, getFilterMenu, multiSort } from '@inspect/helpers';
 
 import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
@@ -44,12 +44,14 @@ export class CodeDefects extends React.PureComponent {
     );
   }
 
-  getTableColumns() {
+  getTableColumns(ds) {
     return [
       {
         align: 'center',
         title: 'Analyzer',
         dataIndex: 'tool',
+        filters: getFilterMenu(ds, 'tool'),
+        onFilter: (value, record) => record.tool === value,
         sorter: columnSortFactory('string', 'tool'),
         width: 100
       },
@@ -58,6 +60,11 @@ export class CodeDefects extends React.PureComponent {
         title: 'Level',
         dataIndex: 'level',
         defaultSortOrder: 'descend',
+        filters: [...new Set(ds.map(x => x.level))].sort().map(value => ({
+          value,
+          text: SEVERITY_LEVEL_NAME[value]
+        })),
+        onFilter: (value, record) => record.level === value,
         render: CodeDefects.renderSeverityLevel,
         sorter: columnSortFactory('number', 'level')
       },
@@ -66,6 +73,8 @@ export class CodeDefects extends React.PureComponent {
         title: 'Category',
         dataIndex: 'category',
         defaultSortOrder: 'descend',
+        filters: getFilterMenu(ds, 'category'),
+        onFilter: (value, record) => record.category === value,
         render: category => <Tag>{category.toUpperCase()}</Tag>,
         sorter: columnSortFactory('string', 'category')
       },
@@ -114,7 +123,7 @@ export class CodeDefects extends React.PureComponent {
       <div className="page-container">
         <Table
           childrenColumnName="_"
-          columns={this.getTableColumns()}
+          columns={this.getTableColumns(ds)}
           dataSource={ds}
           pagination={{
             defaultPageSize: 15,
