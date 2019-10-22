@@ -17,6 +17,7 @@
 /* eslint-disable no-constant-condition, no-case-declarations */
 
 import * as actions from './actions';
+import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
 import {
@@ -44,7 +45,23 @@ import { selectStorageItem } from '../../store/selectors';
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
 function* watchAddProject() {
-  yield takeEvery(actions.ADD_PROJECT, function*({ projectDir }) {
+  yield takeEvery(actions.ADD_PROJECT, function*({ projectDir, withOpen, onEnd }) {
+    const iniPath = pathlib.join(projectDir, 'platformio.ini');
+    const fileExists = yield call(apiFetchData, {
+      query: 'os.is_file',
+      params: [iniPath]
+    });
+    if (!fileExists) {
+      if (onEnd) {
+        yield call(
+          onEnd,
+          'This is not PlatformIO Project (should contain "platformio.ini" file).',
+          projectDir
+        );
+      }
+      return;
+    }
+
     const result = (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     if (!result.includes(projectDir)) {
       yield put(
@@ -54,6 +71,12 @@ function* watchAddProject() {
     }
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());
+    if (withOpen) {
+      yield put(actions.openProject(projectDir));
+    }
+    if (onEnd) {
+      yield call(onEnd, undefined, projectDir);
+    }
   });
 }
 

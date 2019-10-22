@@ -94,10 +94,15 @@ class InspectionFormComponent extends React.Component {
     });
   }
 
-  handleOpenProjectCancel() {
+  handleOpenProjectCancel(projectDir) {
     this.setState({
       openProjectVisible: false
     });
+    if (projectDir) {
+      this.props.form.setFieldsValue({
+        projectDir
+      });
+    }
   }
 
   handleOpenProjectClick() {
@@ -176,6 +181,7 @@ class InspectionFormComponent extends React.Component {
     return (
       <div className="inspect-configuration-page">
         <ProjectOpenModal
+          skipOpenProject
           visible={this.state.openProjectVisible}
           onCancel={::this.handleOpenProjectCancel}
         />

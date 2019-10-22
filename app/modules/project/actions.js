@@ -26,7 +26,8 @@ export const INIT_PROJECT = 'INIT_PROJECT';
 export const IMPORT_ARDUINO_PROJECT = 'IMPORT_ARDUINO_PROJECT';
 export const LOAD_PROJECT_EXAMPLES = 'LOAD_PROJECT_EXAMPLES';
 
-export const addProject = projectDir => createAction(ADD_PROJECT, { projectDir });
+export const addProject = (projectDir, withOpen = true, onEnd) =>
+  createAction(ADD_PROJECT, { projectDir, withOpen, onEnd });
 export const hideProject = projectDir => createAction(HIDE_PROJECT, { projectDir });
 export const openProject = projectDir => createAction(OPEN_PROJECT, { projectDir });
 export const importProject = (projectDir, onEnd = undefined) =>
