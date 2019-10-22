@@ -170,46 +170,6 @@ class InspectionFormComponent extends React.Component {
   }
 
   render() {
-    const itemLayout = {
-      labelCol: {
-        xs: {
-          span: 6
-        },
-        sm: { span: 5 },
-        md: { span: 4 },
-        lg: { span: 3 }
-      },
-      wrapperCol: {
-        xs: {
-          span: 18
-        },
-        sm: {
-          span: 19
-        },
-        md: { span: 20 },
-        lg: { span: 13 }
-      }
-    };
-    const buttonsLayout = {
-      wrapperCol: {
-        xs: {
-          ...itemLayout.wrapperCol.xs,
-          offset: itemLayout.labelCol.xs.span
-        },
-        sm: {
-          ...itemLayout.wrapperCol.sm,
-          offset: itemLayout.labelCol.sm.span
-        },
-        md: {
-          ...itemLayout.wrapperCol.md,
-          offset: itemLayout.labelCol.md.span
-        },
-        lg: {
-          ...itemLayout.wrapperCol.lg,
-          offset: itemLayout.labelCol.lg.span
-        }
-      }
-    };
     return (
       <div className="inspect-configuration-page">
         <ProjectOpenModal
@@ -217,38 +177,36 @@ class InspectionFormComponent extends React.Component {
           visible={this.state.openProjectVisible}
           onCancel={::this.handleOpenProjectCancel}
         />
-        <Row>
-          <Col {...buttonsLayout.wrapperCol}>
-            <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
-            <p style={{ maxWidth: '40em' }}>
-              A report after inspection includes memory use information with a detailed
-              visual view of memory utilization, helps locate and improve parts of the
-              application like symbols or functions which have a significant memory
-              footprint. A static code analysis report helps spot and fix software
-              defects before debugging.
-            </p>
-            <p>
-              <Icon type="bulb" /> Building a project in{' '}
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl(
-                    'http://docs.platformio.org/page/projectconf/build_configurations.html'
-                  )
-                }
-              >
-                debug mode
-              </a>{' '}
-              before an inspection can significantly reduce the processing time.
-            </p>
-          </Col>
-        </Row>
-        <Form layout="horizontal" onSubmit={::this.handleSubmit}>
-          <Form.Item label="Project" {...itemLayout}>
+
+        <h1 style={{ marginTop: 12 }}>Project Inspection</h1>
+        <p>
+          A report after inspection includes memory use information with a detailed
+          visual view of memory utilization, helps locate and improve parts of the
+          application like symbols or functions which have a significant memory
+          footprint. A static code analysis report helps spot and fix software defects
+          before debugging.
+        </p>
+        <p>
+          <Icon type="bulb" /> Building a project in{' '}
+          <a
+            onClick={() =>
+              this.props.osOpenUrl(
+                'http://docs.platformio.org/page/projectconf/build_configurations.html'
+              )
+            }
+          >
+            debug mode
+          </a>{' '}
+          before an inspection can significantly reduce the processing time.
+        </p>
+
+        <Form layout="vertical" onSubmit={::this.handleSubmit}>
+          <Form.Item label="Project">
             <Row gutter={8}>
-              <Col xs={24} sm={24} md={18} lg={18}>
+              <Col xs={16} sm={18} md={19} lg={20}>
                 {this.renderProjectSelect()}
               </Col>
-              <Col xs={12} sm={8} md={6} lg={6}>
+              <Col xs={8} sm={6} md={5} lg={4}>
                 <Button
                   icon="folder"
                   size="large"
@@ -261,11 +219,9 @@ class InspectionFormComponent extends React.Component {
             </Row>
           </Form.Item>
 
-          <Form.Item label="Environment" {...itemLayout}>
-            {this.renderEnvSelect()}
-          </Form.Item>
+          <Form.Item label="Environment">{this.renderEnvSelect()}</Form.Item>
 
-          <Form.Item {...buttonsLayout}>
+          <Form.Item>
             <label className="switch-label">
               {this.props.form.getFieldDecorator('memory', {
                 valuePropName: 'checked',
@@ -282,7 +238,7 @@ class InspectionFormComponent extends React.Component {
             </label>
           </Form.Item>
 
-          <Form.Item {...buttonsLayout}>
+          <Form.Item>
             <Button
               htmlType="submit"
               disabled={!this.isValid()}
@@ -296,14 +252,12 @@ class InspectionFormComponent extends React.Component {
           </Form.Item>
         </Form>
         {this.state.error && (
-          <Row>
-            <Col {...buttonsLayout.wrapperCol}>
-              <div className="ant-form-item-label">
-                <label>Errors</label>
-              </div>
-              <div className="inspect-config-console">{this.state.error}</div>
-            </Col>
-          </Row>
+          <div>
+            <div className="ant-form-item-label">
+              <label>Errors</label>
+            </div>
+            <div className="inspect-config-console">{this.state.error}</div>
+          </div>
         )}
       </div>
     );
