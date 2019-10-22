@@ -126,7 +126,7 @@ export function selectMemoryStats(state) {
         location
       })),
     topFiles: files
-      .map(({ flash_size, path }) => ({ flash: flash_size, path }))
+      .map(({ flash_size, path }) => ({ flash: flash_size, path: fixPath(path) }))
       .sort((a, b) => b.flash - a.flash)
       .slice(0, 5)
   };

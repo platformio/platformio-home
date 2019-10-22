@@ -42,7 +42,12 @@ export class PathBreadcrumb extends React.PureComponent {
 
     const parts = this.splitPath(path);
     const device = parts.shift();
-    onChange(device + pathlib.join(...parts.slice(0, idx)));
+
+    if (idx > 0) {
+      onChange(device + pathlib.join(...parts.slice(0, idx - 1)));
+    } else {
+      onChange(device);
+    }
   };
 
   splitPath(path) {
@@ -61,9 +66,6 @@ export class PathBreadcrumb extends React.PureComponent {
     const parts = path !== undefined ? this.splitPath(path) : [];
     let lastName;
     if (parts.length) {
-      if (parts[0] === '/') {
-        parts.shift();
-      }
       lastName = parts.pop();
     }
     return (
@@ -73,13 +75,16 @@ export class PathBreadcrumb extends React.PureComponent {
             <Icon type="book" />
           </a>
         </Breadcrumb.Item>
-        {parts.map((name, i) => (
-          <Breadcrumb.Item key={i + 1}>
-            <a data-idx={i + 1} onClick={this.handleItemClick}>
-              {name}
-            </a>
-          </Breadcrumb.Item>
-        ))}
+        {parts.map(
+          (name, i) =>
+            name !== '/' && (
+              <Breadcrumb.Item key={i + 1}>
+                <a data-idx={i + 1} onClick={this.handleItemClick}>
+                  {name}
+                </a>
+              </Breadcrumb.Item>
+            )
+        )}
         {lastName !== undefined && (
           <Breadcrumb.Item key={-1}>{lastName}</Breadcrumb.Item>
         )}

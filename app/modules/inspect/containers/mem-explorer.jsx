@@ -136,7 +136,7 @@ class FileExplorerPage extends React.PureComponent {
         // if drives have same relative path then overlapping occures
         // const fullRelativePath
         const displayName = !cwd && root ? pathlib.join(root, name) : name;
-        dirUnfolder.remember(relativePathParts, isDir);
+        dirUnfolder.remember(cwd ? relativePathParts : path.split(pathlib.sep));
         aggregator.increment(displayName, { flash, ram });
 
         return {
