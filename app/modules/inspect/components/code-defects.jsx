@@ -116,7 +116,7 @@ export class CodeDefects extends React.PureComponent {
           columns={this.getTableColumns()}
           dataSource={ds}
           pagination={{
-            defaultPageSize: 20,
+            defaultPageSize: 15,
             hideOnSinglePage: true
           }}
           rowKey="idx"

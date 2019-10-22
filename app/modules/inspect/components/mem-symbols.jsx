@@ -211,7 +211,7 @@ export class MemorySymbols extends React.PureComponent {
           dataSource={ds}
           footer={this.renderFooter}
           pagination={{
-            defaultPageSize: 20,
+            defaultPageSize: 15,
             hideOnSinglePage: true
           }}
           rowKey="idx"

@@ -247,26 +247,22 @@ class MemoryStatisticsPage extends React.PureComponent {
       {
         title: 'Component',
         dataIndex: 'component',
-        render: text => <b>{text}</b>,
-        fixed: true
+        render: text => <b>{text}</b>
       },
       {
         align: 'right',
         title: 'High',
-        dataIndex: 'high',
-        fixed: true
+        dataIndex: 'high'
       },
       {
         align: 'right',
         title: 'Medium',
-        dataIndex: 'medium',
-        fixed: true
+        dataIndex: 'medium'
       },
       {
         align: 'right',
         title: 'Low',
-        dataIndex: 'low',
-        fixed: true
+        dataIndex: 'low'
       }
     ];
     return (
@@ -276,7 +272,6 @@ class MemoryStatisticsPage extends React.PureComponent {
           dataSource={this.props.code.stats}
           rowKey="component"
           pagination={false}
-          tableLayout="fixed"
           size="small"
         />
       </Card>
@@ -290,21 +285,14 @@ class MemoryStatisticsPage extends React.PureComponent {
     const columns = [
       {
         title: 'Level',
-        dataIndex: 'severity',
-        fixed: true
+        dataIndex: 'severity'
       },
       {
         title: 'Message',
         dataIndex: 'message',
-        fixed: true
+        render: (message, { file, line, column }) =>
+          (<Tooltip title={ `${limitPathLength(file || '', 40)}:${line}:${column}` }>{message}</Tooltip>)
       },
-      {
-        title: 'Location',
-        dataIndex: 'file',
-        render: (file, { line, column }) =>
-          `${limitPathLength(file || '', 40)}:${line}:${column}`,
-        fixed: true
-      }
     ];
     return (
       <Card title="Top Defects" className="block">
@@ -313,7 +301,6 @@ class MemoryStatisticsPage extends React.PureComponent {
           dataSource={this.props.code.topDefects.map((x, idx) => ({ ...x, idx }))}
           rowKey="idx"
           pagination={false}
-          tableLayout="fixed"
           size="small"
         />
       </Card>
