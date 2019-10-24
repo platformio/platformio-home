@@ -161,7 +161,7 @@ export default class LibraryDetailMain extends React.Component {
     ) {
       return `id=${this.props.data.id}@${this.state.selectedVersion}`;
     }
-    if (latestVersion.match(/^[\d\.]+$/)) {
+    if (latestVersion.match(/^\d+\.\d+\.\d+$/)) {
       return `id=${this.props.data.id}@^${latestVersion}`;
     }
     return `id=${this.props.data.id}`;
