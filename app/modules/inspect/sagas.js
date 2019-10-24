@@ -18,7 +18,7 @@ import * as pathlib from '@core/path';
 
 import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
 import { INSPECT_PROJECT, REINSPECT_PROJECT, inspectProject } from '@inspect/actions';
-import { all, call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '@store/actions';
 import {
   selectInspectionResult,
@@ -28,8 +28,6 @@ import {
 
 import { apiFetchData } from '@store/api';
 import jsonrpc from 'jsonrpc-lite';
-
-const RUN_PARALLEL_INSPECT = false;
 
 function* _inspectMemory({ projectDir, env }) {
   yield call(apiFetchData, {
@@ -94,30 +92,13 @@ function* watchInspectProject() {
       let memoryResult;
       let codeCheckResult;
 
-      if (RUN_PARALLEL_INSPECT) {
-        const parallelTasks = [];
-        if (memory) {
-          parallelTasks.push(call(_inspectMemory, configuration));
-        }
-        if (code) {
-          parallelTasks.push(call(_inspectCode, configuration));
-        }
-        // FIXME: most time gives JsonRPC error 4003, but works on occasion. Backend issue?
-        const results = yield all(parallelTasks);
-        if (memory) {
-          memoryResult = results.shift();
-        }
-        if (code) {
-          codeCheckResult = results.shift();
-        }
-      } else {
-        if (memory) {
-          memoryResult = yield call(_inspectMemory, configuration);
-        }
-        if (code) {
-          codeCheckResult = yield call(_inspectCode, configuration);
-        }
+      if (memory) {
+        memoryResult = yield call(_inspectMemory, configuration);
       }
+      if (code) {
+        codeCheckResult = yield call(_inspectCode, configuration);
+      }
+
       const entity = { memory: memoryResult, codeChecks: codeCheckResult };
       yield put(updateStorageItem(CONFIG_KEY, configuration));
       yield put(updateEntity(RESULT_KEY, entity));
