@@ -136,19 +136,17 @@ export function selectCodeStats(state) {
 
   const statsByComponent = {};
   for (const codeCheck of codeChecks) {
-    for (const statObject of codeCheck.stats) {
-      for (const [name, cmpStats] of Object.entries(statObject)) {
-        if (!statsByComponent[name]) {
-          statsByComponent[name] = {
-            high: 0,
-            medium: 0,
-            low: 0
-          };
-        }
-        statsByComponent[name].low += cmpStats.low || 0;
-        statsByComponent[name].medium += cmpStats.medium || 0;
-        statsByComponent[name].high += cmpStats.high || 0;
+    for (const [name, cmpStats] of Object.entries(codeCheck.stats)) {
+      if (!statsByComponent[name]) {
+        statsByComponent[name] = {
+          high: 0,
+          medium: 0,
+          low: 0
+        };
       }
+      statsByComponent[name].low += cmpStats.low || 0;
+      statsByComponent[name].medium += cmpStats.medium || 0;
+      statsByComponent[name].high += cmpStats.high || 0;
     }
   }
   return {
