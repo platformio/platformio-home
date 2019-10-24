@@ -26,6 +26,7 @@ import { loadProjects } from '@project/actions';
 import { osOpenUrl } from '@core/actions';
 import { selectProjects } from '@project/selectors';
 import { selectSavedConfiguration } from '@inspect/selectors';
+import { shallowCompare } from '@inspect/helpers';
 
 class InspectionFormComponent extends React.Component {
   static propTypes = {
@@ -57,7 +58,17 @@ class InspectionFormComponent extends React.Component {
       code: true
     };
     this.props.loadProjects();
+    // Storage with saved configuration loads asynchronously, so data can come later
     this.props.form.setFieldsValue(this.props.savedConfiguration || defaults);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.savedConfiguration &&
+      !shallowCompare(prevProps.savedConfiguration, this.props.savedConfiguration)
+    ) {
+      this.props.form.setFieldsValue(this.props.savedConfiguration);
+    }
   }
 
   componentWillUnmount() {
