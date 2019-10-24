@@ -35,6 +35,11 @@ const typeToOrder = {
   STT_OBJECT: 2
 };
 
+const typeToName = {
+  STT_FUNC: 'Function',
+  STT_OBJECT: 'Variable'
+};
+
 function sortFunctionsFirst(a, b) {
   return compareNumber(typeToOrder[a.type] || 0, typeToOrder[b.type] || 0);
 }
@@ -66,7 +71,12 @@ export class MemorySymbols extends React.PureComponent {
   }
 
   renderDisplayName = (displayName, item) => (
-    <Tooltip placement="right" title={item.type + ' -> ' + item.location}>
+    <Tooltip
+      placement="right"
+      title={
+        item.location.includes('?') ? undefined : `at ${item.location.split('/').pop()}`
+      }
+    >
       {this.renderIcon(item.type)} {displayName}
     </Tooltip>
   );
@@ -84,6 +94,18 @@ export class MemorySymbols extends React.PureComponent {
         sorter: multiSort(sortFunctionsFirst, (a, b) =>
           compareString(a.displayName, b.displayName)
         )
+      },
+      {
+        title: 'Type',
+        align: 'center',
+        dataIndex: 'type',
+        render: type => (
+          <Tooltip title={typeToName[type] !== type ? type : undefined}>
+            {typeToName[type] || type}
+          </Tooltip>
+        ),
+        sorter: (a, b) => compareString(a.type, b.type),
+        width: 150
       },
       {
         title: 'Address',
