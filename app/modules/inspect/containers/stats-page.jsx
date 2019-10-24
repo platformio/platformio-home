@@ -24,6 +24,7 @@ import {
   selectMemoryStats
 } from '@inspect/selectors';
 
+import { CodeDefects } from '@inspect/components/code-defects';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -309,7 +310,8 @@ class MemoryStatisticsPage extends React.PureComponent {
     const columns = [
       {
         title: 'Level',
-        dataIndex: 'severity'
+        dataIndex: 'level',
+        render: CodeDefects.renderSeverityLevel
       },
       {
         title: 'Message',

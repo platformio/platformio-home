@@ -214,17 +214,17 @@ class InspectionFormComponent extends React.Component {
         <Form layout="vertical" onSubmit={::this.handleSubmit}>
           <Form.Item label="Project">
             <Row gutter={8}>
-              <Col xs={16} sm={18} md={19} lg={20}>
+              <Col xs={24} sm={17} md={19} lg={20}>
                 {this.renderProjectSelect()}
               </Col>
-              <Col xs={8} sm={6} md={5} lg={4}>
+              <Col xs={24} sm={7} md={5} lg={4}>
                 <Button
                   icon="folder"
                   size="large"
                   style={{ width: '100%' }}
                   onClick={::this.handleOpenProjectClick}
                 >
-                  Other…
+                  Browse…
                 </Button>
               </Col>
             </Row>

@@ -99,6 +99,8 @@ export class MemorySymbols extends React.PureComponent {
         title: 'Type',
         align: 'center',
         dataIndex: 'type',
+        filters: getFilterMenu(ds, 'type'),
+        onFilter: (type, record) => record.type.includes(type),
         render: type => (
           <Tooltip title={typeToName[type] !== type ? type : undefined}>
             {typeToName[type] || type}
