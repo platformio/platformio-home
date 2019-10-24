@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import * as pathlib from '@core/path';
-
 import { MemoryDirExplorer } from '@inspect/components/mem-dir-explorer';
 import { MemorySymbols } from '@app/modules/inspect/components/mem-symbols.jsx';
 import PropTypes from 'prop-types';
@@ -30,7 +28,8 @@ import { selectExplorerSizeData } from '@inspect/selectors';
 class DirectoryUnfolder {
   children = new Map();
 
-  remember(parts, isDir) {
+  remember(path, isDir) {
+    const parts = path.split('/');
     let parentPath = '';
     for (let i = 0; i < parts.length; i++) {
       if (!this.children.has(parentPath)) {
@@ -41,7 +40,7 @@ class DirectoryUnfolder {
       }
 
       const { files, dirs } = this.children.get(parentPath);
-      const childPath = pathlib.join(...parts.slice(0, i + 1));
+      const childPath = parts.slice(0, i + 1).join('/');
       const childIsDir = i + 1 !== parts.length || isDir;
 
       if (childIsDir) {
@@ -124,28 +123,25 @@ class FileExplorerPage extends React.PureComponent {
     const dirUnfolder = new DirectoryUnfolder();
 
     const result = (this.props.files || [])
-      .filter(item => !cwd || item.path.startsWith(cwd))
+      .filter(item => !cwd || (cwd && item.path.startsWith(`${cwd}/`)))
       .map(({ path, isDir, ram, flash }) => {
-        const root = cwd || path.substring(0, path.indexOf(pathlib.sep) + 1);
-        const relativePath = path.substring(root.length);
-        const relativePathParts = pathlib.split(relativePath);
-        const name = relativePathParts[0];
+        const relativePath = path.substring(cwd ? cwd.length + 1 : 0);
+        const relativePathParts = relativePath.split('/');
 
-        // FIXME: seems like there can be problems if cwd=undefined
-        // Relative path in this case has stripped drive,
-        // if drives have same relative path then overlapping occures
-        // const fullRelativePath
-        const displayName = !cwd && root ? pathlib.join(root, name) : name;
-        dirUnfolder.remember(cwd ? relativePathParts : path.split(pathlib.sep));
-        aggregator.increment(displayName, { flash, ram });
+        let name = relativePathParts[0];
+        if (!cwd && !name.length) {
+          // Fix displaying unir root(/) folder items
+          name = `/${relativePathParts[1]}`;
+        }
+
+        dirUnfolder.remember(relativePath);
+        aggregator.increment(name, { flash, ram });
 
         return {
           isDir: relativePathParts.length !== 1 || isDir,
           flash,
           ram,
-          relativePath: displayName
-          // relativePath: name # missed device when listing root!
-          // relativePath: pathlib.join(root, name) // abs path to dir, not relative!
+          relativePath: name
         };
       })
       .filter(({ relativePath }) => uniqueFilter.filter(relativePath))

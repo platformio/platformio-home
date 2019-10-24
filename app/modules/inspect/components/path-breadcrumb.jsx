@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import * as pathlib from '@core/path';
-
 import { Breadcrumb, Icon } from 'antd';
 
 import PropTypes from 'prop-types';
@@ -33,43 +31,23 @@ export class PathBreadcrumb extends React.PureComponent {
     if (!a) {
       return;
     }
-    const { path, onChange } = this.props;
     const idx = parseInt(a.dataset.idx);
-    if (idx === 0) {
-      onChange();
-      return;
-    }
-
-    const parts = this.splitPath(path);
-    const device = parts.shift();
-
-    if (idx > 0) {
-      onChange(device + pathlib.join(...parts.slice(0, idx - 1)));
-    } else {
-      onChange(device);
-    }
+    const path = (this.props.path || '')
+      .split('/')
+      .slice(0, idx)
+      .join('/');
+    this.props.onChange(path.length ? path : undefined);
   };
-
-  splitPath(path) {
-    const sepIdx = path.indexOf(pathlib.sep);
-    if (sepIdx === -1) {
-      return [path];
-    }
-    const device = path.substring(0, sepIdx + 1);
-    const devicePathParts = pathlib.split(path.substring(device.length));
-
-    return [device, ...devicePathParts];
-  }
 
   render() {
     const { path } = this.props;
-    const parts = path !== undefined ? this.splitPath(path) : [];
+    const parts = (path || '').split('/');
     let lastName;
     if (parts.length) {
       lastName = parts.pop();
     }
     return (
-      <Breadcrumb className="block" separator={pathlib.sep}>
+      <Breadcrumb className="block" separator="/">
         <Breadcrumb.Item key={0}>
           <a data-idx={0} onClick={this.handleItemClick}>
             <Icon type="book" />
@@ -77,7 +55,7 @@ export class PathBreadcrumb extends React.PureComponent {
         </Breadcrumb.Item>
         {parts.map(
           (name, i) =>
-            name !== '/' && (
+            name.length !== 0 && (
               <Breadcrumb.Item key={i + 1}>
                 <a data-idx={i + 1} onClick={this.handleItemClick}>
                   {name}

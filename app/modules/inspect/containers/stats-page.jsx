@@ -134,7 +134,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     let ramPercent;
     let flashPercent;
 
-    if (this.props.memory) {
+    if (this.props.memory && this.props.device) {
       ramPercent = (this.props.memory.ram / this.props.device.ram) * 100;
       flashPercent = (this.props.memory.flash / this.props.device.flash) * 100;
     }

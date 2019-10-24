@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import * as pathlib from '@core/path';
-
 import { Icon, Table } from 'antd';
 import {
   PARENT_DIR,
@@ -108,15 +106,17 @@ export class MemoryDirExplorer extends React.PureComponent {
     const idx = parseInt(tr.dataset.rowKey);
     let path;
     if (idx === PARENT_ITEM_IDX) {
-      path = pathlib.dirname(dir);
-      if (path === dir) {
+      const parts = dir.split('/');
+      parts.pop();
+      path = parts.join('/');
+      if (path === '') {
         // ROOT dir
         path = undefined;
       }
     } else {
       const item = items[idx];
       if (dir.length) {
-        path = pathlib.join(dir, item.relativePath);
+        path = `${dir}/${item.relativePath}`;
       } else {
         path = item.relativePath;
       }

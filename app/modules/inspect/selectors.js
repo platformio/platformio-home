@@ -15,8 +15,8 @@
  */
 
 import { CONFIG_KEY, RESULT_KEY, SEVERITY_LEVEL } from '@inspect/constants';
-import { fixPath, shallowCompare } from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
+import { shallowCompare, windowsToPosixPath } from '@inspect/helpers';
 
 export function selectSavedConfiguration(state) {
   return selectStorageItem(state, CONFIG_KEY);
@@ -79,7 +79,7 @@ export function selectExplorerSizeData(state) {
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: fixPath(v.path),
+    path: windowsToPosixPath(v.path),
     ram: v.ram_size,
     symbols: (v.symbols || []).map(s => ({
       ...s,
@@ -104,11 +104,9 @@ export function selectMemoryStats(state) {
   if (!memory) {
     return;
   }
-  const {
-    files = [],
-    total: { ram_size: ram, flash_size: flash, sections = [] } = {}
-  } = memory;
+  const files = selectExplorerSizeData(state);
   const allSymbols = selectSymbolsSizeData(state);
+  const { total: { ram_size: ram, flash_size: flash, sections = [] } = {} } = memory;
 
   return {
     ram,
@@ -125,10 +123,7 @@ export function selectMemoryStats(state) {
         type,
         location
       })),
-    topFiles: files
-      .map(({ flash_size, path }) => ({ flash: flash_size, path: fixPath(path) }))
-      .sort((a, b) => b.flash - a.flash)
-      .slice(0, 5)
+    topFiles: files.sort((a, b) => b.flash - a.flash).slice(0, 5)
   };
 }
 
@@ -156,7 +151,6 @@ export function selectCodeStats(state) {
       }
     }
   }
-
   return {
     defectsCountTotal: defects.length,
     defectsCountBySeverity: {
