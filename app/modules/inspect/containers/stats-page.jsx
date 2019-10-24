@@ -207,7 +207,7 @@ class MemoryStatisticsPage extends React.PureComponent {
                   <b>{formatSize(flash)}</b>
                 </td>
                 <td>
-                  <Tooltip title={path}>{limitPathLength(path, 50)}</Tooltip>
+                  <Tooltip title={path}>{limitPathLength(path, 35)}</Tooltip>
                 </td>
               </tr>
             ))}
@@ -228,13 +228,17 @@ class MemoryStatisticsPage extends React.PureComponent {
                   <b>{formatSize(symbol.size)}</b>
                 </td>
                 <td>
-                  <Tooltip title={symbol.type + ' -> ' + symbol.location}>
-                    <Icon
-                      title={SYMBOL_NAME_BY_TYPE[symbol.type]}
-                      type={SYMBOL_ICON_BY_TYPE[symbol.type]}
-                    />{' '}
-                    {symbol.displayName}
-                  </Tooltip>
+                  <div
+                    style={{ overflow: 'hidden', whiteSpace: 'nowrap', width: '100%' }}
+                  >
+                    <Tooltip title={symbol.type + ' -> ' + symbol.location}>
+                      <Icon
+                        title={SYMBOL_NAME_BY_TYPE[symbol.type]}
+                        type={SYMBOL_ICON_BY_TYPE[symbol.type]}
+                      />{' '}
+                      {symbol.displayName}
+                    </Tooltip>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -255,17 +259,17 @@ class MemoryStatisticsPage extends React.PureComponent {
         render: text => <b>{text}</b>
       },
       {
-        align: 'right',
+        align: 'center',
         title: 'High',
         dataIndex: 'high'
       },
       {
-        align: 'right',
+        align: 'center',
         title: 'Medium',
         dataIndex: 'medium'
       },
       {
-        align: 'right',
+        align: 'center',
         title: 'Low',
         dataIndex: 'low'
       }
@@ -341,14 +345,14 @@ class MemoryStatisticsPage extends React.PureComponent {
         {this.renderGauges()}
         {this.props.memory && (
           <Row gutter={12}>
-            <Col sm={12}>{this.renderTopFiles()}</Col>
-            <Col sm={12}>{this.renderTopSymbols()}</Col>
+            <Col md={12}>{this.renderTopFiles()}</Col>
+            <Col md={12}>{this.renderTopSymbols()}</Col>
           </Row>
         )}
         {this.props.code && (
           <Row gutter={12}>
-            <Col sm={12}>{this.renderDefectsStats()}</Col>
-            <Col sm={12}>{this.renderTopDefects()}</Col>
+            <Col md={12}>{this.renderDefectsStats()}</Col>
+            <Col md={12}>{this.renderTopDefects()}</Col>
           </Row>
         )}
       </div>
