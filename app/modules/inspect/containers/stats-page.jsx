@@ -286,7 +286,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     ];
 
     return (
-      <Card title="Defects Summary" className="block">
+      <Card title="Defects Summary" className="blcok defects-stats-block">
         <Table
           className="inspect-stats-table"
           columns={columns}
@@ -320,11 +320,12 @@ class MemoryStatisticsPage extends React.PureComponent {
           <Tooltip title={`${limitPathLength(file || '', 40)}:${line}:${column}`}>
             {message}
           </Tooltip>
-        )
+        ),
+        width: '100%'
       }
     ];
     return (
-      <Card title="Top Defects" className="block">
+      <Card title="Top Defects" className="block defects-stats-block">
         <Table
           className="inspect-stats-table"
           columns={columns}

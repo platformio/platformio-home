@@ -224,7 +224,7 @@ class InspectionFormComponent extends React.Component {
                   style={{ width: '100%' }}
                   onClick={::this.handleOpenProjectClick}
                 >
-                  Browse…
+                  Browse
                 </Button>
               </Col>
             </Row>
