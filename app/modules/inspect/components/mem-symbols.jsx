@@ -73,9 +73,8 @@ export class MemorySymbols extends React.PureComponent {
   renderDisplayName = (displayName, item) => (
     <Tooltip
       placement="right"
-      title={
-        item.location.includes('?') ? undefined : `at ${item.location.split('/').pop()}`
-      }
+      title={item.location.includes('?') ? undefined : `at ${item.location}`}
+      overlayStyle={{ maxWidth: 400 }}
     >
       {this.renderIcon(item.type)} {displayName}
     </Tooltip>

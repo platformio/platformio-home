@@ -215,7 +215,9 @@ class MemoryStatisticsPage extends React.PureComponent {
                   <b>{formatSize(flash)}</b>
                 </td>
                 <td>
-                  <Tooltip title={path}>{limitPathLength(path, 35)}</Tooltip>
+                  <Tooltip title={path} overlayStyle={{ maxWidth: 400 }}>
+                    {limitPathLength(path, 35)}
+                  </Tooltip>
                 </td>
               </tr>
             ))}
@@ -239,7 +241,10 @@ class MemoryStatisticsPage extends React.PureComponent {
                   <div
                     style={{ overflow: 'hidden', whiteSpace: 'nowrap', width: '100%' }}
                   >
-                    <Tooltip title={symbol.type + ' -> ' + symbol.location}>
+                    <Tooltip
+                      title={symbol.type + ' -> ' + symbol.location}
+                      overlayStyle={{ maxWidth: 400 }}
+                    >
                       <Icon
                         title={SYMBOL_NAME_BY_TYPE[symbol.type]}
                         type={SYMBOL_ICON_BY_TYPE[symbol.type]}
