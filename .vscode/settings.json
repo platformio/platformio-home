@@ -1,3 +1,15 @@
 {
+  "eslint.enable": true,
+  "eslint.validate": ["javascript", "javascriptreact"],
+  "eslint.autoFixOnSave": false,
+  "[javascript]": {
+    "editor.rulers": [88]
+  },
+  "[javascriptreact]": {
+    "editor.rulers": [88]
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": false
+  },
   "javascript.validate.enable": false
 }

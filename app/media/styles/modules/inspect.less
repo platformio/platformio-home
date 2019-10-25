@@ -1,0 +1,83 @@
+.inspect-configuration-page {
+  max-width: 700px;
+
+  .inspect-config-console {
+    background-color: @input-bg;
+    border: 1px solid @input-border-color;
+    border-radius: @border-radius-base;
+    padding: @input-padding-vertical-base @input-padding-horizontal;
+  }
+
+  .switch-label {
+    color: @label-color;
+    margin-right: 15px;
+    white-space: nowrap;
+  }
+}
+
+.inspect-stats-page {
+  .ant-progress {
+    cursor: pointer;
+
+    .ant-progress-text small {
+      font-size: 12px;
+    }
+  }
+
+  .ant-card {
+    min-height: 205px;
+  }
+
+  .defects-stats-block {
+    min-height: 250px;
+  }
+
+  .inspect-stats-block {
+    & {
+      width: auto;
+    }
+
+    td,
+    th {
+      padding: 1px 5px;
+      white-space: nowrap;
+    }
+
+    tr {
+      cursor: pointer;
+    }
+  }
+
+  .inspect-stats-table {
+    tr {
+      cursor: pointer;
+    }
+
+    .empty-row {
+      cursor: default;
+    }
+  }
+
+  .ant-table-small {
+    border: none;
+  }
+}
+
+/* Severity Tag */
+.severity-tag {
+  &.severity-low {
+    color: @btn-danger-color;
+  }
+
+  &.severity-medium {
+    color: @body-background;
+    background-color: @warning-color;
+    border-color: lighten(@warning-color, 30%);
+  }
+
+  &.severity-high {
+    color: @btn-danger-color;
+    background-color: @error-color;
+    border-color: lighten(@error-color, 30%);
+  }
+}

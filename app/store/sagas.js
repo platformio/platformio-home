@@ -27,6 +27,7 @@ import { asyncDelay } from '../modules/core/helpers';
 import coreSagas from '../modules/core/sagas';
 import deviceSagas from '../modules/device/sagas';
 import homeSagas from '../modules/home/sagas';
+import inspectSagas from '../modules/inspect/sagas';
 import librarySagas from '../modules/library/sagas';
 import { notifyError } from '../modules/core/actions';
 import platformSagas from '../modules/platform/sagas';
@@ -102,7 +103,8 @@ export default function* root() {
       ...homeSagas,
       ...librarySagas,
       ...projectSagas,
-      ...platformSagas
+      ...platformSagas,
+      ...inspectSagas
     ].map(s => s())
   );
 }

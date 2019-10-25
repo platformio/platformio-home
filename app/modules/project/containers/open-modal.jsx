@@ -17,82 +17,67 @@
 import * as path from '../../core/path';
 
 import { Button, Modal, message } from 'antd';
-import { addProject, openProject } from '../actions';
 
 import FileExplorer from '../../core/containers/file-explorer';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { addProject } from '../actions';
 import { connect } from 'react-redux';
-import { osIsFile } from '../../core/actions';
-import { selectOsIsFileItems } from '../../core/selectors';
 
 class ProjectOpenModal extends React.Component {
   static propTypes = {
-    visible: PropTypes.bool.isRequired,
+    // data
+    skipOpenProject: PropTypes.bool,
+    visible: PropTypes.bool,
+    // callbacks
     onCancel: PropTypes.func.isRequired,
-
-    osIsFileItems: PropTypes.object,
-    addProject: PropTypes.func.isRequired,
-    openProject: PropTypes.func.isRequired,
-    osIsFile: PropTypes.func.isRequired
+    // dispatch
+    addProject: PropTypes.func.isRequired
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       projectDir: null,
-      platformioIni: null,
       checking: false
     };
   }
 
-  UNSAFE_componentWillReceiveProps(newProps) {
-    if (!this.state.checking) {
-      return;
-    }
-    this.validateProjectDir(newProps.osIsFileItems);
+  componentDidMount() {
+    this._mounted = true;
   }
 
-  validateProjectDir(osIsFileItems) {
-    if (!osIsFileItems || !osIsFileItems[this.state.platformioIni]) {
-      if (!this.state.checking) {
-        this.props.osIsFile(this.state.platformioIni);
-      }
-      this.setState({
-        checking: true
-      });
-      return;
-    }
-
-    this.setState({
-      checking: false
-    });
-
-    if (!osIsFileItems[this.state.platformioIni]) {
-      return message.error(
-        'This is not PlatformIO Project (should contain "platformio.ini" file).'
-      );
-    }
-    this.props.addProject(this.state.projectDir);
-    this.props.openProject(this.state.projectDir);
-    this.onDidCancel();
+  componentWillUnmount() {
+    this._mounted = false;
   }
 
   onDidOpen() {
     if (!this.state.projectDir) {
       return message.error('Please select Project Folder');
     }
-    this.validateProjectDir(this.props.osIsFileItems);
+    this.setState({ checking: true });
+    this.props.addProject(
+      this.state.projectDir,
+      !this.props.skipOpenProject,
+      (err, projectDir) => {
+        if (this._mounted) {
+          this.setState({ checking: false });
+          if (err) {
+            return message.error(err);
+          }
+          this.onDidCancel(projectDir);
+        }
+      }
+    );
   }
 
-  onDidCancel() {
-    this.props.onCancel();
+  onDidCancel(projectDir) {
+    this.props.onCancel(projectDir);
   }
 
   onDidSelect(projectDir) {
     this.setState({
-      projectDir,
-      platformioIni: projectDir ? path.join(projectDir, 'platformio.ini') : null
+      projectDir
     });
   }
 
@@ -134,17 +119,9 @@ class ProjectOpenModal extends React.Component {
 
 // Redux
 
-function mapStateToProps(state) {
-  return {
-    osIsFileItems: selectOsIsFileItems(state)
-  };
-}
-
 export default connect(
-  mapStateToProps,
+  undefined,
   {
-    addProject,
-    openProject,
-    osIsFile
+    addProject
   }
 )(ProjectOpenModal);

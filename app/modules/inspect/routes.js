@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-.custom-icon {
-  vertical-align: middle;
-  svg {
-    height: 18px;
-    line {
-      stroke: @text-color;
-    }
+import { InspectionForm } from '@app/modules/inspect/containers/configuration';
+import { InspectionResultPage } from '@inspect/containers/result';
+
+const routes = [
+  {
+    path: '/inspect',
+    component: InspectionForm
+  },
+  {
+    path: '/inspect/result',
+    component: InspectionResultPage
   }
-}
+];
+
+export default routes;

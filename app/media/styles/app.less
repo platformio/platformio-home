@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
- @sider-width: 70px;
- @max-content-width: @screen-xl - @sider-width;
+@sider-width: 70px;
+@max-content-width: @screen-xl - @sider-width;
 
 .app-container {
-
   .ant-layout-sider {
     overflow: auto;
     height: 100vh;
@@ -93,7 +92,12 @@
     max-width: @max-content-width;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     .ant-badge {
       margin-left: 3px;
     }
@@ -114,7 +118,6 @@
 
 /* Menu with Babges */
 .ant-menu {
-
   .ant-badge {
     color: inherit !important;
   }
@@ -145,4 +148,13 @@
 .ant-notification .ant-notification-notice-description {
   overflow: auto;
   max-height: 300px;
+}
+
+/* Progress */
+.progress-error-stroke .ant-progress .ant-progress-circle-path {
+  stroke: @error-color !important;
+}
+
+.progress-warning-stroke .ant-progress .ant-progress-circle-path {
+  stroke: @warning-color !important;
 }
