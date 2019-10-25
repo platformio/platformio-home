@@ -72,26 +72,24 @@ export class MemoryDirExplorer extends React.PureComponent {
             {this.renderIcon(item.isDir)} {path.replace(/^\//, '')}
           </a>
         ),
-
         sorter: multiSort(sortDirFirst, (a, b) =>
           compareString(a.relativePath, b.relativePath)
-        )
+        ),
+        width: '100%'
       },
       {
-        align: 'right',
         title: 'Flash',
         dataIndex: 'flash',
-        render: safeFormatSize,
+        render: (size) => <div className='text-nowrap'>{safeFormatSize(size)}</div>,
         sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.flash, b.flash)),
-        width: 100
+        align: 'right'
       },
       {
-        align: 'right',
         title: 'RAM',
         dataIndex: 'ram',
-        render: safeFormatSize,
+        render: (size) => <div className='text-nowrap'>{safeFormatSize(size)}</div>,
         sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.ram, b.ram)),
-        width: 100
+        align: 'right'
       }
     ];
   }

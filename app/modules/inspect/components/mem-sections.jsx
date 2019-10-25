@@ -47,7 +47,8 @@ export class MemorySections extends React.PureComponent {
         title: 'Name',
         dataIndex: 'name',
         defaultSortOrder: 'ascend',
-        sorter: (a, b) => compareString(a.name, b.name)
+        sorter: (a, b) => compareString(a.name, b.name),
+        width: '100%'
       },
       {
         title: 'Type',
@@ -56,7 +57,7 @@ export class MemorySections extends React.PureComponent {
         onFilter: (value, record) => record.type === value,
         render: type => <Tag>{type}</Tag>,
         sorter: (a, b) => compareString(a.type, b.type),
-        width: 150
+        align: 'center'
       },
       {
         title: 'Flags',
@@ -65,24 +66,22 @@ export class MemorySections extends React.PureComponent {
         onFilter: (value, record) => record.flags === value,
         render: flags => flags.length !== 0 && <Tag>{flags}</Tag>,
         sorter: (a, b) => compareString(a.flags, b.flags),
-        width: 100
+        align: 'center'
       },
       {
-        align: 'right',
         title: 'Address',
         dataIndex: 'startAddr',
         render: this.renderAddress,
         sorter: (a, b) => compareNumber(a.startAddr, b.startAddr),
-        width: 150
+        align: 'center'
       },
 
       {
-        align: 'right',
         title: 'Size',
         dataIndex: 'size',
-        render: formatSize,
+        render: (size) => <div className='text-nowrap'>{formatSize(size)}</div>,
         sorter: (a, b) => compareNumber(a.size, b.size),
-        width: 100
+        align: 'right'
       }
     ];
   }

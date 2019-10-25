@@ -92,47 +92,49 @@ export class MemorySymbols extends React.PureComponent {
         render: this.renderDisplayName,
         sorter: multiSort(sortFunctionsFirst, (a, b) =>
           compareString(a.displayName, b.displayName)
-        )
+        ),
+        width: '100%'
       },
       {
         title: 'Type',
         align: 'center',
         dataIndex: 'type',
+        render: text => <Tag>{text}</Tag>,
         filters: getFilterMenu(ds, 'type'),
         onFilter: (type, record) => record.type.includes(type),
-        render: type => (
-          <Tooltip title={typeToName[type] !== type ? type : undefined}>
-            {typeToName[type] || type}
-          </Tooltip>
-        ),
-        sorter: (a, b) => compareString(a.type, b.type),
-        width: 150
+        sorter: (a, b) => compareString(a.type, b.type)
+      },
+      {
+        title: 'Bind',
+        align: 'center',
+        dataIndex: 'bind',
+        render: text => <Tag>{text}</Tag>,
+        filters: getFilterMenu(ds, 'bind'),
+        onFilter: (bind, record) => record.bind.includes(bind),
+        sorter: (a, b) => compareString(a.bind, b.bind)
       },
       {
         title: 'Address',
-        align: 'center',
         dataIndex: 'addr',
         render: this.renderAddress,
         sorter: (a, b) => compareNumber(a.addr, b.addr),
-        width: 150
+        align: 'center'
       },
       {
         title: 'Section',
-        align: 'center',
         dataIndex: 'section',
+        render: text => <Tag>{text}</Tag>,
         filters: getFilterMenu(ds, 'section'),
         onFilter: (section, record) => record.section === section,
-        render: section => <Tag>{section}</Tag>,
         sorter: (a, b) => compareString(a.section, b.section),
-        width: 150
+        align: 'center'
       },
       {
         title: 'Size',
-        align: 'right',
         dataIndex: 'size',
-        render: formatSize,
+        render: (size) => <div className='text-nowrap'>{formatSize(size)}</div>,
         sorter: (a, b) => compareNumber(a.size, b.size),
-        width: 100
+        align: 'right'
       }
     ];
   }

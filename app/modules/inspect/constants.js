@@ -33,9 +33,9 @@ export const SYMBOL_NAME_BY_TYPE = Object.freeze({
 });
 
 export const SEVERITY_LEVEL = Object.freeze({
-  LOW: 1,
+  HIGH: 1,
   MEDIUM: 2,
-  HIGH: 3
+  LOW: 4,
 });
 
 export const SEVERITY_LEVEL_NAME = {

@@ -47,35 +47,31 @@ export class CodeDefects extends React.PureComponent {
   getTableColumns(ds) {
     return [
       {
-        align: 'center',
-        title: 'Analyzer',
+        title: 'Tool',
         dataIndex: 'tool',
         filters: getFilterMenu(ds, 'tool'),
         onFilter: (value, record) => record.tool === value,
-        sorter: columnSortFactory('string', 'tool')
+        sorter: columnSortFactory('string', 'tool'),
+        align: 'center'
       },
       {
-        align: 'center',
         title: 'Level',
         dataIndex: 'level',
-        defaultSortOrder: 'descend',
-        filters: [...new Set(ds.map(x => x.level))].sort().map(value => ({
-          value,
-          text: SEVERITY_LEVEL_NAME[value]
-        })),
+        defaultSortOrder: 'ascend',
+        filters: Object.entries(SEVERITY_LEVEL_NAME).map(([value, text]) => ({text, value: parseInt(value)})),
         onFilter: (value, record) => record.level === value,
         render: CodeDefects.renderSeverityLevel,
-        sorter: columnSortFactory('number', 'level')
+        sorter: columnSortFactory('number', 'level'),
+        align: 'center'
       },
       {
-        align: 'center',
         title: 'Category',
         dataIndex: 'category',
-        defaultSortOrder: 'descend',
         filters: getFilterMenu(ds, 'category'),
         onFilter: (value, record) => record.category === value,
         render: category => <Tag>{category.toUpperCase()}</Tag>,
-        sorter: columnSortFactory('string', 'category')
+        sorter: columnSortFactory('string', 'category'),
+        align: 'center'
       },
       {
         title: 'Message',
