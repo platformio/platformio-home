@@ -77,12 +77,15 @@ class MemoryStatisticsPage extends React.PureComponent {
     onSymbolsClick: PropTypes.func.isRequired
   };
 
-  static formatPercent(value) {
-    return <a>{value.toFixed(0) + '%'}</a>;
-  }
-
-  formatDefects() {
-    return <a>{this.props.code.defectsCountTotal}</a>;
+  formatMemoryProgress(percent, value) {
+    return (
+      <span>
+        {percent.toFixed(0) + '%'}
+        <div>
+          <small>{formatSize(value)}</small>
+        </div>
+      </span>
+    );
   }
 
   getDefectsTooltip() {
@@ -131,7 +134,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     );
   }
 
-  renderGauges() {
+  renderDashboards() {
     let ramPercent;
     let flashPercent;
 
@@ -141,7 +144,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     }
 
     return (
-      <Row gutter={16} className="block text-center inspect-dashboards">
+      <Row gutter={16} className="block text-center inspect-dashboard">
         {ramPercent !== undefined && (
           <Col xs={12} sm={8} lg={4} className={this.getGaugeCls(ramPercent)}>
             <Tooltip
@@ -151,7 +154,9 @@ class MemoryStatisticsPage extends React.PureComponent {
             >
               <Progress
                 type="dashboard"
-                format={MemoryStatisticsPage.formatPercent}
+                format={percent =>
+                  this.formatMemoryProgress(percent, this.props.memory.ram)
+                }
                 onClick={::this.handleMemoryClick}
                 percent={ramPercent}
                 width={120}
@@ -169,7 +174,9 @@ class MemoryStatisticsPage extends React.PureComponent {
             >
               <Progress
                 type="dashboard"
-                format={MemoryStatisticsPage.formatPercent}
+                format={percent =>
+                  this.formatMemoryProgress(percent, this.props.memory.flash)
+                }
                 onClick={::this.handleMemoryClick}
                 percent={flashPercent}
                 width={120}
@@ -183,7 +190,7 @@ class MemoryStatisticsPage extends React.PureComponent {
             <Tooltip title={this.getDefectsTooltip()}>
               <Progress
                 type="dashboard"
-                format={::this.formatDefects}
+                format={() => this.props.code.defectsCountTotal}
                 onClick={::this.handleCodeClick}
                 percent={this.props.code.defectsCountTotal === 0 ? 0 : 100}
                 successPercent={0}
@@ -345,7 +352,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     }
     return (
       <div className="inspect-stats-page">
-        {this.renderGauges()}
+        {this.renderDashboards()}
         {this.props.memory && (
           <Row gutter={12}>
             <Col md={12}>{this.renderTopFiles()}</Col>
