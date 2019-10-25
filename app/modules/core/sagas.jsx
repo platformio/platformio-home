@@ -103,8 +103,8 @@ function* watchNotifyError() {
           type="danger"
           onClick={() =>
             _openUrl(
-              `https://github.com/platformio/platformio-core/issues/new?${qs.stringify({
-                title: `Home: ${title}`,
+              `https://github.com/platformio/platformio-home/issues/new?${qs.stringify({
+                title,
                 body: description
               })}`
             )
