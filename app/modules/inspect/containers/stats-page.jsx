@@ -286,7 +286,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     ];
 
     return (
-      <Card title="Defects Summary" className="blcok defects-stats-block">
+      <Card title="Defects Summary" className="block defects-stats-block">
         <Table
           className="inspect-stats-table"
           columns={columns}
