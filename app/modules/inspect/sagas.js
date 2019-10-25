@@ -37,7 +37,11 @@ function* _inspectMemory({ projectDir, env }) {
 
   const buildDir = yield call(apiFetchData, {
     query: 'project.config_call',
-    params: [pathlib.join(projectDir, 'platformio.ini'), 'get_optional_dir', 'build']
+    params: [
+      { path: pathlib.join(projectDir, 'platformio.ini') },
+      'get_optional_dir',
+      'build'
+    ]
   });
   const sizedataPath = pathlib.join(buildDir, env, 'sizedata.json');
 
