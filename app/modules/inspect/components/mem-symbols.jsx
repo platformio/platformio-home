@@ -35,11 +35,6 @@ const typeToOrder = {
   STT_OBJECT: 2
 };
 
-const typeToName = {
-  STT_FUNC: 'Function',
-  STT_OBJECT: 'Variable'
-};
-
 function sortFunctionsFirst(a, b) {
   return compareNumber(typeToOrder[a.type] || 0, typeToOrder[b.type] || 0);
 }
@@ -132,7 +127,7 @@ export class MemorySymbols extends React.PureComponent {
       {
         title: 'Size',
         dataIndex: 'size',
-        render: (size) => <div className='text-nowrap'>{formatSize(size)}</div>,
+        render: size => <div className="text-nowrap">{formatSize(size)}</div>,
         sorter: (a, b) => compareNumber(a.size, b.size),
         align: 'right'
       }

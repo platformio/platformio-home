@@ -58,7 +58,10 @@ export class CodeDefects extends React.PureComponent {
         title: 'Level',
         dataIndex: 'level',
         defaultSortOrder: 'ascend',
-        filters: Object.entries(SEVERITY_LEVEL_NAME).map(([value, text]) => ({text, value: parseInt(value)})),
+        filters: Object.entries(SEVERITY_LEVEL_NAME).map(([value, text]) => ({
+          text,
+          value: parseInt(value)
+        })),
         onFilter: (value, record) => record.level === value,
         render: CodeDefects.renderSeverityLevel,
         sorter: columnSortFactory('number', 'level'),

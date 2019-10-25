@@ -80,14 +80,14 @@ export class MemoryDirExplorer extends React.PureComponent {
       {
         title: 'Flash',
         dataIndex: 'flash',
-        render: (size) => <div className='text-nowrap'>{safeFormatSize(size)}</div>,
+        render: size => <div className="text-nowrap">{safeFormatSize(size)}</div>,
         sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.flash, b.flash)),
         align: 'right'
       },
       {
         title: 'RAM',
         dataIndex: 'ram',
-        render: (size) => <div className='text-nowrap'>{safeFormatSize(size)}</div>,
+        render: size => <div className="text-nowrap">{safeFormatSize(size)}</div>,
         sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.ram, b.ram)),
         align: 'right'
       }

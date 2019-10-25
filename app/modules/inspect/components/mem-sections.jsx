@@ -79,7 +79,7 @@ export class MemorySections extends React.PureComponent {
       {
         title: 'Size',
         dataIndex: 'size',
-        render: (size) => <div className='text-nowrap'>{formatSize(size)}</div>,
+        render: size => <div className="text-nowrap">{formatSize(size)}</div>,
         sorter: (a, b) => compareNumber(a.size, b.size),
         align: 'right'
       }
