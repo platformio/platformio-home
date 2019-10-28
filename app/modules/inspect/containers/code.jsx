@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { openTextDocument, osOpenUrl } from '@core/actions';
+
 import { CodeDefects } from '@inspect/components/code-defects.jsx';
 import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
@@ -24,7 +26,9 @@ import { selectCodeCheckDefects } from '@inspect/selectors';
 
 class CodePage extends React.PureComponent {
   static propTypes = {
-    defects: PropTypes.arrayOf(DefectType)
+    defects: PropTypes.arrayOf(DefectType),
+    osOpenUrl: PropTypes.func.isRequired,
+    openTextDocument: PropTypes.func.isRequired
   };
 
   render() {
@@ -42,7 +46,13 @@ class CodePage extends React.PureComponent {
             <li>No Defects</li>
           </ul>
         )}
-        {defects && defects.length !== 0 && <CodeDefects defects={defects} />}
+        {defects && defects.length !== 0 && (
+          <CodeDefects
+            defects={defects}
+            osOpenUrl={this.props.osOpenUrl}
+            openTextDocument={this.props.openTextDocument}
+          />
+        )}
       </div>
     );
   }
@@ -55,4 +65,12 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(CodePage);
+const dispatchToProps = {
+  osOpenUrl,
+  openTextDocument
+};
+
+export default connect(
+  mapStateToProps,
+  dispatchToProps
+)(CodePage);

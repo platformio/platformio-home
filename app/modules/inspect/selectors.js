@@ -47,17 +47,11 @@ export function selectCodeCheckDefects(state) {
   }
   return codeChecks
     .map(({ tool, defects }) => {
-      return defects.map(({ category, column, file, id, line, message, severity }) => ({
-        category,
-        column: parseInt(column, 10),
-        file,
-        id,
-        line: parseInt(line, 10),
-        message,
-        severity,
-        level: SEVERITY_LEVEL[severity.toUpperCase()],
-        tool
-      }));
+      return defects.map(item => {
+        item['tool'] = tool;
+        item['level'] = SEVERITY_LEVEL[item.severity.toUpperCase()];
+        return item;
+      });
     })
     .flat();
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Table, Tag } from 'antd';
+import { Table, Tag, Tooltip } from 'antd';
 import { columnSortFactory, getFilterMenu, multiSort } from '@inspect/helpers';
 
 import { DefectType } from '@inspect/types';
@@ -24,7 +24,8 @@ import { SEVERITY_LEVEL_NAME } from '@inspect/constants';
 
 export class CodeDefects extends React.PureComponent {
   static propTypes = {
-    defects: PropTypes.arrayOf(DefectType)
+    defects: PropTypes.arrayOf(DefectType),
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -41,6 +42,30 @@ export class CodeDefects extends React.PureComponent {
       <Tag className={`severity-tag severity-${name.toLowerCase()}`}>
         {name.toUpperCase()}
       </Tag>
+    );
+  }
+
+  renderMessage(message, defect) {
+    return (
+      <span>
+        {defect.cwe && (
+          <a
+            style={{ marginRight: 5 }}
+            onClick={() =>
+              this.props.osOpenUrl(
+                `https://cwe.mitre.org/data/definitions/${defect.cwe}.html`
+              )
+            }
+          >
+            CWE-{defect.cwe}:
+          </a>
+        )}
+        {defect.id ? (
+          <Tooltip title={`${defect.tool} defect ID: ${defect.id}`}>{message}</Tooltip>
+        ) : (
+          message
+        )}
+      </span>
     );
   }
 
@@ -79,7 +104,8 @@ export class CodeDefects extends React.PureComponent {
       {
         title: 'Message',
         dataIndex: 'message',
-        sorter: columnSortFactory('string', 'message')
+        sorter: columnSortFactory('string', 'message'),
+        render: ::this.renderMessage
       },
       {
         title: 'Location',
