@@ -125,20 +125,10 @@ function* watchOpenProject() {
     try {
       return yield call(apiFetchData, {
         query: 'ide.open_project',
-        params: [projectDir, getSessionId()]
+        params: [getSessionId(), projectDir]
       });
     } catch (err) {
-      // Invalid params, PIO Core < 4.0.1b3
-      if (err instanceof jsonrpc.JsonRpcError && jsonrpc.JsonRpcError.code === -32602) {
-        try {
-          return yield call(apiFetchData, {
-            query: 'ide.open_project',
-            params: [projectDir]
-          });
-        } catch (err) {
-          console.warn(err);
-        }
-      }
+      console.warn(err);
     }
     Modal.success({
       title: 'Open Project...',
