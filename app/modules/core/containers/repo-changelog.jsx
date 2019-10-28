@@ -113,7 +113,7 @@ class ReleaseNotes extends React.Component {
                 </Tooltip>
               </small>
             </h3>
-            <div dangerouslySetInnerHTML={{ __html: marked(item.body) }}></div>
+            <div dangerouslySetInnerHTML={{ __html: marked(item.body || '') }}></div>
           </div>
         ))}
       </div>
