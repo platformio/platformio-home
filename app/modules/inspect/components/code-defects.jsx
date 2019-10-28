@@ -15,7 +15,12 @@
  */
 
 import { Table, Tag, Tooltip } from 'antd';
-import { columnSortFactory, getFilterMenu, multiSort } from '@inspect/helpers';
+import {
+  columnSortFactory,
+  getFilterMenu,
+  limitPathLength,
+  multiSort
+} from '@inspect/helpers';
 
 import { DefectType } from '@inspect/types';
 import PropTypes from 'prop-types';
@@ -26,6 +31,7 @@ export class CodeDefects extends React.PureComponent {
   static propTypes = {
     defects: PropTypes.arrayOf(DefectType),
     osOpenUrl: PropTypes.func.isRequired,
+    openTextDocument: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -111,9 +117,11 @@ export class CodeDefects extends React.PureComponent {
         title: 'Location',
         dataIndex: 'file',
         render: (file, { line, column }) => (
-          <span>
-            {file}:{line}:{column}
-          </span>
+          <a onClick={() => this.props.openTextDocument(file, line, column)}>
+            <Tooltip title={file}>
+              {limitPathLength(file, 25)}:{line}:{column}
+            </Tooltip>
+          </a>
         ),
         sorter: multiSort(
           columnSortFactory('string', 'file'),

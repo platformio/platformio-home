@@ -36,6 +36,7 @@ export const REQUEST_CONTENT = 'REQUEST_CONTENT';
 export const LOAD_LOGICAL_DEVICES = 'LOAD_LOGICAL_DEVICES';
 export const RESET_FS_ITEMS = 'RESET_FS_ITEMS';
 export const TOGGLE_FAVORITE_FOLDER = 'TOGGLE_FAVORITE_FOLDER';
+export const OPEN_TEXT_DOCUMENT = 'OPEN_TEXT_DOCUMENT';
 
 export const notifyError = (title, err) => createAction(NOTIFY_ERROR, { title, err });
 export const notifySuccess = (title, result) =>
@@ -67,3 +68,5 @@ export const loadLogicalDevices = (force = false) =>
 export const resetFSItems = () => createAction(RESET_FS_ITEMS);
 export const toggleFavoriteFolder = path =>
   createAction(TOGGLE_FAVORITE_FOLDER, { path });
+export const openTextDocument = (path, line = undefined, column = undefined) =>
+  createAction(OPEN_TEXT_DOCUMENT, { path, line, column });

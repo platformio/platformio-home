@@ -22,7 +22,7 @@ import * as selectors from './selectors';
 import { Button, Modal, notification } from 'antd';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
-import { inIframe, reportException } from './helpers';
+import { getSessionId, inIframe, reportException } from './helpers';
 
 import React from 'react';
 import URL from 'url-parse';
@@ -412,6 +412,23 @@ function* watchToggleFavoriteFolder() {
   });
 }
 
+function* watchOpenTextDocument() {
+  yield takeEvery(actions.OPEN_TEXT_DOCUMENT, function*({ path, line, column }) {
+    try {
+      return yield call(apiFetchData, {
+        query: 'ide.open_text_document',
+        params: [getSessionId(), path, line, column]
+      });
+    } catch (err) {
+      console.warn(err);
+      return yield call(apiFetchData, {
+        query: 'os.open_file',
+        params: [path]
+      });
+    }
+  });
+}
+
 export default [
   watchShowAtStartup,
   watchNotifyError,
@@ -425,5 +442,6 @@ export default [
   watchOsIsFile,
   watchOsIsDir,
   watchResetFSItems,
-  watchToggleFavoriteFolder
+  watchToggleFavoriteFolder,
+  watchOpenTextDocument
 ];
