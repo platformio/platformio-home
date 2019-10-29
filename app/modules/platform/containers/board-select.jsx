@@ -65,9 +65,15 @@ class BoardSelect extends React.Component {
         size="large"
         placeholder={`Select a board (${this.props.items.length} available)`}
         optionFilterProp="children"
-        filterOption={(input, option) =>
-          option.props.children.toLowerCase().includes(input.toLocaleLowerCase())
-        }
+        filterOption={(input, option) => {
+          if (typeof option.props.children === 'string') {
+            return option.props.children
+              .toLowerCase()
+              .includes(input.toLocaleLowerCase());
+          }
+          // Skipping groups because matched group shows all its options
+          return false;
+        }}
         onChange={::this.onDidChange}
       >
         {Object.keys(data).map(group => (
