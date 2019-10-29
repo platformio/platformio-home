@@ -170,11 +170,8 @@ export function formatFrequency(f, digitsAfterPoint = 1, hideZeroesAfterPoint = 
     ++order;
   }
   let value = f.toFixed(digitsAfterPoint);
-  if (hideZeroesAfterPoint) {
-    value = value.replace(/(?<=\.\d*)0+$/, '');
-    if (value.endsWith('.')) {
-      value = value.slice(0, -1);
-    }
+  if (hideZeroesAfterPoint && value.includes('.')) {
+    value = value.replace(/0+$/, '').replace(/\.$/, '');
   }
   return `${value}${FREQ_UNITS[order]}`;
 }
