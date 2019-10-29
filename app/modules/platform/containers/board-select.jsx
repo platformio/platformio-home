@@ -66,8 +66,7 @@ class BoardSelect extends React.Component {
         placeholder={`Select a board (${this.props.items.length} available)`}
         optionFilterProp="children"
         filterOption={(input, option) => {
-          const { children } = option.props;
-          if (typeof children === 'string') {
+          if (typeof option.props.children === 'string') {
             return option.props.children
               .toLowerCase()
               .includes(input.toLocaleLowerCase());
