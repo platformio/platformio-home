@@ -20,24 +20,29 @@ import React from 'react';
 import { Spin } from 'antd';
 import { SymbolType } from '@inspect/types';
 import { connect } from 'react-redux';
+import { openTextDocument } from '@core/actions';
 import { selectSymbolsSizeData } from '@inspect/selectors';
 
 class SymbolsPage extends React.PureComponent {
   static propTypes = {
-    symbols: PropTypes.arrayOf(SymbolType)
+    symbols: PropTypes.arrayOf(SymbolType),
+    openTextDocument: PropTypes.func.isRequired
   };
 
   render() {
-    const { symbols } = this.props;
-
     return (
       <div>
-        {!symbols && (
+        {!this.props.symbols && (
           <div className="text-center">
             <Spin tip="Loading..." size="large" />
           </div>
         )}
-        {symbols && <MemorySymbols symbols={symbols} />}
+        {this.props.symbols && (
+          <MemorySymbols
+            symbols={this.props.symbols}
+            openTextDocument={this.props.openTextDocument}
+          />
+        )}
       </div>
     );
   }
@@ -50,4 +55,11 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(SymbolsPage);
+const dispatchToProps = {
+  openTextDocument
+};
+
+export default connect(
+  mapStateToProps,
+  dispatchToProps
+)(SymbolsPage);

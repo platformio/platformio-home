@@ -108,15 +108,7 @@ export function selectMemoryStats(state) {
     filesCount: files.length,
     symbolsCount: files.reduce((total, { symbols = [] }) => total + symbols.length, 0),
     sectionsCount: Object.keys(sections).length,
-    topSymbols: allSymbols
-      .sort((a, b) => b.size - a.size)
-      .slice(0, 5)
-      .map(({ displayName, size, type, location }) => ({
-        displayName,
-        size,
-        type,
-        location
-      })),
+    topSymbols: allSymbols.sort((a, b) => b.size - a.size).slice(0, 5),
     topFiles: files.sort((a, b) => b.flash - a.flash).slice(0, 5)
   };
 }

@@ -41,8 +41,9 @@ function sortFunctionsFirst(a, b) {
 
 export class MemorySymbols extends React.PureComponent {
   static propTypes = {
-    file: PropTypes.string,
     symbols: PropTypes.arrayOf(SymbolType),
+    openTextDocument: PropTypes.func.isRequired,
+    file: PropTypes.string,
     onDirChange: PropTypes.func
   };
 
@@ -65,15 +66,29 @@ export class MemorySymbols extends React.PureComponent {
     return icon && <Icon type={icon} />;
   }
 
-  renderDisplayName = (displayName, item) => (
-    <Tooltip
-      placement="right"
-      title={item.location.includes('?') ? undefined : `at ${item.location}`}
-      overlayStyle={{ maxWidth: 400 }}
-    >
-      {this.renderIcon(item.type)} {displayName}
-    </Tooltip>
-  );
+  renderDisplayName(displayName, item) {
+    if (!item.file) {
+      return (
+        <span>
+          {this.renderIcon(item.type)} {displayName}
+        </span>
+      );
+    }
+    return (
+      <span>
+        {this.renderIcon(item.type)} {displayName}{' '}
+        <Tooltip
+          placement="right"
+          title={`at ${item.file}:${item.line}`}
+          overlayStyle={{ maxWidth: 400 }}
+        >
+          <a onClick={() => this.props.openTextDocument(item.file, item.line)}>
+            <Icon type="search" className="open-document-icon" />
+          </a>
+        </Tooltip>
+      </span>
+    );
+  }
 
   renderAddress = addr => <code>{formatHex(addr, { width: this.addressWidth })}</code>;
 
@@ -84,7 +99,7 @@ export class MemorySymbols extends React.PureComponent {
         dataIndex: 'displayName',
         // Commented because it's very slow on big projects
         // defaultSortOrder: 'ascend',
-        render: this.renderDisplayName,
+        render: ::this.renderDisplayName,
         sorter: multiSort(sortFunctionsFirst, (a, b) =>
           compareString(a.displayName, b.displayName)
         ),
@@ -209,7 +224,7 @@ export class MemorySymbols extends React.PureComponent {
     this.addressWidth = this.getMaxAddressWidth(ds);
 
     return (
-      <div>
+      <div className="inspect-mem-symbols">
         <div className="block">
           <Input.Search
             enterButton

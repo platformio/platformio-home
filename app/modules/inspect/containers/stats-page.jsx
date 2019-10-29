@@ -242,7 +242,9 @@ class MemoryStatisticsPage extends React.PureComponent {
                     style={{ overflow: 'hidden', whiteSpace: 'nowrap', width: '100%' }}
                   >
                     <Tooltip
-                      title={symbol.type + ' -> ' + symbol.location}
+                      title={`${symbol.type} -> ${
+                        symbol.file ? `${symbol.file}:${symbol.line}` : 'unknown'
+                      }`}
                       overlayStyle={{ maxWidth: 400 }}
                     >
                       <Icon

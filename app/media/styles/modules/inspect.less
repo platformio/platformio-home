@@ -63,7 +63,6 @@
   }
 }
 
-/* Severity Tag */
 .severity-tag {
   // &.severity-low {
   // }
@@ -78,5 +77,15 @@
     color: @btn-danger-color;
     background-color: @error-color;
     border-color: lighten(@error-color, 30%);
+  }
+}
+
+.inspect-mem-symbols .open-document-icon {
+  visibility: hidden;
+}
+
+.inspect-mem-symbols tr:hover {
+  .open-document-icon {
+    visibility: visible;
   }
 }

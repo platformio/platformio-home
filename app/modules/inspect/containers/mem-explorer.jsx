@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Spin } from 'antd';
 import { connect } from 'react-redux';
+import { openTextDocument } from '@core/actions';
 import { selectExplorerSizeData } from '@inspect/selectors';
 
 /**
@@ -104,7 +105,8 @@ class FileExplorerPage extends React.PureComponent {
         path: PropTypes.string.isRequired,
         ram: PropTypes.number.isRequired
       })
-    )
+    ),
+    openTextDocument: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -194,6 +196,7 @@ class FileExplorerPage extends React.PureComponent {
           <MemorySymbols
             file={selectedFile.path}
             symbols={selectedFile.symbols}
+            openTextDocument={this.props.openTextDocument}
             onDirChange={this.handlePathChange}
           />
         )}
@@ -209,4 +212,11 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(FileExplorerPage);
+const dispatchToProps = {
+  openTextDocument
+};
+
+export default connect(
+  mapStateToProps,
+  dispatchToProps
+)(FileExplorerPage);

@@ -39,11 +39,12 @@ export const SymbolType = PropTypes.shape({
   bind: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   demangled_name: PropTypes.string,
-  location: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   section: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
-  type: PropTypes.string.isRequired
+  type: PropTypes.string.isRequired,
+  file: PropTypes.string,
+  line: PropTypes.number
 });
 
 export const SectionsType = PropTypes.arrayOf(
