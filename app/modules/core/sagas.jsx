@@ -19,7 +19,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 
-import { Button, Modal, notification } from 'antd';
+import { Button, Modal, message, notification } from 'antd';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { getSessionId, inIframe, reportException } from './helpers';
@@ -414,6 +414,13 @@ function* watchToggleFavoriteFolder() {
 
 function* watchOpenTextDocument() {
   yield takeEvery(actions.OPEN_TEXT_DOCUMENT, function*({ path, line, column }) {
+    const is_file = yield call(apiFetchData, {
+      query: 'os.is_file',
+      params: [path]
+    });
+    if (!is_file) {
+      return message.error(`File does not exist on disk ${path}`);
+    }
     try {
       return yield call(apiFetchData, {
         query: 'ide.open_text_document',
