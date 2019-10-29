@@ -132,24 +132,9 @@ export class CodeDefects extends React.PureComponent {
     ];
   }
 
-  getMaxStartAddressWidth(items) {
-    let i = items.length;
-    let maxAddr = 0;
-    while (i--) {
-      const { startAddr } = items[i];
-      if (maxAddr < startAddr) {
-        maxAddr = startAddr;
-      }
-    }
-    return maxAddr.toString(16).length;
-  }
-
   render() {
     const { defects } = this.props;
-
     const ds = defects.map((x, i) => ({ ...x, idx: i }));
-    this.addressWidth = this.getMaxStartAddressWidth(ds);
-
     return (
       <div className="page-container">
         <Table
