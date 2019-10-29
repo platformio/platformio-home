@@ -26,7 +26,12 @@ import {
   UPDATE_PLATFORM
 } from '../platform/actions';
 import { Modal, message } from 'antd';
-import { OS_RENAME_FILE, notifyError, notifySuccess } from '../core/actions';
+import {
+  OS_RENAME_FILE,
+  notifyError,
+  notifySuccess,
+  osRevealFile
+} from '../core/actions';
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import {
   deleteEntity,
@@ -129,6 +134,7 @@ function* watchOpenProject() {
       });
     } catch (err) {
       console.warn(err);
+      yield put(osRevealFile(projectDir));
     }
     Modal.success({
       title: 'Open Project...',
