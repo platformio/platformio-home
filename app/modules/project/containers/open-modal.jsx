@@ -65,14 +65,14 @@ class ProjectOpenModal extends React.Component {
           if (err) {
             return message.error(err);
           }
-          this.onDidCancel(projectDir);
+          this.props.onCancel(projectDir);
         }
       }
     );
   }
 
-  onDidCancel(projectDir) {
-    this.props.onCancel(projectDir);
+  onDidCancel() {
+    this.props.onCancel();
   }
 
   onDidSelect(projectDir) {
