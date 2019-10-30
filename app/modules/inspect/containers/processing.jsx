@@ -31,8 +31,8 @@ import { connect } from 'react-redux';
 import { selectProjectInfo } from '@project/selectors';
 import { selectStorageItem } from '@store/selectors';
 
-const DEFAULT_MEMORY_INSPECT_DURATION_MS = 5000;
-const DEFAULT_CODE_INSPECT_DURATION_MS = 1500;
+const DEFAULT_MEMORY_INSPECT_DURATION_MS = 20000;
+const DEFAULT_CODE_INSPECT_DURATION_MS = 20000;
 
 class InspectionProcessing extends React.PureComponent {
   static propTypes = {
