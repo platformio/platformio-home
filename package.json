@@ -111,6 +111,7 @@
       "@error-color": "#D42D35",
       "@primary-1": "#3F3F46",
       "@heading-color": "#CCCCCC",
+      "@alert-message-color": "@component-background",
       "@text-color": "#989898",
       "@text-color-secondary": "fade(@heading-color, 45%)",
       "@disabled-color": "fade(@text-color, 50%)",
