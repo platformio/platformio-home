@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { CONFIG_KEY, RESULT_KEY } from '@inspect/constants';
+import { CONFIG_KEY, METRICS_KEY, RESULT_KEY } from '@inspect/constants';
 import { INSPECT_PROJECT, REINSPECT_PROJECT, inspectProject } from '@inspect/actions';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '@store/actions';
@@ -27,9 +27,11 @@ import {
 } from '@inspect/selectors';
 
 import { apiFetchData } from '@store/api';
+import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 
 function* _inspectMemory({ projectDir, env }) {
+  const start = Date.now();
   yield call(apiFetchData, {
     query: 'core.call',
     params: [['run', '-d', projectDir, '-e', env, '-t', 'sizedata']]
@@ -52,16 +54,26 @@ function* _inspectMemory({ projectDir, env }) {
   if (!jsonContent) {
     throw new Error('sizedata.json file not found. Build error?');
   }
-  return JSON.parse(jsonContent);
+  const result = JSON.parse(jsonContent);
+  const duration = Date.now() - start;
+  yield put(
+    updateStorageItem([METRICS_KEY, projectDir, env, 'memory'].join(':'), duration)
+  );
+  return result;
 }
 
 function* _inspectCode({ projectDir, env }) {
+  const start = Date.now();
   let codeCheckResults;
   try {
     codeCheckResults = yield call(apiFetchData, {
       query: 'core.call',
       params: [['check', '-d', projectDir, '-e', env, '--json-output']]
     });
+    const duration = Date.now() - start;
+    yield put(
+      updateStorageItem([METRICS_KEY, projectDir, env, 'code'].join(':'), duration)
+    );
     if (codeCheckResults && codeCheckResults.length) {
       return codeCheckResults;
     }
@@ -91,6 +103,13 @@ function* watchInspectProject() {
       }
     }
     yield put(deleteEntity(new RegExp(`^${RESULT_KEY}$`)));
+    yield put(updateStorageItem(CONFIG_KEY, configuration));
+
+    const state = yield select();
+    if (state.router) {
+      yield call(goTo, state.router.history, '/inspect/processing', undefined, true);
+    }
+
     const { memory, code } = configuration;
     try {
       let memoryResult;
@@ -98,23 +117,27 @@ function* watchInspectProject() {
 
       if (memory) {
         memoryResult = yield call(_inspectMemory, configuration);
+        yield put(updateEntity(RESULT_KEY, { memory: memoryResult }));
       }
+
       if (code) {
         codeCheckResult = yield call(_inspectCode, configuration);
+        yield put(
+          updateEntity(RESULT_KEY, {
+            memory: memoryResult,
+            codeChecks: codeCheckResult
+          })
+        );
       }
-
       const entity = { memory: memoryResult, codeChecks: codeCheckResult };
-      yield put(updateStorageItem(CONFIG_KEY, configuration));
-      yield put(updateEntity(RESULT_KEY, entity));
-
       if (onEnd) {
         onEnd(entity);
       }
+      if (state.router) {
+        yield call(goTo, state.router.history, '/inspect/result', undefined, true);
+      }
     } catch (e) {
       console.error('Exception during inspectProject', e);
-      if (!onEnd) {
-        return;
-      }
       let error = 'Exception';
       if (e instanceof jsonrpc.JsonRpcError) {
         error = e.message;
@@ -124,7 +147,10 @@ function* watchInspectProject() {
       } else if (e instanceof SyntaxError) {
         error = 'Bad JSON';
       }
-      onEnd(undefined, error);
+      if (onEnd) {
+        onEnd(undefined, error);
+      }
+      yield put(updateEntity(RESULT_KEY, { error }));
     }
   });
 }

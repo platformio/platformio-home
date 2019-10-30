@@ -15,6 +15,7 @@
  */
 
 import { InspectionForm } from '@app/modules/inspect/containers/configuration';
+import { InspectionProcessingPage } from '@inspect/containers/processing';
 import { InspectionResultPage } from '@inspect/containers/result';
 
 const routes = [
@@ -25,6 +26,10 @@ const routes = [
   {
     path: '/inspect/result',
     component: InspectionResultPage
+  },
+  {
+    path: '/inspect/processing',
+    component: InspectionProcessingPage
   }
 ];
 
