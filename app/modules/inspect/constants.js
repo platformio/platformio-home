@@ -22,6 +22,8 @@ export const CONFIG_KEY = PREFIX + 'Configuration';
 
 export const RESULT_KEY = PREFIX + 'Sizedata';
 
+export const METRICS_KEY = PREFIX + 'Metrics';
+
 export const SYMBOL_ICON_BY_TYPE = Object.freeze({
   STT_FUNC: 'profile',
   STT_OBJECT: 'tag'
