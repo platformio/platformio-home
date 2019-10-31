@@ -271,7 +271,11 @@ class MemoryStatisticsPage extends React.PureComponent {
       {
         title: 'Component',
         dataIndex: 'component',
-        render: text => <b>{text}</b>
+        render: text => (
+          <Tooltip title={text}>
+            <b>{limitPathLength(text || '', 40)}</b>
+          </Tooltip>
+        )
       },
       {
         align: 'center',

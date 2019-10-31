@@ -122,7 +122,8 @@ export function selectCodeStats(state) {
 
   const statsByComponent = {};
   for (const codeCheck of codeChecks) {
-    for (const [name, cmpStats] of Object.entries(codeCheck.stats || {})) {
+    for (const [_name, cmpStats] of Object.entries(codeCheck.stats || {})) {
+      const name = windowsToPosixPath(_name);
       if (!statsByComponent[name]) {
         statsByComponent[name] = {
           high: 0,
