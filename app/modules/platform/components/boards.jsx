@@ -101,6 +101,13 @@ export default class Boards extends React.Component {
     }
   }
 
+  isCertified(item) {
+    if (workspaceSettings.isBoardCertified(item)) {
+      return true;
+    }
+    return ['riscv_gap', 'sifive'].includes(item.platform.name);
+  }
+
   normalizeTableData(items) {
     if (!items) {
       return items;
@@ -132,9 +139,8 @@ export default class Boards extends React.Component {
         cmpSort(a.name.toUpperCase(), b.name.toUpperCase())
       );
       item.extra = ['test'];
-      if (workspaceSettings.isBoardCertified(item)) {
+      if (this.isCertified(item)) {
         item.extra.push('certified');
-        item.extra.push('shop');
       }
       if (item.debug) {
         item.extra.push('debug-external');
@@ -154,18 +160,19 @@ export default class Boards extends React.Component {
     if (this.state.filterValue) {
       return result;
     }
-    return result.sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()));
-    //   .sort((a, b) => {
-    //   const aInc = a.extra.includes('certified');
-    //   const bInc = b.extra.includes('certified');
-    //   if (aInc && !bInc) {
-    //     return -1;
-    //   }
-    //   if (!aInc && bInc) {
-    //     return 1;
-    //   }
-    //   return 0;
-    // });
+    return result
+      .sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()))
+      .sort((a, b) => {
+        const aInc = a.extra.includes('certified');
+        const bInc = b.extra.includes('certified');
+        if (aInc && !bInc) {
+          return -1;
+        }
+        if (!aInc && bInc) {
+          return 1;
+        }
+        return 0;
+      });
   }
 
   onFilterChange(value) {
@@ -419,10 +426,10 @@ export default class Boards extends React.Component {
         key: 'extra',
         className: 'board-extra-column',
         filters: [
-          // {
-          //   text: 'Certified Board',
-          //   value: 'certified'
-          // },
+          {
+            text: 'Certified Board',
+            value: 'certified'
+          },
           {
             text: 'IoT-enabled',
             value: 'iot'
@@ -439,10 +446,6 @@ export default class Boards extends React.Component {
             text: 'Debug: External',
             value: 'debug-external'
           }
-          // {
-          //   text: 'Get Now!',
-          //   value: 'shop'
-          // }
         ],
         filteredValue: dataFilters.extra || null,
         onFilter: (_, record) =>
@@ -536,12 +539,14 @@ export default class Boards extends React.Component {
           <li>&nbsp;</li>
           <li>
             <Button.Group>
-              {/* <Button type='primary'
-              icon='safety'
-              ghost={ !this.isExtraFilterEnabled('certified') }
-              onClick={ () => this.onToggleExtraFilter('certified') }>
-              Certified
-            </Button> */}
+              <Button
+                type="primary"
+                icon="safety"
+                ghost={!this.isExtraFilterEnabled('certified')}
+                onClick={() => this.onToggleExtraFilter('certified')}
+              >
+                Certified
+              </Button>
               <Button
                 type="primary"
                 icon="cloud-o"
@@ -550,12 +555,6 @@ export default class Boards extends React.Component {
               >
                 IoT-enabled
               </Button>
-              {/* <Button type='primary'
-              icon='shopping-cart'
-              ghost={ !this.isExtraFilterEnabled('shop') }
-              onClick={ () => this.onToggleExtraFilter('shop') }>
-              Get Now!
-            </Button> */}
             </Button.Group>
           </li>
           <li>Debug: </li>
@@ -586,7 +585,7 @@ export default class Boards extends React.Component {
 
   renderTable(data) {
     const pagination = {
-      defaultPageSize: 15,
+      defaultPageSize: 10,
       pageSizeOptions: ['10', '15', '30', '50', '100', '1000'],
       size: 'default',
       showSizeChanger: true,
@@ -685,15 +684,15 @@ export default class Boards extends React.Component {
             </a>{' '}
           </Tooltip>
         )}
-        {record.extra.includes('shop') && (
-          <Tooltip title="Get Now!">
+        {/* {record.extra.includes('shop') && ( */}
+        <Tooltip title="Get Now!">
+          {' '}
+          <a onClick={() => this.props.osOpenUrl(record.url)}>
             {' '}
-            <a onClick={() => this.props.osOpenUrl(record.url)}>
-              {' '}
-              <Icon type="shopping-cart" />{' '}
-            </a>{' '}
-          </Tooltip>
-        )}
+            <Icon type="shopping-cart" />{' '}
+          </a>{' '}
+        </Tooltip>
+        {/* )} */}
       </span>
     );
   }

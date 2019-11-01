@@ -77,6 +77,14 @@ function* watchNotifyError() {
       [
         /Please try this solution -> http:\/\/bit.ly\/faq-package-manager/g,
         'http://bit.ly/faq-package-manager'
+      ],
+      [
+        /Please install Git client/g,
+        'https://github.com/platformio/platformio-core/issues/2811'
+      ],
+      [
+        /Detected unknown package/g,
+        'https://github.com/platformio/platformio-core/issues/3116'
       ]
     ];
     for (const [regex, url] of knownIssues) {

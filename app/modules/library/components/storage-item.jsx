@@ -118,7 +118,7 @@ export default class LibraryStorageItem extends React.Component {
         <Row>
           <Col sm={16}>
             <div className="inline-buttons">
-              {this.props.item.keywords.map(name => (
+              {(this.props.item.keywords || []).map(name => (
                 <Button
                   key={name}
                   icon="tag"

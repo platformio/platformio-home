@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "description": "PlatformIO Home",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "antd": "3.24.3",
     "clipboard": "^2.0.4",
     "fuzzaldrin-plus": "^0.6.0",
-    "highlight.js": "^9.15.10",
+    "highlight.js": "^9.16.1",
     "humanize": "^0.0.9",
     "jsonrpc-lite": "~2.0.7",
     "marked": "^0.7.0",

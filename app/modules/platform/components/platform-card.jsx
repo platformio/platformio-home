@@ -146,11 +146,11 @@ export default class PlatformCard extends React.Component {
           </Col>
           <Col sm={8} className="text-right text-nowrap">
             <Button.Group>
-              {this.props.actions && this.props.actions.includes('reveal') && (
+              {/* {this.props.actions && this.props.actions.includes('reveal') && (
                 <Button type="primary" icon="folder" onClick={::this.onDidReveal}>
                   Reveal
                 </Button>
-              )}
+              )} */}
               {this.props.actions && this.props.actions.includes('uninstall') && (
                 <Popconfirm
                   title="Are you sure?"
