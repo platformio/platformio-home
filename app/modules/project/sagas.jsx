@@ -20,6 +20,7 @@ import * as actions from './actions';
 import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
+import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
@@ -32,7 +33,7 @@ import {
   notifySuccess,
   osRevealFile
 } from '../core/actions';
-import { call, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   deleteEntity,
   saveState,
@@ -46,7 +47,6 @@ import { apiFetchData } from '../../store/api';
 import { getSessionId } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { selectStorageItem } from '../../store/selectors';
-
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
 function* watchAddProject() {
@@ -322,6 +322,40 @@ function* watchImportArduinoProject() {
   }
 }
 
+function* watchLoadConfigSchema() {
+  yield takeLatest(actions.LOAD_CONFIG_SCHEMA, function*() {
+    try {
+      const schema = yield call(apiFetchData, {
+        query: 'project.get_config_schema'
+      });
+      yield put(updateEntity(CONFIG_SCHEMA_KEY, schema));
+    } catch (e) {
+      console.error(e);
+    }
+  });
+}
+
+function* watchLoadProjectConfig() {
+  yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
+    try {
+      const tupleConfig = yield call(apiFetchData, {
+        query: 'project.config_load',
+        params: [pathlib.join(projectDir, 'platformio.ini')]
+      });
+      const config = tupleConfig.map(([section, items]) => ({
+        section,
+        items: items.map(([name, value]) => ({
+          name,
+          value
+        }))
+      }));
+      yield put(updateEntity(PROJECT_CONFIG_KEY, config));
+    } catch (e) {
+      console.error(e);
+    }
+  });
+}
+
 export default [
   watchAddProject,
   watchHideProject,
@@ -332,5 +366,7 @@ export default [
   watchCleanupProjectExamples,
   watchImportProject,
   watchInitProject,
-  watchImportArduinoProject
+  watchImportArduinoProject,
+  watchLoadConfigSchema,
+  watchLoadProjectConfig
 ];

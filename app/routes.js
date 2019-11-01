@@ -21,6 +21,7 @@ import HomePage from './modules/home/containers/home-page';
 import InspectPage from './modules/inspect';
 import LibraryIndex from './modules/library/index';
 import PlatformPage from './modules/platform/index';
+import ProjectsPage from './modules/project';
 
 const routes = [
   {
@@ -64,6 +65,12 @@ const routes = [
     icon: 'monitor',
     label: 'Inspect',
     component: InspectPage
+  },
+  {
+    path: '/projects',
+    icon: 'file-ppt',
+    label: 'Projects',
+    component: ProjectsPage
   }
 ];
 

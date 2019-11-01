@@ -14,45 +14,5 @@
  * limitations under the License.
  */
 
-.project-open-modal {
-  .ant-modal-body {
-    padding: 0;
-    margin: 0;
-  }
-}
-
-.project-example-description {
-  white-space: normal !important;
-  font-size: 12px;
-  color: @text-color-secondary;
-  line-height: 1.3em;
-}
-
-.project-init-carousel {
-  .ant-alert {
-    min-height: 230px;
-  }
-}
-
-.project-settings-page,
-.project-list-page {
-  padding-top: 12px;
-}
-
-.project-settings-page {
-  .ant-anchor-wrapper {
-    padding-left: 7px;
-  }
-  // .ant-tabs-bar {
-  //   margin-bottom: 0;
-  //   margin-left: 12px;
-  // }
-
-  // .ant-tabs {
-  //   margin-left: -12px;
-  // }
-
-  // .ant-tabs-content {
-  //   padding-left: 12px;
-  // }
-}
+export const PROJECT_CONFIG_KEY = 'projectConfig';
+export const CONFIG_SCHEMA_KEY = 'projectConfigSchema';

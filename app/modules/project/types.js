@@ -14,45 +14,22 @@
  * limitations under the License.
  */
 
-.project-open-modal {
-  .ant-modal-body {
-    padding: 0;
-    margin: 0;
-  }
-}
+import PropTypes from 'prop-types';
 
-.project-example-description {
-  white-space: normal !important;
-  font-size: 12px;
-  color: @text-color-secondary;
-  line-height: 1.3em;
-}
+export const ProjectType = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  modified: PropTypes.number.isRequired,
+  boards: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    })
+  )
+});
 
-.project-init-carousel {
-  .ant-alert {
-    min-height: 230px;
-  }
-}
-
-.project-settings-page,
-.project-list-page {
-  padding-top: 12px;
-}
-
-.project-settings-page {
-  .ant-anchor-wrapper {
-    padding-left: 7px;
-  }
-  // .ant-tabs-bar {
-  //   margin-bottom: 0;
-  //   margin-left: 12px;
-  // }
-
-  // .ant-tabs {
-  //   margin-left: -12px;
-  // }
-
-  // .ant-tabs-content {
-  //   padding-left: 12px;
-  // }
-}
+export const ActionType = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  icon: PropTypes.string,
+  text: PropTypes.string.isRequired
+});

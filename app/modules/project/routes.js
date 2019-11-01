@@ -14,45 +14,18 @@
  * limitations under the License.
  */
 
-.project-open-modal {
-  .ant-modal-body {
-    padding: 0;
-    margin: 0;
+import { ProjectSettingsPage } from '@project/containers/configuration';
+import { ProjectsListPage } from '@project/containers/list';
+
+const routes = [
+  {
+    path: '/projects',
+    component: ProjectsListPage
+  },
+  {
+    path: '/projects/settings',
+    component: ProjectSettingsPage
   }
-}
+];
 
-.project-example-description {
-  white-space: normal !important;
-  font-size: 12px;
-  color: @text-color-secondary;
-  line-height: 1.3em;
-}
-
-.project-init-carousel {
-  .ant-alert {
-    min-height: 230px;
-  }
-}
-
-.project-settings-page,
-.project-list-page {
-  padding-top: 12px;
-}
-
-.project-settings-page {
-  .ant-anchor-wrapper {
-    padding-left: 7px;
-  }
-  // .ant-tabs-bar {
-  //   margin-bottom: 0;
-  //   margin-left: 12px;
-  // }
-
-  // .ant-tabs {
-  //   margin-left: -12px;
-  // }
-
-  // .ant-tabs-content {
-  //   padding-left: 12px;
-  // }
-}
+export default routes;

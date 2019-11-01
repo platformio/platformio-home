@@ -14,45 +14,18 @@
  * limitations under the License.
  */
 
-.project-open-modal {
-  .ant-modal-body {
-    padding: 0;
-    margin: 0;
+import MultiPage from '@core/components/multipage';
+import React from 'react';
+import routes from './routes';
+
+export default class ProjectsPage extends React.PureComponent {
+  static propTypes = {};
+
+  render() {
+    return (
+      <section className="page-container project-module">
+        <MultiPage routes={routes} disableMenu />
+      </section>
+    );
   }
-}
-
-.project-example-description {
-  white-space: normal !important;
-  font-size: 12px;
-  color: @text-color-secondary;
-  line-height: 1.3em;
-}
-
-.project-init-carousel {
-  .ant-alert {
-    min-height: 230px;
-  }
-}
-
-.project-settings-page,
-.project-list-page {
-  padding-top: 12px;
-}
-
-.project-settings-page {
-  .ant-anchor-wrapper {
-    padding-left: 7px;
-  }
-  // .ant-tabs-bar {
-  //   margin-bottom: 0;
-  //   margin-left: 12px;
-  // }
-
-  // .ant-tabs {
-  //   margin-left: -12px;
-  // }
-
-  // .ant-tabs-content {
-  //   padding-left: 12px;
-  // }
 }
