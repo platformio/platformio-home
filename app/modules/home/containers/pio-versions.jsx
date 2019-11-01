@@ -39,7 +39,16 @@ class PioVersions extends React.Component {
       <div className="versions">
         <ul className="list-inline">
           <li>
-            Home <code>{APP_VERSION}</code>
+            Home{' '}
+            <a
+              onClick={() =>
+                this.props.osOpenUrl(
+                  'https://github.com/platformio/platformio-home/releases'
+                )
+              }
+            >
+              <code>{APP_VERSION}</code>
+            </a>
           </li>
           <li>·</li>
           <li>
