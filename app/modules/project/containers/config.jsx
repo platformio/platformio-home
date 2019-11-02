@@ -244,7 +244,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         input = <Input />;
       }
     } else if (type === TYPE_BOOL) {
-      input = <Checkbox>{item.name}</Checkbox>;
+      input = <Checkbox>{schema.description}</Checkbox>;
     } else if (type === TYPE_CHOICE) {
       input = (
         <Select
@@ -276,11 +276,14 @@ class ProjectConfigFormComponent extends React.PureComponent {
       // throw new Error(`Unsupported item type: "${type}"`);
     }
     const itemProps = {
-      help: schema.description,
-      key: item.name
+      key: item.name,
+      label: item.name,
+      labelCol: {
+        id: this.generateFieldLabelId(section.section, item)
+      }
     };
     if (type !== TYPE_BOOL) {
-      itemProps.label = item.name;
+      itemProps.help = schema.description;
     }
     const fieldName = this.generateFieldId(section.section, item);
     const wrappedInput = this.props.form.getFieldDecorator(fieldName)(input);
@@ -289,6 +292,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
   generateFieldId(sectionName, item) {
     return `${escapeFieldName(sectionName)}.${escapeFieldName(item.name)}`;
+  }
+
+  generateFieldLabelId(sectionName, item) {
+    return `${sectionName}-${item.name}`;
   }
 
   renderLoader() {
@@ -311,7 +318,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
           >
             {itemsByGroup[groupName].map(item => (
               <Anchor.Link
-                href={`#${this.generateFieldId(sectionName, item)}`}
+                href={`#${this.generateFieldLabelId(sectionName, item)}`}
                 key={item.name}
                 title={item.name}
               />
