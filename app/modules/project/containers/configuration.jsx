@@ -46,12 +46,12 @@ const { TabPane } = Tabs;
 const { Link } = Anchor;
 const { Option } = Select;
 
-const SCOPE_PLATFORMIO = 'platformio';
-const SCOPE_ENV = 'env';
-const SCOPE_ENV_CUSTOM = 'env:';
-const SCOPE_CUSTOM = 'custom';
+const SECTION_PLATFORMIO = 'platformio';
+const SECTION_GLOBAL_ENV = 'env';
+const SECTION_USER_ENV = 'env:';
+const SECTION_CUSTOM = 'custom';
 
-const SCOPES = Object.freeze([SCOPE_PLATFORMIO, SCOPE_ENV, SCOPE_CUSTOM]);
+const SECTIONS = Object.freeze([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_CUSTOM]);
 
 const TYPE_TEXT = 'string';
 const TYPE_CHOICE = 'choice';
@@ -102,9 +102,9 @@ class ProjectSettingsFormComponent extends React.PureComponent {
   };
 
   static iconByScope = {
-    [SCOPE_PLATFORMIO]: 'appstore',
-    [SCOPE_ENV]: 'environment',
-    [SCOPE_CUSTOM]: 'user'
+    [SECTION_PLATFORMIO]: 'appstore',
+    [SECTION_GLOBAL_ENV]: 'environment',
+    [SECTION_CUSTOM]: 'user'
   };
 
   componentDidMount() {
@@ -146,13 +146,13 @@ class ProjectSettingsFormComponent extends React.PureComponent {
   }
 
   getSectionScope(name) {
-    if (name === SCOPE_PLATFORMIO) {
-      return SCOPE_PLATFORMIO;
+    if (name === SECTION_PLATFORMIO) {
+      return SECTION_PLATFORMIO;
     }
-    if (name === SCOPE_ENV || name.startsWith(SCOPE_ENV_CUSTOM)) {
-      return SCOPE_ENV;
+    if (name === SECTION_GLOBAL_ENV || name.startsWith(SECTION_USER_ENV)) {
+      return SECTION_GLOBAL_ENV;
     }
-    return SCOPE_CUSTOM;
+    return SECTION_CUSTOM;
   }
 
   getScopeIcon(name) {
@@ -276,7 +276,7 @@ class ProjectSettingsFormComponent extends React.PureComponent {
   }
 
   generateIndexedSchema(schema) {
-    const result = Object.fromEntries(SCOPES.map(name => [name, {}]));
+    const result = Object.fromEntries(SECTIONS.map(name => [name, {}]));
     for (const item of schema) {
       result[item.scope][item.name] = item;
     }
@@ -291,10 +291,10 @@ class ProjectSettingsFormComponent extends React.PureComponent {
 
     const newSectionMenu = (
       <Menu onClick={::this.handleNewSectionMenuClick}>
-        <Menu.Item key={SCOPE_PLATFORMIO}>{SCOPE_PLATFORMIO}</Menu.Item>
-        <Menu.Item key={SCOPE_ENV}>Default environment</Menu.Item>
-        <Menu.Item key={SCOPE_ENV_CUSTOM}>Custom environment</Menu.Item>
-        <Menu.Item key={SCOPE_CUSTOM}>User-specific section</Menu.Item>
+        <Menu.Item key={SECTION_PLATFORMIO} title='PlatformIO Core options'>[platformio]</Menu.Item>
+        <Menu.Item key={SECTION_GLOBAL_ENV} title='Every "User [env:***]" section automatically extends "Global [env]" options'>Global [env]</Menu.Item>
+        <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
+        <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item>
       </Menu>
     );
 
@@ -317,7 +317,7 @@ class ProjectSettingsFormComponent extends React.PureComponent {
         </div>
         <Tabs
           hideAdd
-          defaultActiveKey={SCOPE_PLATFORMIO}
+          defaultActiveKey={SECTION_PLATFORMIO}
           type="editable-card"
           tabBarExtraContent={addBtn}
         >
