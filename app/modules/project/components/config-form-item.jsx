@@ -16,7 +16,7 @@
 
 import { Form } from 'antd';
 
-export class FormItem extends Form.Item {
+export class ConfigFormItem extends Form.Item {
   renderChildren(prefixCls) {
     const { children } = this.props;
     return [
