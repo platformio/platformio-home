@@ -45,7 +45,7 @@ class ProjectsListComponent extends React.PureComponent {
   handleAction(name, projectDir) {
     switch (name) {
       case ACTION_SETTINGS:
-        goTo(this.props.history, '/projects/settings', { projectDir });
+        goTo(this.props.history, '/projects/config', { projectDir });
         break;
     }
   }

@@ -23,6 +23,7 @@ import {
   Form,
   Icon,
   Input,
+  InputNumber,
   Menu,
   Row,
   Select,
@@ -41,17 +42,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-const { Search, TextArea } = Input;
-const { TabPane } = Tabs;
-const { Link } = Anchor;
-const { Option } = Select;
-
 const SECTION_PLATFORMIO = 'platformio';
 const SECTION_GLOBAL_ENV = 'env';
 const SECTION_USER_ENV = 'env:';
 const SECTION_CUSTOM = 'custom';
 
-const SECTIONS = Object.freeze([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_CUSTOM]);
+const SECTIONS = Object.freeze([
+  SECTION_PLATFORMIO,
+  SECTION_GLOBAL_ENV,
+  SECTION_CUSTOM
+]);
 
 const TYPE_TEXT = 'string';
 const TYPE_CHOICE = 'choice';
@@ -69,7 +69,7 @@ const TYPES = Object.freeze([
   TYPE_FILE
 ]);
 
-class ProjectSettingsFormComponent extends React.PureComponent {
+class ProjectConfigFormComponent extends React.PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -90,6 +90,8 @@ class ProjectSettingsFormComponent extends React.PureComponent {
         default: PropTypes.any,
         description: PropTypes.string,
         group: PropTypes.string,
+        max: PropTypes.number,
+        min: PropTypes.number,
         name: PropTypes.string.isRequired,
         multiple: PropTypes.bool,
         scope: PropTypes.string.isRequired,
@@ -156,7 +158,7 @@ class ProjectSettingsFormComponent extends React.PureComponent {
   }
 
   getScopeIcon(name) {
-    return ProjectSettingsFormComponent.iconByScope[this.getSectionScope(name)];
+    return ProjectConfigFormComponent.iconByScope[this.getSectionScope(name)];
   }
 
   handleNewSectionMenuClick() {
@@ -174,7 +176,7 @@ class ProjectSettingsFormComponent extends React.PureComponent {
     let input;
     if (type === TYPE_TEXT) {
       if (schema.multiple) {
-        input = <TextArea autoSize={{ minRows: 2, maxRows: 20 }} rows={2} />;
+        input = <Input.TextArea autoSize={{ minRows: 2, maxRows: 20 }} rows={2} />;
       } else {
         input = <Input />;
       }
@@ -187,12 +189,20 @@ class ProjectSettingsFormComponent extends React.PureComponent {
           tokenSeparators={[',', '\n']}
         >
           {schema.choices.map(value => (
-            <Option key={value} value={value}>
+            <Select.Option key={value} value={value}>
               {value}
-            </Option>
+            </Select.Option>
           ))}
         </Select>
       );
+    } else if ([TYPE_INT, TYPE_INT_RANGE].includes(type)) {
+      const inputProps = {};
+      if (type === TYPE_INT_RANGE) {
+        inputProps.min = schema.min;
+        inputProps.max = schema.max;
+        // inputProps.defaultValue = schema.default
+      }
+      input = <InputNumber {...inputProps} />;
     } else {
       throw new Error(`Unsupported item type: "${type}"`);
     }
@@ -222,23 +232,24 @@ class ProjectSettingsFormComponent extends React.PureComponent {
 
   renderToC(section, schemaByName, groupNames) {
     return (
-      <Anchor>
+      <Anchor className="toc">
         {groupNames.map(groupName => (
-          <Link
+          <Anchor.Link
+            className="config-section-group"
             href={`#${this.generateGroupAnchorId(groupName)}`}
             key={groupName}
-            title={<b>{groupName}</b>}
+            title={groupName}
           >
             {section.items
               .filter(item => schemaByName[item.name].group === groupName)
               .map(item => (
-                <Link
+                <Anchor.Link
                   href={`#${this.generateFieldId(section, item)}`}
                   key={item.name}
                   title={item.name}
                 />
               ))}
-          </Link>
+          </Anchor.Link>
         ))}
       </Anchor>
     );
@@ -247,7 +258,7 @@ class ProjectSettingsFormComponent extends React.PureComponent {
   renderSectionTab(section, schemaByName) {
     const groupNames = [...new Set(Object.values(schemaByName).map(x => x.group))];
     return (
-      <TabPane
+      <Tabs.TabPane
         key={section.section}
         tab={
           <span>
@@ -259,10 +270,15 @@ class ProjectSettingsFormComponent extends React.PureComponent {
         <Row gutter={16}>
           <Col span={6}>{this.renderToC(section, schemaByName, groupNames)}</Col>
           <Col span={18}>
-            <Form layout="vertical">
+            <Form layout="vertical" className="config-form">
               {groupNames.map(groupName => (
                 <div key={groupName}>
-                  <h2 id={this.generateGroupAnchorId(groupName)}>{groupName}</h2>
+                  <h2
+                    className="config-section-group"
+                    id={this.generateGroupAnchorId(groupName)}
+                  >
+                    {groupName} Options
+                  </h2>
                   {section.items
                     .filter(item => schemaByName[item.name].group === groupName)
                     .map(item => this.renderFormItem(section, item, schemaByName))}
@@ -271,7 +287,7 @@ class ProjectSettingsFormComponent extends React.PureComponent {
             </Form>
           </Col>
         </Row>
-      </TabPane>
+      </Tabs.TabPane>
     );
   }
 
@@ -291,8 +307,15 @@ class ProjectSettingsFormComponent extends React.PureComponent {
 
     const newSectionMenu = (
       <Menu onClick={::this.handleNewSectionMenuClick}>
-        <Menu.Item key={SECTION_PLATFORMIO} title='PlatformIO Core options'>[platformio]</Menu.Item>
-        <Menu.Item key={SECTION_GLOBAL_ENV} title='Every "User [env:***]" section automatically extends "Global [env]" options'>Global [env]</Menu.Item>
+        <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
+          [platformio]
+        </Menu.Item>
+        <Menu.Item
+          key={SECTION_GLOBAL_ENV}
+          title='Every "User [env:***]" section automatically extends "Global [env]" options'
+        >
+          Global [env]
+        </Menu.Item>
         <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
         <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item>
       </Menu>
@@ -306,10 +329,10 @@ class ProjectSettingsFormComponent extends React.PureComponent {
       </Dropdown>
     );
     return (
-      <div className="project-settings-page">
+      <div className="project-config-page">
         <h1>{this.props.project.name}</h1>
         <div className="block">
-          <Search
+          <Input.Search
             placeholder="Search settings"
             onSearch={::this.handleSearch}
             style={{ width: '100%' }}
@@ -347,9 +370,9 @@ const dispatchToProps = {
   loadProjectConfig
 };
 
-const ConnectedProjectSettingsFormComponent = connect(
+const ConnectedProjectConfigFormComponent = connect(
   mapStateToProps,
   dispatchToProps
-)(ProjectSettingsFormComponent);
+)(ProjectConfigFormComponent);
 
-export const ProjectSettingsPage = Form.create()(ConnectedProjectSettingsFormComponent);
+export const ProjectConfigPage = Form.create()(ConnectedProjectConfigFormComponent);

@@ -330,7 +330,9 @@ function* watchLoadConfigSchema() {
       });
       yield put(updateEntity(CONFIG_SCHEMA_KEY, schema));
     } catch (e) {
-      console.error(e);
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not config schema', e));
+      }
     }
   });
 }
@@ -351,7 +353,9 @@ function* watchLoadProjectConfig() {
       }));
       yield put(updateEntity(PROJECT_CONFIG_KEY, config));
     } catch (e) {
-      console.error(e);
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not project config', e));
+      }
     }
   });
 }

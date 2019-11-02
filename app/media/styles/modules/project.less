@@ -34,12 +34,27 @@
   }
 }
 
-.project-settings-page,
+.project-config-page,
 .project-list-page {
   padding-top: 12px;
 }
 
-.project-settings-page {
+.project-config-page {
+  .toc {
+    .config-section-group {
+      > .ant-anchor-link-title {
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .config-form {
+    .config-section-group {
+      text-transform: capitalize;
+    }
+  }
+
   .ant-anchor-wrapper {
     padding-left: 7px;
   }

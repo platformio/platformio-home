@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectSettingsPage } from '@project/containers/configuration';
+import { ProjectConfigPage } from '@project/containers/config';
 import { ProjectsListPage } from '@project/containers/list';
 
 const routes = [
@@ -23,8 +23,8 @@ const routes = [
     component: ProjectsListPage
   },
   {
-    path: '/projects/settings',
-    component: ProjectSettingsPage
+    path: '/projects/config',
+    component: ProjectConfigPage
   }
 ];
 
