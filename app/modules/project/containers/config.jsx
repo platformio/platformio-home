@@ -108,6 +108,13 @@ class ProjectConfigFormComponent extends React.PureComponent {
     [SECTION_CUSTOM]: 'user'
   };
 
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      showOverridden: true
+    };
+  }
+
   componentDidMount() {
     if (!this.props.schema) {
       this.props.loadConfigSchema();
@@ -126,7 +133,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
       const values = {};
       for (const section of this.props.config) {
         for (const item of section.items) {
-          const fieldName = this.generateFieldId(section, item);
+          const fieldName = this.generateFieldId(section.section, item);
           const sectionType = this.getSectionType(section.section);
           let value;
 
@@ -169,8 +176,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
     // TODO: create new section
   }
 
-  handleSearch() {
-    // TODO: search
+  handleSearch(search) {
+    this.setState({
+      search
+    });
   }
 
   handleSaveClick() {
@@ -179,6 +188,12 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
   handleResetClick() {
     // TODO: reset
+  }
+
+  handleShowOverriddenChange(e) {
+    this.setState({
+      showOverridden: e.target.checked
+    });
   }
 
   renderFormItem(section, item, schemaByName) {
@@ -225,13 +240,13 @@ class ProjectConfigFormComponent extends React.PureComponent {
     if (type !== TYPE_BOOL) {
       itemProps.label = item.name;
     }
-    const fieldName = this.generateFieldId(section, item);
+    const fieldName = this.generateFieldId(section.section, item);
     const wrappedInput = this.props.form.getFieldDecorator(fieldName)(input);
     return <FormItem {...itemProps}>{wrappedInput}</FormItem>;
   }
 
-  generateFieldId(section, item) {
-    return `${encodeURIComponent(section.section)}.${item.name}`;
+  generateFieldId(sectionName, item) {
+    return `${encodeURIComponent(sectionName)}.${item.name}`;
   }
 
   renderLoader() {
@@ -242,7 +257,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     return `section__${encodeURIComponent(sectionName)}--group__${groupName}`;
   }
 
-  renderToC(section, schemaByName, groupNames) {
+  renderToC(sectionName, itemsByGroup, schemaByName, groupNames) {
     return (
       <Anchor className="toc">
         {groupNames.map(groupName => (
@@ -252,63 +267,80 @@ class ProjectConfigFormComponent extends React.PureComponent {
             key={groupName}
             title={`${groupName} Options`}
           >
-            {section.items
-              .filter(
-                item => !schemaByName || schemaByName[item.name].group === groupName
-              )
-              .map(item => (
-                <Anchor.Link
-                  href={`#${this.generateFieldId(section, item)}`}
-                  key={item.name}
-                  title={item.name}
-                />
-              ))}
+            {itemsByGroup[groupName].map(item => (
+              <Anchor.Link
+                href={`#${this.generateFieldId(sectionName, item)}`}
+                key={item.name}
+                title={item.name}
+              />
+            ))}
           </Anchor.Link>
         ))}
       </Anchor>
     );
   }
 
-  renderSectionTab(section, schemaByName) {
-    const groupNames = schemaByName
+  renderNoFilteredItems() {
+    return (
+      <ul className="background-message text-center">
+        <li>No Results</li>
+      </ul>
+    );
+  }
+
+  renderEmptySection() {
+    return (
+      <ul className="background-message text-center">
+        <li>No options defined!</li>
+      </ul>
+    );
+  }
+
+  renderSectionTabContent(section, schemaByName) {
+    if (!section.items.length) {
+      return this.renderEmptySection();
+    }
+    const filteredItems = section.items.filter(
+      item => this.state.search === undefined || item.name.includes(this.state.search)
+    );
+    if (!filteredItems.length) {
+      return this.renderNoFilteredItems();
+    }
+    const schemaGroupNames = schemaByName
       ? [...new Set(Object.values(schemaByName).map(x => x.group))]
       : ['Custom'];
 
+    const itemsByGroup = Object.fromEntries(schemaGroupNames.map(name => [name, []]));
+    for (const item of filteredItems) {
+      const group = schemaByName ? schemaByName[item.name].group : 'Custom';
+      itemsByGroup[group].push(item);
+    }
+    // Hide empty groups
+    const groupNames = schemaGroupNames.filter(name => itemsByGroup[name].length);
+
     return (
-      <Tabs.TabPane
-        key={section.section}
-        size="small"
-        tab={
-          <span>
-            <Icon type={this.getScopeIcon(section.section)} />
-            {section.section}
-          </span>
-        }
-      >
-        <Row gutter={16}>
-          <Col span={6}>{this.renderToC(section, schemaByName, groupNames)}</Col>
-          <Col span={18}>
-            <Form layout="vertical" className="config-form">
-              {groupNames.map(groupName => (
-                <div key={groupName}>
-                  <h2
-                    className="config-section-group"
-                    id={this.generateGroupAnchorId(groupName)}
-                  >
-                    {groupName} Options
-                  </h2>
-                  {section.items
-                    .filter(
-                      item =>
-                        !schemaByName || schemaByName[item.name].group === groupName
-                    )
-                    .map(item => this.renderFormItem(section, item, schemaByName))}
-                </div>
-              ))}
-            </Form>
-          </Col>
-        </Row>
-      </Tabs.TabPane>
+      <Row gutter={16}>
+        <Col span={6}>
+          {this.renderToC(section.section, itemsByGroup, schemaByName, groupNames)}
+        </Col>
+        <Col span={18}>
+          <Form layout="vertical" className="config-form">
+            {groupNames.map(groupName => (
+              <div key={groupName}>
+                <h2
+                  className="config-section-group"
+                  id={this.generateGroupAnchorId(groupName)}
+                >
+                  {groupName} Options
+                </h2>
+                {itemsByGroup[groupName].map(item =>
+                  this.renderFormItem(section, item, schemaByName)
+                )}
+              </div>
+            ))}
+          </Form>
+        </Col>
+      </Row>
     );
   }
 
@@ -341,6 +373,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         <div className="block search-row">
           <div className="search-block">
             <Input.Search
+              allowClear
               placeholder="Search settings"
               onSearch={::this.handleSearch}
               style={{ width: '100%' }}
@@ -348,7 +381,12 @@ class ProjectConfigFormComponent extends React.PureComponent {
           </div>
         </div>
         <div className="filter-right">
-          <Checkbox>Show overridden</Checkbox>
+          <Checkbox
+            checked={this.state.showOverridden}
+            onChange={::this.handleShowOverriddenChange}
+          >
+            Show overridden
+          </Checkbox>
         </div>
       </div>
     );
@@ -398,12 +436,23 @@ class ProjectConfigFormComponent extends React.PureComponent {
           type="editable-card"
           tabBarExtraContent={this.renderNewSectionBtn()}
         >
-          {this.props.config.map(section =>
-            this.renderSectionTab(
-              section,
-              schemaByScopeAndName[this.getSectionType(section.section)]
-            )
-          )}
+          {this.props.config.map(section => (
+            <Tabs.TabPane
+              key={section.section}
+              size="small"
+              tab={
+                <span>
+                  <Icon type={this.getScopeIcon(section.section)} />
+                  {section.section}
+                </span>
+              }
+            >
+              {this.renderSectionTabContent(
+                section,
+                schemaByScopeAndName[this.getSectionType(section.section)]
+              )}
+            </Tabs.TabPane>
+          ))}
         </Tabs>
       </div>
     );
