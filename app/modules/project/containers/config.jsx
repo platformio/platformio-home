@@ -47,11 +47,9 @@ const SECTION_GLOBAL_ENV = 'env';
 const SECTION_USER_ENV = 'env:';
 const SECTION_CUSTOM = 'custom';
 
-const SECTIONS = Object.freeze([
-  SECTION_PLATFORMIO,
-  SECTION_GLOBAL_ENV,
-  SECTION_CUSTOM
-]);
+const SCOPE_PLATFORMIO = 'platformio';
+const SCOPE_ENV = 'env';
+const SCOPES = Object.freeze([SCOPE_PLATFORMIO, SCOPE_ENV]);
 
 const TYPE_TEXT = 'string';
 const TYPE_CHOICE = 'choice';
@@ -94,7 +92,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         min: PropTypes.number,
         name: PropTypes.string.isRequired,
         multiple: PropTypes.bool,
-        scope: PropTypes.string.isRequired,
+        scope: PropTypes.oneOf(SCOPES).isRequired,
         type: PropTypes.oneOf(TYPES)
       })
     ),
@@ -128,17 +126,22 @@ class ProjectConfigFormComponent extends React.PureComponent {
       for (const section of this.props.config) {
         for (const item of section.items) {
           const fieldName = this.generateFieldId(section, item);
-          const schema =
-            schemaByScopeAndName[this.getSectionScope(section.section)][item.name];
-
+          const sectionType = this.getSectionType(section.section);
           let value;
-          if (schema.multiple && typeof item.value === 'string') {
-            value = item.value.split(/[,\n]/);
-          } else {
+
+          if (sectionType === SECTION_CUSTOM) {
+            // FIXME: can be array
             value = item.value;
-          }
-          if (schema.type === TYPE_TEXT && schema.multiple) {
-            value = value.join('\n');
+          } else {
+            const schema = schemaByScopeAndName[sectionType][item.name];
+            if (schema.multiple && typeof item.value === 'string') {
+              value = item.value.split(/[,\n]/);
+            } else {
+              value = item.value;
+            }
+            if (schema.type === TYPE_TEXT && schema.multiple) {
+              value = value.join('\n');
+            }
           }
           values[fieldName] = value;
         }
@@ -147,7 +150,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     }
   }
 
-  getSectionScope(name) {
+  getSectionType(name) {
     if (name === SECTION_PLATFORMIO) {
       return SECTION_PLATFORMIO;
     }
@@ -158,7 +161,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   getScopeIcon(name) {
-    return ProjectConfigFormComponent.iconByScope[this.getSectionScope(name)];
+    return ProjectConfigFormComponent.iconByScope[this.getSectionType(name)];
   }
 
   handleNewSectionMenuClick() {
@@ -170,7 +173,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   renderFormItem(section, item, schemaByName) {
-    const schema = schemaByName[item.name] || {};
+    const schema = (schemaByName && schemaByName[item.name]) || {};
     const type = schema.type || TYPE_TEXT;
 
     let input;
@@ -241,7 +244,9 @@ class ProjectConfigFormComponent extends React.PureComponent {
             title={groupName}
           >
             {section.items
-              .filter(item => schemaByName[item.name].group === groupName)
+              .filter(
+                item => !schemaByName || schemaByName[item.name].group === groupName
+              )
               .map(item => (
                 <Anchor.Link
                   href={`#${this.generateFieldId(section, item)}`}
@@ -256,7 +261,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   renderSectionTab(section, schemaByName) {
-    const groupNames = [...new Set(Object.values(schemaByName).map(x => x.group))];
+    const groupNames = schemaByName
+      ? [...new Set(Object.values(schemaByName).map(x => x.group))]
+      : ['Custom'];
+
     return (
       <Tabs.TabPane
         key={section.section}
@@ -280,7 +288,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
                     {groupName} Options
                   </h2>
                   {section.items
-                    .filter(item => schemaByName[item.name].group === groupName)
+                    .filter(
+                      item =>
+                        !schemaByName || schemaByName[item.name].group === groupName
+                    )
                     .map(item => this.renderFormItem(section, item, schemaByName))}
                 </div>
               ))}
@@ -292,7 +303,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   generateIndexedSchema(schema) {
-    const result = Object.fromEntries(SECTIONS.map(name => [name, {}]));
+    const result = Object.fromEntries(SCOPES.map(name => [name, {}]));
     for (const item of schema) {
       result[item.scope][item.name] = item;
     }
@@ -347,7 +358,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
           {this.props.config.map(section =>
             this.renderSectionTab(
               section,
-              schemaByScopeAndName[this.getSectionScope(section.section)]
+              schemaByScopeAndName[this.getSectionType(section.section)]
             )
           )}
         </Tabs>
