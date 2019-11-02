@@ -230,8 +230,14 @@ class ProjectConfigFormComponent extends React.PureComponent {
         // inputProps.defaultValue = schema.default
       }
       input = <InputNumber {...inputProps} />;
+    } else if (type === TYPE_FILE) {
+      // FIXME: change to file selector
+      input = <Input />;
     } else {
-      throw new Error(`Unsupported item type: "${type}"`);
+      // Fallback
+      input = <Input />;
+      console.warn(`Unsupported item type: "${type}" for name: "${item.name}"`);
+      // throw new Error(`Unsupported item type: "${type}"`);
     }
     const itemProps = {
       help: schema.description,
@@ -297,12 +303,20 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   renderSectionTabContent(section, schemaByName) {
-    if (!section.items.length) {
+    let sectionItems;
+    if (this.state.showOverridden || !schemaByName) {
+      sectionItems = section.items;
+    } else {
+      sectionItems = Object.keys(schemaByName).map(name => ({ name }));
+    }
+
+    if (!sectionItems.length) {
       return this.renderEmptySection();
     }
-    const filteredItems = section.items.filter(
-      item => this.state.search === undefined || item.name.includes(this.state.search)
-    );
+    const searchFilter = item =>
+      this.state.search === undefined || item.name.includes(this.state.search);
+
+    const filteredItems = sectionItems.filter(searchFilter);
     if (!filteredItems.length) {
       return this.renderNoFilteredItems();
     }
