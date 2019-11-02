@@ -37,6 +37,7 @@ import {
   selectProjectInfo
 } from '@project/selectors';
 
+import { FormItem } from '@project/components/form-item';
 import { ProjectType } from '@project/types';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -226,7 +227,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     }
     const fieldName = this.generateFieldId(section, item);
     const wrappedInput = this.props.form.getFieldDecorator(fieldName)(input);
-    return <Form.Item {...itemProps}>{wrappedInput}</Form.Item>;
+    return <FormItem {...itemProps}>{wrappedInput}</FormItem>;
   }
 
   generateFieldId(section, item) {
