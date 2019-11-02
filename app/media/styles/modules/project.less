@@ -40,6 +40,38 @@
 }
 
 .project-config-page {
+  @fixedFilterWidth: 150px;
+  @filterGutter: 6px;
+  @buttonWidth: @fixedFilterWidth;
+
+  .form-actions-block {
+    &:extend(.pull-right);
+
+    .ant-btn-primary {
+      width: @buttonWidth;
+    }
+  }
+
+  .search-row {
+    float: left;
+    margin-right: -@fixedFilterWidth;
+    width: 100%;
+
+    .search-block {
+      margin-right: @fixedFilterWidth;
+    }
+  }
+
+  .filter-right {
+    float: right;
+    padding: 4px 0 4px @filterGutter;
+    width: @fixedFilterWidth;
+  }
+
+  .add-section-btn {
+    width: @buttonWidth;
+  }
+
   .toc {
     .config-section-group {
       > .ant-anchor-link-title {

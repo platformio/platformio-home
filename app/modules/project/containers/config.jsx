@@ -172,6 +172,14 @@ class ProjectConfigFormComponent extends React.PureComponent {
     // TODO: search
   }
 
+  handleSaveClick() {
+    // TODO: save
+  }
+
+  handleResetClick() {
+    // TODO: reset
+  }
+
   renderFormItem(section, item, schemaByName) {
     const schema = (schemaByName && schemaByName[item.name]) || {};
     const type = schema.type || TYPE_TEXT;
@@ -268,6 +276,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     return (
       <Tabs.TabPane
         key={section.section}
+        size="small"
         tab={
           <span>
             <Icon type={this.getScopeIcon(section.section)} />
@@ -309,13 +318,42 @@ class ProjectConfigFormComponent extends React.PureComponent {
     }
     return result;
   }
-  render() {
-    if (!this.props.schema || !this.props.config) {
-      return this.renderLoader();
-    }
 
-    const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
+  renderFormActions() {
+    return (
+      <div className="form-actions-block">
+        <Button.Group>
+          <Button icon="reload" onClick={::this.handleResetClick}>
+            Reset
+          </Button>
+          <Button icon="save" type="primary" onClick={::this.handleSaveClick}>
+            Save
+          </Button>
+        </Button.Group>
+      </div>
+    );
+  }
 
+  renderFilter() {
+    return (
+      <div style={{ overflow: 'hidden' }}>
+        <div className="block search-row">
+          <div className="search-block">
+            <Input.Search
+              placeholder="Search settings"
+              onSearch={::this.handleSearch}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+        <div className="filter-right">
+          <Checkbox>Show overridden</Checkbox>
+        </div>
+      </div>
+    );
+  }
+
+  renderNewSectionBtn() {
     const newSectionMenu = (
       <Menu onClick={::this.handleNewSectionMenuClick}>
         <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
@@ -332,28 +370,32 @@ class ProjectConfigFormComponent extends React.PureComponent {
       </Menu>
     );
 
-    const addBtn = (
+    return (
       <Dropdown overlay={newSectionMenu}>
-        <Button icon="plus">
+        <Button className="add-section-btn" icon="plus">
           Section <Icon type="down" />
         </Button>
       </Dropdown>
     );
+  }
+
+  render() {
+    if (!this.props.schema || !this.props.config) {
+      return this.renderLoader();
+    }
+    const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
     return (
       <div className="project-config-page">
-        <h1>{this.props.project.name}</h1>
-        <div className="block">
-          <Input.Search
-            placeholder="Search settings"
-            onSearch={::this.handleSearch}
-            style={{ width: '100%' }}
-          />
-        </div>
+        <h1 className="block">
+          {this.props.project.name}
+          {this.renderFormActions()}
+        </h1>
+        {this.renderFilter()}
         <Tabs
           hideAdd
           defaultActiveKey={SECTION_PLATFORMIO}
           type="editable-card"
-          tabBarExtraContent={addBtn}
+          tabBarExtraContent={this.renderNewSectionBtn()}
         >
           {this.props.config.map(section =>
             this.renderSectionTab(
