@@ -249,7 +249,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
             className="config-section-group"
             href={`#${this.generateGroupAnchorId(groupName)}`}
             key={groupName}
-            title={groupName}
+            title={`${groupName} Options`}
           >
             {section.items
               .filter(
