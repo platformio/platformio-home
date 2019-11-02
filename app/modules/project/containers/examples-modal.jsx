@@ -189,7 +189,7 @@ class ProjectExamplesModal extends React.Component {
                   >
                     {item.name}
                     {item.description && (
-                      <div className="project-example-description">
+                      <div className="select-option-extra project-example-description">
                         {item.description}
                       </div>
                     )}
