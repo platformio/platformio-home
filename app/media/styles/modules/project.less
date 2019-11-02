@@ -41,14 +41,13 @@
 
 .project-config-page {
   @fixedFilterWidth: 150px;
-  @filterGutter: 6px;
-  @buttonWidth: @fixedFilterWidth;
+  @filterGutter: 8px;
 
   .form-actions-block {
     &:extend(.pull-right);
 
-    .ant-btn-primary {
-      width: @buttonWidth;
+    .ant-btn-group {
+      margin-left: @filterGutter;
     }
   }
 
@@ -66,10 +65,6 @@
     float: right;
     padding: 4px 0 4px @filterGutter;
     width: @fixedFilterWidth;
-  }
-
-  .add-section-btn {
-    width: @buttonWidth;
   }
 
   .toc {

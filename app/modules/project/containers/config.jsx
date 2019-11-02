@@ -410,6 +410,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
   renderFormActions() {
     return (
       <div className="form-actions-block">
+        <Button.Group>{this.renderNewSectionBtn()}</Button.Group>
         <Button.Group>
           <Button icon="reload" onClick={::this.handleResetClick}>
             Reset
@@ -486,16 +487,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
     return (
       <div className="project-config-page">
         <h1 className="block">
-          {this.props.project.name}
+          <span>{this.props.project.name}</span>
           {this.renderFormActions()}
         </h1>
         {this.renderFilter()}
-        <Tabs
-          hideAdd
-          defaultActiveKey={SECTION_PLATFORMIO}
-          type="editable-card"
-          tabBarExtraContent={this.renderNewSectionBtn()}
-        >
+        <Tabs hideAdd defaultActiveKey={SECTION_PLATFORMIO} type="editable-card">
           {this.props.config.map(section => (
             <Tabs.TabPane
               key={section.section}
