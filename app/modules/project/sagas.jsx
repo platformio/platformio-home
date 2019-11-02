@@ -340,6 +340,7 @@ function* watchLoadConfigSchema() {
 function* watchLoadProjectConfig() {
   yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
     try {
+      yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`), config));
       const tupleConfig = yield call(apiFetchData, {
         query: 'project.config_load',
         params: [pathlib.join(projectDir, 'platformio.ini')]
@@ -354,8 +355,25 @@ function* watchLoadProjectConfig() {
       yield put(updateEntity(PROJECT_CONFIG_KEY, config));
     } catch (e) {
       if (!(e instanceof jsonrpc.JsonRpcError)) {
-        yield put(notifyError('Could not project config', e));
+        yield put(notifyError('Could not load project config', e));
       }
+    }
+  });
+}
+
+function* watchSaveProjectConfig() {
+  yield takeLatest(actions.SAVE_PROJECT_CONFIG, function*({ projectDir, data, onEnd }) {
+    try {
+      yield call(apiFetchData, {
+        query: 'project.config_dump',
+        params: [pathlib.join(projectDir, 'platformio.ini'), data]
+      });
+    } catch (e) {
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not save project config', e));
+      }
+    } finally {
+      yield call(onEnd);
     }
   });
 }
@@ -372,5 +390,6 @@ export default [
   watchInitProject,
   watchImportArduinoProject,
   watchLoadConfigSchema,
-  watchLoadProjectConfig
+  watchLoadProjectConfig,
+  watchSaveProjectConfig
 ];

@@ -25,9 +25,9 @@ export const PROJECTS_LOADED = 'PROJECTS_LOADED';
 export const INIT_PROJECT = 'INIT_PROJECT';
 export const IMPORT_ARDUINO_PROJECT = 'IMPORT_ARDUINO_PROJECT';
 export const LOAD_PROJECT_EXAMPLES = 'LOAD_PROJECT_EXAMPLES';
-
-export const LOAD_PROJECT_CONFIG = 'LOAD_PROJECT_CONFIG';
 export const LOAD_CONFIG_SCHEMA = 'LOAD_CONFIG_SCHEMA';
+export const LOAD_PROJECT_CONFIG = 'LOAD_PROJECT_CONFIG';
+export const SAVE_PROJECT_CONFIG = 'SAVE_PROJECT_CONFIG';
 
 export const addProject = (projectDir, withOpen = true, onEnd) =>
   createAction(ADD_PROJECT, { projectDir, withOpen, onEnd });
@@ -53,6 +53,10 @@ export const importArduinoProject = (
   });
 export const loadProjectExamples = () => createAction(LOAD_PROJECT_EXAMPLES);
 
+export const loadConfigSchema = () => createAction(LOAD_CONFIG_SCHEMA);
+
 export const loadProjectConfig = projectDir =>
   createAction(LOAD_PROJECT_CONFIG, { projectDir });
-export const loadConfigSchema = () => createAction(LOAD_CONFIG_SCHEMA);
+
+export const saveProjectConfig = (projectDir, data, onEnd) =>
+  createAction(SAVE_PROJECT_CONFIG, { projectDir, data, onEnd });

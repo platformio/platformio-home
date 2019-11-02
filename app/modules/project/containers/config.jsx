@@ -30,7 +30,11 @@ import {
   Spin,
   Tabs
 } from 'antd';
-import { loadConfigSchema, loadProjectConfig } from '@project/actions';
+import {
+  loadConfigSchema,
+  loadProjectConfig,
+  saveProjectConfig
+} from '@project/actions';
 import {
   selectConfigSchema,
   selectProjectConfig,
@@ -68,6 +72,9 @@ const TYPES = Object.freeze([
   TYPE_FILE
 ]);
 
+const escapeFieldName = x => x.replace(/\./g, '@');
+const unescapeFieldName = x => x.replace(/@/g, '.');
+
 class ProjectConfigFormComponent extends React.PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
@@ -99,7 +106,8 @@ class ProjectConfigFormComponent extends React.PureComponent {
     ),
     // callbacks
     loadConfigSchema: PropTypes.func.isRequired,
-    loadProjectConfig: PropTypes.func.isRequired
+    loadProjectConfig: PropTypes.func.isRequired,
+    saveProjectConfig: PropTypes.func.isRequired
   };
 
   static iconByScope = {
@@ -119,7 +127,35 @@ class ProjectConfigFormComponent extends React.PureComponent {
     if (!this.props.schema) {
       this.props.loadConfigSchema();
     }
+    this.load();
+  }
+
+  load() {
     this.props.loadProjectConfig(this.props.location.state.projectDir);
+  }
+
+  save() {
+    this.props.form.validateFields((err, fieldsValue) => {
+      if (err) {
+        return;
+      }
+
+      const config = Object.entries(fieldsValue).map(([section, values]) => [
+        section,
+        Object.entries(values)
+          .map(([name, value]) => [unescapeFieldName(name), value])
+          .filter(item => item[1] !== undefined)
+      ]);
+
+      this.setState({
+        saving: true
+      });
+      this.props.saveProjectConfig(this.props.location.state.projectDir, config, () => {
+        this.setState({
+          saving: false
+        });
+      });
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -183,11 +219,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   handleSaveClick() {
-    // TODO: save
+    this.save();
   }
 
   handleResetClick() {
-    // TODO: reset
+    this.load();
   }
 
   handleShowOverriddenChange(e) {
@@ -252,7 +288,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   generateFieldId(sectionName, item) {
-    return `${encodeURIComponent(sectionName)}.${item.name}`;
+    return `${escapeFieldName(sectionName)}.${escapeFieldName(item.name)}`;
   }
 
   renderLoader() {
@@ -260,7 +296,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   generateGroupAnchorId(sectionName, groupName) {
-    return `section__${encodeURIComponent(sectionName)}--group__${groupName}`;
+    return `section__${sectionName}--group__${groupName}`;
   }
 
   renderToC(sectionName, itemsByGroup, schemaByName, groupNames) {
@@ -373,7 +409,12 @@ class ProjectConfigFormComponent extends React.PureComponent {
           <Button icon="reload" onClick={::this.handleResetClick}>
             Reset
           </Button>
-          <Button icon="save" type="primary" onClick={::this.handleSaveClick}>
+          <Button
+            icon="save"
+            loading={this.state.saving}
+            type="primary"
+            onClick={::this.handleSaveClick}
+          >
             Save
           </Button>
         </Button.Group>
@@ -484,7 +525,8 @@ const mapStateToProps = function(state, ownProps) {
 };
 const dispatchToProps = {
   loadConfigSchema,
-  loadProjectConfig
+  loadProjectConfig,
+  saveProjectConfig
 };
 
 const ConnectedProjectConfigFormComponent = connect(
