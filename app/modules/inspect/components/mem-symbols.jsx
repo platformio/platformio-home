@@ -227,6 +227,7 @@ export class MemorySymbols extends React.PureComponent {
       <div className="inspect-mem-symbols">
         <div className="block">
           <Input.Search
+            allowClear
             enterButton
             // FIXME: need debounce to enable
             // onChange={this.handleSearch}

@@ -99,6 +99,7 @@ export default class PlatformsList extends React.Component {
           onCancel={::this.onDidCancelAdvanced}
         />
         <Input.Search
+          allowClear
           className="block"
           placeholder="Filter platforms by name..."
           defaultValue={this.props.filterValue}
