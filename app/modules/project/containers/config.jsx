@@ -240,7 +240,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     let input;
     if (type === TYPE_TEXT) {
       if (multiple) {
-        input = <Input.TextArea autoSize={{ minRows: 2, maxRows: 20 }} rows={2} />;
+        input = <Input.TextArea autoSize={{ minRows: 1, maxRows: 20 }} rows={1} />;
       } else {
         input = <Input />;
       }
