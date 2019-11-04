@@ -266,7 +266,6 @@ class ProjectConfigFormComponent extends React.PureComponent {
     return (
       <div className="documentation-link">
         <a
-          href={getDocumentationUrl(scope, group, name)}
           onClick={e => {
             e.preventDefault();
             this.props.osOpenUrl(getDocumentationUrl(scope, group, name), {
