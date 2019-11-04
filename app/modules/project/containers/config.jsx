@@ -84,6 +84,10 @@ function unescapeFieldName(x) {
   return x.replace(/@/g, '.');
 }
 
+function splitMultipleField(v) {
+  return v.split(/[,\n]/);
+}
+
 function getDocumentationUrl(scope, group, name) {
   const pageParts = [scope];
   if (scope !== SCOPE_PLATFORMIO) {
@@ -171,12 +175,23 @@ class ProjectConfigFormComponent extends React.PureComponent {
         return;
       }
 
-      const config = Object.entries(fieldsValue).map(([section, values]) => [
-        section,
-        Object.entries(values)
-          .map(([name, value]) => [unescapeFieldName(name), value])
-          .filter(item => item[1] !== undefined)
-      ]);
+      const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
+
+      const config = Object.entries(fieldsValue).map(([section, values]) => {
+        const sectionType = this.getSectionType(section);
+        const sectionSchema = schemaByScopeAndName[sectionType] || {};
+        return [
+          section,
+          Object.entries(values)
+            .filter(item => item[1] !== undefined)
+            .map(([name, rawValue]) => {
+              return [
+                unescapeFieldName(name),
+                this.transformFormValue(rawValue, sectionSchema[name])
+              ];
+            })
+        ];
+      });
 
       this.setState({
         saving: true
@@ -187,6 +202,25 @@ class ProjectConfigFormComponent extends React.PureComponent {
         });
       });
     });
+  }
+
+  transformFormValue(rawValue, fieldSchema) {
+    let value = rawValue;
+    if (fieldSchema) {
+      if (fieldSchema.multiple) {
+        if (fieldSchema.type === TYPE_TEXT) {
+          value = splitMultipleField(rawValue);
+        }
+      } else {
+        if (fieldSchema.type === TYPE_BOOL) {
+          value = rawValue ? 'yes' : 'no';
+        }
+      }
+    } else {
+      // Custom fields without defined schema are treated as multiline text
+      value = splitMultipleField(rawValue);
+    }
+    return value;
   }
 
   componentDidUpdate(prevProps) {
@@ -210,7 +244,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
           } else {
             const schema = schemaByScopeAndName[sectionType][item.name];
             if (schema.multiple && typeof item.value === 'string') {
-              value = item.value.split(/[,\n]/);
+              value = splitMultipleField(item.value);
             } else {
               value = item.value;
             }
@@ -285,6 +319,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = schema ? schema.multiple : true;
     const description = (schema || {}).description;
+    const decoratorOptions = {};
     let label = item.name;
 
     label = (
@@ -334,6 +369,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
       }
     } else if (type === TYPE_BOOL) {
       input = <Checkbox>{description}</Checkbox>;
+      decoratorOptions.valuePropName = 'checked';
     } else if (type === TYPE_CHOICE) {
       input = (
         <Select mode={multiple ? 'multiple' : 'default'} tokenSeparators={[',', '\n']}>
@@ -372,7 +408,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
       itemProps.help = description;
     }
     const fieldName = this.generateFieldId(sectionName, item);
-    const wrappedInput = this.props.form.getFieldDecorator(fieldName)(input);
+
+    const wrappedInput = this.props.form.getFieldDecorator(fieldName, decoratorOptions)(
+      input
+    );
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
   }
 
