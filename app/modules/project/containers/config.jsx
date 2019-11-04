@@ -398,7 +398,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         {groupNames.map(groupName => (
           <Anchor.Link
             className="config-section-group"
-            href={`#${this.generateGroupAnchorId(groupName)}`}
+            href={`#${this.generateGroupAnchorId(sectionName, groupName)}`}
             key={groupName}
             title={`${groupName} Options`}
           >
@@ -472,7 +472,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
               <div key={groupName}>
                 <h2
                   className="config-section-group"
-                  id={this.generateGroupAnchorId(groupName)}
+                  id={this.generateGroupAnchorId(section.section, groupName)}
                 >
                   {groupName} Options
                 </h2>
