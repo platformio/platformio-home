@@ -43,6 +43,7 @@ import {
 } from '@project/selectors';
 
 import { ConfigFormItem } from '@project/components/config-form-item';
+import { IS_WINDOWS } from '@app/config';
 import { ProjectType } from '@project/types';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -83,10 +84,23 @@ function unescapeFieldName(x) {
 }
 
 function getDocumentationUrl(scope, group, name) {
-  return `https://docs.platformio.org/en/latest/projectconf/section_${scope}_${group}.html#${name.replace(
-    /[^a-z]/g,
-    '-'
-  )}`;
+  const pageParts = [scope];
+  if (scope !== SCOPE_PLATFORMIO) {
+    pageParts.push(group);
+  }
+  const page = `section_${pageParts.join('_')}.html`;
+  const hash =
+    name !== undefined
+      ? name.replace(/[^a-z]/g, '-')
+      : `${group.toLowerCase()}-options`;
+
+  return `https://docs.platformio.org/en/latest/projectconf/${encodeURIComponent(
+    page
+  )}#${encodeURIComponent(hash)}`;
+}
+
+function formatEnvVar(name) {
+  return IS_WINDOWS ? `%${name}%` : `$${name}`;
 }
 
 class ProjectConfigFormComponent extends React.PureComponent {
@@ -115,6 +129,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         name: PropTypes.string.isRequired,
         multiple: PropTypes.bool,
         scope: PropTypes.oneOf(SCOPES).isRequired,
+        sysenvvar: PropTypes.string,
         type: PropTypes.oneOf(TYPES)
       })
     ),
@@ -251,6 +266,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     return (
       <div className="documentation-link">
         <a
+          href={getDocumentationUrl(scope, group, name)}
           onClick={e => {
             e.preventDefault();
             this.props.osOpenUrl(getDocumentationUrl(scope, group, name), {
@@ -269,19 +285,43 @@ class ProjectConfigFormComponent extends React.PureComponent {
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = schema ? schema.multiple : true;
     const description = (schema || {}).description;
-    const name = (
+    let label = item.name;
+
+    label = (
       <React.Fragment>
         {this.renderDocLink(schema.scope, schema.group, item.name)}
-        {item.name}
+        {label}
       </React.Fragment>
     );
-    const label = multiple ? (
-      <React.Fragment>
-        {name} <Tag size="small">ML</Tag>
-      </React.Fragment>
-    ) : (
-      name
-    );
+
+    if (multiple) {
+      label = (
+        <React.Fragment>
+          {label}{' '}
+          <Tag
+            className="multiline"
+            size="small"
+            title="Option accepts multiple arguments separated by new lines"
+          >
+            ml
+          </Tag>
+        </React.Fragment>
+      );
+    }
+
+    if (schema.sysenvvar) {
+      label = (
+        <React.Fragment>
+          {label}{' '}
+          <Tag
+            className="sysenvvar"
+            title={`Accepted as ${formatEnvVar(schema.sysenvvar)} environment variable`}
+          >
+            env
+          </Tag>
+        </React.Fragment>
+      );
+    }
 
     let input;
     if (type === TYPE_TEXT) {
