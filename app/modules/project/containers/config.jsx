@@ -312,9 +312,12 @@ class ProjectConfigFormComponent extends React.PureComponent {
         <React.Fragment>
           {label}{' '}
           <Tooltip
-            title={<React.Fragment>Option can be configured by a global <code>{formatEnvVar(
-              schema.sysenvvar
-            )}</code> environment variable</React.Fragment>}
+            title={
+              <React.Fragment>
+                Option can be configured by a global{' '}
+                <code>{formatEnvVar(schema.sysenvvar)}</code> environment variable
+              </React.Fragment>
+            }
           >
             <Tag className="sysenvvar">ENV</Tag>
           </Tooltip>
