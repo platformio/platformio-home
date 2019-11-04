@@ -60,6 +60,7 @@ export default class FrameworksList extends React.Component {
     return (
       <div>
         <Input.Search
+          allowClear
           className="block"
           placeholder="Filter frameworks by name"
           defaultValue={this.props.filterValue}

@@ -61,6 +61,7 @@ export default class LibraryStoragesList extends React.Component {
     return (
       <div className="lib-storages-list">
         <Input.Search
+          allowClear
           className="block"
           placeholder="Filter libraries by name..."
           defaultValue={this.props.filterValue}
