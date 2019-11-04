@@ -28,7 +28,8 @@ import {
   Row,
   Select,
   Spin,
-  Tabs
+  Tabs,
+  Tag
 } from 'antd';
 import {
   loadConfigSchema,
@@ -236,6 +237,14 @@ class ProjectConfigFormComponent extends React.PureComponent {
     const schema = (schemaByName || {})[item.name];
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = schema ? schema.multiple : true;
+    const description = (schema || {}).description;
+    const label = multiple ? (
+      <React.Fragment>
+        {item.name} <Tag size="small">ML</Tag>
+      </React.Fragment>
+    ) : (
+      item.name
+    );
 
     let input;
     if (type === TYPE_TEXT) {
@@ -245,7 +254,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         input = <Input />;
       }
     } else if (type === TYPE_BOOL) {
-      input = <Checkbox>{schema.description}</Checkbox>;
+      input = <Checkbox>{description}</Checkbox>;
     } else if (type === TYPE_CHOICE) {
       input = (
         <Select mode={multiple ? 'multiple' : 'default'} tokenSeparators={[',', '\n']}>
@@ -275,13 +284,13 @@ class ProjectConfigFormComponent extends React.PureComponent {
     }
     const itemProps = {
       key: item.name,
-      label: item.name,
+      label,
       labelCol: {
         id: this.generateFieldLabelId(section.section, item)
       }
     };
     if (type !== TYPE_BOOL) {
-      itemProps.help = (schema || {}).description;
+      itemProps.help = description;
     }
     const fieldName = this.generateFieldId(section.section, item);
     const wrappedInput = this.props.form.getFieldDecorator(fieldName)(input);
