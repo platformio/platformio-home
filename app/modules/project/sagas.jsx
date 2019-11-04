@@ -33,7 +33,15 @@ import {
   notifySuccess,
   osRevealFile
 } from '../core/actions';
-import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+  apply,
+  call,
+  put,
+  select,
+  take,
+  takeEvery,
+  takeLatest
+} from 'redux-saga/effects';
 import {
   deleteEntity,
   saveState,
@@ -368,6 +376,9 @@ function* watchSaveProjectConfig() {
         query: 'project.config_dump',
         params: [pathlib.join(projectDir, 'platformio.ini'), data]
       });
+      yield apply(message, message.success, [
+        { content: 'Project configuration saved', key: actions.SAVE_PROJECT_CONFIG }
+      ]);
     } catch (e) {
       if (!(e instanceof jsonrpc.JsonRpcError)) {
         yield put(notifyError('Could not save project config', e));
