@@ -47,6 +47,7 @@ import { ProjectType } from '@project/types';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { osOpenUrl } from '@core/actions';
 
 const SECTION_PLATFORMIO = 'platformio';
 const SECTION_GLOBAL_ENV = 'env';
@@ -73,8 +74,20 @@ const TYPES = Object.freeze([
   TYPE_FILE
 ]);
 
-const escapeFieldName = x => x.replace(/\./g, '@');
-const unescapeFieldName = x => x.replace(/@/g, '.');
+function escapeFieldName(x) {
+  return x.replace(/\./g, '@');
+}
+
+function unescapeFieldName(x) {
+  return x.replace(/@/g, '.');
+}
+
+function getDocumentationUrl(scope, group, name) {
+  return `https://docs.platformio.org/en/latest/projectconf/section_${scope}_${group}.html#${name.replace(
+    /[^a-z]/g,
+    '-'
+  )}`;
+}
 
 class ProjectConfigFormComponent extends React.PureComponent {
   static propTypes = {
@@ -108,7 +121,8 @@ class ProjectConfigFormComponent extends React.PureComponent {
     // callbacks
     loadConfigSchema: PropTypes.func.isRequired,
     loadProjectConfig: PropTypes.func.isRequired,
-    saveProjectConfig: PropTypes.func.isRequired
+    saveProjectConfig: PropTypes.func.isRequired,
+    osOpenUrl: PropTypes.func.isRequired
   };
 
   static iconByScope = {
@@ -233,17 +247,40 @@ class ProjectConfigFormComponent extends React.PureComponent {
     });
   }
 
-  renderFormItem(section, item, schemaByName) {
+  renderDocLink(scope, group, name) {
+    return (
+      <div className="documentation-link">
+        <a
+          onClick={e => {
+            e.preventDefault();
+            this.props.osOpenUrl(getDocumentationUrl(scope, group, name), {
+              target: '_blank'
+            });
+          }}
+        >
+          <Icon type="question-circle" />
+        </a>
+      </div>
+    );
+  }
+
+  renderFormItem(sectionName, item, schemaByName) {
     const schema = (schemaByName || {})[item.name];
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = schema ? schema.multiple : true;
     const description = (schema || {}).description;
+    const name = (
+      <React.Fragment>
+        {this.renderDocLink(schema.scope, schema.group, item.name)}
+        {item.name}
+      </React.Fragment>
+    );
     const label = multiple ? (
       <React.Fragment>
-        {item.name} <Tag size="small">ML</Tag>
+        {name} <Tag size="small">ML</Tag>
       </React.Fragment>
     ) : (
-      item.name
+      name
     );
 
     let input;
@@ -286,13 +323,13 @@ class ProjectConfigFormComponent extends React.PureComponent {
       key: item.name,
       label,
       labelCol: {
-        id: this.generateFieldLabelId(section.section, item)
+        id: this.generateFieldLabelId(sectionName, item)
       }
     };
     if (type !== TYPE_BOOL) {
       itemProps.help = description;
     }
-    const fieldName = this.generateFieldId(section.section, item);
+    const fieldName = this.generateFieldId(sectionName, item);
     const wrappedInput = this.props.form.getFieldDecorator(fieldName)(input);
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
   }
@@ -383,11 +420,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
     const groupNames = schemaGroupNames.filter(name => itemsByGroup[name].length);
 
     return (
-      <Row gutter={16}>
-        <Col span={6}>
+      <Row gutter={0}>
+        <Col xs={24} sm={9} md={6}>
           {this.renderToC(section.section, itemsByGroup, schemaByName, groupNames)}
         </Col>
-        <Col span={18}>
+        <Col xs={24} sm={15} md={18}>
           <Form layout="vertical" className="config-form">
             {groupNames.map(groupName => (
               <div key={groupName}>
@@ -398,7 +435,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
                   {groupName} Options
                 </h2>
                 {itemsByGroup[groupName].map(item =>
-                  this.renderFormItem(section, item, schemaByName)
+                  this.renderFormItem(section.section, item, schemaByName)
                 )}
               </div>
             ))}
@@ -495,7 +532,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
     return (
       <div className="project-config-page">
-        <h1 className="block">
+        <h1 className="block clearfix">
           <span>{this.props.project.name}</span>
           {this.renderFormActions()}
         </h1>
@@ -536,6 +573,7 @@ const mapStateToProps = function(state, ownProps) {
 const dispatchToProps = {
   loadConfigSchema,
   loadProjectConfig,
+  osOpenUrl,
   saveProjectConfig
 };
 

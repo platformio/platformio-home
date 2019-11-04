@@ -77,7 +77,12 @@
   }
 
   .config-form {
+    @gutter: 32px;
+
+    padding-left: @gutter;
+
     .config-section-group {
+      margin-left: -@gutter / 2;
       text-transform: capitalize;
     }
 
@@ -95,6 +100,49 @@
     .ant-tag {
       &:extend(small);
       line-height: @line-height-base;
+    }
+
+    .ant-form-item {
+      margin-bottom: 0;
+      margin-left: -@gutter;
+      overflow: hidden;
+      padding: 0px @gutter 5px;
+
+      &:hover {
+        background-color: lighten(@layout-body-background, 3%);
+      }
+
+      .ant-form-item-label {
+        overflow: visible;
+      }
+
+      .documentation-link {
+        @icon-size: 16px;
+        @width: @icon-size*2;
+
+        display: none;
+        font-size: @icon-size;
+        height: 82px;
+        left: -@width;
+        position: absolute;
+        text-align: center;
+        top: -3px;
+        width: @width;
+
+        .anticon {
+          color: @text-color;
+
+          &:hover {
+            color: @link-hover-color;
+          }
+        }
+      }
+
+      &:hover {
+        .documentation-link {
+          display: block;
+        }
+      }
     }
   }
 
