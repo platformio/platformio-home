@@ -177,7 +177,8 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
       const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
 
-      const config = Object.entries(fieldsValue).map(([section, values]) => {
+      const config = this.props.config.map(({ section }) => {
+        const values = fieldsValue[section];
         const sectionType = this.getSectionType(section);
         const sectionSchema = schemaByScopeAndName[sectionType] || {};
         return [
@@ -206,18 +207,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
   transformFormValue(rawValue, fieldSchema) {
     let value = rawValue;
-    if (fieldSchema) {
-      if (fieldSchema.multiple) {
-        if (fieldSchema.type === TYPE_TEXT) {
-          value = splitMultipleField(rawValue);
-        }
-      } else {
-        if (fieldSchema.type === TYPE_BOOL) {
-          value = rawValue ? 'yes' : 'no';
-        }
-      }
-    } else {
-      // Custom fields without defined schema are treated as multiline text
+    if (fieldSchema && fieldSchema.multiple && fieldSchema.type === TYPE_TEXT) {
       value = splitMultipleField(rawValue);
     }
     return value;
@@ -239,8 +229,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
           let value;
 
           if (sectionType === SECTION_CUSTOM) {
-            // FIXME: can be array
-            value = item.value;
+            if (typeof item.value === 'string') {
+              value = item.value;
+            } else if (Array.isArray(item.value)) {
+              value = item.value.join('\n');
+            }
           } else {
             const schema = schemaByScopeAndName[sectionType][item.name];
             if (schema.multiple && typeof item.value === 'string') {
