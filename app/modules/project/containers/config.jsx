@@ -29,7 +29,8 @@ import {
   Select,
   Spin,
   Tabs,
-  Tag
+  Tag,
+  Tooltip
 } from 'antd';
 import {
   loadConfigSchema,
@@ -297,13 +298,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
       label = (
         <React.Fragment>
           {label}{' '}
-          <Tag
-            className="multiline"
-            size="small"
-            title="Option accepts multiple arguments separated by new lines"
-          >
-            ml
-          </Tag>
+          <Tooltip title="Option accepts multiple arguments separated by new line">
+            <Tag className="multiline" size="small">
+              ML
+            </Tag>
+          </Tooltip>
         </React.Fragment>
       );
     }
@@ -312,12 +311,13 @@ class ProjectConfigFormComponent extends React.PureComponent {
       label = (
         <React.Fragment>
           {label}{' '}
-          <Tag
-            className="sysenvvar"
-            title={`Accepted as ${formatEnvVar(schema.sysenvvar)} environment variable`}
+          <Tooltip
+            title={<React.Fragment>Option can be configured by a global <code>{formatEnvVar(
+              schema.sysenvvar
+            )}</code> environment variable</React.Fragment>}
           >
-            env
-          </Tag>
+            <Tag className="sysenvvar">ENV</Tag>
+          </Tooltip>
         </React.Fragment>
       );
     }
