@@ -289,7 +289,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
     label = (
       <React.Fragment>
-        {this.renderDocLink(schema.scope, schema.group, item.name)}
+        {schema && this.renderDocLink(schema.scope, schema.group, item.name)}
         {label}
       </React.Fragment>
     );
@@ -307,7 +307,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
       );
     }
 
-    if (schema.sysenvvar) {
+    if (schema && schema.sysenvvar) {
       label = (
         <React.Fragment>
           {label}{' '}
