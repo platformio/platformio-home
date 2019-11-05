@@ -228,7 +228,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
           const sectionType = this.getSectionType(section.section);
           let value;
 
-          if (sectionType === SECTION_CUSTOM) {
+          if (
+            sectionType === SECTION_CUSTOM ||
+            schemaByScopeAndName[sectionType][item.name] === undefined
+          ) {
             if (typeof item.value === 'string') {
               value = item.value;
             } else if (Array.isArray(item.value)) {
@@ -504,7 +507,17 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
     const itemsByGroup = Object.fromEntries(schemaGroupNames.map(name => [name, []]));
     for (const item of filteredItems) {
-      const group = schemaByName ? schemaByName[item.name].group : 'Custom';
+      const group =
+        schemaByName && schemaByName[item.name]
+          ? schemaByName[item.name].group
+          : 'Custom';
+      if (!itemsByGroup[group]) {
+        console.warn(`Item without schema: ${item.name} in section ${section.section}`);
+        itemsByGroup[group] = [];
+        if (!schemaGroupNames.includes('Custom')) {
+          schemaGroupNames.push('Custom');
+        }
+      }
       itemsByGroup[group].push(item);
     }
     // Hide empty groups
