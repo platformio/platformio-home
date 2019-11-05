@@ -573,6 +573,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
           <div className="search-block">
             <Input.Search
               allowClear
+              disabled={!this.isLoaded()}
               placeholder="Search settings"
               onSearch={::this.handleSearch}
               style={{ width: '100%' }}
@@ -582,6 +583,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         <div className="filter-right">
           <Checkbox
             checked={this.state.showOverridden}
+            disabled={!this.isLoaded()}
             onChange={::this.handleShowOverriddenChange}
           >
             Show overridden
@@ -623,34 +625,31 @@ class ProjectConfigFormComponent extends React.PureComponent {
     }
     const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
     return (
-      <React.Fragment>
-        {this.renderFilter()}
-        <Tabs
-          activeKey={this.state.activeSection}
-          defaultActiveKey={this.props.config[0].section}
-          hideAdd
-          onChange={::this.handleTabChange}
-          type="editable-card"
-        >
-          {this.props.config.map(section => (
-            <Tabs.TabPane
-              key={section.section}
-              size="small"
-              tab={
-                <span>
-                  <Icon type={this.getScopeIcon(section.section)} />
-                  {section.section}
-                </span>
-              }
-            >
-              {this.renderSectionTabContent(
-                section,
-                schemaByScopeAndName[this.getSectionType(section.section)]
-              )}
-            </Tabs.TabPane>
-          ))}
-        </Tabs>
-      </React.Fragment>
+      <Tabs
+        activeKey={this.state.activeSection}
+        defaultActiveKey={this.props.config[0].section}
+        hideAdd
+        onChange={::this.handleTabChange}
+        type="editable-card"
+      >
+        {this.props.config.map(section => (
+          <Tabs.TabPane
+            key={section.section}
+            size="small"
+            tab={
+              <span>
+                <Icon type={this.getScopeIcon(section.section)} />
+                {section.section}
+              </span>
+            }
+          >
+            {this.renderSectionTabContent(
+              section,
+              schemaByScopeAndName[this.getSectionType(section.section)]
+            )}
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
     );
   }
 
@@ -661,6 +660,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
           <span>{this.props.project.name}</span>
           {this.renderFormActions()}
         </h1>
+        {this.renderFilter()}
         {this.renderConfig()}
       </div>
     );
