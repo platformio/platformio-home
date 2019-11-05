@@ -37,11 +37,12 @@ module.exports = {
   outputDir: path.join(rootDir, 'dist'),
   resolve: {
     alias: {
-      '@app': path.resolve(__dirname, '../app/'),
       '@core': path.resolve(__dirname, '../app/modules/core/'),
       '@inspect': path.resolve(__dirname, '../app/modules/inspect/'),
       '@project': path.resolve(__dirname, '../app/modules/project/'),
-      '@store': path.resolve(__dirname, '../app/store/')
+      '@platform': path.resolve(__dirname, '../app/modules/platform/'),
+      '@store': path.resolve(__dirname, '../app/store/'),
+      '@app': path.resolve(__dirname, '../app/')
     }
   },
 

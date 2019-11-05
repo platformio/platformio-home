@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-import { Badge, Spin } from 'antd';
+import { Badge, Input, Spin } from 'antd';
+import { hideProject, loadProjects, openProject } from '@project/actions';
+import { lazyUpdateInputValue, updateInputValue } from '@store/actions';
+
+import { BOARDS_INPUT_FILTER_KEY } from '@platform/selectors';
 import { ProjectListItem } from '@project/components/list-item';
 import { ProjectType } from '@project/types';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { goTo } from '@core/helpers';
-import { loadProjects } from '@project/actions';
+import { osRevealFile } from '@core/actions';
 import { selectProjects } from '@project/selectors';
 
-const ACTION_SETTINGS = 'settings';
+const ACTION_HIDE = 'hide';
+const ACTION_REVEAL = 'reveal';
+const ACTION_CONFIGURE = 'configure';
 const ACTION_OPEN = 'open';
 
 class ProjectsListComponent extends React.PureComponent {
@@ -33,8 +40,18 @@ class ProjectsListComponent extends React.PureComponent {
     history: PropTypes.object.isRequired,
     items: PropTypes.arrayOf(ProjectType),
     //callbacks
-    loadProjects: PropTypes.func.isRequired
+    loadProjects: PropTypes.func.isRequired,
+    hideProject: PropTypes.func.isRequired,
+    openProject: PropTypes.func.isRequired,
+    osRevealFile: PropTypes.func.isRequired,
+    updateInputValue: PropTypes.func.isRequired,
+    showBoards: PropTypes.func.isRequired
   };
+
+  constructor(...args) {
+    super(...args);
+    this.state = {};
+  }
 
   componentDidMount() {
     if (!this.props.items) {
@@ -44,24 +61,60 @@ class ProjectsListComponent extends React.PureComponent {
 
   handleAction(name, projectDir) {
     switch (name) {
-      case ACTION_SETTINGS:
+      case ACTION_CONFIGURE:
         goTo(this.props.history, '/projects/config', { projectDir });
+        break;
+      case ACTION_HIDE:
+        this.props.hideProject(projectDir);
+        break;
+      case ACTION_REVEAL:
+        this.props.osRevealFile(projectDir);
+        break;
+      case ACTION_OPEN:
+        this.props.openProject(projectDir);
         break;
     }
   }
 
+  handleSearch(search) {
+    this.setState({
+      search
+    });
+  }
+
+  handleBoardClick(name) {
+    this.props.updateInputValue(BOARDS_INPUT_FILTER_KEY, name);
+    this.props.showBoards();
+  }
+
   getActionsConfiguration() {
     return [
-      {
-        name: ACTION_OPEN,
-        icon: 'folder',
-        text: 'Open'
-      },
-      {
-        name: ACTION_SETTINGS,
-        icon: 'setting',
-        text: 'Configure'
-      }
+      [
+        {
+          name: ACTION_HIDE,
+          icon: 'eye-invisible',
+          text: 'Hide'
+        },
+        {
+          name: ACTION_REVEAL,
+          icon: 'eye',
+          text: 'Reveal'
+        }
+      ],
+      [
+        {
+          name: ACTION_OPEN,
+          icon: 'folder-open',
+          text: 'Open',
+          type: 'primary'
+        },
+        {
+          name: ACTION_CONFIGURE,
+          icon: 'setting',
+          text: 'Configure',
+          type: 'primary'
+        }
+      ]
     ];
   }
 
@@ -69,17 +122,35 @@ class ProjectsListComponent extends React.PureComponent {
     if (!this.props.items) {
       return <Spin />;
     }
+    const ds = this.props.items.filter(
+      project =>
+        this.state.search === undefined || project.name.includes(this.state.search)
+    );
     return (
       <div className="project-list-page">
         <h1>
           Projects <Badge count={this.props.items.length} />
         </h1>
-        {this.props.items.map(project => (
+        <div className="block">
+          <Input.Search
+            allowClear
+            enterButton
+            placeholder="Search projects"
+            onSearch={::this.handleSearch}
+            size="large"
+            style={{ width: '100%' }}
+          />
+        </div>
+        {this.state.search && <h2>Search Results ({ds.length}):</h2>}
+        {!this.state.search && <h2>All Projects:</h2>}
+        {ds.map(project => (
           <ProjectListItem
             key={project.path}
             data={project}
             actions={this.getActionsConfiguration()}
             onAction={::this.handleAction}
+            onClick={() => this.handleAction(ACTION_CONFIGURE, project.path)}
+            onBoardClick={::this.handleBoardClick}
           />
         ))}
       </div>
@@ -92,9 +163,23 @@ const mapStateToProps = function(state) {
     items: selectProjects(state)
   };
 };
-const dispatchToProps = {
-  loadProjects
-};
+
+function dispatchToProps(dispatch, ownProps) {
+  return {
+    ...bindActionCreators(
+      {
+        loadProjects,
+        hideProject,
+        openProject,
+        osRevealFile,
+        lazyUpdateInputValue,
+        updateInputValue
+      },
+      dispatch
+    ),
+    showBoards: () => goTo(ownProps.history, '/boards')
+  };
+}
 
 export const ProjectsListPage = connect(
   mapStateToProps,

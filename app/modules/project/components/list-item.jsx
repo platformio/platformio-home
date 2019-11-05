@@ -15,18 +15,21 @@
  */
 
 import { ActionType, ProjectType } from '@project/types';
-import { Button, Card, Col, Row, Tag } from 'antd';
+import { Button, Card, Icon, Tag, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import humanize from 'humanize';
 
 export class ProjectListItem extends React.PureComponent {
   static propTypes = {
     // data
     data: ProjectType,
-    actions: PropTypes.arrayOf(ActionType),
+    actions: PropTypes.arrayOf(PropTypes.arrayOf(ActionType)),
     // callbacks
-    onAction: PropTypes.func
+    onAction: PropTypes.func,
+    onClick: PropTypes.func,
+    onBoardClick: PropTypes.func
   };
 
   handleActionClick(name) {
@@ -35,44 +38,101 @@ export class ProjectListItem extends React.PureComponent {
     }
   }
 
+  handleBoardClick(e, name) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this.props.onBoardClick) {
+      this.props.onBoardClick(name);
+    }
+  }
+
+  handleInlineEditClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    // TODO:
+  }
+
+  renderBoards() {
+    const set = new Set();
+    return (
+      <div>
+        <Tooltip title="Boards">
+          <Icon type="calculator" />
+        </Tooltip>{' '}
+        {this.props.data.boards
+          .filter(({ id }) => !set.has(id) && set.add(id))
+          .map(({ name, id }, i) => (
+            <React.Fragment key={id}>
+              {i ? ', ' : ''}
+              <a onClick={e => this.handleBoardClick(e, name)}>{name}</a>
+            </React.Fragment>
+          ))}
+      </div>
+    );
+  }
+
   render() {
     return (
       <Card
-        // hoverable
-        title={this.props.data.name}
-        // title={<a>{this.props.data.name}</a>}
-        // extra={extra}
-        // onClick={::this.onDidShow}
         className="list-item-card"
+        extra={
+          <small>
+            <Tooltip
+              title={`Last Modified: ${new Date(
+                this.props.data.modified * 1000
+              ).toString()}`}
+            >
+              <Icon type="clock-circle" />{' '}
+              {humanize.relativeTime(this.props.data.modified)}
+            </Tooltip>
+          </small>
+        }
+        hoverable
+        onClick={this.props.onClick}
+        title={this.props.data.name}
       >
-        <div className="block">{this.props.data.description}</div>
-        <Row className="block">
-          <Col>
-            Environments:{' '}
+        {
+          <div className="block">
+            {this.props.data.description || 'No description'}{' '}
+            <Tooltip title="Inline edit description">
+              <Button
+                icon="edit"
+                size="small"
+                type="link"
+                onClick={::this.handleInlineEditClick}
+              ></Button>
+            </Tooltip>
+          </div>
+        }
+        <div className="block">
+          <div>
+            <Tooltip title="Environments">
+              <Icon type="environment" />
+            </Tooltip>{' '}
             {this.props.data.envs.map(env => (
               <Tag key={env}>{env}</Tag>
             ))}
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {this.props.actions && (
-              <Button.Group>
-                {this.props.actions.map(action => (
+          </div>
+          {this.props.data.boards.length > 0 && this.renderBoards()}
+        </div>
+        <div>
+          {this.props.actions &&
+            this.props.actions.map((actions, i) => (
+              <Button.Group key={i}>
+                {actions.map(action => (
                   <Button
                     key={action.name}
                     icon={action.icon}
                     size="small"
-                    // type="primary"
+                    type={action.type}
                     onClick={() => this.handleActionClick(action.name)}
                   >
                     {action.text}
                   </Button>
                 ))}
               </Button.Group>
-            )}
-          </Col>
-        </Row>
+            ))}
+        </div>
       </Card>
     );
   }
