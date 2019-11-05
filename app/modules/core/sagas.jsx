@@ -85,6 +85,10 @@ function* watchNotifyError() {
       [
         /Detected unknown package/g,
         'https://github.com/platformio/platformio-core/issues/3116'
+      ],
+      [
+        /Error: You are not connected to the Internet/g,
+        'https://github.com/platformio/platformio-core/issues/1348'
       ]
     ];
     for (const [regex, url] of knownIssues) {
