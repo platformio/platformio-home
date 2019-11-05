@@ -15,7 +15,7 @@
  */
 
 import { ActionType, ProjectType } from '@project/types';
-import { Button, Card, Icon, Tag, Tooltip } from 'antd';
+import { Button, Card, Col, Icon, Row, Tag, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -32,7 +32,9 @@ export class ProjectListItem extends React.PureComponent {
     onBoardClick: PropTypes.func
   };
 
-  handleActionClick(name) {
+  handleActionClick(e, name) {
+    e.preventDefault();
+    e.stopPropagation();
     if (this.props.onAction) {
       this.props.onAction(name, this.props.data.path);
     }
@@ -89,33 +91,20 @@ export class ProjectListItem extends React.PureComponent {
         }
         hoverable
         onClick={this.props.onClick}
-        title={this.props.data.name}
+        title={<a>{this.props.data.name}</a>}
       >
-        {
-          <div className="block">
-            {this.props.data.description || 'No description'}{' '}
-            <Tooltip title="Inline edit description">
-              <Button
-                icon="edit"
-                size="small"
-                type="link"
-                onClick={::this.handleInlineEditClick}
-              ></Button>
-            </Tooltip>
-          </div>
-        }
         <div className="block">
-          <div>
-            <Tooltip title="Environments">
-              <Icon type="environment" />
-            </Tooltip>{' '}
-            {this.props.data.envs.map(env => (
-              <Tag key={env}>{env}</Tag>
-            ))}
-          </div>
-          {this.props.data.boards.length > 0 && this.renderBoards()}
+          {this.props.data.description || 'No description'}{' '}
+          <Tooltip title="Inline edit description">
+            <Button
+              icon="edit"
+              size="small"
+              type="link"
+              onClick={::this.handleInlineEditClick}
+            ></Button>
+          </Tooltip>
         </div>
-        <div>
+        <div className="pull-right">
           {this.props.actions &&
             this.props.actions.map((actions, i) => (
               <Button.Group key={i}>
@@ -123,9 +112,8 @@ export class ProjectListItem extends React.PureComponent {
                   <Button
                     key={action.name}
                     icon={action.icon}
-                    size="small"
                     type={action.type}
-                    onClick={() => this.handleActionClick(action.name)}
+                    onClick={e => this.handleActionClick(e, action.name)}
                   >
                     {action.text}
                   </Button>
@@ -133,6 +121,15 @@ export class ProjectListItem extends React.PureComponent {
               </Button.Group>
             ))}
         </div>
+        <div>
+          <Tooltip title="Environments">
+            <Icon type="environment" />
+          </Tooltip>{' '}
+          {this.props.data.envs.map(env => (
+            <Tag key={env}>{env}</Tag>
+          ))}
+        </div>
+        {this.props.data.boards.length > 0 && this.renderBoards()}
       </Card>
     );
   }
