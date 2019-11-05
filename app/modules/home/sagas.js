@@ -39,7 +39,7 @@ function* watchLoadLatestTweets() {
     try {
       items = yield call(apiFetchData, {
         query: 'misc.load_latest_tweets',
-        params: [username]
+        params: [`https://dl.platformio.org/tweets/${username}/data.json`]
       });
     } catch (err) {
       items = err;
