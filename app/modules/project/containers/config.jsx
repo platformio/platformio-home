@@ -248,6 +248,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
           values[fieldName] = value;
         }
       }
+      this.setState(state => {
+        if (state.activeSection === undefined) {
+          return { activeSection: this.props.config[0].section };
+        }
+      });
       this.props.form.setFieldsValue(values);
     }
   }
@@ -288,6 +293,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
     this.setState({
       showOverridden: e.target.checked
     });
+  }
+
+  handleTabChange(activeSection) {
+    this.setState({ activeSection });
   }
 
   renderDocLink(scope, group, name) {
@@ -417,11 +426,19 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   renderLoader() {
-    return <Spin size="large" tip="Loading…" />;
+    return (
+      <center>
+        <Spin size="large" tip="Loading…" />
+      </center>
+    );
   }
 
   generateGroupAnchorId(sectionName, groupName) {
     return `section__${sectionName}--group__${groupName}`;
+  }
+
+  isLoaded() {
+    return Boolean(this.props.schema && this.props.config);
   }
 
   renderToC(sectionName, itemsByGroup, schemaByName, groupNames) {
@@ -536,6 +553,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
             Reset
           </Button>
           <Button
+            disabled={!this.isLoaded()}
             icon="save"
             loading={this.state.saving}
             type="primary"
@@ -591,7 +609,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     );
 
     return (
-      <Dropdown overlay={newSectionMenu}>
+      <Dropdown overlay={newSectionMenu} disabled={!this.isLoaded()}>
         <Button className="add-section-btn" icon="plus">
           Section <Icon type="down" />
         </Button>
@@ -599,19 +617,21 @@ class ProjectConfigFormComponent extends React.PureComponent {
     );
   }
 
-  render() {
-    if (!this.props.schema || !this.props.config) {
+  renderConfig() {
+    if (!this.isLoaded()) {
       return this.renderLoader();
     }
     const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
     return (
-      <div className="project-config-page">
-        <h1 className="block clearfix">
-          <span>{this.props.project.name}</span>
-          {this.renderFormActions()}
-        </h1>
+      <React.Fragment>
         {this.renderFilter()}
-        <Tabs hideAdd defaultActiveKey={SECTION_PLATFORMIO} type="editable-card">
+        <Tabs
+          activeKey={this.state.activeSection}
+          defaultActiveKey={this.props.config[0].section}
+          hideAdd
+          onChange={::this.handleTabChange}
+          type="editable-card"
+        >
           {this.props.config.map(section => (
             <Tabs.TabPane
               key={section.section}
@@ -630,6 +650,18 @@ class ProjectConfigFormComponent extends React.PureComponent {
             </Tabs.TabPane>
           ))}
         </Tabs>
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    return (
+      <div className="project-config-page">
+        <h1 className="block clearfix">
+          <span>{this.props.project.name}</span>
+          {this.renderFormActions()}
+        </h1>
+        {this.renderConfig()}
       </div>
     );
   }
