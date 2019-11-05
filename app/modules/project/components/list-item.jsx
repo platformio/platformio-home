@@ -15,7 +15,7 @@
  */
 
 import { ActionType, ProjectType } from '@project/types';
-import { Button, Card, Col, Icon, Row, Tag, Tooltip } from 'antd';
+import { Button, Card, Dropdown, Icon, Menu, Tag, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -26,6 +26,7 @@ export class ProjectListItem extends React.PureComponent {
     // data
     data: ProjectType,
     actions: PropTypes.arrayOf(PropTypes.arrayOf(ActionType)),
+    extraActions: PropTypes.arrayOf(ActionType),
     // callbacks
     onAction: PropTypes.func,
     onClick: PropTypes.func,
@@ -73,21 +74,56 @@ export class ProjectListItem extends React.PureComponent {
     );
   }
 
+  renderExtraActions() {
+    if (!this.props.extraActions) {
+      return;
+    }
+    const menu = (
+      <Menu onClick={({ key, domEvent }) => this.handleActionClick(domEvent, key)}>
+        {this.props.extraActions.map(action => (
+          <Menu.Item key={action.name}>
+            {action.icon && (
+              <React.Fragment>
+                <Icon type={action.icon} />{' '}
+              </React.Fragment>
+            )}
+            {action.text}
+          </Menu.Item>
+        ))}
+      </Menu>
+    );
+
+    return (
+      <Dropdown overlay={menu}>
+        <Button size="small" type="link" onClick={e => e.stopPropagation()}>
+          <Icon
+            type="ellipsis"
+            rotate={90}
+            style={{ color: 'grey', fontSize: 16, verticalAlign: 'middle' }}
+          />
+        </Button>
+      </Dropdown>
+    );
+  }
+
   render() {
     return (
       <Card
         className="list-item-card"
         extra={
-          <small>
-            <Tooltip
-              title={`Last Modified: ${new Date(
-                this.props.data.modified * 1000
-              ).toString()}`}
-            >
-              <Icon type="clock-circle" />{' '}
-              {humanize.relativeTime(this.props.data.modified)}
-            </Tooltip>
-          </small>
+          <React.Fragment>
+            <small>
+              <Tooltip
+                title={`Last Modified: ${new Date(
+                  this.props.data.modified * 1000
+                ).toString()}`}
+              >
+                <Icon type="clock-circle" />{' '}
+                {humanize.relativeTime(this.props.data.modified)}
+              </Tooltip>
+            </small>{' '}
+            {this.renderExtraActions()}
+          </React.Fragment>
         }
         hoverable
         onClick={this.props.onClick}

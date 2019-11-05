@@ -91,18 +91,6 @@ class ProjectsListComponent extends React.PureComponent {
     return [
       [
         {
-          name: ACTION_HIDE,
-          icon: 'eye-invisible',
-          text: 'Hide'
-        },
-        {
-          name: ACTION_REVEAL,
-          icon: 'eye',
-          text: 'Reveal'
-        }
-      ],
-      [
-        {
           name: ACTION_OPEN,
           icon: 'folder-open',
           text: 'Open',
@@ -115,6 +103,21 @@ class ProjectsListComponent extends React.PureComponent {
           type: 'primary'
         }
       ]
+    ];
+  }
+
+  getExtraActions() {
+    return [
+      {
+        name: ACTION_HIDE,
+        icon: 'eye-invisible',
+        text: 'Hide'
+      },
+      {
+        name: ACTION_REVEAL,
+        icon: 'folder',
+        text: 'Reveal'
+      }
     ];
   }
 
@@ -148,6 +151,7 @@ class ProjectsListComponent extends React.PureComponent {
             key={project.path}
             data={project}
             actions={this.getActionsConfiguration()}
+            extraActions={this.getExtraActions()}
             onAction={::this.handleAction}
             onClick={() => this.handleAction(ACTION_CONFIGURE, project.path)}
             onBoardClick={::this.handleBoardClick}
