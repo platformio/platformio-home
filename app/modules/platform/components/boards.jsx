@@ -508,11 +508,10 @@ export default class Boards extends React.Component {
 
   renderNotifications() {
     return (
-      <span>
-        <p>
-          PlatformIO currently supports over 700 boards from leading manufacturers, and
-          we are constantly adding new ones.
-        </p>
+      <div>
+        PlatformIO currently supports over 700 boards from leading manufacturers, and we
+        are constantly adding new ones.
+        <br />
         You can be part of the process by letting us know what board you wish to see
         supported next, by{' '}
         <a
@@ -523,7 +522,7 @@ export default class Boards extends React.Component {
           submitting a feature request
         </a>
         .
-      </span>
+      </div>
     );
   }
 
