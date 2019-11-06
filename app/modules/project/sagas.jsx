@@ -33,15 +33,7 @@ import {
   notifySuccess,
   osRevealFile
 } from '../core/actions';
-import {
-  apply,
-  call,
-  put,
-  select,
-  take,
-  takeEvery,
-  takeLatest
-} from 'redux-saga/effects';
+import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   deleteEntity,
   saveState,

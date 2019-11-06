@@ -85,7 +85,7 @@ function unescapeFieldName(x) {
 }
 
 function splitMultipleField(v) {
-  return v.split(/[,\n]/);
+  return v.split(/[,\n]/).filter((v, i) => v.length || i);
 }
 
 function getDocumentationUrl(scope, group, name) {
@@ -233,7 +233,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
             schemaByScopeAndName[sectionType][item.name] === undefined
           ) {
             if (typeof item.value === 'string') {
-              value = item.value;
+              value = splitMultipleField(item.value).join('\n');
             } else if (Array.isArray(item.value)) {
               value = item.value.join('\n');
             }
