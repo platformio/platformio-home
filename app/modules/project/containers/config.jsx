@@ -44,6 +44,7 @@ import {
 } from '@project/selectors';
 
 import { ConfigFormItem } from '@project/components/config-form-item';
+import { DraggableTabs } from '@project/components/draggable-tabs';
 import { IS_WINDOWS } from '@app/config';
 import { ProjectType } from '@project/types';
 import PropTypes from 'prop-types';
@@ -176,8 +177,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
       }
 
       const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
-
-      const config = this.props.config.map(({ section }) => {
+      const config = this.sectionsOrder.map(section => {
         const values = fieldsValue[section];
         const sectionType = this.getSectionType(section);
         const sectionSchema = schemaByScopeAndName[sectionType] || {};
@@ -193,7 +193,6 @@ class ProjectConfigFormComponent extends React.PureComponent {
             })
         ];
       });
-
       this.setState({
         saving: true
       });
@@ -257,6 +256,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         }
       });
       this.props.form.setFieldsValue(values);
+      this.sectionsOrder = this.props.config.map(section => section.section);
     }
   }
 
@@ -300,6 +300,10 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
   handleTabChange(activeSection) {
     this.setState({ activeSection });
+  }
+
+  handleOrderChange(order) {
+    this.sectionsOrder = order;
   }
 
   renderDocLink(scope, group, name) {
@@ -638,10 +642,11 @@ class ProjectConfigFormComponent extends React.PureComponent {
     }
     const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
     return (
-      <Tabs
+      <DraggableTabs
         activeKey={this.state.activeSection}
         defaultActiveKey={this.props.config[0].section}
         hideAdd
+        onOrderChange={::this.handleOrderChange}
         onChange={::this.handleTabChange}
         type="editable-card"
       >
@@ -662,7 +667,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
             )}
           </Tabs.TabPane>
         ))}
-      </Tabs>
+      </DraggableTabs>
     );
   }
 
