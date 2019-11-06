@@ -131,23 +131,27 @@ class ProjectsListComponent extends React.PureComponent {
     ];
   }
 
-  render() {
-    if (!this.props.items) {
-      return (
-        <center>
-          <Spin size="large" tip="Loading…" />
-        </center>
-      );
-    }
+  renderData() {
     const ds = this.props.items.filter(
       project =>
         this.state.search === undefined || project.name.includes(this.state.search)
     );
+    if (!ds.length) {
+      return (
+        <ul className="background-message text-center">
+          <li>
+            Please Add Existing
+            <br />
+            or
+            <br />
+            Create New Project
+          </li>
+        </ul>
+      );
+    }
+
     return (
-      <div className="project-list-page">
-        <h1>
-          Projects <Badge count={this.props.items.length} />
-        </h1>
+      <React.Fragment>
         <div className="block">
           <Input.Search
             allowClear
@@ -172,6 +176,25 @@ class ProjectsListComponent extends React.PureComponent {
             updateConfigDescription={::this.handleUpdateConfigDescription}
           />
         ))}
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    if (!this.props.items) {
+      return (
+        <center>
+          <Spin size="large" tip="Loading…" />
+        </center>
+      );
+    }
+
+    return (
+      <div className="project-list-page">
+        <h1>
+          Projects <Badge count={this.props.items.length} />
+        </h1>
+        {this.renderData()}
       </div>
     );
   }
