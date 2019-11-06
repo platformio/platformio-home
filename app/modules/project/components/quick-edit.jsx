@@ -69,6 +69,12 @@ export class QuickEdit extends React.PureComponent {
     this.stopEdit(true);
   }
 
+  handleCancelClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.stopEdit();
+  }
+
   handleBeginEditClick(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -79,26 +85,34 @@ export class QuickEdit extends React.PureComponent {
     if (e.keyCode === 27) {
       // Escape
       this.stopEdit();
+    } else if (e.keyCode === 13) {
+      // Return
+      this.stopEdit(true);
     }
   }
 
   render() {
     if (this.state.editing) {
       return (
-        <React.Fragment>
-          <Input.Search
+        <div className="quick-edit">
+          <Input
             {...this.props.inputProps}
-            className="quick-edit"
-            enterButton={<Button icon="save" size="small" type="primary"></Button>}
             onBlur={::this.handleSaveClick}
             onChange={::this.handleChange}
             onKeyDown={::this.handleKeyDown}
-            onPressEnter={::this.handleSaveClick}
             placeholder={this.props.placeholder}
             ref={$el => (this.$input = $el)}
             value={this.state.value}
           />
-        </React.Fragment>
+          <span className="buttons">
+            <Button type="primary" onClick={::this.handleSaveClick}>
+              <span className="return-icon">⏎</span>
+              Save
+            </Button>
+            <span className="delimiter"> or </span>
+            <a onClick={::this.handleCancelClick}>Cancel</a>
+          </span>
+        </div>
       );
     }
 

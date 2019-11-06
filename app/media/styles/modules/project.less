@@ -45,12 +45,27 @@
   }
 
   .quick-edit {
+    display: flex;
+    align-items: center;
     margin-top: -4px;
     margin-bottom: -4px;
 
     .ant-input {
       border: 0;
+      flex: 1;
       padding: 0;
+    }
+
+    .buttons {
+      padding-left: 8px;
+
+      .delimiter {
+        margin: 0 2px;
+      }
+      .return-icon {
+        vertical-align: middle;
+        margin-right: 7px;
+      }
     }
   }
 }

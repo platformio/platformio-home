@@ -16,8 +16,3 @@
 
 export const PROJECT_CONFIG_KEY = 'projectConfig';
 export const CONFIG_SCHEMA_KEY = 'projectConfigSchema';
-
-export const SECTION_PLATFORMIO = 'platformio';
-export const SECTION_GLOBAL_ENV = 'env';
-export const SECTION_USER_ENV = 'env:';
-export const SECTION_CUSTOM = 'custom';

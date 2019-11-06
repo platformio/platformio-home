@@ -20,11 +20,7 @@ import * as actions from './actions';
 import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
-import {
-  CONFIG_SCHEMA_KEY,
-  PROJECT_CONFIG_KEY,
-  SECTION_PLATFORMIO
-} from '@project/constants';
+import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
@@ -425,9 +421,10 @@ function* watchUpdateConfigDescription() {
         query: 'project.config_update_description',
         params: [pathlib.join(projectDir, 'platformio.ini'), description]
       });
-      yield apply(message, message.success, [
-        'Project description is saved into configuration file'
-      ]);
+      // Wrapped into closure to prevent returned promise to suspend Saga channel execution
+      yield call(() => {
+        message.success('Project description is saved into configuration file');
+      });
     } catch (e) {
       err = e;
       if (!(e instanceof jsonrpc.JsonRpcError)) {
@@ -437,7 +434,6 @@ function* watchUpdateConfigDescription() {
       if (undo) {
         yield _patchProjectState(projectDir, { description: undo.description });
       }
-
       console.error(e);
     } finally {
       if (onEnd) {
