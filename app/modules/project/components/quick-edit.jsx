@@ -51,7 +51,10 @@ export class QuickEdit extends React.PureComponent {
 
   stopEdit(save) {
     if (save && this.state.value !== this.props.value) {
-      this.props.onSave(this.state.value);
+      this.setState({ saving: true });
+      this.props.onSave(this.state.value, () => {
+        this.setState({ saving: false });
+      });
     }
     this.setState({ editing: false });
   }
@@ -107,6 +110,7 @@ export class QuickEdit extends React.PureComponent {
         <Tooltip title="Inline edit description">
           <Button
             icon="edit"
+            loading={this.state.saving}
             size="small"
             type="link"
             onClick={::this.handleBeginEditClick}

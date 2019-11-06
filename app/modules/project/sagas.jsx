@@ -396,6 +396,18 @@ function* watchSaveProjectConfig() {
   });
 }
 
+function* _patchProjectState(path, patch) {
+  const exProjects = (yield select(selectors.selectProjects)) || [];
+  const exProject = exProjects.find(x => x.path === path);
+  if (!exProject) {
+    return;
+  }
+  const project = { ...exProject, ...patch };
+  const projects = exProjects.map(p => (p === exProject ? project : p));
+  yield put(updateEntity('projects', projects));
+  return exProject;
+}
+
 function* watchUpdateConfigDescription() {
   yield takeLatest(actions.UPDATE_CONFIG_DESCRIPTION, function*({
     projectDir,
@@ -403,16 +415,29 @@ function* watchUpdateConfigDescription() {
     onEnd
   }) {
     let err;
+    let undo;
     try {
+      // Patch existing state if loaded
+      undo = yield _patchProjectState(projectDir, { description });
+
+      // Patch file via RPC
       yield call(apiFetchData, {
         query: 'project.config_update_description',
         params: [pathlib.join(projectDir, 'platformio.ini'), description]
       });
+      yield apply(message, message.success, [
+        'Project description is saved into configuration file'
+      ]);
     } catch (e) {
       err = e;
       if (!(e instanceof jsonrpc.JsonRpcError)) {
         yield put(notifyError('Could not save project config', e));
       }
+      // Rollback edit
+      if (undo) {
+        yield _patchProjectState(projectDir, { description: undo.description });
+      }
+
       console.error(e);
     } finally {
       if (onEnd) {

@@ -51,8 +51,8 @@ export class ProjectListItem extends React.PureComponent {
     }
   }
 
-  handleSaveDescription(description) {
-    this.props.updateConfigDescription(this.props.data.path, description);
+  handleSaveDescription(description, onEnd) {
+    this.props.updateConfigDescription(this.props.data.path, description, onEnd);
   }
 
   handleClick(e) {

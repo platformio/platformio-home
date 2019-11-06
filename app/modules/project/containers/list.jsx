@@ -93,13 +93,8 @@ class ProjectsListComponent extends React.PureComponent {
     this.props.showBoards();
   }
 
-  handleUpdateConfigDescription(projectDir, description) {
-    this.props.updateConfigDescription(projectDir, description, err => {
-      if (!err) {
-        // Refresh updated project
-        this.props.loadProjects(true);
-      }
-    });
+  handleUpdateConfigDescription(projectDir, description, onEnd) {
+    this.props.updateConfigDescription(projectDir, description, onEnd);
   }
 
   getActionsConfiguration() {
