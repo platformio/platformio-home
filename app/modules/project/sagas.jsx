@@ -379,9 +379,7 @@ function* watchSaveProjectConfig() {
         query: 'project.config_dump',
         params: [pathlib.join(projectDir, 'platformio.ini'), data]
       });
-      yield apply(message, message.success, [
-        { content: 'Project configuration saved', key: actions.SAVE_PROJECT_CONFIG }
-      ]);
+      message.success('Project configuration saved');
     } catch (e) {
       if (!(e instanceof jsonrpc.JsonRpcError)) {
         yield put(notifyError('Could not save project config', e));
@@ -421,10 +419,7 @@ function* watchUpdateConfigDescription() {
         query: 'project.config_update_description',
         params: [pathlib.join(projectDir, 'platformio.ini'), description]
       });
-      // Wrapped into closure to prevent returned promise to suspend Saga channel execution
-      yield call(() => {
-        message.success('Project description is saved into configuration file');
-      });
+      message.success('Project description is saved into configuration file');
     } catch (e) {
       err = e;
       if (!(e instanceof jsonrpc.JsonRpcError)) {
