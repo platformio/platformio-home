@@ -404,35 +404,16 @@ function* watchUpdateConfigDescription() {
   }) {
     let err;
     try {
-      const configPath = pathlib.join(projectDir, 'platformio.ini');
-      const tupleConfig = yield call(apiFetchData, {
-        query: 'project.config_load',
-        params: [configPath]
-      });
-
-      let platformioSection = tupleConfig.find(x => x[0] === SECTION_PLATFORMIO);
-      if (!platformioSection) {
-        platformioSection = [SECTION_PLATFORMIO, []];
-        tupleConfig.unshift(platformioSection);
-      }
-      const values = platformioSection[1];
-      let option = values.find(x => x[0] === 'description');
-      if (!option) {
-        option = ['description', description];
-        values.unshift(option);
-      } else {
-        option[1] = description;
-      }
-
       yield call(apiFetchData, {
-        query: 'project.config_dump',
-        params: [configPath, tupleConfig]
+        query: 'project.config_update_description',
+        params: [pathlib.join(projectDir, 'platformio.ini'), description]
       });
     } catch (e) {
       err = e;
       if (!(e instanceof jsonrpc.JsonRpcError)) {
         yield put(notifyError('Could not save project config', e));
       }
+      console.error(e);
     } finally {
       if (onEnd) {
         yield call(onEnd, err);
