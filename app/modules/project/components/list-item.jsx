@@ -18,6 +18,7 @@ import { ActionType, ProjectType } from '@project/types';
 import { Button, Card, Dropdown, Icon, Menu, Tag, Tooltip } from 'antd';
 
 import PropTypes from 'prop-types';
+import { QuickEdit } from '@project/components/quick-edit';
 import React from 'react';
 import humanize from 'humanize';
 
@@ -30,7 +31,8 @@ export class ProjectListItem extends React.PureComponent {
     // callbacks
     onAction: PropTypes.func,
     onClick: PropTypes.func,
-    onBoardClick: PropTypes.func
+    onBoardClick: PropTypes.func,
+    updateConfigDescription: PropTypes.func.isRequired
   };
 
   handleActionClick(e, name) {
@@ -49,10 +51,15 @@ export class ProjectListItem extends React.PureComponent {
     }
   }
 
-  handleInlineEditClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    // TODO:
+  handleSaveDescription(description) {
+    this.props.updateConfigDescription(this.props.data.path, description);
+  }
+
+  handleClick(e) {
+    if (e.target.closest('button') || e.target.closest('input')) {
+      return;
+    }
+    this.props.onClick(e);
   }
 
   renderBoards() {
@@ -126,19 +133,15 @@ export class ProjectListItem extends React.PureComponent {
           </React.Fragment>
         }
         hoverable
-        onClick={this.props.onClick}
+        onClick={::this.handleClick}
         title={<a>{this.props.data.name}</a>}
       >
         <div className="block">
-          {this.props.data.description || 'No description'}{' '}
-          <Tooltip title="Inline edit description">
-            <Button
-              icon="edit"
-              size="small"
-              type="link"
-              onClick={::this.handleInlineEditClick}
-            ></Button>
-          </Tooltip>
+          <QuickEdit
+            placeholder="No description"
+            value={this.props.data.description}
+            onSave={::this.handleSaveDescription}
+          />
         </div>
         <div className="pull-right">
           {this.props.actions &&

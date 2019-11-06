@@ -20,7 +20,11 @@ import * as actions from './actions';
 import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
-import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
+import {
+  CONFIG_SCHEMA_KEY,
+  PROJECT_CONFIG_KEY,
+  SECTION_PLATFORMIO
+} from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
@@ -167,11 +171,14 @@ export function* preloadProjects() {
 
 function* watchLoadProjects() {
   while (true) {
-    yield take(actions.LOAD_PROJECTS);
-    let items = yield select(selectors.selectProjects);
-    if (items) {
-      yield put(actions.projectsLoaded());
-      continue;
+    const action = yield take(actions.LOAD_PROJECTS);
+    let items;
+    if (!(action && action.force)) {
+      items = yield select(selectors.selectProjects);
+      if (items) {
+        yield put(actions.projectsLoaded());
+        continue;
+      }
     }
     try {
       items = yield call(apiFetchData, {
@@ -389,6 +396,51 @@ function* watchSaveProjectConfig() {
   });
 }
 
+function* watchUpdateConfigDescription() {
+  yield takeLatest(actions.UPDATE_CONFIG_DESCRIPTION, function*({
+    projectDir,
+    description,
+    onEnd
+  }) {
+    let err;
+    try {
+      const configPath = pathlib.join(projectDir, 'platformio.ini');
+      const tupleConfig = yield call(apiFetchData, {
+        query: 'project.config_load',
+        params: [configPath]
+      });
+
+      let platformioSection = tupleConfig.find(x => x[0] === SECTION_PLATFORMIO);
+      if (!platformioSection) {
+        platformioSection = [SECTION_PLATFORMIO, []];
+        tupleConfig.unshift(platformioSection);
+      }
+      const values = platformioSection[1];
+      let option = values.find(x => x[0] === 'description');
+      if (!option) {
+        option = ['description', description];
+        values.unshift(option);
+      } else {
+        option[1] = description;
+      }
+
+      yield call(apiFetchData, {
+        query: 'project.config_dump',
+        params: [configPath, tupleConfig]
+      });
+    } catch (e) {
+      err = e;
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not save project config', e));
+      }
+    } finally {
+      if (onEnd) {
+        yield call(onEnd, err);
+      }
+    }
+  });
+}
+
 export default [
   watchAddProject,
   watchHideProject,
@@ -402,5 +454,6 @@ export default [
   watchImportArduinoProject,
   watchLoadConfigSchema,
   watchLoadProjectConfig,
-  watchSaveProjectConfig
+  watchSaveProjectConfig,
+  watchUpdateConfigDescription
 ];

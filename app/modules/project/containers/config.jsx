@@ -33,10 +33,17 @@ import {
   Tooltip
 } from 'antd';
 import {
+  SECTION_CUSTOM,
+  SECTION_GLOBAL_ENV,
+  SECTION_PLATFORMIO,
+  SECTION_USER_ENV
+} from '@project/constants';
+import {
   loadConfigSchema,
   loadProjectConfig,
   saveProjectConfig
 } from '@project/actions';
+
 import {
   selectConfigSchema,
   selectProjectConfig,
@@ -50,11 +57,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { osOpenUrl } from '@core/actions';
-
-const SECTION_PLATFORMIO = 'platformio';
-const SECTION_GLOBAL_ENV = 'env';
-const SECTION_USER_ENV = 'env:';
-const SECTION_CUSTOM = 'custom';
 
 const SCOPE_PLATFORMIO = 'platformio';
 const SCOPE_ENV = 'env';

@@ -29,13 +29,15 @@ export const LOAD_CONFIG_SCHEMA = 'LOAD_CONFIG_SCHEMA';
 export const LOAD_PROJECT_CONFIG = 'LOAD_PROJECT_CONFIG';
 export const SAVE_PROJECT_CONFIG = 'SAVE_PROJECT_CONFIG';
 
+export const UPDATE_CONFIG_DESCRIPTION = 'UPDATE_CONFIG_DESCRIPTION';
+
 export const addProject = (projectDir, withOpen = true, onEnd) =>
   createAction(ADD_PROJECT, { projectDir, withOpen, onEnd });
 export const hideProject = projectDir => createAction(HIDE_PROJECT, { projectDir });
 export const openProject = projectDir => createAction(OPEN_PROJECT, { projectDir });
 export const importProject = (projectDir, onEnd = undefined) =>
   createAction(IMPORT_PROJECT, { projectDir, onEnd });
-export const loadProjects = () => createAction(LOAD_PROJECTS);
+export const loadProjects = force => createAction(LOAD_PROJECTS, { force });
 export const projectsLoaded = () => createAction(PROJECTS_LOADED);
 export const initProject = (board, framework, projectDir, onEnd = undefined) =>
   createAction(INIT_PROJECT, { board, framework, projectDir, onEnd });
@@ -60,3 +62,6 @@ export const loadProjectConfig = projectDir =>
 
 export const saveProjectConfig = (projectDir, data, onEnd) =>
   createAction(SAVE_PROJECT_CONFIG, { projectDir, data, onEnd });
+
+export const updateConfigDescription = (projectDir, description, onEnd) =>
+  createAction(UPDATE_CONFIG_DESCRIPTION, { projectDir, description, onEnd });

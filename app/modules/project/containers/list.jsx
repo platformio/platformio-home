@@ -15,7 +15,12 @@
  */
 
 import { Badge, Input, Spin } from 'antd';
-import { hideProject, loadProjects, openProject } from '@project/actions';
+import {
+  hideProject,
+  loadProjects,
+  openProject,
+  updateConfigDescription
+} from '@project/actions';
 import { lazyUpdateInputValue, updateInputValue } from '@store/actions';
 
 import { BOARDS_INPUT_FILTER_KEY } from '@platform/selectors';
@@ -45,7 +50,8 @@ class ProjectsListComponent extends React.PureComponent {
     openProject: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired,
     updateInputValue: PropTypes.func.isRequired,
-    showBoards: PropTypes.func.isRequired
+    showBoards: PropTypes.func.isRequired,
+    updateConfigDescription: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -87,6 +93,15 @@ class ProjectsListComponent extends React.PureComponent {
     this.props.showBoards();
   }
 
+  handleUpdateConfigDescription(projectDir, description) {
+    this.props.updateConfigDescription(projectDir, description, err => {
+      if (!err) {
+        // Refresh updated project
+        this.props.loadProjects(true);
+      }
+    });
+  }
+
   getActionsConfiguration() {
     return [
       [
@@ -123,7 +138,11 @@ class ProjectsListComponent extends React.PureComponent {
 
   render() {
     if (!this.props.items) {
-      return <Spin />;
+      return (
+        <center>
+          <Spin size="large" tip="Loading…" />
+        </center>
+      );
     }
     const ds = this.props.items.filter(
       project =>
@@ -155,6 +174,7 @@ class ProjectsListComponent extends React.PureComponent {
             onAction={::this.handleAction}
             onClick={() => this.handleAction(ACTION_CONFIGURE, project.path)}
             onBoardClick={::this.handleBoardClick}
+            updateConfigDescription={::this.handleUpdateConfigDescription}
           />
         ))}
       </div>
@@ -177,7 +197,8 @@ function dispatchToProps(dispatch, ownProps) {
         openProject,
         osRevealFile,
         lazyUpdateInputValue,
-        updateInputValue
+        updateInputValue,
+        updateConfigDescription
       },
       dispatch
     ),
