@@ -1,9 +1,17 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import * as path from '../path';
@@ -17,9 +25,7 @@ import hljs from 'highlight.js';
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
 
-
 class CodeBeautifier extends React.Component {
-
   static propTypes = {
     title: PropTypes.string,
     uri: PropTypes.string,
@@ -28,7 +34,7 @@ class CodeBeautifier extends React.Component {
     className: PropTypes.string,
     toggle: PropTypes.bool,
     requestContent: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -63,40 +69,51 @@ class CodeBeautifier extends React.Component {
 
   renderToggler() {
     return (
-      <Icon type='up-circle-o'
-        className='source-code-toggler'
-        title='Show/Hide source code'
-        onClick={ (e) => this.onDidToggle(e) } />
-      );
+      <Icon
+        type="up-circle-o"
+        className="source-code-toggler"
+        title="Show/Hide source code"
+        onClick={e => this.onDidToggle(e)}
+      />
+    );
   }
 
   renderFileContent() {
     if (!this.props.content) {
       return (
-        <div className='text-center'>
-          <Spin tip='Loading...' />
+        <div className="text-center">
+          <Spin tip="Loading..." />
         </div>
-        );
+      );
     }
     return (
-      <pre><code ref={ code => this._codeElement = code } className={ this.props.language || 'c' }>{ this.props.content }</code></pre>
+      <pre>
+        <code
+          ref={code => (this._codeElement = code)}
+          className={this.props.language || 'c'}
+        >
+          {this.props.content}
+        </code>
+      </pre>
     );
   }
 
   render() {
     if (!this.props.toggle) {
-      return <div className={ this.props.className }>{ this.renderFileContent() }</div>;
+      return <div className={this.props.className}>{this.renderFileContent()}</div>;
     }
     return (
-      <div className={ this.props.className }>
-        <h3><Icon type='file' /> { this.props.title || path.basename(this.props.uri) } { this.renderToggler() }</h3>
-        <div ref={ item => this._codeTogglePlaceholder = item }>
-          { this.renderFileContent() }
+      <div className={this.props.className}>
+        <h3>
+          <Icon type="file" /> {this.props.title || path.basename(this.props.uri)}{' '}
+          {this.renderToggler()}
+        </h3>
+        <div ref={item => (this._codeTogglePlaceholder = item)}>
+          {this.renderFileContent()}
         </div>
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -110,4 +127,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps, { requestContent })(CodeBeautifier);
+export default connect(
+  mapStateToProps,
+  { requestContent }
+)(CodeBeautifier);

@@ -1,0 +1,93 @@
+.inspect-configuration-page {
+  max-width: 700px;
+
+  .switch-label {
+    color: @label-color;
+    margin-right: 15px;
+    white-space: nowrap;
+  }
+}
+
+.inspect-processing-page {
+  .inspect-config-console {
+    background-color: @input-bg;
+    border: 1px solid @input-border-color;
+    border-radius: @border-radius-base;
+    padding: @input-padding-vertical-base @input-padding-horizontal;
+  }
+}
+
+.inspect-stats-page {
+  .ant-progress {
+    cursor: pointer;
+
+    .ant-progress-text small {
+      font-size: 12px;
+    }
+  }
+
+  .ant-card {
+    min-height: 205px;
+  }
+
+  .defects-stats-block {
+    min-height: 250px;
+  }
+
+  .inspect-stats-block {
+    & {
+      width: auto;
+    }
+
+    td,
+    th {
+      padding: 1px 5px;
+      white-space: nowrap;
+    }
+
+    tr {
+      cursor: pointer;
+    }
+  }
+
+  .inspect-stats-table {
+    tr {
+      cursor: pointer;
+    }
+
+    .empty-row {
+      cursor: default;
+    }
+  }
+
+  .ant-table-small {
+    border: none;
+  }
+}
+
+.severity-tag {
+  // &.severity-low {
+  // }
+
+  &.severity-medium {
+    color: @body-background;
+    background-color: @warning-color;
+    border-color: lighten(@warning-color, 30%);
+  }
+
+  &.severity-high {
+    color: @btn-danger-color;
+    background-color: @error-color;
+    border-color: lighten(@error-color, 30%);
+  }
+}
+
+.inspect-mem-symbols .open-document-icon {
+  visibility: hidden;
+}
+
+.inspect-mem-symbols tr:hover {
+  .open-document-icon {
+    visibility: visible;
+  }
+}

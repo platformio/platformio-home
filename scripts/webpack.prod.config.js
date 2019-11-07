@@ -15,7 +15,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Create multiple instances
-const extractThemeCSS = new ExtractTextPlugin(`themes/${common.workspace}-${common.theme}.css`);
+const extractThemeCSS = new ExtractTextPlugin(
+  `themes/${common.workspace}-${common.theme}.css`
+);
 
 module.exports = {
   mode: 'production',
@@ -32,6 +34,7 @@ module.exports = {
     filename: '[hash].min.js'
   },
   resolve: {
+    alias: common.resolve.alias,
     extensions: ['.js', '.jsx']
   },
   module: {

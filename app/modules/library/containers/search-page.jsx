@@ -1,9 +1,17 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import * as actions from '../actions';
@@ -18,9 +26,7 @@ import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
 import { selectSearchResult } from '../selectors';
 
-
 class LibrarySearchPage extends React.Component {
-
   static propTypes = {
     result: PropTypes.shape({
       items: PropTypes.array.isRequired,
@@ -33,14 +39,14 @@ class LibrarySearchPage extends React.Component {
     loadSearchResult: PropTypes.func.isRequired,
     searchQuery: PropTypes.string.isRequired,
     searchPage: PropTypes.number
-  }
+  };
 
   static STATUS = {
     LOADING: 0,
     LOADING_MORE: 1,
     NORESULTS: 2,
     LOADED: 3
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -60,10 +66,7 @@ class LibrarySearchPage extends React.Component {
 
   onDidMoreResults() {
     this._moreItems = this._moreItems.concat(this.props.result.items);
-    this.props.searchLibrary(
-      this.props.searchQuery,
-      this.props.result.page + 1
-    );
+    this.props.searchLibrary(this.props.searchQuery, this.props.result.page + 1);
   }
 
   hasMoreResults() {
@@ -72,7 +75,7 @@ class LibrarySearchPage extends React.Component {
     } else if (!this.props.result) {
       return false;
     }
-    return (this.props.result.page * this.props.result.perpage) < this.props.result.total;
+    return this.props.result.page * this.props.result.perpage < this.props.result.total;
   }
 
   getStatus() {
@@ -103,53 +106,72 @@ class LibrarySearchPage extends React.Component {
     }
 
     return (
-      <div className='page-container'>
-        <LibrarySearchForm searchLibrary={ this.props.searchLibrary } defaultSearch={ this.props.searchQuery } />
-        { totalResults > 0 && (
-          <h1>Libraries <Badge overflowCount={ 100000 } count={ totalResults } /></h1>
+      <div className="page-container">
+        <LibrarySearchForm
+          searchLibrary={this.props.searchLibrary}
+          defaultSearch={this.props.searchQuery}
+        />
+        {totalResults > 0 && (
+          <h1>
+            Libraries <Badge overflowCount={100000} count={totalResults} />
+          </h1>
         )}
-        { status === LibrarySearchPage.STATUS.LOADING &&
-           <div className='text-center'>
-            <Spin tip='Loading...' size='large' />
-          </div> }
-        { status === LibrarySearchPage.STATUS.NORESULTS &&
-          <ul className='background-message text-center'>
-            <li>
-              No Results
-            </li>
-          </ul> }
-        <div className='block'>
-          { items.map(item => (
-              <LibrarySearchCard key={ item.id }
-                item={ item }
-                searchLibrary={ this.props.searchLibrary }
-                showLibrary={ this.props.showLibrary } />
-            )) }
+        {status === LibrarySearchPage.STATUS.LOADING && (
+          <div className="text-center">
+            <Spin tip="Loading..." size="large" />
+          </div>
+        )}
+        {status === LibrarySearchPage.STATUS.NORESULTS && (
+          <ul className="background-message text-center">
+            <li>No Results</li>
+          </ul>
+        )}
+        <div className="block">
+          {items.map(item => (
+            <LibrarySearchCard
+              key={item.id}
+              item={item}
+              searchLibrary={this.props.searchLibrary}
+              showLibrary={this.props.showLibrary}
+            />
+          ))}
         </div>
-        { this.hasMoreResults() &&
-          <div className='block text-center'>
-            <Button onClick={ ::this.onDidMoreResults } loading={ status === LibrarySearchPage.STATUS.LOADING_MORE }>
+        {this.hasMoreResults() && (
+          <div className="block text-center">
+            <Button
+              onClick={::this.onDidMoreResults}
+              loading={status === LibrarySearchPage.STATUS.LOADING_MORE}
+            >
               More...
             </Button>
-          </div> }
+          </div>
+        )}
       </div>
     );
   }
-
 }
 
 // Redux
 
 function mapStateToProps(state, ownProps) {
   return {
-    result: selectSearchResult(state, ownProps.location.state.query, ownProps.location.state.page),
+    result: selectSearchResult(
+      state,
+      ownProps.location.state.query,
+      ownProps.location.state.page
+    ),
     searchQuery: ownProps.location.state.query,
     searchPage: ownProps.location.state.page,
-    searchLibrary: (query, page) => goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest => goTo(ownProps.history, '/libraries/registry/show', {
-      idOrManifest
-    })
+    searchLibrary: (query, page) =>
+      goTo(ownProps.history, '/libraries/registry/search', { query, page }),
+    showLibrary: idOrManifest =>
+      goTo(ownProps.history, '/libraries/registry/show', {
+        idOrManifest
+      })
   };
 }
 
-export default connect(mapStateToProps, actions)(LibrarySearchPage);
+export default connect(
+  mapStateToProps,
+  actions
+)(LibrarySearchPage);

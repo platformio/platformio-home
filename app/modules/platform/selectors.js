@@ -1,16 +1,23 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import * as helpers from '../core/helpers';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
 import { selectInputValue } from '../../store/selectors';
-
 
 // Data Filters
 export const BOARDS_INPUT_FILTER_KEY = 'boardsFilter';
@@ -88,7 +95,10 @@ export function expandFrameworksOrPlatforms(state, what, items) {
   if (!items.length || typeof items[0] !== 'string') {
     return items;
   }
-  const data = (what === 'platforms' ? selectRegistryPlatforms(state) : selectRegistryFrameworks(state)) || [];
+  const data =
+    (what === 'platforms'
+      ? selectRegistryPlatforms(state)
+      : selectRegistryFrameworks(state)) || [];
   if (items.length && items[0] === '*') {
     return data.map(item => {
       return {
@@ -139,8 +149,14 @@ export function selectNormalizedBoards(state) {
   }
   return items.map(item => {
     const newItem = Object.assign({}, item);
-    newItem.platform = expandFrameworksOrPlatforms(state, 'platforms', [newItem.platform])[0];
-    newItem.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', newItem.frameworks);
+    newItem.platform = expandFrameworksOrPlatforms(state, 'platforms', [
+      newItem.platform
+    ])[0];
+    newItem.frameworks = expandFrameworksOrPlatforms(
+      state,
+      'frameworks',
+      newItem.frameworks
+    );
     return newItem;
   });
 }
@@ -154,7 +170,11 @@ export function selectVisibleEmbeddedPlatforms(state) {
   items = items.filter(item => !item.forDesktop);
   items = items.map(item => {
     const newItem = Object.assign({}, item);
-    newItem.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', newItem.frameworks);
+    newItem.frameworks = expandFrameworksOrPlatforms(
+      state,
+      'frameworks',
+      newItem.frameworks
+    );
     return newItem;
   });
   if (!filterValue) {
@@ -174,7 +194,11 @@ export function selectVisibleDesktopPlatforms(state) {
   items = items.filter(item => item.forDesktop);
   items = items.map(item => {
     const newItem = Object.assign({}, item);
-    newItem.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', newItem.frameworks);
+    newItem.frameworks = expandFrameworksOrPlatforms(
+      state,
+      'frameworks',
+      newItem.frameworks
+    );
     return newItem;
   });
   if (!filterValue) {
@@ -208,17 +232,23 @@ export function selectPlatformData(state, name) {
   if (!data.boards) {
     const boards = selectBoards(state);
     if (boards) {
-      data.boards = boards.filter(
-        item => item.platform === data.name
-      ).map(item => Object.assign({}, item));
+      data.boards = boards
+        .filter(item => item.platform === data.name)
+        .map(item => Object.assign({}, item));
     }
   }
 
   // make titled frameworks and platforms
   if (data.boards) {
     data.boards = data.boards.map(item => {
-      item.platform = expandFrameworksOrPlatforms(state, 'platforms', [item.platform])[0];
-      item.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', item.frameworks);
+      item.platform = expandFrameworksOrPlatforms(state, 'platforms', [
+        item.platform
+      ])[0];
+      item.frameworks = expandFrameworksOrPlatforms(
+        state,
+        'frameworks',
+        item.frameworks
+      );
       return item;
     });
   }
@@ -239,13 +269,19 @@ export function selectFrameworkData(state, name) {
 
   const boards = selectBoards(state);
   if (boards) {
-    data.boards = boards.filter(
-      item => item.frameworks.includes(data.name)
-    ).map(item => Object.assign({}, item));
+    data.boards = boards
+      .filter(item => item.frameworks.includes(data.name))
+      .map(item => Object.assign({}, item));
     // make titled frameworks and platforms
     data.boards = data.boards.map(item => {
-      item.platform = expandFrameworksOrPlatforms(state, 'platforms', [item.platform])[0];
-      item.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', item.frameworks);
+      item.platform = expandFrameworksOrPlatforms(state, 'platforms', [
+        item.platform
+      ])[0];
+      item.frameworks = expandFrameworksOrPlatforms(
+        state,
+        'frameworks',
+        item.frameworks
+      );
       return item;
     });
   }
@@ -261,7 +297,11 @@ export function selectVisibleInstalledPlatforms(state) {
   }
   items = items.map(item => {
     const newItem = Object.assign({}, item);
-    newItem.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', newItem.frameworks);
+    newItem.frameworks = expandFrameworksOrPlatforms(
+      state,
+      'frameworks',
+      newItem.frameworks
+    );
     return newItem;
   });
   if (!filterValue) {
@@ -280,7 +320,11 @@ export function selectVisiblePlatformUpdates(state) {
   }
   items = items.map(item => {
     const newItem = Object.assign({}, item);
-    newItem.frameworks = expandFrameworksOrPlatforms(state, 'frameworks', newItem.frameworks);
+    newItem.frameworks = expandFrameworksOrPlatforms(
+      state,
+      'frameworks',
+      newItem.frameworks
+    );
     return newItem;
   });
   if (!filterValue) {
@@ -299,7 +343,11 @@ export function selectVisibleFrameworks(state) {
   }
   items = items.map(item => {
     const newItem = Object.assign({}, item);
-    newItem.platforms = expandFrameworksOrPlatforms(state, 'platforms', newItem.platforms);
+    newItem.platforms = expandFrameworksOrPlatforms(
+      state,
+      'platforms',
+      newItem.platforms
+    );
     return newItem;
   });
   if (!filterValue) {

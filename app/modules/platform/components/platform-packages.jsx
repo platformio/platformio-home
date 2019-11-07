@@ -1,9 +1,17 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { Alert, Icon, Table } from 'antd';
@@ -12,23 +20,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { cmpSort } from '../../core/helpers';
 
-
 export default class PlatformDetailPackages extends React.Component {
-
   static propTypes = {
-    items: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string,
-      type: PropTypes.string,
-      requirements: PropTypes.string,
-      version: PropTypes.string,
-      originalVersion: PropTypes.string,
-      url: PropTypes.string,
-      optional: PropTypes.bool
-    })),
+    items: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        type: PropTypes.string,
+        requirements: PropTypes.string,
+        version: PropTypes.string,
+        originalVersion: PropTypes.string,
+        url: PropTypes.string,
+        optional: PropTypes.bool
+      })
+    ),
     osOpenUrl: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired
-  }
+  };
 
   getTableColumns(extended) {
     let columns = [
@@ -36,12 +44,13 @@ export default class PlatformDetailPackages extends React.Component {
         title: 'Name',
         key: 'name',
         render: (_, record) => (
-          <span>{ record.url ? (
-        <a onClick={ () => this.props.osOpenUrl(record.url) }>
-          { record.name }
-        </a>
-        ) : (
-        record.name) }</span>
+          <span>
+            {record.url ? (
+              <a onClick={() => this.props.osOpenUrl(record.url)}>{record.name}</a>
+            ) : (
+              record.name
+            )}
+          </span>
         )
       }
     ];
@@ -54,7 +63,7 @@ export default class PlatformDetailPackages extends React.Component {
         {
           title: 'Optional',
           key: 'optional',
-          render: (_, record) => <Icon type={ record.optional ? 'check' : '' } />
+          render: (_, record) => <Icon type={record.optional ? 'check' : ''} />
         },
         {
           title: 'Requirements',
@@ -64,9 +73,10 @@ export default class PlatformDetailPackages extends React.Component {
           title: 'Installed',
           key: 'installed',
           render: (_, record) => (
-            <span>{ record.version } { record.originalVersion && (
-                           <span>{ ' ' }({ record.originalVersion })</span>
-                           ) }</span>
+            <span>
+              {record.version}{' '}
+              {record.originalVersion && <span> ({record.originalVersion})</span>}
+            </span>
           )
         }
       ]);
@@ -88,24 +98,36 @@ export default class PlatformDetailPackages extends React.Component {
     const extended = this.props.items[0].requirements ? true : false;
     return (
       <div>
-        <Alert className='block' showIcon message={ this.renderNotifications(extended) } />
-        { this.renderTable(extended) }
-      </div>);
+        <Alert
+          className="block"
+          showIcon
+          message={this.renderNotifications(extended)}
+        />
+        {this.renderTable(extended)}
+      </div>
+    );
   }
 
   renderNotifications(extended) {
     return (
       <div>
-        { extended ? (
+        {extended ? (
           <div>
-           Optional packages will be installed automatically depending on a build environment.
+            Optional packages will be installed automatically depending on a build
+            environment.
           </div>
-          ) : (
+        ) : (
           <div>
-           More detailed information about package requirements and installed versions is available for the <a onClick={ () => this.props.showInstalledPlatforms() }>installed platforms</a>.
+            More detailed information about package requirements and installed versions
+            is available for the{' '}
+            <a onClick={() => this.props.showInstalledPlatforms()}>
+              installed platforms
+            </a>
+            .
           </div>
-          ) }
-      </div>);
+        )}
+      </div>
+    );
   }
 
   renderTable(extended) {
@@ -113,23 +135,26 @@ export default class PlatformDetailPackages extends React.Component {
     data = data.sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()));
     if (extended) {
       return (
-        <Table rowKey='name'
-          pagination={ false }
-          dataSource={ data }
-          columns={ this.getTableColumns(extended) }
-          expandedRowRender={ ::this.renderExpandedRow } />);
+        <Table
+          rowKey="name"
+          pagination={false}
+          dataSource={data}
+          columns={this.getTableColumns(extended)}
+          expandedRowRender={::this.renderExpandedRow}
+        />
+      );
     }
-    return <Table rowKey='name'
-             pagination={ false }
-             dataSource={ data }
-             columns={ this.getTableColumns(extended) } />;
+    return (
+      <Table
+        rowKey="name"
+        pagination={false}
+        dataSource={data}
+        columns={this.getTableColumns(extended)}
+      />
+    );
   }
 
   renderExpandedRow(record) {
-    return (
-      <div>
-        { record.description }
-      </div>
-      );
+    return <div>{record.description}</div>;
   }
 }

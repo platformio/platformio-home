@@ -1,9 +1,17 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import PropTypes from 'prop-types';
@@ -13,35 +21,47 @@ import { connect } from 'react-redux';
 import { osOpenUrl } from '../../core/actions';
 import { selectStorageItem } from '../../../store/selectors';
 
-
 class PioVersions extends React.Component {
-
   static propTypes = {
     coreVersion: PropTypes.string,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   renderCoreVersion() {
     if (this.props.coreVersion) {
-      return <code>{ this.props.coreVersion }</code>;
+      return <code>{this.props.coreVersion}</code>;
     }
-    return (
-      <Spin size='small' />
-    );
+    return <Spin size="small" />;
   }
 
   render() {
     return (
-      <div className='versions'>
-        <ul className='list-inline'>
+      <div className="versions">
+        <ul className="list-inline">
           <li>
-            Home <code>{ APP_VERSION }</code>
+            Home{' '}
+            <a
+              onClick={() =>
+                this.props.osOpenUrl(
+                  'https://github.com/platformio/platformio-home/releases'
+                )
+              }
+            >
+              <code>{APP_VERSION}</code>
+            </a>
           </li>
+          <li>·</li>
           <li>
-            ·
-          </li>
-          <li>
-            Core <a onClick={ () => this.props.osOpenUrl('https://github.com/platformio/platformio/blob/develop/HISTORY.rst') }>{ this.renderCoreVersion() }</a>
+            Core{' '}
+            <a
+              onClick={() =>
+                this.props.osOpenUrl(
+                  'https://github.com/platformio/platformio/blob/develop/HISTORY.rst'
+                )
+              }
+            >
+              {this.renderCoreVersion()}
+            </a>
           </li>
         </ul>
       </div>
@@ -57,4 +77,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { osOpenUrl })(PioVersions);
+export default connect(
+  mapStateToProps,
+  { osOpenUrl }
+)(PioVersions);

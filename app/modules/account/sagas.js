@@ -1,9 +1,17 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /* eslint-disable no-constant-condition */
@@ -19,14 +27,14 @@ import { apiFetchData } from '../../store/api';
 import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
 
-
 const CORE_API_EXCEPTION_PREFIX = '[API] ';
-
 
 function showAPIErrorMessage(output) {
   output = output.replace(/[\\r\\n]+\'/, '').trim();
   const pos = output.indexOf(CORE_API_EXCEPTION_PREFIX);
-  return message.error(pos !== -1 ? output.substr(pos + CORE_API_EXCEPTION_PREFIX.length) : output);
+  return message.error(
+    pos !== -1 ? output.substr(pos + CORE_API_EXCEPTION_PREFIX.length) : output
+  );
 }
 
 function* watchLoadAccountInfo() {
@@ -39,11 +47,18 @@ function* watchLoadAccountInfo() {
     try {
       data = yield call(apiFetchData, {
         query: 'core.call',
-        params: [['account', 'show', '--json-output', ...(extended ? [] : ['--offline'])]]        
+        params: [
+          ['account', 'show', '--json-output', ...(extended ? [] : ['--offline'])]
+        ]
       });
     } catch (err) {
-      if (!(err instanceof jsonrpc.JsonRpcError && err.data.includes('`pio account login`'))) {
-        yield put(notifyError('Could not load PIO Account information', err));        
+      if (
+        !(
+          err instanceof jsonrpc.JsonRpcError &&
+          err.data.includes('`pio account login`')
+        )
+      ) {
+        yield put(notifyError('Could not load PIO Account information', err));
       }
     }
     yield put(updateEntity('accountInfo', data || {}));
@@ -51,7 +66,7 @@ function* watchLoadAccountInfo() {
 }
 
 function* watchLoginAccount() {
-  yield takeLatest(actions.LOGIN_ACCOUNT, function*({username, password, onEnd}) {
+  yield takeLatest(actions.LOGIN_ACCOUNT, function*({ username, password, onEnd }) {
     try {
       yield call(apiFetchData, {
         query: 'core.call',
@@ -89,14 +104,19 @@ function* watchLogoutAccount() {
 }
 
 function* watchRegisterAccount() {
-  yield takeLatest(actions.REGISTER_ACCOUNT, function*({username, onEnd}) {
+  yield takeLatest(actions.REGISTER_ACCOUNT, function*({ username, onEnd }) {
     let err = null;
     try {
       yield call(apiFetchData, {
         query: 'core.call',
         params: [['account', 'register', '--username', username]]
       });
-      yield put(notifySuccess('Congrats!', 'Please check your email for the further instructions.'));
+      yield put(
+        notifySuccess(
+          'Congrats!',
+          'Please check your email for the further instructions.'
+        )
+      );
     } catch (err_) {
       err = err_;
       if (err && err.data) {
@@ -112,14 +132,19 @@ function* watchRegisterAccount() {
 }
 
 function* watchForgotAccount() {
-  yield takeLatest(actions.FORGOT_ACCOUNT, function*({username, onEnd}) {
+  yield takeLatest(actions.FORGOT_ACCOUNT, function*({ username, onEnd }) {
     let err = null;
     try {
       yield call(apiFetchData, {
         query: 'core.call',
         params: [['account', 'forgot', '--username', username]]
       });
-      yield put(notifySuccess('Congrats!', 'If this account is registered, we will send the further instructions to your email.'));
+      yield put(
+        notifySuccess(
+          'Congrats!',
+          'If this account is registered, we will send the further instructions to your email.'
+        )
+      );
     } catch (err_) {
       err = err_;
       if (err && err.data) {
@@ -135,12 +160,25 @@ function* watchForgotAccount() {
 }
 
 function* watchPasswordAccount() {
-  yield takeLatest(actions.PASSWORD_ACCOUNT, function*({oldPassword, newPassword, onEnd}) {
+  yield takeLatest(actions.PASSWORD_ACCOUNT, function*({
+    oldPassword,
+    newPassword,
+    onEnd
+  }) {
     let err = null;
     try {
       yield call(apiFetchData, {
         query: 'core.call',
-        params: [['account', 'password', '--old-password', oldPassword, '--new-password', newPassword]]
+        params: [
+          [
+            'account',
+            'password',
+            '--old-password',
+            oldPassword,
+            '--new-password',
+            newPassword
+          ]
+        ]
       });
       yield put(notifySuccess('Congrats!', 'Successfully updated password!'));
     } catch (err_) {
@@ -158,7 +196,11 @@ function* watchPasswordAccount() {
 }
 
 function* watchTokenAccount() {
-  yield takeLatest(actions.SHOW_ACCOUNT_TOKEN, function*({password, regenerate, onEnd}) {
+  yield takeLatest(actions.SHOW_ACCOUNT_TOKEN, function*({
+    password,
+    regenerate,
+    onEnd
+  }) {
     try {
       const args = ['account', 'token', '--json-output', '--password', password];
       if (regenerate) {

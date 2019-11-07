@@ -1,18 +1,40 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /* eslint-disable no-constant-condition, no-case-declarations */
 
 import * as path from '../modules/core/path';
 
-import { HIDE_PROJECT, IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, OPEN_PROJECT } from '../modules/project/actions';
-import { INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY } from '../modules/library/actions';
-import { INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM } from '../modules/platform/actions';
+import {
+  HIDE_PROJECT,
+  IMPORT_ARDUINO_PROJECT,
+  IMPORT_PROJECT,
+  INIT_PROJECT,
+  OPEN_PROJECT
+} from '../modules/project/actions';
+import {
+  INSTALL_LIBRARY,
+  UNINSTALL_LIBRARY,
+  UPDATE_LIBRARY
+} from '../modules/library/actions';
+import {
+  INSTALL_PLATFORM,
+  UNINSTALL_PLATFORM,
+  UPDATE_PLATFORM
+} from '../modules/platform/actions';
 import { OS_OPEN_URL, SHOW_AT_STARTUP } from '../modules/core/actions';
 import { select, takeEvery, takeLatest } from 'redux-saga/effects';
 
@@ -24,7 +46,12 @@ import { selectStorage } from './selectors';
 function* watchActivateGA() {
   yield takeLatest(STORE_READY, function*() {
     const storage = yield select(selectStorage);
-    if (!storage.cid || (storage.coreSettings && storage.coreSettings.enable_telemetry && !storage.coreSettings.enable_telemetry.value)) {
+    if (
+      !storage.cid ||
+      (storage.coreSettings &&
+        storage.coreSettings.enable_telemetry &&
+        !storage.coreSettings.enable_telemetry.value)
+    ) {
       return;
     }
     ReactGA.initialize('UA-1768265-9', {
@@ -63,14 +90,18 @@ function* watchActivateGA() {
 
 function* watchPackageActions() {
   const actions = [
-    INSTALL_LIBRARY, UNINSTALL_LIBRARY, UPDATE_LIBRARY,
-    INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM];
-  yield takeEvery(actions, function (action) {
+    INSTALL_LIBRARY,
+    UNINSTALL_LIBRARY,
+    UPDATE_LIBRARY,
+    INSTALL_PLATFORM,
+    UNINSTALL_PLATFORM,
+    UPDATE_PLATFORM
+  ];
+  yield takeEvery(actions, function(action) {
     let label = '';
     if (action.type.endsWith('_LIBRARY')) {
       label = action.lib || (action.pkgDir ? path.basename(action.pkgDir) : '');
-    }
-    else if (action.type.endsWith('_PLATFORM')) {
+    } else if (action.type.endsWith('_PLATFORM')) {
       label = action.platform || (action.pkgDir ? path.basename(action.pkgDir) : '');
     }
     ReactGA.event({
@@ -82,17 +113,23 @@ function* watchPackageActions() {
 }
 
 function* watchProjectActions() {
-  yield takeEvery([IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT], function(action) {
-    let label = action.board || undefined;
-    if (!label && action.projectDir) {
-      label = path.join(path.basename(path.dirname(action.projectDir)), path.basename(action.projectDir));
+  yield takeEvery(
+    [IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT],
+    function(action) {
+      let label = action.board || undefined;
+      if (!label && action.projectDir) {
+        label = path.join(
+          path.basename(path.dirname(action.projectDir)),
+          path.basename(action.projectDir)
+        );
+      }
+      ReactGA.event({
+        category: 'Project',
+        action: action.type.toLowerCase(),
+        label
+      });
     }
-    ReactGA.event({
-      category: 'Project',
-      action: action.type.toLowerCase(),
-      label
-    });
-  });
+  );
 }
 
 function* watchOutboundLinks() {

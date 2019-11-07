@@ -1,9 +1,17 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import * as actions from '../actions';
@@ -20,9 +28,7 @@ import { connect } from 'react-redux';
 import { osOpenUrl } from '../../core/actions';
 import { selectStorageItem } from '../../../store/selectors';
 
-
 class ProjectNewModal extends React.Component {
-
   static propTypes = {
     form: PropTypes.object.isRequired,
     visible: PropTypes.bool.isRequired,
@@ -34,7 +40,7 @@ class ProjectNewModal extends React.Component {
     openProject: PropTypes.func.isRequired,
     initProject: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -74,7 +80,6 @@ class ProjectNewModal extends React.Component {
     });
   }
 
-
   onDidFinish() {
     this.props.form.resetFields(['isCustomLocation']);
     this.props.form.validateFields((err, values) => {
@@ -87,7 +92,12 @@ class ProjectNewModal extends React.Component {
       this.props.initProject(
         values.board.id,
         this.state.selectedFramework,
-        path.join(this.state.useDefaultLocation ? this.props.projectsDir : this.state.projectLocation, values.name),
+        path.join(
+          this.state.useDefaultLocation
+            ? this.props.projectsDir
+            : this.state.projectLocation,
+          values.name
+        ),
         (err, location) => {
           this.setState({
             inProgress: false
@@ -111,94 +121,116 @@ class ProjectNewModal extends React.Component {
 
   render() {
     return (
-      <Modal visible={ this.props.visible }
-        confirmLoading={ this.state.inProgress }
-        width={ 600 }
-        title='Project Wizard'
-        okText={ this.state.inProgress ? 'Please wait...' : 'Finish' }
-        onOk={ ::this.onDidFinish }
-        onCancel={ ::this.onDidCancel }>
-        { this.renderBody() }
+      <Modal
+        visible={this.props.visible}
+        confirmLoading={this.state.inProgress}
+        width={600}
+        title="Project Wizard"
+        okText={this.state.inProgress ? 'Please wait...' : 'Finish'}
+        onOk={::this.onDidFinish}
+        onCancel={::this.onDidCancel}
+      >
+        {this.renderBody()}
       </Modal>
-      );
+    );
   }
 
   renderBody() {
     if (this.state.inProgress) {
-      return <ProjectInitCarousel osOpenUrl={ this.props.osOpenUrl } />;
+      return <ProjectInitCarousel osOpenUrl={this.props.osOpenUrl} />;
     }
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     return (
       <Form hideRequiredMark>
-        <div className='block'>
-          This wizard allows you to <b>create new</b> PlatformIO project or <b>update existing</b>. In the last case, you need to uncheck &quot;Use default location&quot; and specify
-          path to existing project.
+        <div className="block">
+          This wizard allows you to <b>create new</b> PlatformIO project or{' '}
+          <b>update existing</b>. In the last case, you need to uncheck &quot;Use
+          default location&quot; and specify path to existing project.
         </div>
-        <Form.Item label='Name' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          { getFieldDecorator('name', {
-              rules: [{
+        <Form.Item label="Name" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+          {getFieldDecorator('name', {
+            rules: [
+              {
                 required: true,
                 whitespace: true,
                 pattern: /^[a-z\d\_\-\. ]+$/i,
                 message: 'Please input a valid name for project folder! [a-z0-9_-. ]'
-              }],
-            })(
-              <Input placeholder='Project name' />
-            ) }
+              }
+            ]
+          })(<Input placeholder="Project name" />)}
         </Form.Item>
-        <Form.Item label='Board' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          { getFieldDecorator('board', {
-              rules: [{
+        <Form.Item label="Board" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+          {getFieldDecorator('board', {
+            rules: [
+              {
                 required: true,
                 message: 'Please select a board!'
-              }]
-            })(
-              <BoardSelect onChange={ ::this.onDidBoard } />
-            ) }
+              }
+            ]
+          })(<BoardSelect onChange={::this.onDidBoard} />)}
         </Form.Item>
-        <Form.Item label='Framework' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          <Select value={ this.state.selectedFramework }
-            style={ { width: '100%' } }
-            size='large'
-            disabled={ !this.state.selectedFramework }
-            onChange={ ::this.onDidFramework }>
-            { this.state.frameworks.map(item => (
-                <Select.Option key={ item.name } value={ item.name } title={ item.title }>
-                  { item.title }
-                </Select.Option>
-              )) }
+        <Form.Item label="Framework" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+          <Select
+            value={this.state.selectedFramework}
+            style={{ width: '100%' }}
+            size="large"
+            disabled={!this.state.selectedFramework}
+            onChange={::this.onDidFramework}
+          >
+            {this.state.frameworks.map(item => (
+              <Select.Option key={item.name} value={item.name} title={item.title}>
+                {item.title}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
-        <Form.Item label='Location' labelCol={ { span: 4 } } wrapperCol={ { span: 20 } }>
-          { getFieldDecorator('isCustomLocation', {
-              rules: [{
-                validator: (rule, value, callback) => setTimeout(() => callback((this.state.useDefaultLocation || this.state.projectLocation) ? undefined : true), 200),
+        <Form.Item label="Location" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+          {getFieldDecorator('isCustomLocation', {
+            rules: [
+              {
+                validator: (rule, value, callback) =>
+                  setTimeout(
+                    () =>
+                      callback(
+                        this.state.useDefaultLocation || this.state.projectLocation
+                          ? undefined
+                          : true
+                      ),
+                    200
+                  ),
                 message: 'Please select a custom project location!'
-              }]
-            })(
-              <Checkbox onChange={ ::this.onDidUseDefaultLocation } checked={ this.state.useDefaultLocation }>
-                Use default location
-                <Tooltip title={ `Default location for PlatformIO Projects is: "${this.props.projectsDir}"` } overlayStyle={ { wordBreak: 'break-all' } }>
-                  <Icon type='question-circle' style={ { marginLeft: '5px' } } />
-                </Tooltip>
-              </Checkbox>
-            ) }
+              }
+            ]
+          })(
+            <Checkbox
+              onChange={::this.onDidUseDefaultLocation}
+              checked={this.state.useDefaultLocation}
+            >
+              Use default location
+              <Tooltip
+                title={`Default location for PlatformIO Projects is: "${this.props.projectsDir}"`}
+                overlayStyle={{ wordBreak: 'break-all' }}
+              >
+                <Icon type="question-circle" style={{ marginLeft: '5px' }} />
+              </Tooltip>
+            </Checkbox>
+          )}
         </Form.Item>
-        { !this.state.useDefaultLocation && this.renderExplorer() }
-      </Form> );
+        {!this.state.useDefaultLocation && this.renderExplorer()}
+      </Form>
+    );
   }
 
   renderExplorer() {
     return (
       <div>
-        <div style={ { marginBottom: '5px' } }>
+        <div style={{ marginBottom: '5px' }}>
           Choose a location where we will create project folder:
         </div>
-        <FileExplorer ask='directory' onSelect={ ::this.onDidProjectLocation } />
+        <FileExplorer ask="directory" onSelect={::this.onDidProjectLocation} />
       </div>
-      );
+    );
   }
-
 }
 
 // Redux
@@ -209,7 +241,10 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {
-  ...actions,
-  osOpenUrl
-})(Form.create()(ProjectNewModal));
+export default connect(
+  mapStateToProps,
+  {
+    ...actions,
+    osOpenUrl
+  }
+)(Form.create()(ProjectNewModal));

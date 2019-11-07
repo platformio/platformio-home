@@ -1,17 +1,28 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { LibraryStorage, filterStorageItems } from './storage';
-import { expandFrameworksOrPlatforms, selectRegistryFrameworks, selectRegistryPlatforms } from '../platform/selectors';
+import {
+  expandFrameworksOrPlatforms,
+  selectRegistryFrameworks,
+  selectRegistryPlatforms
+} from '../platform/selectors';
 import { selectInputValue } from '../../store/selectors';
 
 import { selectProjects } from '../project/selectors';
-
 
 // Data Filters
 export const BUILTIN_INPUT_FILTER_KEY = 'libBuiltinFilter';
@@ -29,7 +40,6 @@ export function selectInstalledFilter(state) {
 export function selectUpdatesFilter(state) {
   return selectInputValue(state, UPDATES_INPUT_FILTER_KEY);
 }
-
 
 export function selectStoreSearchKey(query, page = 0) {
   return [query, page].join();
@@ -74,7 +84,11 @@ export function selectLibraryData(state, idOrManifest) {
   const data = Object.assign({}, idOrManifest);
   // fix platforms and frameworks
   for (const key of ['platforms', 'frameworks']) {
-    if (!data.hasOwnProperty(key) || data[key].length === 0 || (typeof data[key][0] === 'object' && data[key][0].name)) {
+    if (
+      !data[key] ||
+      data[key].length === 0 ||
+      (typeof data[key][0] === 'object' && data[key][0].name)
+    ) {
       continue;
     }
     data[key] = expandFrameworksOrPlatforms(state, key, data[key]);
@@ -87,9 +101,7 @@ export function selectLibraryData(state, idOrManifest) {
 
   // missed fields
   for (const key of ['authors', 'frameworks', 'platforms', 'keywords']) {
-    if (!data.hasOwnProperty(key)) {
-      data[key] = [];
-    }
+    data[key] = data[key] || [];
   }
   return data;
 }
@@ -104,7 +116,9 @@ export function selectVisibletBuiltinLibs(state) {
   if (!items) {
     return null;
   }
-  items = items.filter(data => data.items.length).map(data => new LibraryStorage(data.name, data.path, data.items));
+  items = items
+    .filter(data => data.items.length)
+    .map(data => new LibraryStorage(data.name, data.path, data.items));
   if (!filterValue) {
     return items;
   }
@@ -117,7 +131,9 @@ export function selectLibraryStorages(state) {
   projects.forEach(project => {
     if (project.envLibStorages) {
       project.envLibStorages.forEach(storage => {
-        items.push(new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path));
+        items.push(
+          new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path)
+        );
       });
     }
     project.extraLibStorages.forEach(storage => {
@@ -132,7 +148,7 @@ export function selectLibraryStorages(state) {
 export function selectInstalledLibs(state) {
   return selectLibraryStorages(state).map(storage => {
     const key = `installedLibs${storage.initialPath}`;
-    if (state.entities.hasOwnProperty(key)) {
+    if (state.entities[key]) {
       storage.items = state.entities[key];
     }
     storage.actions = LibraryStorage.ACTION_REVEAL | LibraryStorage.ACTION_UNINSTALL;
@@ -154,7 +170,7 @@ export function selectVisibleInstalledLibs(state) {
 export function selectLibUpdates(state) {
   return selectLibraryStorages(state).map(storage => {
     const key = `libUpdates${storage.initialPath}`;
-    if (state.entities.hasOwnProperty(key)) {
+    if (state.entities[key]) {
       storage.items = state.entities[key];
     }
     storage.actions = LibraryStorage.ACTION_REVEAL | LibraryStorage.ACTION_UPDATE;

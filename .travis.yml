@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - 10
+
+script:
+  - npm run lint
+  - npm run build
+
+notifications:
+  email: false
+
+  slack:
+    rooms:
+      secure: lbyfXNJ/qElXhOO58x9XGJno+AWOV96w1JlgMf1n6jnYvVn9sk9PAFzMEeqQzt973jZC9Ur6zu3abXvND4mxf4y/b/ocn0YmA+TwQRrj6/v+s2EUVzQXdlUzSlXScYhUDJKASDL0bA6dlX+gWDZ4J776vc5XeFnAzVxa6UltoxrpRp5xVzohcKXb+FKMBuY6gARM4VsUYnAH7r4UX4wrTyATj3Ei4+w/bnmNDGhlpqRsQUebmKW8+64vPGF3pq/zAG29xC96Z0O03KAC/4LEryoWCccmDdwJ2fzueR0qviCuf2mzHYFOzhaWQap9RN0JaofpgvXyIwxB5QiuSxDjQMO06iBbAbsSWE0Ry/q1akJVB1LdM0yeSApmT0roHEUEMd93I3Pw1YizTAC8d7EAx1wyUxycvy7t8DZCgstENhw8PhpJxJ0wMw2fJm+CThqrXzoCjpp5l9csVN1okN0v73ttazOZY6880N4MKpxi9q9zkftrZCTVO9hTQqe7XBdp+9K3Mts2k/0foELmB/jyHTLJGaMze5pbwtj8RriuwcNOzx0NHrQpOFco6JGMe5wlunUKYGdg8Hc1zGCMAjwYPRYJjmjGYRll2VwCqO+UcpCsxS921mFI2e+bFBdULCsjv+VQ6B2qJeuSaQimUtGBDL5jRp/MDMb44edZtTpJjN0=
+    on_failure: always
+    on_success: change

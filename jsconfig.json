@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "allowSyntheticDefaultImports": false,
+    "baseUrl": "./",
+    "jsx": "react",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@core/*": ["app/core/*"],
+      "@inspect/*": ["app/modules/inspect/*"],
+      "@project/*": ["app/modules/project/*"],
+      "@store/*": ["app/store/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

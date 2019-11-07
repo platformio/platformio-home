@@ -1,10 +1,25 @@
 /**
- * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
- * All rights reserved.
+ * Copyright (c) 2014-present PlatformIO <contact@platformio.org>
  *
- * This source code is licensed under the license found in the LICENSE file in
- * the root directory of this source tree.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+h1 {
+  font-size: 1.5em;
+}
+h2 {
+  font-size: 1.3em;
+}
 
 h1 small,
 h2 small,
@@ -26,7 +41,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
   font-size: 1em;
 }
 
@@ -45,7 +60,7 @@ kbd {
   background-color: @tag-kbd-bg;
   border-radius: 3px;
   -webkit-box-shadow: inset 0 -1px 0 @disabled-color;
-          box-shadow: inset 0 -1px 0 @disabled-color;
+  box-shadow: inset 0 -1px 0 @disabled-color;
 }
 
 dl {
@@ -194,7 +209,7 @@ ul.list-styled {
       font-weight: normal;
       font-size: 75%;
       line-height: 1;
-      color: #777;
+      color: @text-color;
     }
   }
 

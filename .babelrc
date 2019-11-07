@@ -1,11 +1,11 @@
 {
-  "presets": ["env", "react"],
+  "presets": ["@babel/env", "@babel/react"],
   "plugins": [
     ["import", {"libraryName": "antd", "libraryDirectory": "es", "style": true}],
-    "transform-runtime",
-    "transform-class-properties",
-    "transform-function-bind",
-    "transform-object-rest-spread",
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-function-bind",
+    "@babel/plugin-proposal-object-rest-spread",
     "react-hot-loader/babel",
     "array-includes"
   ]
