@@ -36,6 +36,12 @@ const routes = [
     component: AccountIndex
   },
   {
+    path: '/inspect',
+    icon: 'monitor',
+    label: 'Inspect',
+    component: InspectPage
+  },
+  {
     path: '/libraries',
     icon: 'book',
     label: 'Libraries',
@@ -58,12 +64,6 @@ const routes = [
     icon: 'usb',
     label: 'Devices',
     component: DevicePage
-  },
-  {
-    path: '/inspect',
-    icon: 'monitor',
-    label: 'Inspect',
-    component: InspectPage
   }
 ];
 
