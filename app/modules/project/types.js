@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { SCOPES, TYPES } from '@project/constants';
+
 import PropTypes from 'prop-types';
 
 export const ProjectType = PropTypes.shape({
@@ -33,3 +35,18 @@ export const ActionType = PropTypes.shape({
   icon: PropTypes.string,
   text: PropTypes.string.isRequired
 });
+
+export const SchemaType = PropTypes.arrayOf(
+  PropTypes.shape({
+    default: PropTypes.any,
+    description: PropTypes.string,
+    group: PropTypes.string,
+    max: PropTypes.number,
+    min: PropTypes.number,
+    name: PropTypes.string.isRequired,
+    multiple: PropTypes.bool,
+    scope: PropTypes.oneOf(SCOPES).isRequired,
+    sysenvvar: PropTypes.string,
+    type: PropTypes.oneOf(TYPES)
+  })
+);

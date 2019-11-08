@@ -16,3 +16,30 @@
 
 export const PROJECT_CONFIG_KEY = 'projectConfig';
 export const CONFIG_SCHEMA_KEY = 'projectConfigSchema';
+
+export const TYPE_TEXT = 'string';
+export const TYPE_CHOICE = 'choice';
+export const TYPE_INT = 'integer';
+export const TYPE_INT_RANGE = 'integer range';
+export const TYPE_BOOL = 'boolean';
+export const TYPE_FILE = 'file';
+
+export const TYPES = Object.freeze([
+  TYPE_TEXT,
+  TYPE_CHOICE,
+  TYPE_INT,
+  TYPE_INT_RANGE,
+  TYPE_BOOL,
+  TYPE_FILE
+]);
+
+export const SCOPE_PLATFORMIO = 'platformio';
+export const SCOPE_ENV = 'env';
+export const SCOPES = Object.freeze([SCOPE_PLATFORMIO, SCOPE_ENV]);
+
+export const SECTION_PLATFORMIO = 'platformio';
+export const SECTION_GLOBAL_ENV = 'env';
+export const SECTION_USER_ENV = 'env:';
+export const SECTION_CUSTOM = 'custom';
+
+export const SECTION_NAME_KEY = '__section';

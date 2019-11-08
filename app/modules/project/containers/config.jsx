@@ -14,107 +14,40 @@
  * limitations under the License.
  */
 
+import { Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
+import { ProjectType, SchemaType } from '@project/types';
 import {
-  Anchor,
-  Button,
-  Checkbox,
-  Col,
-  Dropdown,
-  Form,
-  Icon,
-  Input,
-  InputNumber,
-  Menu,
-  Row,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Tooltip
-} from 'antd';
+  SECTION_CUSTOM,
+  SECTION_GLOBAL_ENV,
+  SECTION_NAME_KEY,
+  SECTION_PLATFORMIO,
+  SECTION_USER_ENV,
+  TYPE_TEXT
+} from '@project/constants';
 import {
   loadConfigSchema,
   loadProjectConfig,
   saveProjectConfig
 } from '@project/actions';
+
 import {
   selectConfigSchema,
   selectProjectConfig,
   selectProjectInfo
 } from '@project/selectors';
 
-import { ConfigFormItem } from '@project/components/config-form-item';
+import { ConfigSectionForm } from '@project/components/config-section';
 import { DraggableTabs } from '@project/components/draggable-tabs';
-import { IS_WINDOWS } from '@app/config';
-import { ProjectType } from '@project/types';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { osOpenUrl } from '@core/actions';
 
-const SECTION_PLATFORMIO = 'platformio';
-const SECTION_GLOBAL_ENV = 'env';
-const SECTION_USER_ENV = 'env:';
-const SECTION_CUSTOM = 'custom';
-
-const SCOPE_PLATFORMIO = 'platformio';
-const SCOPE_ENV = 'env';
-const SCOPES = Object.freeze([SCOPE_PLATFORMIO, SCOPE_ENV]);
-
-const TYPE_TEXT = 'string';
-const TYPE_CHOICE = 'choice';
-const TYPE_INT = 'integer';
-const TYPE_INT_RANGE = 'integer range';
-const TYPE_BOOL = 'boolean';
-const TYPE_FILE = 'file';
-
-const TYPES = Object.freeze([
-  TYPE_TEXT,
-  TYPE_CHOICE,
-  TYPE_INT,
-  TYPE_INT_RANGE,
-  TYPE_BOOL,
-  TYPE_FILE
-]);
-
-function escapeFieldName(x) {
-  return x.replace(/\./g, '@');
-}
-
-function unescapeFieldName(x) {
-  return x.replace(/@/g, '.');
-}
-
-function splitMultipleField(v) {
-  return v.split(/[,\n]/).filter((v, i) => v.length || i);
-}
-
-function getDocumentationUrl(scope, group, name) {
-  const pageParts = [scope];
-  if (scope !== SCOPE_PLATFORMIO) {
-    pageParts.push(group);
-  }
-  const page = `section_${pageParts.join('_')}.html`;
-  const hash =
-    name !== undefined
-      ? name.replace(/[^a-z]/g, '-')
-      : `${group.toLowerCase()}-options`;
-
-  return `https://docs.platformio.org/en/latest/projectconf/${encodeURIComponent(
-    page
-  )}#${encodeURIComponent(hash)}`;
-}
-
-function formatEnvVar(name) {
-  return IS_WINDOWS ? `%${name}%` : `$${name}`;
-}
-
-class ProjectConfigFormComponent extends React.PureComponent {
+class ProjectConfig extends React.PureComponent {
   static propTypes = {
-    form: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     project: ProjectType.isRequired,
-    config: PropTypes.arrayOf(
+    initialConfig: PropTypes.arrayOf(
       PropTypes.shape({
         section: PropTypes.string.isRequired,
         items: PropTypes.arrayOf(
@@ -125,20 +58,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
         )
       })
     ),
-    schema: PropTypes.arrayOf(
-      PropTypes.shape({
-        default: PropTypes.any,
-        description: PropTypes.string,
-        group: PropTypes.string,
-        max: PropTypes.number,
-        min: PropTypes.number,
-        name: PropTypes.string.isRequired,
-        multiple: PropTypes.bool,
-        scope: PropTypes.oneOf(SCOPES).isRequired,
-        sysenvvar: PropTypes.string,
-        type: PropTypes.oneOf(TYPES)
-      })
-    ),
+    schema: SchemaType,
     // callbacks
     loadConfigSchema: PropTypes.func.isRequired,
     loadProjectConfig: PropTypes.func.isRequired,
@@ -157,6 +77,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
     this.state = {
       showOverridden: true
     };
+    this.forms = {};
   }
 
   componentDidMount() {
@@ -171,265 +92,171 @@ class ProjectConfigFormComponent extends React.PureComponent {
   }
 
   save() {
-    this.props.form.validateFields((err, fieldsValue) => {
-      if (err) {
-        return;
-      }
+    // Tabs use lazy render, so not all sections are present
+    // FIXME: use validateFields?
+    const renderedSectionsArr = Object.values(this.forms).map(x => x.getValues());
+    const renderedItemsBySection = Object.fromEntries(
+      renderedSectionsArr.map(({ section, items }) => [section, items])
+    );
+    const defaultItemsBySection = Object.fromEntries(
+      this.props.initialConfig.map(({ section, items }) => [section, items])
+    );
 
-      const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
-      const config = this.sectionsOrder.map(section => {
-        const values = fieldsValue[section];
-        const sectionType = this.getSectionType(section);
-        const sectionSchema = schemaByScopeAndName[sectionType] || {};
-        return [
-          section,
-          Object.entries(values)
-            .filter(item => item[1] !== undefined)
-            .map(([name, rawValue]) => {
-              return [
-                unescapeFieldName(name),
-                this.transformFormValue(rawValue, sectionSchema[name])
-              ];
-            })
-        ];
-      });
-      this.setState({
-        saving: true
-      });
-      this.props.saveProjectConfig(this.props.location.state.projectDir, config, () => {
+    const stateConfig = this.sectionsOrder.map(section => ({
+      section,
+      items: renderedItemsBySection[section] || defaultItemsBySection[section]
+    }));
+    const apiConfig = stateConfig.map(({ section, items }) => [
+      section,
+      items.map(({ name, value }) => [name, value])
+    ]);
+
+    this.setState({
+      config: stateConfig.map(s => this.addSectionNameField(s)),
+      saving: true
+    });
+    this.props.saveProjectConfig(
+      this.props.location.state.projectDir,
+      apiConfig,
+      () => {
         this.setState({
           saving: false
         });
-      });
-    });
+      }
+    );
   }
 
-  transformFormValue(rawValue, fieldSchema) {
-    let value = rawValue;
-    if (fieldSchema && fieldSchema.multiple && fieldSchema.type === TYPE_TEXT) {
-      value = splitMultipleField(rawValue);
-    }
-    return value;
+  addSectionNameField(section) {
+    return {
+      ...section,
+      items: [{ name: SECTION_NAME_KEY, value: section.section }, ...section.items]
+    };
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      this.props.config &&
-      this.props.schema &&
-      (prevProps.config !== this.props.config || prevProps.schema !== this.props.schema)
-    ) {
-      // set form values
-      const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
-      const values = {};
-      for (const section of this.props.config) {
-        for (const item of section.items) {
-          const fieldName = this.generateFieldId(section.section, item);
-          const sectionType = this.getSectionType(section.section);
-          let value;
+    if (!this.props.initialConfig || !this.props.schema) {
+      return;
+    }
 
-          if (
-            sectionType === SECTION_CUSTOM ||
-            schemaByScopeAndName[sectionType][item.name] === undefined
-          ) {
-            if (typeof item.value === 'string') {
-              value = splitMultipleField(item.value).join('\n');
-            } else if (Array.isArray(item.value)) {
-              value = item.value.join('\n');
-            }
-          } else {
-            const schema = schemaByScopeAndName[sectionType][item.name];
-            if (schema.multiple && typeof item.value === 'string') {
-              value = splitMultipleField(item.value);
-            } else {
-              value = item.value;
-            }
-            if (schema.type === TYPE_TEXT && schema.multiple) {
-              value = value.join('\n');
-            }
-          }
-          values[fieldName] = value;
-        }
-      }
+    if (
+      prevProps.initialConfig !== this.props.initialConfig ||
+      prevProps.schema !== this.props.schema
+    ) {
+      this.sectionsOrder = this.props.initialConfig.map(section => section.section);
+      this.setState({
+        config: this.props.initialConfig.map(section =>
+          this.addSectionNameField(section)
+        )
+      });
+      // Restore active tab if section is present, otherwise display first
       this.setState(state => {
-        if (state.activeSection === undefined) {
-          return { activeSection: this.props.config[0].section };
+        if (
+          state.activeSection === undefined ||
+          !this.props.initialConfig.find(
+            section => section.section === state.activeSection
+          )
+        ) {
+          return {
+            activeSection: this.props.initialConfig.length
+              ? this.props.initialConfig[0].section
+              : undefined
+          };
         }
       });
-      this.props.form.setFieldsValue(values);
-      this.sectionsOrder = this.props.config.map(section => section.section);
     }
   }
 
   getSectionType(name) {
-    if (name === SECTION_PLATFORMIO) {
-      return SECTION_PLATFORMIO;
+    if (name === SECTION_PLATFORMIO || name === SECTION_GLOBAL_ENV) {
+      return name;
     }
-    if (name === SECTION_GLOBAL_ENV || name.startsWith(SECTION_USER_ENV)) {
-      return SECTION_GLOBAL_ENV;
+    if (name.startsWith(SECTION_USER_ENV)) {
+      return SECTION_GLOBAL_ENV; // SECTION_USER_ENV;
     }
     return SECTION_CUSTOM;
   }
 
   getScopeIcon(name) {
-    return ProjectConfigFormComponent.iconByScope[this.getSectionType(name)];
+    return ProjectConfig.iconByScope[this.getSectionType(name)];
   }
 
-  handleNewSectionMenuClick() {
-    // TODO: create new section
-  }
+  handleNewSectionMenuClick = ({ key }) => {
+    // TODO: create new sections
+    if ([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(key)) {
+      this.setState(state => ({
+        config: [
+          ...state.config,
+          this.addSectionNameField({
+            section: key,
+            items: []
+          })
+        ],
+        activeSection: key
+      }));
+    }
+  };
 
-  handleSearch(search) {
+  handleSearch = search => {
     this.setState({
       search
     });
-  }
+  };
 
-  handleSaveClick() {
+  handleSaveClick = () => {
     this.save();
-  }
+  };
 
-  handleResetClick() {
+  handleResetClick = () => {
     this.load();
-  }
+  };
 
-  handleShowOverriddenChange(e) {
+  handleShowOverriddenChange = e => {
     this.setState({
       showOverridden: e.target.checked
     });
-  }
+  };
 
-  handleTabChange(activeSection) {
+  handleTabChange = activeSection => {
     this.setState({ activeSection });
-  }
+  };
 
-  handleOrderChange(order) {
+  handleOrderChange = order => {
     this.sectionsOrder = order;
+  };
+
+  handleDocumentationClick = url => {
+    this.props.osOpenUrl(url, {
+      target: '_blank'
+    });
+  };
+
+  isLoaded() {
+    return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
 
-  renderDocLink(scope, group, name) {
-    return (
-      <div className="documentation-link">
-        <a
-          onClick={e => {
-            e.preventDefault();
-            this.props.osOpenUrl(getDocumentationUrl(scope, group, name), {
-              target: '_blank'
-            });
-          }}
-        >
-          <Icon type="question-circle" />
-        </a>
-      </div>
-    );
-  }
-
-  renderFormItem(sectionName, item, schemaByName) {
-    const schema = (schemaByName || {})[item.name];
-    const type = schema ? schema.type : TYPE_TEXT;
-    const multiple = schema ? schema.multiple : true;
-    const description = (schema || {}).description;
-    const decoratorOptions = {};
-    let label = item.name;
-
-    label = (
-      <React.Fragment>
-        {schema && this.renderDocLink(schema.scope, schema.group, item.name)}
-        {label}
-      </React.Fragment>
-    );
-
-    if (multiple) {
-      label = (
-        <React.Fragment>
-          {label}{' '}
-          <Tooltip title="Option accepts multiple arguments separated by new line">
-            <Tag className="multiline" size="small">
-              ML
-            </Tag>
-          </Tooltip>
-        </React.Fragment>
-      );
-    }
-
-    if (schema && schema.sysenvvar) {
-      label = (
-        <React.Fragment>
-          {label}{' '}
-          <Tooltip
-            title={
-              <React.Fragment>
-                Option can be configured by a global{' '}
-                <code>{formatEnvVar(schema.sysenvvar)}</code> environment variable
-              </React.Fragment>
+  generateIndexedSchema(schema) {
+    const result = Object.fromEntries(
+      [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
+        name => [
+          name,
+          {
+            [SECTION_NAME_KEY]: {
+              name: SECTION_NAME_KEY,
+              displayName: 'name',
+              multiple: false,
+              type: TYPE_TEXT,
+              label: 'Section Name',
+              group: 'Section',
+              readonly: [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(name)
             }
-          >
-            <Tag className="sysenvvar">ENV</Tag>
-          </Tooltip>
-        </React.Fragment>
-      );
-    }
-
-    let input;
-    if (type === TYPE_TEXT) {
-      if (multiple) {
-        input = <Input.TextArea autoSize={{ minRows: 1, maxRows: 20 }} rows={1} />;
-      } else {
-        input = <Input />;
-      }
-    } else if (type === TYPE_BOOL) {
-      input = <Checkbox>{description}</Checkbox>;
-      decoratorOptions.valuePropName = 'checked';
-    } else if (type === TYPE_CHOICE) {
-      input = (
-        <Select mode={multiple ? 'multiple' : 'default'} tokenSeparators={[',', '\n']}>
-          {schema.choices.map(value => (
-            <Select.Option key={value} value={value}>
-              {value}
-            </Select.Option>
-          ))}
-        </Select>
-      );
-    } else if ([TYPE_INT, TYPE_INT_RANGE].includes(type)) {
-      const inputProps = {};
-      if (type === TYPE_INT_RANGE) {
-        inputProps.min = schema.min;
-        inputProps.max = schema.max;
-        // inputProps.defaultValue = schema.default
-      }
-      input = <InputNumber {...inputProps} />;
-    } else if (type === TYPE_FILE) {
-      // FIXME: change to file selector
-      input = <Input />;
-    } else {
-      // Fallback
-      input = <Input />;
-      console.warn(`Unsupported item type: "${type}" for name: "${item.name}"`);
-      // throw new Error(`Unsupported item type: "${type}"`);
-    }
-    const itemProps = {
-      key: item.name,
-      label,
-      labelCol: {
-        id: this.generateFieldLabelId(sectionName, item)
-      }
-    };
-    if (type !== TYPE_BOOL) {
-      itemProps.help = description;
-    }
-    const fieldName = this.generateFieldId(sectionName, item);
-
-    const wrappedInput = this.props.form.getFieldDecorator(fieldName, decoratorOptions)(
-      input
+          }
+        ]
+      )
     );
-    return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
-  }
-
-  generateFieldId(sectionName, item) {
-    return `${escapeFieldName(sectionName)}.${escapeFieldName(item.name)}`;
-  }
-
-  generateFieldLabelId(sectionName, item) {
-    return `${sectionName}-${item.name}`;
+    for (const item of schema) {
+      result[item.scope][item.name] = item;
+    }
+    return result;
   }
 
   renderLoader() {
@@ -439,134 +266,12 @@ class ProjectConfigFormComponent extends React.PureComponent {
       </center>
     );
   }
-
-  generateGroupAnchorId(sectionName, groupName) {
-    return `section__${sectionName}--group__${groupName}`;
-  }
-
-  isLoaded() {
-    return Boolean(this.props.schema && this.props.config);
-  }
-
-  renderToC(sectionName, itemsByGroup, schemaByName, groupNames) {
-    return (
-      <Anchor className="toc">
-        {groupNames.map(groupName => (
-          <Anchor.Link
-            className="config-section-group"
-            href={`#${this.generateGroupAnchorId(sectionName, groupName)}`}
-            key={groupName}
-            title={`${groupName} Options`}
-          >
-            {itemsByGroup[groupName].map(item => (
-              <Anchor.Link
-                href={`#${this.generateFieldLabelId(sectionName, item)}`}
-                key={item.name}
-                title={item.name}
-              />
-            ))}
-          </Anchor.Link>
-        ))}
-      </Anchor>
-    );
-  }
-
-  renderNoFilteredItems() {
-    return (
-      <ul className="background-message text-center">
-        <li>No Results</li>
-      </ul>
-    );
-  }
-
-  renderEmptySection() {
-    return (
-      <ul className="background-message text-center">
-        <li>No options defined!</li>
-      </ul>
-    );
-  }
-
-  renderSectionTabContent(section, schemaByName) {
-    let sectionItems;
-    if (this.state.showOverridden || !schemaByName) {
-      sectionItems = section.items;
-    } else {
-      sectionItems = Object.keys(schemaByName).map(name => ({ name }));
-    }
-
-    if (!sectionItems.length) {
-      return this.renderEmptySection();
-    }
-    const searchFilter = item =>
-      this.state.search === undefined || item.name.includes(this.state.search);
-
-    const filteredItems = sectionItems.filter(searchFilter);
-    if (!filteredItems.length) {
-      return this.renderNoFilteredItems();
-    }
-    const schemaGroupNames = schemaByName
-      ? [...new Set(Object.values(schemaByName).map(x => x.group))]
-      : ['Custom'];
-
-    const itemsByGroup = Object.fromEntries(schemaGroupNames.map(name => [name, []]));
-    for (const item of filteredItems) {
-      const group =
-        schemaByName && schemaByName[item.name]
-          ? schemaByName[item.name].group
-          : 'Custom';
-      if (!itemsByGroup[group]) {
-        console.warn(`Item without schema: ${item.name} in section ${section.section}`);
-        itemsByGroup[group] = [];
-        if (!schemaGroupNames.includes('Custom')) {
-          schemaGroupNames.push('Custom');
-        }
-      }
-      itemsByGroup[group].push(item);
-    }
-    // Hide empty groups
-    const groupNames = schemaGroupNames.filter(name => itemsByGroup[name].length);
-
-    return (
-      <Row gutter={0}>
-        <Col xs={24} sm={9} md={6}>
-          {this.renderToC(section.section, itemsByGroup, schemaByName, groupNames)}
-        </Col>
-        <Col xs={24} sm={15} md={18}>
-          <Form layout="vertical" className="config-form">
-            {groupNames.map(groupName => (
-              <div key={groupName}>
-                <h2
-                  className="config-section-group"
-                  id={this.generateGroupAnchorId(section.section, groupName)}
-                >
-                  {groupName} Options
-                </h2>
-                {itemsByGroup[groupName].map(item =>
-                  this.renderFormItem(section.section, item, schemaByName)
-                )}
-              </div>
-            ))}
-          </Form>
-        </Col>
-      </Row>
-    );
-  }
-
-  generateIndexedSchema(schema) {
-    const result = Object.fromEntries(SCOPES.map(name => [name, {}]));
-    for (const item of schema) {
-      result[item.scope][item.name] = item;
-    }
-    return result;
-  }
-
   renderFormActions() {
     return (
       <div className="form-actions-block">
         <Button.Group>{this.renderNewSectionBtn()}</Button.Group>
         <Button.Group>
-          <Button icon="reload" onClick={::this.handleResetClick}>
+          <Button icon="reload" onClick={this.handleResetClick}>
             Reset
           </Button>
           <Button
@@ -574,7 +279,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
             icon="save"
             loading={this.state.saving}
             type="primary"
-            onClick={::this.handleSaveClick}
+            onClick={this.handleSaveClick}
           >
             Save
           </Button>
@@ -592,7 +297,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
               allowClear
               disabled={!this.isLoaded()}
               placeholder="Search settings"
-              onSearch={::this.handleSearch}
+              onSearch={this.handleSearch}
               style={{ width: '100%' }}
             />
           </div>
@@ -601,7 +306,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
           <Checkbox
             checked={this.state.showOverridden}
             disabled={!this.isLoaded()}
-            onChange={::this.handleShowOverriddenChange}
+            onChange={this.handleShowOverriddenChange}
           >
             Show overridden
           </Checkbox>
@@ -612,7 +317,7 @@ class ProjectConfigFormComponent extends React.PureComponent {
 
   renderNewSectionBtn() {
     const newSectionMenu = (
-      <Menu onClick={::this.handleNewSectionMenuClick}>
+      <Menu onClick={this.handleNewSectionMenuClick}>
         <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
           [platformio]
         </Menu.Item>
@@ -636,6 +341,40 @@ class ProjectConfigFormComponent extends React.PureComponent {
     );
   }
 
+  renderConfigSection(section, schema) {
+    const fields = section.items.map(({ name }) => name);
+    const initialValues = Object.fromEntries(
+      section.items.map(({ name, value }) => [name, value])
+    );
+    const props = {
+      fields,
+      // WARN: must be unique to avoid collisions between ids of subform fields
+      idPrefix: section.section,
+      initialValues,
+      schema,
+      showOverridden: this.state.showOverridden,
+      search: this.state.search,
+      onDocumentationClick: this.handleDocumentationClick
+    };
+    return (
+      <Tabs.TabPane
+        key={section.section}
+        size="small"
+        tab={
+          <span>
+            <Icon type={this.getScopeIcon(section.section)} />
+            {section.section}
+          </span>
+        }
+      >
+        <ConfigSectionForm
+          wrappedComponentRef={form => (this.forms[section.section] = form)}
+          {...props}
+        />
+      </Tabs.TabPane>
+    );
+  }
+
   renderConfig() {
     if (!this.isLoaded()) {
       return this.renderLoader();
@@ -644,29 +383,20 @@ class ProjectConfigFormComponent extends React.PureComponent {
     return (
       <DraggableTabs
         activeKey={this.state.activeSection}
-        defaultActiveKey={this.props.config[0].section}
+        defaultActiveKey={
+          this.state.config.length ? this.state.config[0].section : undefined
+        }
         hideAdd
-        onOrderChange={::this.handleOrderChange}
-        onChange={::this.handleTabChange}
+        onOrderChange={this.handleOrderChange}
+        onChange={this.handleTabChange}
         type="editable-card"
       >
-        {this.props.config.map(section => (
-          <Tabs.TabPane
-            key={section.section}
-            size="small"
-            tab={
-              <span>
-                <Icon type={this.getScopeIcon(section.section)} />
-                {section.section}
-              </span>
-            }
-          >
-            {this.renderSectionTabContent(
-              section,
-              schemaByScopeAndName[this.getSectionType(section.section)]
-            )}
-          </Tabs.TabPane>
-        ))}
+        {this.state.config.map(section =>
+          this.renderConfigSection(
+            section,
+            schemaByScopeAndName[this.getSectionType(section.section)]
+          )
+        )}
       </DraggableTabs>
     );
   }
@@ -691,9 +421,10 @@ const mapStateToProps = function(state, ownProps) {
   return {
     project: selectProjectInfo(state, projectDir),
     schema: selectConfigSchema(state),
-    config: selectProjectConfig(state)
+    initialConfig: selectProjectConfig(state)
   };
 };
+
 const dispatchToProps = {
   loadConfigSchema,
   loadProjectConfig,
@@ -701,9 +432,7 @@ const dispatchToProps = {
   saveProjectConfig
 };
 
-const ConnectedProjectConfigFormComponent = connect(
+export const ProjectConfigPage = connect(
   mapStateToProps,
   dispatchToProps
-)(ProjectConfigFormComponent);
-
-export const ProjectConfigPage = Form.create()(ConnectedProjectConfigFormComponent);
+)(ProjectConfig);
