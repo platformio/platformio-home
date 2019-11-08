@@ -50,3 +50,8 @@ export const SchemaType = PropTypes.arrayOf(
     type: PropTypes.oneOf(TYPES)
   })
 );
+
+export const ConfigOptionType = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  value: PropTypes.any
+});

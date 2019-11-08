@@ -26,9 +26,15 @@ import {
   Tag,
   Tooltip
 } from 'antd';
+import { ConfigOptionType, SchemaType } from '@project/types';
 import {
+  SCOPE_ENV,
   SCOPE_PLATFORMIO,
+  SECTIONS,
+  SECTION_GLOBAL_ENV,
   SECTION_NAME_KEY,
+  SECTION_PLATFORMIO,
+  SECTION_USER_ENV,
   TYPE_BOOL,
   TYPE_CHOICE,
   TYPE_FILE,
@@ -39,7 +45,6 @@ import {
 
 import { ConfigFormItem } from '@project/components/config-form-item';
 import { ConfigSectionToc } from '@project/components/config-section-toc';
-
 import { IS_WINDOWS } from '@app/config';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -103,15 +108,18 @@ class DocumentationLink extends React.PureComponent {
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
-    fields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    // fields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     form: PropTypes.object.isRequired,
-    idPrefix: PropTypes.string.isRequired,
-    initialValues: PropTypes.object,
-    schema: PropTypes.object,
+    id: PropTypes.string.isRequired,
+    initialValues: PropTypes.arrayOf(ConfigOptionType),
+    name: PropTypes.string.isRequired,
+    schema: SchemaType,
     search: PropTypes.string,
     showOverridden: PropTypes.bool,
+    type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
-    onDocumentationClick: PropTypes.func.isRequired
+    onDocumentationClick: PropTypes.func.isRequired,
+    onRename: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -120,26 +128,71 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.setFormValuesFromData(this.props.initialValues);
+    this.setFormValuesFromProps();
   }
 
   componentDidUpdate(prevProps) {
-    // TODO: deep value comparision?
-    if (this.props.initialValues !== prevProps.initialValues) {
-      this.setFormValuesFromData(this.props.initialValues);
+    if (
+      this.props.initialValues !== prevProps.initialValues ||
+      this.props.showOverridden !== prevProps.showOverridden ||
+      this.props.search !== prevProps.search
+    ) {
+      this.setFormValuesFromProps();
     }
   }
 
+  setFormValuesFromProps() {
+    this.setFormValuesFromData(
+      Object.fromEntries(
+        this.props.initialValues.map(({ name, value }) => [name, value])
+      )
+    );
+  }
+
+  generateIndexedSchema() {
+    const result = {};
+    // Object.fromEntries(
+    //   [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
+    //     name => [name, {}]
+    //   )
+    // );
+    // result = Object.fromEntries(
+    //   [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
+    //     name => [
+    //       name,
+    //       {
+    //         [SECTION_NAME_KEY]: {
+    //           name: SECTION_NAME_KEY,
+    //           displayName: 'name',
+    //           multiple: false,
+    //           type: TYPE_TEXT,
+    //           label: 'Section Name',
+    //           group: 'Section',
+    //           readonly: [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(name)
+    //         }
+    //       }
+    //     ]
+    //   )
+    // );
+    const scope = this.getSectionScope(this.props.type);
+    for (const item of this.props.schema) {
+      if (item.scope === scope) {
+        result[item.name] = item;
+      }
+    }
+    return result;
+  }
+
   generateFieldId(name) {
-    return `${escapeFieldName(this.props.idPrefix)}.${escapeFieldName(name)}`;
+    return `${escapeFieldName(this.props.id)}.${escapeFieldName(name)}`;
   }
 
   generateFieldLabelId(name) {
-    return `${this.props.idPrefix}-f-${name}`;
+    return `${this.props.id}-f-${name}`;
   }
 
   generateGroupAnchorId(groupName) {
-    return `${this.props.idPrefix}-g-${groupName}`;
+    return `${this.props.id}-g-${groupName}`;
   }
 
   transformFormValue(rawValue, fieldSchema) {
@@ -150,43 +203,48 @@ class ConfigSectionComponent extends React.PureComponent {
     return value;
   }
 
+  getSectionScope(type) {
+    if (type === SECTION_PLATFORMIO) {
+      return SCOPE_PLATFORMIO;
+    }
+    if (type === SECTION_USER_ENV || type === SECTION_GLOBAL_ENV) {
+      return SCOPE_ENV;
+    }
+  }
+
   getValues() {
+    // TODO: validate
     // this.props.form.validateFields((err, fieldsValue) => {
-    const values = this.props.form.getFieldsValue()[this.props.idPrefix];
-    return {
-      section: values[SECTION_NAME_KEY],
-      items: Object.entries(values)
-        .filter(item => item[1] !== undefined && item[0] !== SECTION_NAME_KEY)
-        .map(([name, rawValue]) => {
-          return {
-            name: unescapeFieldName(name),
-            value: this.transformFormValue(rawValue, this.props.schema[name])
-          };
-        })
-    };
+    const values = this.props.form.getFieldsValue()[this.props.id] || {};
+    const schema = this.generateIndexedSchema();
+
+    return Object.entries(values)
+      .filter(item => item[1] !== undefined)
+      .map(([name, rawValue]) => {
+        return {
+          name: unescapeFieldName(name),
+          value: this.transformFormValue(rawValue, schema[name])
+        };
+      });
   }
 
   setFormValuesFromData(rawValues) {
     // set form values
+    const sectionSchema = this.generateIndexedSchema();
     const values = {};
-    // const sectionName = rawValues[SECTION_NAME_KEY];
-    // const sectionType = this.getSectionType(sectionName);
-
     for (const [name, rawValue] of Object.entries(rawValues)) {
       const fieldName = this.generateFieldId(name);
       let value;
 
-      if (
-        // sectionType === SECTION_CUSTOM ||
-        this.props.schema[name] === undefined
-      ) {
+      if (!sectionSchema[name]) {
+        // Custom field
         if (typeof rawValue === 'string') {
           value = splitMultipleField(rawValue).join('\n');
         } else if (Array.isArray(rawValue)) {
           value = rawValue.join('\n');
         }
       } else {
-        const schema = this.props.schema[name];
+        const schema = sectionSchema[name];
         if (schema.multiple && typeof rawValue === 'string') {
           value = splitMultipleField(rawValue);
         } else {
@@ -212,6 +270,14 @@ class ConfigSectionComponent extends React.PureComponent {
 
   handleDocumentationClick = url => {
     this.props.onDocumentationClick(url);
+  };
+
+  handleRename = e => {
+    let name = e.target.value;
+    if (this.props.type === SECTION_USER_ENV) {
+      name = SECTION_USER_ENV + name;
+    }
+    this.props.onRename(name, this.props.id);
   };
 
   renderEmptySection() {
@@ -241,7 +307,7 @@ class ConfigSectionComponent extends React.PureComponent {
 
     label = (
       <React.Fragment>
-        {schema && !name.startsWith('__') && (
+        {schema && (
           <DocumentationLink
             url={getDocumentationUrl(schema.scope, schema.group, name)}
             onClick={this.handleDocumentationClick}
@@ -285,52 +351,61 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   renderFormItem(name, schemaByName) {
-    const schema = (schemaByName || {})[name];
+    const schema = schemaByName[name];
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
-    const description = (schema || {}).description;
+    const description = schema ? schema.description : undefined;
     const decoratorOptions = {
       validateTrigger: false
     };
     const label = this.renderLabel(name, schema, multiple);
 
     let input;
-    if (type === TYPE_TEXT) {
-      if (multiple) {
-        input = <Input.TextArea autoSize={{ minRows: 1, maxRows: 20 }} rows={1} />;
-      } else {
-        input = <Input disabled={schema && schema.readonly} />;
-      }
-    } else if (type === TYPE_BOOL) {
-      input = <Checkbox>{description}</Checkbox>;
-      decoratorOptions.valuePropName = 'checked';
-    } else if (type === TYPE_CHOICE) {
-      input = (
-        <Select mode={multiple ? 'multiple' : 'default'} tokenSeparators={[',', '\n']}>
-          {schema.choices.map(value => (
-            <Select.Option key={value} value={value}>
-              {value}
-            </Select.Option>
-          ))}
-        </Select>
-      );
-    } else if ([TYPE_INT, TYPE_INT_RANGE].includes(type)) {
-      const inputProps = {};
-      if (type === TYPE_INT_RANGE) {
-        inputProps.min = schema.min;
-        inputProps.max = schema.max;
+    switch (type) {
+      case TYPE_BOOL:
+        input = <Checkbox>{description}</Checkbox>;
+        decoratorOptions.valuePropName = 'checked';
+        break;
+
+      case TYPE_INT:
+        input = <InputNumber />;
+        break;
+
+      case TYPE_INT_RANGE:
         // inputProps.defaultValue = schema.default
-      }
-      input = <InputNumber {...inputProps} />;
-    } else if (type === TYPE_FILE) {
-      // FIXME: change to file selector
-      input = <Input />;
-    } else {
-      // Fallback
-      input = <Input />;
-      console.warn(`Unsupported item type: "${type}" for name: "${name}"`);
-      // throw new Error(`Unsupported item type: "${type}"`);
+        input = <InputNumber min={schema.min} max={schema.max} />;
+        break;
+
+      case TYPE_CHOICE:
+        input = (
+          <Select
+            mode={multiple ? 'multiple' : 'default'}
+            tokenSeparators={[',', '\n']}
+          >
+            {schema.choices.map(value => (
+              <Select.Option key={value} value={value}>
+                {value}
+              </Select.Option>
+            ))}
+          </Select>
+        );
+        break;
+
+      case TYPE_TEXT:
+      case TYPE_FILE:
+      default:
+        if (multiple) {
+          input = <Input.TextArea autoSize={{ minRows: 1, maxRows: 20 }} rows={1} />;
+        } else {
+          input = <Input readOnly={schema && schema.readonly} />;
+        }
+        if (!type) {
+          console.warn(`Unsupported item type: "${type}" for name: "${name}"`);
+          // throw new Error(`Unsupported item type: "${type}"`);
+        }
+        break;
     }
+
     const itemProps = {
       key: name,
       label,
@@ -338,23 +413,50 @@ class ConfigSectionComponent extends React.PureComponent {
         id: this.generateFieldLabelId(name)
       }
     };
+
     if (type !== TYPE_BOOL) {
       itemProps.help = description;
     }
-    const fieldName = this.generateFieldId(name);
 
-    const wrappedInput = this.props.form.getFieldDecorator(fieldName, decoratorOptions)(
-      input
-    );
+    const wrappedInput = this.props.form.getFieldDecorator(
+      this.generateFieldId(name),
+      decoratorOptions
+    )(input);
+
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
   }
 
+  renderName() {
+    return (
+      <React.Fragment>
+        <h2 className="config-section-group" id={this.generateGroupAnchorId('Section')}>
+          Section Options
+        </h2>
+        <ConfigFormItem key={SECTION_NAME_KEY} label="Section Name">
+          <Input
+            addonBefore={
+              this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
+            }
+            defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
+            readOnly={
+              this.props.type === SECTION_PLATFORMIO ||
+              this.props.type === SECTION_GLOBAL_ENV
+            }
+            onChange={this.handleRename}
+          />
+        </ConfigFormItem>
+      </React.Fragment>
+    );
+  }
+
   render() {
+    const schema = this.generateIndexedSchema();
     let fields;
-    if (this.props.showOverridden || Object.keys(this.props.schema).length <= 1) {
-      fields = this.props.fields;
+    if (this.props.showOverridden || !Object.keys(schema).length) {
+      // fields = this.props.fields;
+      fields = this.props.initialValues.map(({ name }) => name);
     } else {
-      fields = Object.keys(this.props.schema);
+      fields = Object.keys(schema);
     }
 
     if (!fields.length) {
@@ -371,7 +473,7 @@ class ConfigSectionComponent extends React.PureComponent {
     const groups = new Set();
     const fieldsByGroup = [];
     filteredFields.forEach(name => {
-      const group = this.props.schema[name] ? this.props.schema[name].group : 'Custom';
+      const group = schema[name] ? schema[name].group : 'Custom';
       if (!groups.has(group)) {
         groups.add(group);
         fieldsByGroup[group] = [];
@@ -384,12 +486,13 @@ class ConfigSectionComponent extends React.PureComponent {
         <Col xs={24} sm={9} md={6}>
           <ConfigSectionToc
             fields={filteredFields}
-            schema={this.props.schema}
+            schema={schema}
             onCreateId={this.handleCreateTocId}
           />
         </Col>
         <Col xs={24} sm={15} md={18}>
           <Form layout="vertical" className="config-form">
+            {this.renderName()}
             {[...groups].map(groupName => (
               <div key={groupName}>
                 {groupName.length !== 0 && (
@@ -401,11 +504,7 @@ class ConfigSectionComponent extends React.PureComponent {
                   </h2>
                 )}
                 {fieldsByGroup[groupName].map(name =>
-                  this.renderFormItem(
-                    // this.props.initialValues[SECTION_NAME_KEY],
-                    name,
-                    this.props.schema
-                  )
+                  this.renderFormItem(name, schema)
                 )}
               </div>
             ))}

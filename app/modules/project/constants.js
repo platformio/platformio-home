@@ -43,3 +43,10 @@ export const SECTION_USER_ENV = 'env:';
 export const SECTION_CUSTOM = 'custom';
 
 export const SECTION_NAME_KEY = '__section';
+
+export const SECTIONS = Object.freeze([
+  SECTION_PLATFORMIO,
+  SECTION_GLOBAL_ENV,
+  SECTION_USER_ENV,
+  SECTION_CUSTOM
+]);

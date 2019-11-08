@@ -15,14 +15,12 @@
  */
 
 import { Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
-import { ProjectType, SchemaType } from '@project/types';
+import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SECTION_CUSTOM,
   SECTION_GLOBAL_ENV,
-  SECTION_NAME_KEY,
   SECTION_PLATFORMIO,
-  SECTION_USER_ENV,
-  TYPE_TEXT
+  SECTION_USER_ENV
 } from '@project/constants';
 import {
   loadConfigSchema,
@@ -45,17 +43,13 @@ import { osOpenUrl } from '@core/actions';
 
 class ProjectConfig extends React.PureComponent {
   static propTypes = {
+    // data
     location: PropTypes.object.isRequired,
     project: ProjectType.isRequired,
     initialConfig: PropTypes.arrayOf(
       PropTypes.shape({
         section: PropTypes.string.isRequired,
-        items: PropTypes.arrayOf(
-          PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            value: PropTypes.any
-          })
-        )
+        items: PropTypes.arrayOf(ConfigOptionType)
       })
     ),
     schema: SchemaType,
@@ -66,9 +60,10 @@ class ProjectConfig extends React.PureComponent {
     osOpenUrl: PropTypes.func.isRequired
   };
 
-  static iconByScope = {
+  static iconBySectionType = {
     [SECTION_PLATFORMIO]: 'appstore',
     [SECTION_GLOBAL_ENV]: 'environment',
+    [SECTION_USER_ENV]: 'environment',
     [SECTION_CUSTOM]: 'user'
   };
 
@@ -94,7 +89,17 @@ class ProjectConfig extends React.PureComponent {
   save() {
     // Tabs use lazy render, so not all sections are present
     // FIXME: use validateFields?
-    const renderedSectionsArr = Object.values(this.forms).map(x => x.getValues());
+    if (this.state.search) {
+      // FIXME: filtered form contains only values of fields matching criteria
+      return;
+    }
+
+    const renderedSectionsArr = Object.values(this.forms)
+      .filter(x => !!x)
+      .map(section => ({
+        section: this.state.config[parseInt(section.props.id)].section,
+        items: section.getValues()
+      }));
     const renderedItemsBySection = Object.fromEntries(
       renderedSectionsArr.map(({ section, items }) => [section, items])
     );
@@ -102,19 +107,22 @@ class ProjectConfig extends React.PureComponent {
       this.props.initialConfig.map(({ section, items }) => [section, items])
     );
 
-    const stateConfig = this.sectionsOrder.map(section => ({
-      section,
-      items: renderedItemsBySection[section] || defaultItemsBySection[section]
-    }));
+    const stateConfig = this.sectionsOrder
+      .map(key => this.state.config[parseInt(key)].section)
+      .map(section => ({
+        section,
+        items: renderedItemsBySection[section] || defaultItemsBySection[section]
+      }));
+
+    this.setState({
+      config: stateConfig,
+      saving: true
+    });
+
     const apiConfig = stateConfig.map(({ section, items }) => [
       section,
       items.map(({ name, value }) => [name, value])
     ]);
-
-    this.setState({
-      config: stateConfig.map(s => this.addSectionNameField(s)),
-      saving: true
-    });
     this.props.saveProjectConfig(
       this.props.location.state.projectDir,
       apiConfig,
@@ -126,13 +134,6 @@ class ProjectConfig extends React.PureComponent {
     );
   }
 
-  addSectionNameField(section) {
-    return {
-      ...section,
-      items: [{ name: SECTION_NAME_KEY, value: section.section }, ...section.items]
-    };
-  }
-
   componentDidUpdate(prevProps) {
     if (!this.props.initialConfig || !this.props.schema) {
       return;
@@ -142,24 +143,18 @@ class ProjectConfig extends React.PureComponent {
       prevProps.initialConfig !== this.props.initialConfig ||
       prevProps.schema !== this.props.schema
     ) {
-      this.sectionsOrder = this.props.initialConfig.map(section => section.section);
+      this.sectionsOrder = this.props.initialConfig.map((_x, i) => i.toString());
       this.setState({
-        config: this.props.initialConfig.map(section =>
-          this.addSectionNameField(section)
-        )
+        config: this.props.initialConfig
       });
       // Restore active tab if section is present, otherwise display first
       this.setState(state => {
         if (
-          state.activeSection === undefined ||
-          !this.props.initialConfig.find(
-            section => section.section === state.activeSection
-          )
+          state.activeTabKey === undefined ||
+          parseInt(state.activeTabKey) >= this.props.initialConfig.length
         ) {
           return {
-            activeSection: this.props.initialConfig.length
-              ? this.props.initialConfig[0].section
-              : undefined
+            activeTabKey: this.props.initialConfig.length ? '0' : undefined
           };
         }
       });
@@ -171,29 +166,91 @@ class ProjectConfig extends React.PureComponent {
       return name;
     }
     if (name.startsWith(SECTION_USER_ENV)) {
-      return SECTION_GLOBAL_ENV; // SECTION_USER_ENV;
+      return SECTION_USER_ENV;
     }
     return SECTION_CUSTOM;
   }
 
   getScopeIcon(name) {
-    return ProjectConfig.iconByScope[this.getSectionType(name)];
+    return ProjectConfig.iconBySectionType[this.getSectionType(name)];
+  }
+
+  sectionExists(name) {
+    return (
+      this.state.config && this.state.config.findIndex(s => s.section === name) !== -1
+    );
+  }
+
+  addSection(type) {
+    let name;
+    if ([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(type)) {
+      if (this.sectionExists(type)) {
+        return;
+      }
+      name = type;
+    } else if (type === SECTION_USER_ENV) {
+      let i = 1;
+      while (this.sectionExists((name = `${SECTION_USER_ENV}env${i}`))) {
+        i++;
+      }
+    } else if (type === SECTION_CUSTOM) {
+      let i = 1;
+      while (this.sectionExists((name = `custom${i}`))) {
+        i++;
+      }
+    }
+    this.setState(
+      state => {
+        const config = [
+          ...state.config,
+          {
+            section: name,
+            items: []
+          }
+        ];
+        return {
+          config,
+          activeTabKey: (config.length - 1).toString()
+        };
+      },
+      () => {
+        this.sectionsOrder.push(this.state.config.length - 1);
+      }
+    );
+  }
+
+  removeSection(targetKey) {
+    this.setState(oldState => {
+      const config = oldState.config.filter((s, i) => i !== parseInt(targetKey));
+      this.sectionsOrder = this.sectionsOrder
+        .filter(key => key !== targetKey)
+        .map(key => (key - targetKey > 0 ? (key - 1).toString() : key));
+
+      const state = { config };
+      if (oldState.activeTabKey >= config.length) {
+        state.activeTabKey = (config.length - 1).toString();
+      }
+      return state;
+    });
+  }
+
+  renameSection(tabId, name) {
+    const tabIdx = parseInt(tabId);
+    this.setState(state => ({
+      config: state.config.map((section, idx) => {
+        if (idx !== tabIdx) {
+          return section;
+        }
+        return {
+          ...section,
+          section: name
+        };
+      })
+    }));
   }
 
   handleNewSectionMenuClick = ({ key }) => {
-    // TODO: create new sections
-    if ([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(key)) {
-      this.setState(state => ({
-        config: [
-          ...state.config,
-          this.addSectionNameField({
-            section: key,
-            items: []
-          })
-        ],
-        activeSection: key
-      }));
-    }
+    this.addSection(key);
   };
 
   handleSearch = search => {
@@ -216,11 +273,11 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
-  handleTabChange = activeSection => {
-    this.setState({ activeSection });
+  handleTabChange = activeTabKey => {
+    this.setState({ activeTabKey });
   };
 
-  handleOrderChange = order => {
+  handleTabOrderChange = order => {
     this.sectionsOrder = order;
   };
 
@@ -230,33 +287,25 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
+  handleSectionRename = (name, tabId) => {
+    this.renameSection(tabId, name);
+  };
+
+  handleTabEdit = (targetKey, action) => {
+    if (action === 'remove') {
+      this.removeSection(targetKey);
+    }
+  };
+
+  handleChildRefUpdate = form => {
+    if (form) {
+      // FIXME: gargabe collection?
+      this.forms[form.props.id] = form;
+    }
+  };
+
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
-  }
-
-  generateIndexedSchema(schema) {
-    const result = Object.fromEntries(
-      [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
-        name => [
-          name,
-          {
-            [SECTION_NAME_KEY]: {
-              name: SECTION_NAME_KEY,
-              displayName: 'name',
-              multiple: false,
-              type: TYPE_TEXT,
-              label: 'Section Name',
-              group: 'Section',
-              readonly: [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(name)
-            }
-          }
-        ]
-      )
-    );
-    for (const item of schema) {
-      result[item.scope][item.name] = item;
-    }
-    return result;
   }
 
   renderLoader() {
@@ -318,15 +367,19 @@ class ProjectConfig extends React.PureComponent {
   renderNewSectionBtn() {
     const newSectionMenu = (
       <Menu onClick={this.handleNewSectionMenuClick}>
-        <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
-          [platformio]
-        </Menu.Item>
-        <Menu.Item
-          key={SECTION_GLOBAL_ENV}
-          title='Every "User [env:***]" section automatically extends "Global [env]" options'
-        >
-          Global [env]
-        </Menu.Item>
+        {!this.sectionExists(SECTION_PLATFORMIO) && (
+          <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
+            [platformio]
+          </Menu.Item>
+        )}
+        {!this.sectionExists(SECTION_GLOBAL_ENV) && (
+          <Menu.Item
+            key={SECTION_GLOBAL_ENV}
+            title='Every "User [env:***]" section automatically extends "Global [env]" options'
+          >
+            Global [env]
+          </Menu.Item>
+        )}
         <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
         <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item>
       </Menu>
@@ -341,24 +394,22 @@ class ProjectConfig extends React.PureComponent {
     );
   }
 
-  renderConfigSection(section, schema) {
-    const fields = section.items.map(({ name }) => name);
-    const initialValues = Object.fromEntries(
-      section.items.map(({ name, value }) => [name, value])
-    );
+  renderConfigSection(key, section) {
     const props = {
-      fields,
       // WARN: must be unique to avoid collisions between ids of subform fields
-      idPrefix: section.section,
-      initialValues,
-      schema,
+      id: key,
+      name: section.section,
+      initialValues: section.items,
+      onRename: this.handleSectionRename,
+      schema: this.props.schema,
       showOverridden: this.state.showOverridden,
       search: this.state.search,
+      type: this.getSectionType(section.section),
       onDocumentationClick: this.handleDocumentationClick
     };
     return (
       <Tabs.TabPane
-        key={section.section}
+        key={key}
         size="small"
         tab={
           <span>
@@ -367,10 +418,7 @@ class ProjectConfig extends React.PureComponent {
           </span>
         }
       >
-        <ConfigSectionForm
-          wrappedComponentRef={form => (this.forms[section.section] = form)}
-          {...props}
-        />
+        <ConfigSectionForm wrappedComponentRef={this.handleChildRefUpdate} {...props} />
       </Tabs.TabPane>
     );
   }
@@ -379,23 +427,18 @@ class ProjectConfig extends React.PureComponent {
     if (!this.isLoaded()) {
       return this.renderLoader();
     }
-    const schemaByScopeAndName = this.generateIndexedSchema(this.props.schema);
     return (
       <DraggableTabs
-        activeKey={this.state.activeSection}
-        defaultActiveKey={
-          this.state.config.length ? this.state.config[0].section : undefined
-        }
+        activeKey={this.state.activeTabKey}
+        defaultActiveKey={this.state.config.length ? '0' : undefined}
         hideAdd
-        onOrderChange={this.handleOrderChange}
+        onOrderChange={this.handleTabOrderChange}
         onChange={this.handleTabChange}
+        onEdit={this.handleTabEdit}
         type="editable-card"
       >
-        {this.state.config.map(section =>
-          this.renderConfigSection(
-            section,
-            schemaByScopeAndName[this.getSectionType(section.section)]
-          )
+        {this.state.config.map((section, idx) =>
+          this.renderConfigSection(idx.toString(), section)
         )}
       </DraggableTabs>
     );
