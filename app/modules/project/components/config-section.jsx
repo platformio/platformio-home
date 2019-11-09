@@ -481,7 +481,13 @@ class ConfigSectionComponent extends React.PureComponent {
     if (!fields.length) {
       return this.renderEmptySection();
     }
-    const searchFilter = name => name.includes(this.props.search);
+    const searchFilter = name =>
+      name.includes(this.props.search) ||
+      (schema[name] &&
+        schema[name].description &&
+        schema[name].description
+          .toLowerCase()
+          .includes(this.props.search.toLowerCase()));
 
     const filteredFields = this.props.search ? fields.filter(searchFilter) : fields;
     if (!filteredFields.length) {
