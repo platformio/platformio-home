@@ -139,8 +139,12 @@
       overflow: hidden;
       padding: 0px @gutter 5px;
 
+      &.value-overridden {
+        background-color: lighten(@layout-body-background, 2%);
+      }
+
       &:hover {
-        background-color: lighten(@layout-body-background, 3%);
+        background-color: lighten(@layout-body-background, 4%);
       }
 
       .ant-form-item-label {

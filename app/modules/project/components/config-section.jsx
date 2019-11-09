@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Checkbox,
-  Col,
-  Form,
-  Icon,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  Tag,
-  Tooltip
-} from 'antd';
+import { Checkbox, Col, Form, Icon, Input, Row, Select, Tag, Tooltip } from 'antd';
 import { ConfigOptionType, SchemaType } from '@project/types';
 import {
   SCOPE_PLATFORMIO,
@@ -48,6 +37,9 @@ import { IS_WINDOWS } from '@app/config';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+// Feature flag
+const FEATURE_RESET_LINK = false;
+
 function escapeFieldName(x) {
   return x.replace(/\./g, '@');
 }
@@ -61,6 +53,9 @@ function formatEnvVar(name) {
 }
 
 function splitMultipleField(v) {
+  if (v == undefined) {
+    return;
+  }
   return v.split(/[,\n]/).filter((v, i) => v.length || i);
 }
 
@@ -126,23 +121,23 @@ class ConfigSectionComponent extends React.PureComponent {
     this.state = {};
   }
 
-  // componentDidMount() {
-  //   this.setFormValuesFromProps();
-  // }
+  componentDidMount() {
+    this.setFormValuesFromProps();
+  }
 
-  // componentDidUpdate(prevProps) {
-  //   if (
-  //     this.props.initialValues !== prevProps.initialValues ||
-  //     this.props.showOverridden !== prevProps.showOverridden ||
-  //     this.props.search !== prevProps.search
-  //   ) {
-  //     this.setFormValuesFromProps();
-  //   }
-  // }
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.initialValues !== prevProps.initialValues ||
+      this.props.showOverridden !== prevProps.showOverridden ||
+      this.props.search !== prevProps.search
+    ) {
+      this.setFormValuesFromProps();
+    }
+  }
 
-  // setFormValuesFromProps() {
-  //   this.setFormValuesFromData(this.props.initialValues);
-  // }
+  setFormValuesFromProps() {
+    this.setFormValuesFromData(this.props.initialValues);
+  }
 
   generateIndexedSchema() {
     const result = {};
@@ -177,15 +172,15 @@ class ConfigSectionComponent extends React.PureComponent {
     // this.props.form.validateFields((err, fieldsValue) => {
     const values = this.props.form.getFieldsValue()[this.props.id] || {};
     const schema = this.generateIndexedSchema();
-
-    return Object.entries(values)
-      .filter(item => item[1] !== undefined)
+    const allOptions = Object.entries(values)
+      .filter(item => item[1] != undefined)
       .map(([name, rawValue]) => {
         return {
           name: unescapeFieldName(name),
           value: this.transformFormValue(rawValue, schema[name])
         };
       });
+    return allOptions;
   }
 
   transformIntoFormValues(initialValues, transformName) {
@@ -194,29 +189,31 @@ class ConfigSectionComponent extends React.PureComponent {
 
     for (const { name, value: rawValue } of initialValues) {
       const fieldName = transformName ? this.generateFieldId(name) : name;
-      let value;
-
-      if (!sectionSchema[name]) {
-        // Custom field
-        if (typeof rawValue === 'string') {
-          value = splitMultipleField(rawValue).join('\n');
-        } else if (Array.isArray(rawValue)) {
-          value = rawValue.join('\n');
-        }
-      } else {
-        const schema = sectionSchema[name];
-        if (schema.multiple && typeof rawValue === 'string') {
-          value = splitMultipleField(rawValue);
-        } else {
-          value = rawValue;
-        }
-        if (schema.type === TYPE_TEXT && schema.multiple) {
-          value = value.join('\n');
-        }
-      }
-      values[fieldName] = value;
+      values[fieldName] = this.transformIntoFormValue(rawValue, sectionSchema[name]);
     }
     return values;
+  }
+
+  transformIntoFormValue(rawValue, schema) {
+    let value;
+    if (!schema) {
+      // Custom field
+      if (typeof rawValue === 'string') {
+        value = splitMultipleField(rawValue).join('\n');
+      } else if (Array.isArray(rawValue)) {
+        value = rawValue.join('\n');
+      }
+    } else {
+      if (schema.multiple && typeof rawValue === 'string') {
+        value = splitMultipleField(rawValue);
+      } else {
+        value = rawValue;
+      }
+      if (schema.type === TYPE_TEXT && schema.multiple) {
+        value = value.join('\n');
+      }
+    }
+    return value;
   }
 
   setFormValuesFromData(initialValues) {
@@ -243,6 +240,21 @@ class ConfigSectionComponent extends React.PureComponent {
     this.props.onRename(name, this.props.id);
   };
 
+  handleResetLinkClick = e => {
+    e.preventDefault();
+    const { name } = e.target.closest('a').dataset;
+
+    const value = this.transformIntoFormValue(
+      this.props.schema.find(s => s.name === name).default
+    );
+    const id = this.generateFieldId(name);
+
+    // TODO: doesn't work since we use defaultValue to improve performance
+    this.props.form.setFieldsValue({
+      [id]: value
+    });
+  };
+
   renderEmptySection() {
     return (
       <ul className="background-message text-center">
@@ -265,7 +277,7 @@ class ConfigSectionComponent extends React.PureComponent {
     }
   }
 
-  renderLabel(name, schema, multiple) {
+  renderLabel(name, schema, { multiple, valueOverridden }) {
     let label = schema && schema.label ? schema.label : name;
 
     label = (
@@ -310,6 +322,26 @@ class ConfigSectionComponent extends React.PureComponent {
         </React.Fragment>
       );
     }
+
+    if (FEATURE_RESET_LINK && valueOverridden && schema) {
+      label = (
+        <React.Fragment>
+          {label}{' '}
+          <Tooltip
+            title={`Reset to default ${
+              schema.default != undefined && schema.default.toString().length
+                ? `"${schema.default}"`
+                : '"" (empty string)'
+            }`}
+          >
+            <a data-name={name} onClick={this.handleResetLinkClick}>
+              Reset
+            </a>
+          </Tooltip>
+        </React.Fragment>
+      );
+    }
+
     return label;
   }
 
@@ -318,13 +350,24 @@ class ConfigSectionComponent extends React.PureComponent {
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
     const description = schema ? schema.description : undefined;
+
+    const defaultValue = schema
+      ? this.transformIntoFormValue(schema.default)
+      : undefined;
+    const id = this.generateFieldId(name);
+    const formValue = this.props.form.getFieldValue(id);
+    const valueOverridden =
+      schema && formValue != undefined && formValue !== '' && formValue != defaultValue;
+
     const decoratorOptions = {
       trigger: 'onBlur',
       validateTrigger: false,
       valuePropName: 'defaultValue',
       initialValue
     };
-    const label = this.renderLabel(name, schema, multiple);
+
+    const label = this.renderLabel(name, schema, { multiple, valueOverridden });
+
     const itemProps = {
       help: description,
       key: name,
@@ -333,6 +376,9 @@ class ConfigSectionComponent extends React.PureComponent {
         id: this.generateFieldLabelId(name)
       }
     };
+    if (valueOverridden) {
+      itemProps.className = 'value-overridden';
+    }
 
     let input;
     switch (type) {
@@ -343,18 +389,10 @@ class ConfigSectionComponent extends React.PureComponent {
         itemProps.help = undefined;
         break;
 
-      case TYPE_INT:
-        input = <InputNumber />;
-        break;
-
-      case TYPE_INT_RANGE:
-        // inputProps.defaultValue = schema.default
-        input = <InputNumber min={schema.min} max={schema.max} />;
-        break;
-
       case TYPE_CHOICE:
         input = (
           <Select
+            placeholder={defaultValue}
             mode={multiple ? 'multiple' : 'default'}
             tokenSeparators={[',', '\n']}
           >
@@ -369,11 +407,21 @@ class ConfigSectionComponent extends React.PureComponent {
 
       case TYPE_TEXT:
       case TYPE_FILE:
+      case TYPE_INT:
+      case TYPE_INT_RANGE:
       default:
         if (multiple) {
-          input = <Input.TextArea autoSize={{ minRows: 1, maxRows: 20 }} rows={1} />;
+          input = (
+            <Input.TextArea
+              placeholder={defaultValue}
+              autoSize={{ minRows: 1, maxRows: 20 }}
+              rows={1}
+            />
+          );
         } else {
-          input = <Input readOnly={schema && schema.readonly} />;
+          input = (
+            <Input placeholder={defaultValue} readOnly={schema && schema.readonly} />
+          );
         }
         if (!type) {
           console.warn(`Unsupported item type: "${type}" for name: "${name}"`);
@@ -382,11 +430,7 @@ class ConfigSectionComponent extends React.PureComponent {
         break;
     }
 
-    const wrappedInput = this.props.form.getFieldDecorator(
-      this.generateFieldId(name),
-      decoratorOptions
-    )(input);
-
+    const wrappedInput = this.props.form.getFieldDecorator(id, decoratorOptions)(input);
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
   }
 
