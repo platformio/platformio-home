@@ -17,6 +17,8 @@
 import { Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
+  SCOPE_ENV,
+  SCOPE_PLATFORMIO,
   SECTION_CUSTOM,
   SECTION_GLOBAL_ENV,
   SECTION_PLATFORMIO,
@@ -52,7 +54,10 @@ class ProjectConfig extends React.PureComponent {
         items: PropTypes.arrayOf(ConfigOptionType)
       })
     ),
-    schema: SchemaType,
+    schema: PropTypes.shape({
+      [SCOPE_PLATFORMIO]: SchemaType,
+      [SCOPE_ENV]: SchemaType
+    }),
     // callbacks
     loadConfigSchema: PropTypes.func.isRequired,
     loadProjectConfig: PropTypes.func.isRequired,
@@ -169,6 +174,15 @@ class ProjectConfig extends React.PureComponent {
       return SECTION_USER_ENV;
     }
     return SECTION_CUSTOM;
+  }
+
+  getSectionScope(type) {
+    if (type === SECTION_PLATFORMIO) {
+      return SCOPE_PLATFORMIO;
+    }
+    if (type === SECTION_USER_ENV || type === SECTION_GLOBAL_ENV) {
+      return SCOPE_ENV;
+    }
   }
 
   getScopeIcon(name) {
@@ -395,16 +409,17 @@ class ProjectConfig extends React.PureComponent {
   }
 
   renderConfigSection(key, section) {
+    const type = this.getSectionType(section.section);
     const props = {
       // WARN: must be unique to avoid collisions between ids of subform fields
       id: key,
       name: section.section,
       initialValues: section.items,
       onRename: this.handleSectionRename,
-      schema: this.props.schema,
+      schema: this.props.schema[this.getSectionScope(type)] || [],
       showOverridden: this.state.showOverridden,
       search: this.state.search,
-      type: this.getSectionType(section.section),
+      type,
       onDocumentationClick: this.handleDocumentationClick
     };
     return (

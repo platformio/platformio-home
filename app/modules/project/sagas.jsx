@@ -331,7 +331,16 @@ function* watchLoadConfigSchema() {
       const schema = yield call(apiFetchData, {
         query: 'project.get_config_schema'
       });
-      yield put(updateEntity(CONFIG_SCHEMA_KEY, schema));
+      // group by scope to pass to section without extra processing
+      const schemaByScope = {};
+      for (const item of schema) {
+        const { scope } = item;
+        if (!schemaByScope[scope]) {
+          schemaByScope[scope] = [];
+        }
+        schemaByScope[scope].push(item);
+      }
+      yield put(updateEntity(CONFIG_SCHEMA_KEY, schemaByScope));
     } catch (e) {
       if (!(e instanceof jsonrpc.JsonRpcError)) {
         yield put(notifyError('Could not config schema', e));

@@ -28,7 +28,6 @@ import {
 } from 'antd';
 import { ConfigOptionType, SchemaType } from '@project/types';
 import {
-  SCOPE_ENV,
   SCOPE_PLATFORMIO,
   SECTIONS,
   SECTION_GLOBAL_ENV,
@@ -113,7 +112,7 @@ class ConfigSectionComponent extends React.PureComponent {
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
     name: PropTypes.string.isRequired,
-    schema: SchemaType,
+    schema: SchemaType.isRequired,
     search: PropTypes.string,
     showOverridden: PropTypes.bool,
     type: PropTypes.oneOf(SECTIONS).isRequired,
@@ -150,7 +149,6 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   generateIndexedSchema() {
-    const result = {};
     // Object.fromEntries(
     //   [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
     //     name => [name, {}]
@@ -174,12 +172,11 @@ class ConfigSectionComponent extends React.PureComponent {
     //     ]
     //   )
     // );
-    const scope = this.getSectionScope(this.props.type);
+    const result = {};
     for (const item of this.props.schema) {
-      if (item.scope === scope) {
-        result[item.name] = item;
-      }
+      result[item.name] = item;
     }
+
     return result;
   }
 
@@ -201,15 +198,6 @@ class ConfigSectionComponent extends React.PureComponent {
       value = splitMultipleField(rawValue);
     }
     return value;
-  }
-
-  getSectionScope(type) {
-    if (type === SECTION_PLATFORMIO) {
-      return SCOPE_PLATFORMIO;
-    }
-    if (type === SECTION_USER_ENV || type === SECTION_GLOBAL_ENV) {
-      return SCOPE_ENV;
-    }
   }
 
   getValues() {
