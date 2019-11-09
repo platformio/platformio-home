@@ -75,7 +75,7 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      showOverridden: true
+      showOverridden: false
     };
     this.forms = {};
   }
@@ -371,7 +371,7 @@ class ProjectConfig extends React.PureComponent {
             disabled={!this.isLoaded()}
             onChange={this.handleShowOverriddenChange}
           >
-            Show overridden
+            Show only overridden
           </Checkbox>
         </div>
       </div>

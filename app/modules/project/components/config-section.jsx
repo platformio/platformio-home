@@ -439,12 +439,14 @@ class ConfigSectionComponent extends React.PureComponent {
 
   render() {
     const schema = this.generateIndexedSchema();
+    const configFields = this.props.initialValues.map(({ name }) => name);
     let fields;
+
     if (this.props.showOverridden || !Object.keys(schema).length) {
-      // fields = this.props.fields;
-      fields = this.props.initialValues.map(({ name }) => name);
+      fields = configFields;
     } else {
-      fields = Object.keys(schema);
+      const schemaFields = this.props.schema.map(({ name }) => name);
+      fields = [...new Set([...schemaFields, ...configFields])];
     }
 
     if (!fields.length) {
