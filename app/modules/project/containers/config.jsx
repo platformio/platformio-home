@@ -100,7 +100,7 @@ class ProjectConfig extends React.PureComponent {
     }
 
     const renderedSectionsArr = Object.values(this.forms)
-      .filter(x => !!x)
+      .filter(section => !!section && this.state.config[parseInt(section.props.id)])
       .map(section => ({
         section: this.state.config[parseInt(section.props.id)].section,
         items: section.getValues()
