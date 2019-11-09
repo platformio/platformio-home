@@ -395,7 +395,7 @@ class ProjectConfig extends React.PureComponent {
           </Menu.Item>
         )}
         <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
-        <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item>
+        {/* <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item> */}
       </Menu>
     );
 
