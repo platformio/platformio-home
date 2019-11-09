@@ -343,7 +343,7 @@ function* watchLoadConfigSchema() {
       yield put(updateEntity(CONFIG_SCHEMA_KEY, schemaByScope));
     } catch (e) {
       if (!(e instanceof jsonrpc.JsonRpcError)) {
-        yield put(notifyError('Could not config schema', e));
+        yield put(notifyError('Could not load config schema', e));
       }
     }
   });

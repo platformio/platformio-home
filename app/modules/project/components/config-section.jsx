@@ -149,34 +149,10 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   generateIndexedSchema() {
-    // Object.fromEntries(
-    //   [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
-    //     name => [name, {}]
-    //   )
-    // );
-    // result = Object.fromEntries(
-    //   [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV, SECTION_USER_ENV, SECTION_CUSTOM].map(
-    //     name => [
-    //       name,
-    //       {
-    //         [SECTION_NAME_KEY]: {
-    //           name: SECTION_NAME_KEY,
-    //           displayName: 'name',
-    //           multiple: false,
-    //           type: TYPE_TEXT,
-    //           label: 'Section Name',
-    //           group: 'Section',
-    //           readonly: [SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(name)
-    //         }
-    //       }
-    //     ]
-    //   )
-    // );
     const result = {};
     for (const item of this.props.schema) {
       result[item.name] = item;
     }
-
     return result;
   }
 
@@ -452,10 +428,9 @@ class ConfigSectionComponent extends React.PureComponent {
     if (!fields.length) {
       return this.renderEmptySection();
     }
-    const searchFilter = name =>
-      this.props.search === undefined || name.includes(this.props.search);
+    const searchFilter = name => name.includes(this.props.search);
 
-    const filteredFields = fields.filter(searchFilter);
+    const filteredFields = this.props.search ? fields.filter(searchFilter) : fields;
     if (!filteredFields.length) {
       return this.renderNoFilteredItems();
     }
@@ -476,7 +451,7 @@ class ConfigSectionComponent extends React.PureComponent {
         <Col xs={24} sm={9} md={6}>
           <ConfigSectionToc
             fields={filteredFields}
-            schema={schema}
+            schema={this.props.schema}
             onCreateId={this.handleCreateTocId}
           />
         </Col>

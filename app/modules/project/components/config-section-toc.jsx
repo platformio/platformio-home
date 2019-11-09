@@ -17,21 +17,37 @@
 import { Anchor } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { SchemaType } from '@project/types';
+import { cmpArray } from '@core/helpers';
 
-export class ConfigSectionToc extends React.PureComponent {
+export class ConfigSectionToc extends React.Component {
   static propTypes = {
     // data
     fields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    schema: PropTypes.object,
+    schema: SchemaType.isRequired,
     // callback
     onCreateId: PropTypes.func.isRequired
   };
 
+  shouldComponentUpdate(nextProps) {
+    return (
+      nextProps.schema !== this.props.schema ||
+      nextProps.onCreateId !== this.props.onCreateId ||
+      !cmpArray(nextProps.fields, this.props.fields)
+    );
+  }
+
   render() {
+    const schema = {};
     const groups = new Set();
     const fieldsByGroup = [];
+
+    for (const item of this.props.schema) {
+      schema[item.name] = item;
+    }
+
     this.props.fields.forEach(name => {
-      const group = this.props.schema[name] ? this.props.schema[name].group : 'Custom';
+      const group = schema[name] ? schema[name].group : 'Custom';
       if (!groups.has(group)) {
         groups.add(group);
         fieldsByGroup[group] = [];
@@ -44,20 +60,15 @@ export class ConfigSectionToc extends React.PureComponent {
         {[...groups].map(groupName => (
           <Anchor.Link
             className="config-section-group"
-            href={`#${this.props.onCreateId('group', groupName)}`} // generateGroupAnchorId(sectionName, groupName)
+            href={`#${this.props.onCreateId('group', groupName)}`}
             key={groupName}
             title={`${groupName} Options`}
           >
             {fieldsByGroup[groupName].map(name => (
               <Anchor.Link
-                href={`#${this.props.onCreateId('field', name)}`} // this.generateFieldLabelId(sectionName, name)
+                href={`#${this.props.onCreateId('field', name)}`}
                 key={name}
-                title={
-                  (this.props.schema &&
-                    this.props.schema[name] &&
-                    this.props.schema[name].displayName) ||
-                  name
-                }
+                title={(schema[name] && schema[name].displayName) || name}
               />
             ))}
           </Anchor.Link>
