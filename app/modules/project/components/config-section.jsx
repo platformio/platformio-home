@@ -195,6 +195,10 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   transformIntoFormValue(rawValue, schema) {
+    if (rawValue == undefined) {
+      return;
+    }
+
     let value;
     if (!schema) {
       // Custom field
@@ -202,6 +206,9 @@ class ConfigSectionComponent extends React.PureComponent {
         value = splitMultipleField(rawValue).join('\n');
       } else if (Array.isArray(rawValue)) {
         value = rawValue.join('\n');
+      } else {
+        value = rawValue;
+        console.error('Unsupported custom field type', { schema, rawValue });
       }
     } else {
       if (schema.multiple && typeof rawValue === 'string') {
@@ -243,10 +250,8 @@ class ConfigSectionComponent extends React.PureComponent {
   handleResetLinkClick = e => {
     e.preventDefault();
     const { name } = e.target.closest('a').dataset;
-
-    const value = this.transformIntoFormValue(
-      this.props.schema.find(s => s.name === name).default
-    );
+    const schema = this.props.schema.find(s => s.name === name);
+    const value = this.transformIntoFormValue(schema.default, schema);
     const id = this.generateFieldId(name);
 
     // TODO: doesn't work since we use defaultValue to improve performance
@@ -352,7 +357,7 @@ class ConfigSectionComponent extends React.PureComponent {
     const description = schema ? schema.description : undefined;
 
     const defaultValue = schema
-      ? this.transformIntoFormValue(schema.default)
+      ? this.transformIntoFormValue(schema.default, schema)
       : undefined;
     const id = this.generateFieldId(name);
     const formValue = this.props.form.getFieldValue(id);
@@ -387,6 +392,10 @@ class ConfigSectionComponent extends React.PureComponent {
         decoratorOptions.valuePropName = 'defaultChecked';
         decoratorOptions.trigger = 'onChange';
         itemProps.help = undefined;
+
+        if (initialValue === undefined) {
+          decoratorOptions.initialValue = defaultValue;
+        }
         break;
 
       case TYPE_CHOICE:
