@@ -126,27 +126,23 @@ class ConfigSectionComponent extends React.PureComponent {
     this.state = {};
   }
 
-  componentDidMount() {
-    this.setFormValuesFromProps();
-  }
+  // componentDidMount() {
+  //   this.setFormValuesFromProps();
+  // }
 
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.initialValues !== prevProps.initialValues ||
-      this.props.showOverridden !== prevProps.showOverridden ||
-      this.props.search !== prevProps.search
-    ) {
-      this.setFormValuesFromProps();
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     this.props.initialValues !== prevProps.initialValues ||
+  //     this.props.showOverridden !== prevProps.showOverridden ||
+  //     this.props.search !== prevProps.search
+  //   ) {
+  //     this.setFormValuesFromProps();
+  //   }
+  // }
 
-  setFormValuesFromProps() {
-    this.setFormValuesFromData(
-      Object.fromEntries(
-        this.props.initialValues.map(({ name, value }) => [name, value])
-      )
-    );
-  }
+  // setFormValuesFromProps() {
+  //   this.setFormValuesFromData(this.props.initialValues);
+  // }
 
   generateIndexedSchema() {
     const result = {};
@@ -192,12 +188,12 @@ class ConfigSectionComponent extends React.PureComponent {
       });
   }
 
-  setFormValuesFromData(rawValues) {
-    // set form values
+  transformIntoFormValues(initialValues, transformName) {
     const sectionSchema = this.generateIndexedSchema();
     const values = {};
-    for (const [name, rawValue] of Object.entries(rawValues)) {
-      const fieldName = this.generateFieldId(name);
+
+    for (const { name, value: rawValue } of initialValues) {
+      const fieldName = transformName ? this.generateFieldId(name) : name;
       let value;
 
       if (!sectionSchema[name]) {
@@ -220,8 +216,11 @@ class ConfigSectionComponent extends React.PureComponent {
       }
       values[fieldName] = value;
     }
+    return values;
+  }
 
-    this.props.form.setFieldsValue(values);
+  setFormValuesFromData(initialValues) {
+    this.props.form.setFieldsValue(this.transformIntoFormValues(initialValues, true));
   }
 
   handleCreateTocId = (type, name) => {
@@ -314,21 +313,34 @@ class ConfigSectionComponent extends React.PureComponent {
     return label;
   }
 
-  renderFormItem(name, schemaByName) {
+  renderFormItem(name, schemaByName, initialValue) {
     const schema = schemaByName[name];
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
     const description = schema ? schema.description : undefined;
     const decoratorOptions = {
-      validateTrigger: false
+      trigger: 'onBlur',
+      validateTrigger: false,
+      valuePropName: 'defaultValue',
+      initialValue
     };
     const label = this.renderLabel(name, schema, multiple);
+    const itemProps = {
+      help: description,
+      key: name,
+      label,
+      labelCol: {
+        id: this.generateFieldLabelId(name)
+      }
+    };
 
     let input;
     switch (type) {
       case TYPE_BOOL:
         input = <Checkbox>{description}</Checkbox>;
-        decoratorOptions.valuePropName = 'checked';
+        decoratorOptions.valuePropName = 'defaultChecked';
+        decoratorOptions.trigger = 'onChange';
+        itemProps.help = undefined;
         break;
 
       case TYPE_INT:
@@ -368,18 +380,6 @@ class ConfigSectionComponent extends React.PureComponent {
           // throw new Error(`Unsupported item type: "${type}"`);
         }
         break;
-    }
-
-    const itemProps = {
-      key: name,
-      label,
-      labelCol: {
-        id: this.generateFieldLabelId(name)
-      }
-    };
-
-    if (type !== TYPE_BOOL) {
-      itemProps.help = description;
     }
 
     const wrappedInput = this.props.form.getFieldDecorator(
@@ -446,6 +446,8 @@ class ConfigSectionComponent extends React.PureComponent {
       fieldsByGroup[group].push(name);
     });
 
+    const values = this.transformIntoFormValues(this.props.initialValues);
+
     return (
       <Row gutter={0}>
         <Col xs={24} sm={9} md={6}>
@@ -469,7 +471,7 @@ class ConfigSectionComponent extends React.PureComponent {
                   </h2>
                 )}
                 {fieldsByGroup[groupName].map(name =>
-                  this.renderFormItem(name, schema)
+                  this.renderFormItem(name, schema, values[name])
                 )}
               </div>
             ))}
