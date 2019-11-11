@@ -16,6 +16,11 @@
 
 import { Badge, Input, Spin } from 'antd';
 import {
+  INPUT_FILTER_KEY,
+  selectFilter,
+  selectVisibleProjects
+} from '@project/selectors';
+import {
   hideProject,
   loadProjects,
   openProject,
@@ -32,7 +37,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { goTo } from '@core/helpers';
 import { osRevealFile } from '@core/actions';
-import { selectProjects } from '@project/selectors';
 
 const ACTION_HIDE = 'hide';
 const ACTION_REVEAL = 'reveal';
@@ -42,6 +46,7 @@ const ACTION_OPEN = 'open';
 class ProjectsListComponent extends React.PureComponent {
   static propTypes = {
     // data
+    filterValue: PropTypes.string,
     history: PropTypes.object.isRequired,
     items: PropTypes.arrayOf(ProjectType),
     //callbacks
@@ -51,13 +56,9 @@ class ProjectsListComponent extends React.PureComponent {
     osRevealFile: PropTypes.func.isRequired,
     updateInputValue: PropTypes.func.isRequired,
     showBoards: PropTypes.func.isRequired,
-    updateConfigDescription: PropTypes.func.isRequired
+    updateConfigDescription: PropTypes.func.isRequired,
+    setFilter: PropTypes.func.isRequired
   };
-
-  constructor(...args) {
-    super(...args);
-    this.state = {};
-  }
 
   componentDidMount() {
     if (!this.props.items) {
@@ -65,7 +66,7 @@ class ProjectsListComponent extends React.PureComponent {
     }
   }
 
-  handleAction(name, projectDir) {
+  handleAction = (name, projectDir) => {
     switch (name) {
       case ACTION_CONFIGURE:
         goTo(this.props.history, '/projects/config', { projectDir });
@@ -80,22 +81,20 @@ class ProjectsListComponent extends React.PureComponent {
         this.props.openProject(projectDir);
         break;
     }
-  }
+  };
 
-  handleSearch(search) {
-    this.setState({
-      search
-    });
-  }
+  handleSearch = e => {
+    this.props.setFilter(e.target.value);
+  };
 
-  handleBoardClick(name) {
+  handleBoardClick = name => {
     this.props.updateInputValue(BOARDS_INPUT_FILTER_KEY, name);
     this.props.showBoards();
-  }
+  };
 
-  handleUpdateConfigDescription(projectDir, description, onEnd) {
+  handleUpdateConfigDescription = (projectDir, description, onEnd) => {
     this.props.updateConfigDescription(projectDir, description, onEnd);
-  }
+  };
 
   getActionsConfiguration() {
     return [
@@ -132,54 +131,30 @@ class ProjectsListComponent extends React.PureComponent {
   }
 
   renderData() {
-    const ds = this.props.items
-      .filter(
-        project =>
-          this.state.search === undefined || project.name.includes(this.state.search)
-      )
-      .sort((a, b) => b.modified - a.modified);
-
+    const ds = this.props.items.slice().sort((a, b) => b.modified - a.modified);
     if (!ds.length) {
       return (
         <ul className="background-message text-center">
-          <li>
-            Please Add Existing
-            <br />
-            or
-            <br />
-            Create New Project
-          </li>
+          <li>No Results</li>
         </ul>
       );
     }
 
     return (
-      <React.Fragment>
-        <div className="block">
-          <Input.Search
-            allowClear
-            enterButton
-            placeholder="Search projects"
-            onSearch={::this.handleSearch}
-            size="large"
-            style={{ width: '100%' }}
-          />
-        </div>
-        {this.state.search && <h2>Search Results ({ds.length}):</h2>}
-        {!this.state.search && <h2>All Projects:</h2>}
+      <div>
         {ds.map(project => (
           <ProjectListItem
             key={project.path}
             data={project}
             actions={this.getActionsConfiguration()}
             extraActions={this.getExtraActions()}
-            onAction={::this.handleAction}
+            onAction={this.handleAction}
             onClick={() => this.handleAction(ACTION_CONFIGURE, project.path)}
-            onBoardClick={::this.handleBoardClick}
-            updateConfigDescription={::this.handleUpdateConfigDescription}
+            onBoardClick={this.handleBoardClick}
+            updateConfigDescription={this.handleUpdateConfigDescription}
           />
         ))}
-      </React.Fragment>
+      </div>
     );
   }
 
@@ -197,6 +172,18 @@ class ProjectsListComponent extends React.PureComponent {
         <h1>
           Projects <Badge count={this.props.items.length} />
         </h1>
+        <div className="block">
+          <Input.Search
+            allowClear
+            defaultValue={this.props.filterValue}
+            enterButton
+            placeholder="Search projects"
+            onChange={this.handleSearch}
+            ref={$el => ($el ? $el.focus() : null)}
+            size="large"
+            style={{ width: '100%' }}
+          />
+        </div>
         {this.renderData()}
       </div>
     );
@@ -205,7 +192,8 @@ class ProjectsListComponent extends React.PureComponent {
 
 const mapStateToProps = function(state) {
   return {
-    items: selectProjects(state)
+    filterValue: selectFilter(state),
+    items: selectVisibleProjects(state)
   };
 };
 
@@ -217,7 +205,7 @@ function dispatchToProps(dispatch, ownProps) {
         hideProject,
         openProject,
         osRevealFile,
-        lazyUpdateInputValue,
+        setFilter: value => dispatch(lazyUpdateInputValue(INPUT_FILTER_KEY, value)),
         updateInputValue,
         updateConfigDescription
       },
