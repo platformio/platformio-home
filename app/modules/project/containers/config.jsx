@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import * as pathlib from '@core/path';
+
 import { Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
@@ -29,7 +31,7 @@ import {
   loadProjectConfig,
   saveProjectConfig
 } from '@project/actions';
-
+import { openTextDocument, osOpenUrl } from '@core/actions';
 import {
   selectConfigSchema,
   selectProjectConfig,
@@ -41,7 +43,6 @@ import { DraggableTabs } from '@project/components/draggable-tabs';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { osOpenUrl } from '@core/actions';
 
 class ProjectConfig extends React.PureComponent {
   static propTypes = {
@@ -62,6 +63,7 @@ class ProjectConfig extends React.PureComponent {
     loadConfigSchema: PropTypes.func.isRequired,
     loadProjectConfig: PropTypes.func.isRequired,
     saveProjectConfig: PropTypes.func.isRequired,
+    openTextDocument: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
   };
 
@@ -299,6 +301,12 @@ class ProjectConfig extends React.PureComponent {
     this.load();
   };
 
+  handleOpen = () => {
+    this.props.openTextDocument(
+      pathlib.join(this.props.project.path, 'platformio.ini')
+    );
+  };
+
   handleShowOverriddenChange = e => {
     this.setState({
       showOverridden: e.target.checked
@@ -354,6 +362,11 @@ class ProjectConfig extends React.PureComponent {
         <Button.Group>
           <Button icon="reload" onClick={this.handleResetClick}>
             Reset
+          </Button>
+        </Button.Group>
+        <Button.Group>
+          <Button icon="folder-open" onClick={this.handleOpen}>
+            Open
           </Button>
           <Button
             disabled={!this.isLoaded()}
@@ -506,6 +519,7 @@ const mapStateToProps = function(state, ownProps) {
 const dispatchToProps = {
   loadConfigSchema,
   loadProjectConfig,
+  openTextDocument,
   osOpenUrl,
   saveProjectConfig
 };
