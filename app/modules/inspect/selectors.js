@@ -15,8 +15,12 @@
  */
 
 import { CONFIG_KEY, RESULT_KEY, SEVERITY_LEVEL } from '@inspect/constants';
+import {
+  resolveRelativePathSegments,
+  shallowCompare,
+  windowsToPosixPath
+} from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
-import { shallowCompare, windowsToPosixPath } from '@inspect/helpers';
 
 export function selectSavedConfiguration(state) {
   return selectStorageItem(state, CONFIG_KEY);
@@ -73,7 +77,7 @@ export function selectExplorerSizeData(state) {
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: windowsToPosixPath(v.path),
+    path: resolveRelativePathSegments(windowsToPosixPath(v.path), '/'),
     ram: v.ram_size,
     symbols: (v.symbols || []).map(s => ({
       ...s,
