@@ -132,10 +132,13 @@ class ProjectsListComponent extends React.PureComponent {
   }
 
   renderData() {
-    const ds = this.props.items.filter(
-      project =>
-        this.state.search === undefined || project.name.includes(this.state.search)
-    );
+    const ds = this.props.items
+      .filter(
+        project =>
+          this.state.search === undefined || project.name.includes(this.state.search)
+      )
+      .sort((a, b) => b.modified - a.modified);
+
     if (!ds.length) {
       return (
         <ul className="background-message text-center">
