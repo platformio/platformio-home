@@ -126,11 +126,7 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      this.props.initialValues !== prevProps.initialValues ||
-      this.props.showOverridden !== prevProps.showOverridden ||
-      this.props.search !== prevProps.search
-    ) {
+    if (this.props.initialValues !== prevProps.initialValues) {
       this.setFormValuesFromProps();
     }
   }
@@ -173,7 +169,15 @@ class ConfigSectionComponent extends React.PureComponent {
     const values = this.props.form.getFieldsValue()[this.props.id] || {};
     const schema = this.generateIndexedSchema();
     const allOptions = Object.entries(values)
-      .filter(item => item[1] != undefined)
+      .filter(([, v]) => {
+        if (v == undefined) {
+          return false;
+        }
+        if ((typeof v === 'string' || Array.isArray(v)) && !v.length) {
+          return false;
+        }
+        return true;
+      })
       .map(([name, rawValue]) => {
         return {
           name: unescapeFieldName(name),
@@ -260,20 +264,22 @@ class ConfigSectionComponent extends React.PureComponent {
     });
   };
 
-  renderEmptySection() {
-    return (
-      <ul className="background-message text-center">
-        <li>No options defined!</li>
-      </ul>
-    );
-  }
+  renderEmptyMessage(fields, filteredFields) {
+    if (!this.props.search && fields.length === 0) {
+      return (
+        <ul className="background-message">
+          <li>No options defined!</li>
+        </ul>
+      );
+    }
 
-  renderNoFilteredItems() {
-    return (
-      <ul className="background-message text-center">
-        <li>No Results</li>
-      </ul>
-    );
+    if (this.props.search && filteredFields.length === 0) {
+      return (
+        <ul className="background-message">
+          <li>No matched options found</li>
+        </ul>
+      );
+    }
   }
 
   renderDocLink(scope, group, name) {
@@ -350,7 +356,7 @@ class ConfigSectionComponent extends React.PureComponent {
     return label;
   }
 
-  renderFormItem(name, schemaByName, initialValue) {
+  renderFormItem(name, schemaByName, initialValue, hidden) {
     const schema = schemaByName[name];
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
@@ -374,6 +380,7 @@ class ConfigSectionComponent extends React.PureComponent {
     const label = this.renderLabel(name, schema, { multiple, valueOverridden });
 
     const itemProps = {
+      className: '',
       help: description,
       key: name,
       label,
@@ -382,7 +389,10 @@ class ConfigSectionComponent extends React.PureComponent {
       }
     };
     if (valueOverridden) {
-      itemProps.className = 'value-overridden';
+      itemProps.className += ' value-overridden';
+    }
+    if (hidden) {
+      itemProps.className += ' hide';
     }
 
     let input;
@@ -443,7 +453,7 @@ class ConfigSectionComponent extends React.PureComponent {
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
   }
 
-  renderName() {
+  renderSectionName() {
     return (
       <React.Fragment>
         <h2 className="config-section-group" id={this.generateGroupAnchorId('Section')}>
@@ -466,6 +476,25 @@ class ConfigSectionComponent extends React.PureComponent {
     );
   }
 
+  renderGroup(groupName, fields, schema, values) {
+    const groupHidden = fields.every(x => x.hidden);
+    return (
+      <div key={groupName} className={groupHidden ? 'hide' : undefined}>
+        {groupName.length !== 0 && (
+          <h2
+            className="config-section-group"
+            id={this.generateGroupAnchorId(groupName)}
+          >
+            {groupName} Options
+          </h2>
+        )}
+        {fields.map(({ name, hidden }) =>
+          this.renderFormItem(name, schema, values[name], hidden)
+        )}
+      </div>
+    );
+  }
+
   render() {
     const schema = this.generateIndexedSchema();
     const configFields = this.props.initialValues.map(({ name }) => name);
@@ -478,9 +507,6 @@ class ConfigSectionComponent extends React.PureComponent {
       fields = [...new Set([...schemaFields, ...configFields])];
     }
 
-    if (!fields.length) {
-      return this.renderEmptySection();
-    }
     const searchFilter = name =>
       name.includes(this.props.search) ||
       (schema[name] &&
@@ -490,19 +516,17 @@ class ConfigSectionComponent extends React.PureComponent {
           .includes(this.props.search.toLowerCase()));
 
     const filteredFields = this.props.search ? fields.filter(searchFilter) : fields;
-    if (!filteredFields.length) {
-      return this.renderNoFilteredItems();
-    }
+    const filteredFieldsSet = new Set(filteredFields);
 
     const groups = new Set();
     const fieldsByGroup = [];
-    filteredFields.forEach(name => {
+    fields.forEach(name => {
       const group = schema[name] ? schema[name].group : 'Custom';
       if (!groups.has(group)) {
         groups.add(group);
         fieldsByGroup[group] = [];
       }
-      fieldsByGroup[group].push(name);
+      fieldsByGroup[group].push({ name, hidden: !filteredFieldsSet.has(name) });
     });
 
     const values = this.transformIntoFormValues(this.props.initialValues);
@@ -518,22 +542,12 @@ class ConfigSectionComponent extends React.PureComponent {
         </Col>
         <Col xs={24} sm={15} md={18}>
           <Form layout="vertical" className="config-form">
-            {this.renderName()}
-            {[...groups].map(groupName => (
-              <div key={groupName}>
-                {groupName.length !== 0 && (
-                  <h2
-                    className="config-section-group"
-                    id={this.generateGroupAnchorId(groupName)}
-                  >
-                    {groupName} Options
-                  </h2>
-                )}
-                {fieldsByGroup[groupName].map(name =>
-                  this.renderFormItem(name, schema, values[name])
-                )}
-              </div>
-            ))}
+            {!this.props.search && this.renderSectionName()}
+            {this.renderEmptyMessage(fields, filteredFields)}
+            {fields.length !== 0 &&
+              [...groups].map(groupName =>
+                this.renderGroup(groupName, fieldsByGroup[groupName], schema, values)
+              )}
           </Form>
         </Col>
       </Row>

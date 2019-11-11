@@ -94,11 +94,6 @@ class ProjectConfig extends React.PureComponent {
   save() {
     // Tabs use lazy render, so not all sections are present
     // FIXME: use validateFields?
-    if (this.state.search) {
-      // FIXME: filtered form contains only values of fields matching criteria
-      return;
-    }
-
     const renderedSectionsArr = Object.values(this.forms)
       .filter(section => !!section && this.state.config[parseInt(section.props.id)])
       .map(section => ({
