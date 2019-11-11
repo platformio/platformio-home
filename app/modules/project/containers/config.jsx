@@ -245,13 +245,24 @@ class ProjectConfig extends React.PureComponent {
 
   removeSection(targetKey) {
     this.setState(oldState => {
-      const config = oldState.config.filter(s => s.id !== targetKey);
-      this.sectionsOrder = this.sectionsOrder.filter(key => key !== targetKey);
-
-      const state = { config };
-      if (!config.find(s => s.id === oldState.activeTabKey)) {
-        state.activeTabKey = config[config.length - 1].id;
+      const removedIdx = oldState.config.findIndex(s => s.id === targetKey);
+      if (removedIdx === -1) {
+        return;
       }
+
+      this.sectionsOrder = this.sectionsOrder.filter(key => key !== targetKey);
+      const config = oldState.config.filter(s => s.id !== targetKey);
+      const state = { config };
+
+      // Fix active tab
+      if (targetKey === oldState.activeTabKey) {
+        if (removedIdx >= config.length) {
+          state.activeTabKey = config[config.length - 1].id;
+        } else {
+          state.activeTabKey = config[removedIdx].id;
+        }
+      }
+
       return state;
     });
   }
