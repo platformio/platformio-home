@@ -72,6 +72,8 @@ class ProjectConfig extends React.PureComponent {
     [SECTION_CUSTOM]: 'user'
   };
 
+  sectionIdCounter = 0;
+
   constructor(...args) {
     super(...args);
     this.state = {
@@ -95,9 +97,11 @@ class ProjectConfig extends React.PureComponent {
     // Tabs use lazy render, so not all sections are present
     // FIXME: use validateFields?
     const renderedSectionsArr = Object.values(this.forms)
-      .filter(section => !!section && this.state.config[parseInt(section.props.id)])
+      .filter(
+        section => !!section && this.state.config.find(s => s.id === section.props.id)
+      )
       .map(section => ({
-        section: this.state.config[parseInt(section.props.id)].section,
+        section: this.state.config.find(s => s.id === section.props.id).section,
         items: section.getValues()
       }));
     const renderedItemsBySection = Object.fromEntries(
@@ -108,9 +112,11 @@ class ProjectConfig extends React.PureComponent {
     );
 
     const stateConfig = this.sectionsOrder
-      .map(key => this.state.config[parseInt(key)].section)
-      .map(section => ({
+      .map(tabKey => this.state.config.find(s => s.id === tabKey))
+      .filter(s => !!s)
+      .map(({ section, id }) => ({
         section,
+        id,
         items: renderedItemsBySection[section] || defaultItemsBySection[section]
       }));
 
@@ -143,18 +149,23 @@ class ProjectConfig extends React.PureComponent {
       prevProps.initialConfig !== this.props.initialConfig ||
       prevProps.schema !== this.props.schema
     ) {
-      this.sectionsOrder = this.props.initialConfig.map((_x, i) => i.toString());
+      const config = this.props.initialConfig.map(section => ({
+        ...section,
+        id: this.generateSectionId(section)
+      }));
       this.setState({
-        config: this.props.initialConfig
+        config
       });
+      this.sectionsOrder = config.map(s => s.id);
+
       // Restore active tab if section is present, otherwise display first
       this.setState(state => {
         if (
           state.activeTabKey === undefined ||
-          parseInt(state.activeTabKey) >= this.props.initialConfig.length
+          !state.config.find(s => s.id === state.activeTabKey)
         ) {
           return {
-            activeTabKey: this.props.initialConfig.length ? '0' : undefined
+            activeTabKey: state.config.length ? state.config[0].id : undefined
           };
         }
       });
@@ -190,6 +201,10 @@ class ProjectConfig extends React.PureComponent {
     );
   }
 
+  generateSectionId(section) {
+    return `${++this.sectionIdCounter}-${section.section}`;
+  }
+
   addSection(type) {
     let name;
     if ([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(type)) {
@@ -208,46 +223,43 @@ class ProjectConfig extends React.PureComponent {
         i++;
       }
     }
+    const newSection = {
+      section: name,
+      items: []
+    };
+    newSection.id = this.generateSectionId(newSection);
+
     this.setState(
       state => {
-        const config = [
-          ...state.config,
-          {
-            section: name,
-            items: []
-          }
-        ];
+        const config = [...state.config, newSection];
         return {
           config,
-          activeTabKey: (config.length - 1).toString()
+          activeTabKey: newSection.id
         };
       },
       () => {
-        this.sectionsOrder.push(this.state.config.length - 1);
+        this.sectionsOrder.push(newSection.id);
       }
     );
   }
 
   removeSection(targetKey) {
     this.setState(oldState => {
-      const config = oldState.config.filter((s, i) => i !== parseInt(targetKey));
-      this.sectionsOrder = this.sectionsOrder
-        .filter(key => key !== targetKey)
-        .map(key => (key - targetKey > 0 ? (key - 1).toString() : key));
+      const config = oldState.config.filter(s => s.id !== targetKey);
+      this.sectionsOrder = this.sectionsOrder.filter(key => key !== targetKey);
 
       const state = { config };
-      if (oldState.activeTabKey >= config.length) {
-        state.activeTabKey = (config.length - 1).toString();
+      if (!config.find(s => s.id === oldState.activeTabKey)) {
+        state.activeTabKey = config[config.length - 1].id;
       }
       return state;
     });
   }
 
   renameSection(tabId, name) {
-    const tabIdx = parseInt(tabId);
     this.setState(state => ({
-      config: state.config.map((section, idx) => {
-        if (idx !== tabIdx) {
+      config: state.config.map(section => {
+        if (section.id !== tabId) {
           return section;
         }
         return {
@@ -440,15 +452,17 @@ class ProjectConfig extends React.PureComponent {
     return (
       <DraggableTabs
         activeKey={this.state.activeTabKey}
-        defaultActiveKey={this.state.config.length ? '0' : undefined}
+        defaultActiveKey={
+          this.state.config.length ? this.state.config[0].id : undefined
+        }
         hideAdd
         onOrderChange={this.handleTabOrderChange}
         onChange={this.handleTabChange}
         onEdit={this.handleTabEdit}
         type="editable-card"
       >
-        {this.state.config.map((section, idx) =>
-          this.renderConfigSection(idx.toString(), section)
+        {this.state.config.map(section =>
+          this.renderConfigSection(section.id, section)
         )}
       </DraggableTabs>
     );
