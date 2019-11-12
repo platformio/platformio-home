@@ -16,6 +16,7 @@
 
 import { CONFIG_KEY, RESULT_KEY, SEVERITY_LEVEL } from '@inspect/constants';
 import {
+  arrayFlat,
   resolveRelativePathSegments,
   shallowCompare,
   windowsToPosixPath
@@ -49,15 +50,15 @@ export function selectCodeCheckDefects(state) {
   if (!codeChecks) {
     return;
   }
-  return codeChecks
-    .map(({ tool, defects }) => {
+  return arrayFlat(
+    codeChecks.map(({ tool, defects }) => {
       return defects.map(item => {
         item['tool'] = tool;
         item['level'] = SEVERITY_LEVEL[item.severity.toUpperCase()];
         return item;
       });
     })
-    .flat();
+  );
 }
 
 export function selectExplorerSizeData(state) {
@@ -91,10 +92,7 @@ export function selectSymbolsSizeData(state) {
   if (!files) {
     return;
   }
-  return files
-    .map(({ symbols }) => symbols)
-    .filter(x => x && x.length)
-    .flat();
+  return arrayFlat(files.map(({ symbols }) => symbols).filter(x => x && x.length));
 }
 
 export function selectMemoryStats(state) {
