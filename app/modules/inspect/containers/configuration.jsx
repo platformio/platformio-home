@@ -57,7 +57,7 @@ class InspectionFormComponent extends React.Component {
       memory: true,
       code: true
     };
-    this.props.loadProjects();
+    this.props.loadProjects(true);
     // Storage with saved configuration loads asynchronously, so data can come later
     this.props.form.setFieldsValue(this.props.savedConfiguration || defaults);
   }
@@ -68,6 +68,16 @@ class InspectionFormComponent extends React.Component {
       !shallowCompare(prevProps.savedConfiguration, this.props.savedConfiguration)
     ) {
       this.props.form.setFieldsValue(this.props.savedConfiguration);
+    }
+    if (this.props.projects && prevProps.projects !== this.props.projects) {
+      // ensure selected project still exists
+      const selectedProject = this.props.form.getFieldValue('projectDir');
+      if (
+        selectedProject &&
+        !this.props.projects.find(p => p.path === selectedProject)
+      ) {
+        this.props.form.setFieldsValue({ projectDir: undefined });
+      }
     }
   }
 
