@@ -168,7 +168,7 @@ export function selectSectionsSizeData(state) {
   return sections.map(({ flags, size, type, start_addr: startAddr, name }) => ({
     flags,
     size,
-    type,
+    type: type != undefined ? type.toString() : '',
     startAddr,
     name
   }));
