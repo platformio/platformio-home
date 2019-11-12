@@ -57,7 +57,7 @@ class InspectionFormComponent extends React.Component {
       memory: true,
       code: true
     };
-    this.props.loadProjects();
+    this.props.loadProjects(true);
     // Storage with saved configuration loads asynchronously, so data can come later
     this.props.form.setFieldsValue(this.props.savedConfiguration || defaults);
   }

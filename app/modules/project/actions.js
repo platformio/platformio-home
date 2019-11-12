@@ -32,7 +32,7 @@ export const hideProject = projectDir => createAction(HIDE_PROJECT, { projectDir
 export const openProject = projectDir => createAction(OPEN_PROJECT, { projectDir });
 export const importProject = (projectDir, onEnd = undefined) =>
   createAction(IMPORT_PROJECT, { projectDir, onEnd });
-export const loadProjects = () => createAction(LOAD_PROJECTS);
+export const loadProjects = force => createAction(LOAD_PROJECTS, { force });
 export const projectsLoaded = () => createAction(PROJECTS_LOADED);
 export const initProject = (board, framework, projectDir, onEnd = undefined) =>
   createAction(INIT_PROJECT, { board, framework, projectDir, onEnd });

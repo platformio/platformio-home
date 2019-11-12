@@ -159,11 +159,14 @@ export function* preloadProjects() {
 
 function* watchLoadProjects() {
   while (true) {
-    yield take(actions.LOAD_PROJECTS);
-    let items = yield select(selectors.selectProjects);
-    if (items) {
-      yield put(actions.projectsLoaded());
-      continue;
+    const { force = false } = yield take(actions.LOAD_PROJECTS) || {};
+    let items;
+    if (!force) {
+      items = yield select(selectors.selectProjects);
+      if (items) {
+        yield put(actions.projectsLoaded());
+        continue;
+      }
     }
     try {
       items = yield call(apiFetchData, {
