@@ -128,15 +128,7 @@ class InspectionResultComponent extends React.Component {
           </div>
         </h1>
         {this.props.device && this.renderDeviceInfo()}
-        {this.state.error && (
-          <div>
-            <div className="ant-form-item-label">
-              <label>Errors</label>
-            </div>
-            <div className="inspect-config-console">{this.state.error}</div>
-          </div>
-        )}
-        {!this.state.error && <MultiPage routes={routes} />}
+        <MultiPage routes={routes} />
       </div>
     );
   }
