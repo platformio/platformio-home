@@ -19,18 +19,17 @@ import {
   selectCodeStats,
   selectInspectionResult,
   selectMemoryStats,
+  selectMetric,
   selectSavedConfiguration
 } from '@inspect/selectors';
 
 import { ConfigurationType } from '@inspect/types';
-import { METRICS_KEY } from '@inspect/constants';
 import { Progress } from '@inspect/components/progress';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { goTo } from '@core/helpers';
 import { selectProjectInfo } from '@project/selectors';
-import { selectStorageItem } from '@store/selectors';
 
 const DEFAULT_MEMORY_INSPECT_DURATION_MS = 20000;
 const DEFAULT_CODE_INSPECT_DURATION_MS = 20000;
@@ -107,22 +106,24 @@ class InspectionProcessing extends React.PureComponent {
 
 function mapStateToProps(state) {
   const configuration = selectSavedConfiguration(state);
-  const project = selectProjectInfo(state, configuration.projectDir);
-
   return {
     configuration,
-    codeDuration: selectStorageItem(
+    codeDuration: selectMetric(
       state,
-      [METRICS_KEY, configuration.projectDir, configuration.env, 'code'].join(':')
+      'code',
+      configuration.projectDir,
+      configuration.env
     ),
-    memoryDuration: selectStorageItem(
+    memoryDuration: selectMetric(
       state,
-      [METRICS_KEY, configuration.projectDir, configuration.env, 'memory'].join(':')
+      'memory',
+      configuration.projectDir,
+      configuration.env
     ),
     data: selectInspectionResult(state),
     codeDone: !!selectCodeStats(state),
     memoryDone: !!selectMemoryStats(state),
-    project
+    project: selectProjectInfo(state, configuration.projectDir)
   };
 }
 
