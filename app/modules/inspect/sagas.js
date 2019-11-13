@@ -16,11 +16,12 @@
 
 import * as pathlib from '@core/path';
 
-import { CONFIG_KEY, METRICS_KEY, RESULT_KEY } from '@inspect/constants';
+import { CONFIG_KEY, METRICS_KEY, RESULT_KEY, STORAGE_KEY } from '@inspect/constants';
 import { INSPECT_PROJECT, REINSPECT_PROJECT, inspectProject } from '@inspect/actions';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '@store/actions';
 import {
+  selectInspectStorage,
   selectInspectionResult,
   selectIsConfigurationDifferent,
   selectSavedConfiguration
@@ -30,6 +31,16 @@ import { apiFetchData } from '@store/api';
 import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { selectProjectInfo } from '@project/selectors';
+
+function* _updateMetric(name, projectDir, env, duration) {
+  const storage = yield select(selectInspectStorage);
+  if (!storage[METRICS_KEY]) {
+    storage[METRICS_KEY] = {};
+  }
+  const metricKey = [projectDir, env, name].join(':');
+  storage[METRICS_KEY][metricKey] = duration;
+  yield put(updateStorageItem(STORAGE_KEY, storage));
+}
 
 function* _inspectMemory({ projectDir, env }) {
   const start = Date.now();
@@ -56,10 +67,8 @@ function* _inspectMemory({ projectDir, env }) {
     return;
   }
   const result = JSON.parse(jsonContent);
-  const duration = Date.now() - start;
-  yield put(
-    updateStorageItem([METRICS_KEY, projectDir, env, 'memory'].join(':'), duration)
-  );
+  yield _updateMetric('memory', projectDir, env, Date.now() - start);
+
   return result;
 }
 
@@ -71,10 +80,8 @@ function* _inspectCode({ projectDir, env }) {
       query: 'core.call',
       params: [['check', '-d', projectDir, '-e', env, '--json-output']]
     });
-    const duration = Date.now() - start;
-    yield put(
-      updateStorageItem([METRICS_KEY, projectDir, env, 'code'].join(':'), duration)
-    );
+    yield _updateMetric('code', projectDir, env, Date.now() - start);
+
     if (codeCheckResults && codeCheckResults.length) {
       return codeCheckResults;
     }
@@ -111,7 +118,9 @@ function* watchInspectProject() {
         }
       }
       yield put(deleteEntity(new RegExp(`^${RESULT_KEY}$`)));
-      yield put(updateStorageItem(CONFIG_KEY, configuration));
+      const storage = yield select(selectInspectStorage);
+      storage[CONFIG_KEY] = configuration;
+      yield put(updateStorageItem(STORAGE_KEY, storage));
 
       const state = yield select();
       if (state.router) {

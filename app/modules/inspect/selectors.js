@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { CONFIG_KEY, RESULT_KEY, SEVERITY_LEVEL } from '@inspect/constants';
+import {
+  CONFIG_KEY,
+  METRICS_KEY,
+  RESULT_KEY,
+  SEVERITY_LEVEL,
+  STORAGE_KEY
+} from '@inspect/constants';
 import {
   arrayFlat,
   resolveRelativePathSegments,
@@ -23,8 +29,22 @@ import {
 } from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
 
+export function selectInspectStorage(state, namespace) {
+  const root = selectStorageItem(state, STORAGE_KEY) || {};
+  return namespace ? root[namespace] : root;
+}
+
+export function selectMetrics(state) {
+  return selectInspectStorage(state, METRICS_KEY) || {};
+}
+
+export function selectMetric(state, name, projectDir, env) {
+  const key = [projectDir, env, name].join(':');
+  return selectMetrics(state)[key];
+}
+
 export function selectSavedConfiguration(state) {
-  return selectStorageItem(state, CONFIG_KEY);
+  return selectInspectStorage(state, CONFIG_KEY);
 }
 
 export function selectIsConfigurationDifferent(state, newConfiguration) {
