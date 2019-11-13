@@ -105,18 +105,18 @@ class ProjectNewModal extends React.Component {
           if (!err) {
             this.props.addProject(location);
             this.props.openProject(location);
-            this.onDidCancel();
+            this.onDidCancel(location);
           }
         }
       );
     });
   }
 
-  onDidCancel() {
+  onDidCancel(projectDir) {
     this.setState({
       inProgress: false
     });
-    this.props.onCancel();
+    this.props.onCancel(projectDir);
   }
 
   render() {

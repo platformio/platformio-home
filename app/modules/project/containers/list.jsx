@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Badge, Input, Spin } from 'antd';
+import { Badge, Button, Input, Spin } from 'antd';
 import {
   INPUT_FILTER_KEY,
   selectFilter,
@@ -30,7 +30,11 @@ import { lazyUpdateInputValue, updateInputValue } from '@store/actions';
 
 import { BOARDS_INPUT_FILTER_KEY } from '@platform/selectors';
 import { ProjectListItem } from '@project/components/list-item';
+import ProjectNewModal from '@project/containers/new-modal';
+import ProjectOpenModal from '@project/containers/open-modal';
+
 import { ProjectType } from '@project/types';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { bindActionCreators } from 'redux';
@@ -59,6 +63,14 @@ class ProjectsListComponent extends React.PureComponent {
     updateConfigDescription: PropTypes.func.isRequired,
     setFilter: PropTypes.func.isRequired
   };
+
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      newProjectVisible: false,
+      openProjectVisible: false
+    };
+  }
 
   componentDidMount() {
     if (!this.props.items) {
@@ -94,6 +106,30 @@ class ProjectsListComponent extends React.PureComponent {
 
   handleUpdateConfigDescription = (projectDir, description, onEnd) => {
     this.props.updateConfigDescription(projectDir, description, onEnd);
+  };
+
+  handleOpenProjectClick = () => {
+    this.setState({
+      openProjectVisible: true
+    });
+  };
+
+  handleOpenProjectCancel = () => {
+    this.setState({
+      openProjectVisible: false
+    });
+  };
+
+  handleNewProjectCancel = () => {
+    this.setState({
+      newProjectVisible: false
+    });
+  };
+
+  handleCreateNewProjectClick = () => {
+    this.setState({
+      newProjectVisible: true
+    });
   };
 
   getActionsConfiguration() {
@@ -158,33 +194,76 @@ class ProjectsListComponent extends React.PureComponent {
     );
   }
 
-  render() {
-    if (!this.props.items) {
-      return (
-        <center>
-          <Spin size="large" tip="Loading…" />
-        </center>
-      );
-    }
+  renderModals() {
+    return (
+      <React.Fragment>
+        <ProjectOpenModal
+          skipOpenProject
+          visible={this.state.openProjectVisible}
+          onCancel={this.handleOpenProjectCancel}
+        />
+        <ProjectNewModal
+          visible={this.state.newProjectVisible}
+          onCancel={this.handleNewProjectCancel}
+        />
+      </React.Fragment>
+    );
+  }
 
+  render() {
     return (
       <div className="project-list-page">
-        <h1>
-          Projects <Badge count={this.props.items.length} />
-        </h1>
-        <div className="block">
-          <Input.Search
-            allowClear
-            defaultValue={this.props.filterValue}
-            enterButton
-            placeholder="Search projects"
-            onChange={this.handleSearch}
-            ref={$el => ($el ? $el.focus() : null)}
-            size="large"
-            style={{ width: '100%' }}
-          />
-        </div>
-        {this.renderData()}
+        {this.renderModals()}
+        {!this.props.items && (
+          <center>
+            <Spin size="large" tip="Loading…" />
+          </center>
+        )}
+        {this.props.items && (
+          <div>
+            <h1>
+              Projects <Badge count={this.props.items.length} />
+            </h1>
+            <div className="block">
+              <Input.Search
+                allowClear
+                defaultValue={this.props.filterValue}
+                enterButton
+                placeholder="Search projects"
+                onChange={this.handleSearch}
+                ref={$el => ($el ? $el.focus() : null)}
+                size="large"
+                style={{ width: '100%' }}
+              />
+            </div>
+            {this.renderData()}
+            {this.props.items.length === 0 && (
+              <div className="text-center">
+                <ul className="list-inline">
+                  <li>
+                    <Button
+                      icon="folder-open"
+                      type="primary"
+                      onClick={this.handleOpenProjectClick}
+                    >
+                      Add Existing
+                    </Button>
+                  </li>
+                  <li>or</li>
+                  <li>
+                    <Button
+                      icon="plus"
+                      type="primary"
+                      onClick={this.handleCreateNewProjectClick}
+                    >
+                      Create New Project
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }
