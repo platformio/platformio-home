@@ -43,6 +43,7 @@ import { DraggableTabs } from '@project/components/draggable-tabs';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import querystringify from 'querystringify';
 
 class ProjectConfig extends React.PureComponent {
   static propTypes = {
@@ -493,6 +494,12 @@ class ProjectConfig extends React.PureComponent {
   }
 
   render() {
+    const reportIssueUrl =
+      'https://github.com/platformio/platformio-home/issues/new?' +
+      querystringify.stringify({
+        title: 'Edit Project Config'
+      });
+
     return (
       <div className="project-config-page">
         <h1 className="block clearfix">
@@ -502,13 +509,14 @@ class ProjectConfig extends React.PureComponent {
         <Alert
           className="block"
           message={
-            <span
-              dangerouslySetInnerHTML={{
-                __html: `This a beta version of Project Configuration.
-            Please back up <code>platformio.ini</code> before saving new changes.
-            If you have any issues, <a onClick=https://github.com/platformio/platformio-home/issues>please report us</a>`
-              }}
-            />
+            <span>
+              This a beta version of Project Configuration. Please back up{' '}
+              <code>platformio.ini</code> before saving new changes. If you have any
+              issues,{' '}
+              <a onClick={() => this.props.osOpenUrl(reportIssueUrl)}>
+                please report us
+              </a>
+            </span>
           }
           type="warning"
           showIcon
