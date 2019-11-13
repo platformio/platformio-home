@@ -210,6 +210,29 @@ class ProjectsListComponent extends React.PureComponent {
     );
   }
 
+  renderFormActions() {
+    return (
+      <div className="pull-right">
+        <Button.Group>
+          <Button
+            icon="folder-open"
+            type={this.props.items.length ? 'default' : 'primary'}
+            onClick={this.handleOpenProjectClick}
+          >
+            Add Existing
+          </Button>
+          <Button
+            icon="plus"
+            type={this.props.items.length ? 'default' : 'primary'}
+            onClick={this.handleCreateNewProjectClick}
+          >
+            Create New Project
+          </Button>
+        </Button.Group>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className="project-list-page">
@@ -221,8 +244,11 @@ class ProjectsListComponent extends React.PureComponent {
         )}
         {this.props.items && (
           <div>
-            <h1>
-              Projects <Badge count={this.props.items.length} />
+            <h1 className="block clearfix">
+              <span>
+                Projects <Badge count={this.props.items.length} />
+              </span>
+              {this.renderFormActions()}
             </h1>
             <div className="block">
               <Input.Search
