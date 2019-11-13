@@ -109,9 +109,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    loadBoards
-  }
-)(BoardSelect);
+export default connect(mapStateToProps, {
+  loadBoards
+})(BoardSelect);

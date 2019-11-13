@@ -92,7 +92,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PlatformDesktopPage);
+export default connect(mapStateToProps, mapDispatchToProps)(PlatformDesktopPage);

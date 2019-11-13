@@ -241,10 +241,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    ...actions,
-    osOpenUrl
-  }
-)(Form.create()(ProjectNewModal));
+export default connect(mapStateToProps, {
+  ...actions,
+  osOpenUrl
+})(Form.create()(ProjectNewModal));

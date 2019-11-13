@@ -247,10 +247,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    osOpenUrl,
-    showAtStartup
-  }
-)(HomePage);
+export default connect(mapStateToProps, {
+  osOpenUrl,
+  showAtStartup
+})(HomePage);

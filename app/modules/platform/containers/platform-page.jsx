@@ -72,7 +72,6 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { ...actions, osOpenUrl, osRevealFile }
-)(PlatformDetailPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl, osRevealFile })(
+  PlatformDetailPage
+);

@@ -165,10 +165,7 @@ class ProjectImportArduinoModal extends React.Component {
 
 // Redux
 
-export default connect(
-  null,
-  {
-    ...actions,
-    osOpenUrl
-  }
-)(ProjectImportArduinoModal);
+export default connect(null, {
+  ...actions,
+  osOpenUrl
+})(ProjectImportArduinoModal);

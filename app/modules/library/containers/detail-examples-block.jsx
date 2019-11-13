@@ -132,9 +132,6 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    osFsGlob
-  }
-)(LibraryDetailExamplesBlock);
+export default connect(mapStateToProps, {
+  osFsGlob
+})(LibraryDetailExamplesBlock);

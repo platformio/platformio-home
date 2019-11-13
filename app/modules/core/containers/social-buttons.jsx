@@ -68,9 +68,6 @@ class SocialButtons extends React.Component {
 
 // Redux
 
-export default connect(
-  null,
-  {
-    osOpenUrl
-  }
-)(SocialButtons);
+export default connect(null, {
+  osOpenUrl
+})(SocialButtons);

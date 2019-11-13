@@ -73,7 +73,6 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { ...actions, osOpenUrl }
-)(AccountInformationPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(
+  AccountInformationPage
+);

@@ -250,10 +250,7 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    ...actions,
-    osOpenUrl
-  }
-)(ProjectExamplesModal);
+export default connect(mapStateToProps, {
+  ...actions,
+  osOpenUrl
+})(ProjectExamplesModal);

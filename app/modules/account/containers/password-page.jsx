@@ -55,7 +55,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  actions
-)(AccountPasswordPage);
+export default connect(mapStateToProps, actions)(AccountPasswordPage);

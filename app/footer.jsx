@@ -110,9 +110,6 @@ class AppFooter extends React.Component {
   }
 }
 
-export default connect(
-  null,
-  {
-    osOpenUrl
-  }
-)(AppFooter);
+export default connect(null, {
+  osOpenUrl
+})(AppFooter);

@@ -45,7 +45,4 @@ const mapDispatchToProps = {
   deleteEntity
 };
 
-export default connect(
-  undefined,
-  mapDispatchToProps
-)(InspectPage);
+export default connect(undefined, mapDispatchToProps)(InspectPage);

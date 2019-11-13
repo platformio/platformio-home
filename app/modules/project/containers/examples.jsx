@@ -176,7 +176,4 @@ export class ProjectExamplesWrapped extends React.Component {
   }
 }
 
-export const ProjectExamples = connect(
-  null,
-  actions
-)(ProjectExamplesWrapped);
+export const ProjectExamples = connect(null, actions)(ProjectExamplesWrapped);

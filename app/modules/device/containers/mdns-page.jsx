@@ -160,10 +160,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    ...actions,
-    osOpenUrl
-  }
-)(DeviceMDNSPage);
+export default connect(mapStateToProps, {
+  ...actions,
+  osOpenUrl
+})(DeviceMDNSPage);

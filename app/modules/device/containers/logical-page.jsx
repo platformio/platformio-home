@@ -133,10 +133,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    loadLogicalDevices,
-    osOpenUrl
-  }
-)(DeviceLogicalPage);
+export default connect(mapStateToProps, {
+  loadLogicalDevices,
+  osOpenUrl
+})(DeviceLogicalPage);

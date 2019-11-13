@@ -221,7 +221,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RecentProjectsBlock);
+export default connect(mapStateToProps, mapDispatchToProps)(RecentProjectsBlock);
