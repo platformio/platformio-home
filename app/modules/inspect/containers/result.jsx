@@ -22,20 +22,27 @@ import { selectDeviceInfo, selectSavedConfiguration } from '@inspect/selectors';
 import MultiPage from '@core/components/multipage';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import childRoutes from '@inspect/result-routes';
 import { connect } from 'react-redux';
+import { goTo } from '@core/helpers';
 import { osRevealFile } from '@core/actions';
 import { reinspectProject } from '@inspect/actions';
 import { selectProjectInfo } from '@project/selectors';
 
 class InspectionResultComponent extends React.Component {
   static propTypes = {
+    // data
     configuration: ConfigurationType,
     device: DeviceType,
-    projectName: PropTypes.string,
-
+    project: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired
+    }),
+    // callbacks
     osRevealFile: PropTypes.func.isRequired,
-    reinspectProject: PropTypes.func.isRequired
+    reinspectProject: PropTypes.func.isRequired,
+    showConfiguration: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -45,6 +52,12 @@ class InspectionResultComponent extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
+  }
+
+  componentDidUpdate() {
+    if (!this.props.project) {
+      this.props.showConfiguration();
+    }
   }
 
   componentWillUnmount() {
@@ -78,6 +91,11 @@ class InspectionResultComponent extends React.Component {
   }
 
   render() {
+    if (!this.props.project) {
+      // Will be redirected after render
+      return null;
+    }
+
     const routes = [...childRoutes.common];
     if (this.props.configuration.memory) {
       routes.push(...childRoutes.memory);
@@ -88,9 +106,7 @@ class InspectionResultComponent extends React.Component {
     return (
       <div>
         <h1 style={{ marginTop: 10, marginBottom: 0 }}>
-          <Tooltip title={this.props.configuration.projectDir}>
-            {this.props.projectName}
-          </Tooltip>
+          <Tooltip title={this.props.project.path}>{this.props.project.name}</Tooltip>
           <small>
             {' '}
             <b>env:{this.props.configuration.env}</b>
@@ -120,18 +136,25 @@ class InspectionResultComponent extends React.Component {
 
 function mapStateToProps(state) {
   const configuration = selectSavedConfiguration(state);
-  const project = selectProjectInfo(state, configuration.projectDir);
   return {
-    projectName: (project || {}).name,
+    project: selectProjectInfo(state, configuration.projectDir),
     configuration,
     device: selectDeviceInfo(state)
   };
 }
 
-const dispatchProps = {
-  osRevealFile,
-  reinspectProject
-};
+function dispatchProps(dispatch, ownProps) {
+  return {
+    ...bindActionCreators(
+      {
+        osRevealFile,
+        reinspectProject
+      },
+      dispatch
+    ),
+    showConfiguration: () => goTo(ownProps.history, '/inspect')
+  };
+}
 
 export const InspectionResultPage = connect(
   mapStateToProps,

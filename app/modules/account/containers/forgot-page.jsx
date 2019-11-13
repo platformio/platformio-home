@@ -50,7 +50,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { ...actions, osOpenUrl }
-)(AccountForgotPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountForgotPage);

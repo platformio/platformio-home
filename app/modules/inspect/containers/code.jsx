@@ -70,7 +70,4 @@ const dispatchToProps = {
   openTextDocument
 };
 
-export default connect(
-  mapStateToProps,
-  dispatchToProps
-)(CodePage);
+export default connect(mapStateToProps, dispatchToProps)(CodePage);

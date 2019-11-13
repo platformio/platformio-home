@@ -19,17 +19,17 @@ import {
   selectCodeStats,
   selectInspectionResult,
   selectMemoryStats,
+  selectMetric,
   selectSavedConfiguration
 } from '@inspect/selectors';
 
 import { ConfigurationType } from '@inspect/types';
-import { METRICS_KEY } from '@inspect/constants';
 import { Progress } from '@inspect/components/progress';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { goTo } from '@core/helpers';
 import { selectProjectInfo } from '@project/selectors';
-import { selectStorageItem } from '@store/selectors';
 
 const DEFAULT_MEMORY_INSPECT_DURATION_MS = 20000;
 const DEFAULT_CODE_INSPECT_DURATION_MS = 20000;
@@ -43,10 +43,26 @@ class InspectionProcessing extends React.PureComponent {
     memoryDuration: PropTypes.number,
     codeDone: PropTypes.bool,
     codeDuration: PropTypes.number,
-    projectName: PropTypes.string
+    project: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired
+    }),
+    // callbacks
+    showConfiguration: PropTypes.func.isRequired
   };
 
+  componentDidUpdate() {
+    if (!this.props.project) {
+      this.props.showConfiguration();
+    }
+  }
+
   render() {
+    if (!this.props.project) {
+      // Will be redirected after render
+      return null;
+    }
+
     const steps = [];
     if (this.props.configuration.memory) {
       steps.push({
@@ -66,9 +82,7 @@ class InspectionProcessing extends React.PureComponent {
     return (
       <div className="inspect-processing-page">
         <h1 style={{ marginTop: 10, marginBottom: 0 }}>
-          <Tooltip title={this.props.configuration.projectDir}>
-            {this.props.projectName}
-          </Tooltip>
+          <Tooltip title={this.props.project.path}>{this.props.project.name}</Tooltip>
           <small>
             {' '}
             <b>env:{this.props.configuration.env}</b>
@@ -92,22 +106,34 @@ class InspectionProcessing extends React.PureComponent {
 
 function mapStateToProps(state) {
   const configuration = selectSavedConfiguration(state);
-  const project = selectProjectInfo(state, configuration.projectDir);
-
   return {
     configuration,
-    codeDuration: selectStorageItem(
+    codeDuration: selectMetric(
       state,
-      [METRICS_KEY, configuration.projectDir, configuration.env, 'code'].join(':')
+      'code',
+      configuration.projectDir,
+      configuration.env
     ),
-    memoryDuration: selectStorageItem(
+    memoryDuration: selectMetric(
       state,
-      [METRICS_KEY, configuration.projectDir, configuration.env, 'memory'].join(':')
+      'memory',
+      configuration.projectDir,
+      configuration.env
     ),
     data: selectInspectionResult(state),
     codeDone: !!selectCodeStats(state),
     memoryDone: !!selectMemoryStats(state),
-    projectName: project.name
+    project: selectProjectInfo(state, configuration.projectDir)
   };
 }
-export const InspectionProcessingPage = connect(mapStateToProps)(InspectionProcessing);
+
+function dispatchProps(dispatch, ownProps) {
+  return {
+    showConfiguration: () => goTo(ownProps.history, '/inspect')
+  };
+}
+
+export const InspectionProcessingPage = connect(
+  mapStateToProps,
+  dispatchProps
+)(InspectionProcessing);

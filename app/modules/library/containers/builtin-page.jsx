@@ -101,7 +101,4 @@ function mapDispatchToProps(dispatch) {
     dispatch
   );
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LibraryBuiltinPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LibraryBuiltinPage);

@@ -171,7 +171,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  actions
-)(LibrarySearchPage);
+export default connect(mapStateToProps, actions)(LibrarySearchPage);

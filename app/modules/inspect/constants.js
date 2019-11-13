@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-//  Prefix for names of entities
-export const PREFIX = 'inspect';
-
 // Entity name to save list of environments
-export const CONFIG_KEY = PREFIX + 'Configuration';
+export const STORAGE_KEY = 'inspect';
+export const CONFIG_KEY = 'configuration';
+export const METRICS_KEY = 'metrics';
 
-export const RESULT_KEY = PREFIX + 'Sizedata';
-
-export const METRICS_KEY = PREFIX + 'Metrics';
+export const RESULT_KEY = 'inspectSizedata';
 
 export const SYMBOL_ICON_BY_TYPE = Object.freeze({
   STT_FUNC: 'profile',

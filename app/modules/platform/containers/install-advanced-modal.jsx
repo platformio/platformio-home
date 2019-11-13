@@ -164,7 +164,4 @@ class PlatformInstallAdvancedModal extends React.Component {
 
 // Redux
 
-export default connect(
-  null,
-  { ...actions, osOpenUrl }
-)(PlatformInstallAdvancedModal);
+export default connect(null, { ...actions, osOpenUrl })(PlatformInstallAdvancedModal);

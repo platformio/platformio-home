@@ -452,7 +452,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  actions
-)(FileExplorer);
+export default connect(mapStateToProps, actions)(FileExplorer);

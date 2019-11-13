@@ -16,11 +16,12 @@
 
 import * as pathlib from '@core/path';
 
-import { CONFIG_KEY, METRICS_KEY, RESULT_KEY } from '@inspect/constants';
+import { CONFIG_KEY, METRICS_KEY, RESULT_KEY, STORAGE_KEY } from '@inspect/constants';
 import { INSPECT_PROJECT, REINSPECT_PROJECT, inspectProject } from '@inspect/actions';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '@store/actions';
 import {
+  selectInspectStorage,
   selectInspectionResult,
   selectIsConfigurationDifferent,
   selectSavedConfiguration
@@ -29,6 +30,17 @@ import {
 import { apiFetchData } from '@store/api';
 import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
+import { selectProjectInfo } from '@project/selectors';
+
+function* _updateMetric(name, projectDir, env, duration) {
+  const storage = yield select(selectInspectStorage);
+  if (!storage[METRICS_KEY]) {
+    storage[METRICS_KEY] = {};
+  }
+  const metricKey = [projectDir, env, name].join(':');
+  storage[METRICS_KEY][metricKey] = duration;
+  yield put(updateStorageItem(STORAGE_KEY, storage));
+}
 
 function* _inspectMemory({ projectDir, env }) {
   const start = Date.now();
@@ -52,13 +64,11 @@ function* _inspectMemory({ projectDir, env }) {
     params: [sizedataPath]
   });
   if (!jsonContent) {
-    throw new Error('sizedata.json file not found. Build error?');
+    return;
   }
   const result = JSON.parse(jsonContent);
-  const duration = Date.now() - start;
-  yield put(
-    updateStorageItem([METRICS_KEY, projectDir, env, 'memory'].join(':'), duration)
-  );
+  yield _updateMetric('memory', projectDir, env, Date.now() - start);
+
   return result;
 }
 
@@ -70,10 +80,8 @@ function* _inspectCode({ projectDir, env }) {
       query: 'core.call',
       params: [['check', '-d', projectDir, '-e', env, '--json-output']]
     });
-    const duration = Date.now() - start;
-    yield put(
-      updateStorageItem([METRICS_KEY, projectDir, env, 'code'].join(':'), duration)
-    );
+    yield _updateMetric('code', projectDir, env, Date.now() - start);
+
     if (codeCheckResults && codeCheckResults.length) {
       return codeCheckResults;
     }
@@ -92,31 +100,43 @@ function* _inspectCode({ projectDir, env }) {
 
 function* watchInspectProject() {
   yield takeLatest(INSPECT_PROJECT, function*({ configuration, onEnd }) {
-    if (!(yield select(selectIsConfigurationDifferent, configuration))) {
-      const currentResult = yield select(selectInspectionResult);
-      if (currentResult) {
-        // Result is already present
-        if (onEnd) {
-          onEnd(currentResult);
-        }
-        return;
-      }
-    }
-    yield put(deleteEntity(new RegExp(`^${RESULT_KEY}$`)));
-    yield put(updateStorageItem(CONFIG_KEY, configuration));
-
-    const state = yield select();
-    if (state.router) {
-      yield call(goTo, state.router.history, '/inspect/processing', undefined, true);
-    }
-
-    const { memory, code } = configuration;
     try {
+      if (!(yield select(selectProjectInfo, configuration.projectDir))) {
+        throw new Error(
+          `Can't inspect non-existing project '${configuration.projectDir}'`
+        );
+      }
+
+      if (!(yield select(selectIsConfigurationDifferent, configuration))) {
+        const currentResult = yield select(selectInspectionResult);
+        if (currentResult) {
+          // Result is already present
+          if (onEnd) {
+            onEnd(currentResult);
+          }
+          return;
+        }
+      }
+      yield put(deleteEntity(new RegExp(`^${RESULT_KEY}$`)));
+      const storage = yield select(selectInspectStorage);
+      storage[CONFIG_KEY] = configuration;
+      yield put(updateStorageItem(STORAGE_KEY, storage));
+
+      const state = yield select();
+      if (state.router) {
+        yield call(goTo, state.router.history, '/inspect/processing', undefined, true);
+      }
+
+      const { memory, code } = configuration;
+
       let memoryResult;
       let codeCheckResult;
 
       if (memory) {
         memoryResult = yield call(_inspectMemory, configuration);
+        if (!memoryResult) {
+          throw new Error('Memory inspect returned no result');
+        }
         yield put(updateEntity(RESULT_KEY, { memory: memoryResult }));
       }
 
@@ -151,6 +171,10 @@ function* watchInspectProject() {
         onEnd(undefined, error);
       }
       yield put(updateEntity(RESULT_KEY, { error }));
+      const state = yield select();
+      if (state.router) {
+        yield call(goTo, state.router.history, '/inspect', undefined, true);
+      }
     }
   });
 }

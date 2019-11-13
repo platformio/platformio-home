@@ -77,7 +77,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { osOpenUrl }
-)(PioVersions);
+export default connect(mapStateToProps, { osOpenUrl })(PioVersions);

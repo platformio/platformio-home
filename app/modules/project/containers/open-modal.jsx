@@ -119,9 +119,6 @@ class ProjectOpenModal extends React.Component {
 
 // Redux
 
-export default connect(
-  undefined,
-  {
-    addProject
-  }
-)(ProjectOpenModal);
+export default connect(undefined, {
+  addProject
+})(ProjectOpenModal);

@@ -136,7 +136,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PlatformInstalledPage);
+export default connect(mapStateToProps, mapDispatchToProps)(PlatformInstalledPage);

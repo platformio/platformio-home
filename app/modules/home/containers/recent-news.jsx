@@ -138,10 +138,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    loadLatestTweets,
-    osOpenUrl
-  }
-)(RecentNews);
+export default connect(mapStateToProps, {
+  loadLatestTweets,
+  osOpenUrl
+})(RecentNews);
