@@ -345,6 +345,15 @@ class ProjectConfig extends React.PureComponent {
     }
   };
 
+  handleReportIssueClick = () => {
+    const reportIssueUrl =
+      'https://github.com/platformio/platformio-home/issues/new?' +
+      querystringify.stringify({
+        title: 'Edit Project Config'
+      });
+    this.props.osOpenUrl(reportIssueUrl);
+  };
+
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
@@ -494,12 +503,6 @@ class ProjectConfig extends React.PureComponent {
   }
 
   render() {
-    const reportIssueUrl =
-      'https://github.com/platformio/platformio-home/issues/new?' +
-      querystringify.stringify({
-        title: 'Edit Project Config'
-      });
-
     return (
       <div className="project-config-page">
         <h1 className="block clearfix">
@@ -512,10 +515,7 @@ class ProjectConfig extends React.PureComponent {
             <span>
               This a beta version of Project Configuration. Please back up{' '}
               <code>platformio.ini</code> before saving new changes. If you have any
-              issues,{' '}
-              <a onClick={() => this.props.osOpenUrl(reportIssueUrl)}>
-                please report us
-              </a>
+              issues, <a onClick={this.handleReportIssueClick}>please report us</a>
             </span>
           }
           type="warning"
