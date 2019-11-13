@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
+import { Alert, Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -499,6 +499,20 @@ class ProjectConfig extends React.PureComponent {
           <span>{this.props.project.name}</span>
           {this.renderFormActions()}
         </h1>
+        <Alert
+          className="block"
+          message={
+            <span
+              dangerouslySetInnerHTML={{
+                __html: `This a beta version of Project Configuration.
+            Please back up <code>platformio.ini</code> before saving new changes.
+            If you have any issues, <a onClick=https://github.com/platformio/platformio-home/issues>please report us</a>`
+              }}
+            />
+          }
+          type="warning"
+          showIcon
+        />
         {this.renderFilter()}
         {this.renderConfig()}
       </div>
