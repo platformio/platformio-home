@@ -270,6 +270,36 @@ class ProjectConfig extends React.PureComponent {
     });
   }
 
+  addSectionField(sectionName, name, value = '') {
+    const field = {
+      name,
+      value
+    };
+    const oldSection = this.state.config.find(s => s.section === sectionName);
+    const newSection = {
+      ...oldSection,
+      items: [...oldSection.items, field]
+    };
+    this.setState(prevState => ({
+      config: prevState.config.map(section =>
+        section !== oldSection ? section : newSection
+      )
+    }));
+  }
+
+  removeSectionField(sectionName, name) {
+    const oldSection = this.state.config.find(s => s.section === sectionName);
+    const newSection = {
+      ...oldSection,
+      items: oldSection.items.filter(item => item.name !== name)
+    };
+    this.setState(prevState => ({
+      config: prevState.config.map(section =>
+        section !== oldSection ? section : newSection
+      )
+    }));
+  }
+
   renameSection(tabId, name) {
     this.setState(state => ({
       config: state.config.map(section => {
@@ -354,6 +384,14 @@ class ProjectConfig extends React.PureComponent {
     this.props.osOpenUrl(reportIssueUrl);
   };
 
+  handleFieldAdd = (section, name) => {
+    this.addSectionField(section, name);
+  };
+
+  handleFieldRemove = (section, name) => {
+    this.removeSectionField(section, name);
+  };
+
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
@@ -436,7 +474,7 @@ class ProjectConfig extends React.PureComponent {
           </Menu.Item>
         )}
         <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
-        {/* <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item> */}
+        <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item>
       </Menu>
     );
 
@@ -456,12 +494,14 @@ class ProjectConfig extends React.PureComponent {
       id: key,
       name: section.section,
       initialValues: section.items,
+      onFieldRemove: this.handleFieldRemove,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
       showOverridden: this.state.showOverridden,
       search: this.state.search,
       type,
-      onDocumentationClick: this.handleDocumentationClick
+      onDocumentationClick: this.handleDocumentationClick,
+      onFieldAdd: this.handleFieldAdd
     };
     return (
       <Tabs.TabPane

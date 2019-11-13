@@ -117,9 +117,8 @@
     }
   }
 
+  @gutter: 32px;
   .config-form {
-    @gutter: 32px;
-
     padding-left: @gutter;
 
     .config-section-group {
@@ -171,7 +170,7 @@
         left: -@width;
         position: absolute;
         text-align: center;
-        top: -3px;
+        top: -2px;
         width: @width;
 
         .anticon {
@@ -183,11 +182,32 @@
         }
       }
 
+      .remove-option-btn {
+        display: none;
+        left: -28px;
+        position: absolute;
+        top: -2px;
+      }
+
       &:hover {
-        .documentation-link {
+        .documentation-link,
+        .remove-option-btn {
           display: block;
         }
       }
+    }
+  }
+
+  .add-new-option {
+    @icon-size: 14px;
+
+    margin: 0 @gutter;
+    position: relative;
+
+    .add-icon {
+      left: -(@icon-size + (@gutter - @icon-size)/2);
+      position: absolute;
+      top: (32 - @icon-size)/2;
     }
   }
 

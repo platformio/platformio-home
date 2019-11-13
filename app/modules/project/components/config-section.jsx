@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-import { Checkbox, Col, Form, Icon, Input, Row, Select, Tag, Tooltip } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Icon,
+  Input,
+  Row,
+  Select,
+  Tag,
+  Tooltip
+} from 'antd';
 import { ConfigOptionType, SchemaType } from '@project/types';
 import {
   SCOPE_PLATFORMIO,
   SECTIONS,
+  SECTION_CUSTOM,
   SECTION_GLOBAL_ENV,
   SECTION_NAME_KEY,
   SECTION_PLATFORMIO,
@@ -39,6 +51,8 @@ import React from 'react';
 
 // Feature flag
 const FEATURE_RESET_LINK = false;
+
+const ADD_NEW_OPTION_KEY = 'add-new-option';
 
 function escapeFieldName(x) {
   return x.replace(/\./g, '@');
@@ -102,7 +116,6 @@ class DocumentationLink extends React.PureComponent {
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
-    // fields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     form: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
@@ -113,12 +126,16 @@ class ConfigSectionComponent extends React.PureComponent {
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
     onDocumentationClick: PropTypes.func.isRequired,
-    onRename: PropTypes.func.isRequired
+    onRename: PropTypes.func.isRequired,
+    onFieldAdd: PropTypes.func.isRequired,
+    onFieldRemove: PropTypes.func.isRequired
   };
 
   constructor(...args) {
     super(...args);
-    this.state = {};
+    this.state = {
+      autoFocus: ADD_NEW_OPTION_KEY
+    };
   }
 
   componentDidMount() {
@@ -264,6 +281,35 @@ class ConfigSectionComponent extends React.PureComponent {
     });
   };
 
+  handleNewRefUpdate = $el => {
+    this.$new = $el;
+    if (
+      this.props.type === SECTION_CUSTOM &&
+      this.props.initialValues.length === 0 &&
+      this.$new
+    ) {
+      this.$new.focus();
+    }
+  };
+
+  handleNewKeydown = e => {
+    if (e.defaultPrevented) {
+      return; // Should do nothing if the default action has been cancelled
+    }
+    if (e.keyCode === 13) {
+      const name = this.$new.state.value;
+      this.setState({ autoFocus: name });
+      this.props.onFieldAdd(this.props.name, name);
+      this.$new.setState({ value: '' });
+      // Suppress "double action" if event handled
+      event.preventDefault();
+    }
+  };
+
+  handleRemoveOptionClick = e => {
+    this.props.onFieldRemove(this.props.name, e.target.dataset.name);
+  };
+
   renderEmptyMessage(fields, filteredFields) {
     if (!this.props.search && fields.length === 0) {
       return (
@@ -282,12 +328,6 @@ class ConfigSectionComponent extends React.PureComponent {
     }
   }
 
-  renderDocLink(scope, group, name) {
-    if (name.startsWith('__')) {
-      return;
-    }
-  }
-
   renderLabel(name, schema, { multiple, valueOverridden }) {
     let label = schema && schema.label ? schema.label : name;
 
@@ -298,6 +338,17 @@ class ConfigSectionComponent extends React.PureComponent {
             url={getDocumentationUrl(schema.scope, schema.group, name)}
             onClick={this.handleDocumentationClick}
           />
+        )}
+        {this.props.type === SECTION_CUSTOM && (
+          <Tooltip title="Remove option">
+            <Button
+              className="remove-option-btn"
+              data-name={name}
+              icon="delete"
+              size="small"
+              onClick={this.handleRemoveOptionClick}
+            />
+          </Tooltip>
         )}
         {label}
       </React.Fragment>
@@ -432,6 +483,7 @@ class ConfigSectionComponent extends React.PureComponent {
         if (multiple) {
           input = (
             <Input.TextArea
+              autoFocus={this.state.autoFocus === name}
               placeholder={defaultValue}
               autoSize={{ minRows: 1, maxRows: 20 }}
               rows={1}
@@ -477,7 +529,7 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   renderGroup(groupName, fields, schema, values) {
-    const groupHidden = fields.every(x => x.hidden);
+    const groupHidden = fields.length && fields.every(x => x.hidden);
     return (
       <div key={groupName} className={groupHidden ? 'hide' : undefined}>
         {groupName.length !== 0 && (
@@ -491,6 +543,20 @@ class ConfigSectionComponent extends React.PureComponent {
         {fields.map(({ name, hidden }) =>
           this.renderFormItem(name, schema, values[name], hidden)
         )}
+      </div>
+    );
+  }
+
+  renderNewField() {
+    return (
+      <div className="add-new-option" key={ADD_NEW_OPTION_KEY}>
+        <Icon className="add-icon" type="plus" />
+        <Input
+          autoFocus={this.state.autoFocus === ADD_NEW_OPTION_KEY}
+          onKeyDown={this.handleNewKeydown}
+          placeholder="Enter new option name and press enter"
+          ref={this.handleNewRefUpdate}
+        />
       </div>
     );
   }
@@ -520,6 +586,13 @@ class ConfigSectionComponent extends React.PureComponent {
 
     const groups = new Set();
     const fieldsByGroup = [];
+
+    if (this.props.type === SECTION_CUSTOM) {
+      // Force display group name when there are no fields
+      groups.add('Custom');
+      fieldsByGroup['Custom'] = [];
+    }
+
     fields.forEach(name => {
       const group = schema[name] ? schema[name].group : 'Custom';
       if (!groups.has(group)) {
@@ -543,12 +616,14 @@ class ConfigSectionComponent extends React.PureComponent {
         <Col xs={24} sm={15} md={18}>
           <Form layout="vertical" className="config-form">
             {!this.props.search && this.renderSectionName()}
-            {this.renderEmptyMessage(fields, filteredFields)}
-            {fields.length !== 0 &&
+            {this.props.type !== SECTION_CUSTOM &&
+              this.renderEmptyMessage(fields, filteredFields)}
+            {groups.size !== 0 &&
               [...groups].map(groupName =>
                 this.renderGroup(groupName, fieldsByGroup[groupName], schema, values)
               )}
           </Form>
+          {this.props.type === SECTION_CUSTOM && this.renderNewField()}
         </Col>
       </Row>
     );
