@@ -20,6 +20,7 @@ import * as actions from './actions';
 import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
+import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
@@ -32,7 +33,7 @@ import {
   notifySuccess,
   osRevealFile
 } from '../core/actions';
-import { call, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   deleteEntity,
   saveState,
@@ -329,6 +330,120 @@ function* watchImportArduinoProject() {
   }
 }
 
+function* watchLoadConfigSchema() {
+  yield takeLatest(actions.LOAD_CONFIG_SCHEMA, function*() {
+    try {
+      const schema = yield call(apiFetchData, {
+        query: 'project.get_config_schema'
+      });
+      // group by scope to pass to section without extra processing
+      const schemaByScope = {};
+      for (const item of schema) {
+        const { scope } = item;
+        if (!schemaByScope[scope]) {
+          schemaByScope[scope] = [];
+        }
+        schemaByScope[scope].push(item);
+      }
+      yield put(updateEntity(CONFIG_SCHEMA_KEY, schemaByScope));
+    } catch (e) {
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not load config schema', e));
+      }
+    }
+  });
+}
+
+function* watchLoadProjectConfig() {
+  yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
+    try {
+      yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`), config));
+      const tupleConfig = yield call(apiFetchData, {
+        query: 'project.config_load',
+        params: [pathlib.join(projectDir, 'platformio.ini')]
+      });
+      const config = tupleConfig.map(([section, items]) => ({
+        section,
+        items: items.map(([name, value]) => ({
+          name,
+          value
+        }))
+      }));
+      yield put(updateEntity(PROJECT_CONFIG_KEY, config));
+    } catch (e) {
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not load project config', e));
+      }
+    }
+  });
+}
+
+function* watchSaveProjectConfig() {
+  yield takeLatest(actions.SAVE_PROJECT_CONFIG, function*({ projectDir, data, onEnd }) {
+    try {
+      yield call(apiFetchData, {
+        query: 'project.config_dump',
+        params: [pathlib.join(projectDir, 'platformio.ini'), data]
+      });
+      message.success('Project configuration saved');
+    } catch (e) {
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not save project config', e));
+      }
+    } finally {
+      yield call(onEnd);
+    }
+  });
+}
+
+function* _patchProjectState(path, patch) {
+  const exProjects = (yield select(selectors.selectProjects)) || [];
+  const exProject = exProjects.find(x => x.path === path);
+  if (!exProject) {
+    return;
+  }
+  const project = { ...exProject, ...patch };
+  const projects = exProjects.map(p => (p === exProject ? project : p));
+  yield put(updateEntity('projects', projects));
+  return exProject;
+}
+
+function* watchUpdateConfigDescription() {
+  yield takeLatest(actions.UPDATE_CONFIG_DESCRIPTION, function*({
+    projectDir,
+    description,
+    onEnd
+  }) {
+    let err;
+    let undo;
+    try {
+      // Patch existing state if loaded
+      undo = yield _patchProjectState(projectDir, { description });
+
+      // Patch file via RPC
+      yield call(apiFetchData, {
+        query: 'project.config_update_description',
+        params: [pathlib.join(projectDir, 'platformio.ini'), description]
+      });
+      message.success('Project description is saved into configuration file');
+    } catch (e) {
+      err = e;
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not save project config', e));
+      }
+      // Rollback edit
+      if (undo) {
+        yield _patchProjectState(projectDir, { description: undo.description });
+      }
+      console.error(e);
+    } finally {
+      if (onEnd) {
+        yield call(onEnd, err);
+      }
+    }
+  });
+}
+
 export default [
   watchAddProject,
   watchHideProject,
@@ -339,5 +454,9 @@ export default [
   watchCleanupProjectExamples,
   watchImportProject,
   watchInitProject,
-  watchImportArduinoProject
+  watchImportArduinoProject,
+  watchLoadConfigSchema,
+  watchLoadProjectConfig,
+  watchSaveProjectConfig,
+  watchUpdateConfigDescription
 ];

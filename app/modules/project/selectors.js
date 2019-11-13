@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
 import { selectEntity, selectInputValue } from '../../store/selectors';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
@@ -54,4 +55,12 @@ export function selectVisibleProjects(state) {
 
 export function selectProjectInfo(state, path) {
   return (selectProjects(state) || []).find(item => item.path === path);
+}
+
+export function selectConfigSchema(state) {
+  return selectEntity(state, CONFIG_SCHEMA_KEY);
+}
+
+export function selectProjectConfig(state) {
+  return selectEntity(state, PROJECT_CONFIG_KEY);
 }

@@ -96,3 +96,19 @@ export function cmpSort(a, b) {
   }
   return 0;
 }
+
+export function cmpArray(a, b) {
+  if (a === b) {
+    return true;
+  }
+  if (a.length !== b.length) {
+    return false;
+  }
+  let i = a.length;
+  while (i--) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+  return true;
+}

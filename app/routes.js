@@ -21,6 +21,7 @@ import HomePage from './modules/home/containers/home-page';
 import InspectPage from './modules/inspect';
 import LibraryIndex from './modules/library/index';
 import PlatformPage from './modules/platform/index';
+import ProjectsPage from './modules/project';
 
 const routes = [
   {
@@ -34,6 +35,12 @@ const routes = [
     // icon: 'user',
     // label: 'Account',
     component: AccountIndex
+  },
+  {
+    path: '/projects',
+    icon: 'file-ppt',
+    label: 'Projects',
+    component: ProjectsPage
   },
   {
     path: '/inspect',

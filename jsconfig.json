@@ -5,11 +5,12 @@
     "baseUrl": "./",
     "jsx": "react",
     "paths": {
-      "@app/*": ["app/*"],
       "@core/*": ["app/core/*"],
       "@inspect/*": ["app/modules/inspect/*"],
+      "@platform/*": ["app/modules/platform/*"],
       "@project/*": ["app/modules/project/*"],
-      "@store/*": ["app/store/*"]
+      "@store/*": ["app/store/*"],
+      "@app/*": ["app/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
