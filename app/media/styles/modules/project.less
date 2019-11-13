@@ -44,27 +44,37 @@
     margin-right: 8px;
   }
 
-  .quick-edit {
-    display: flex;
-    align-items: center;
-    margin-top: -4px;
-    margin-bottom: -4px;
+  .quick-edit-target-container {
+    position: relative;
 
-    .ant-input {
-      border: 0;
-      flex: 1;
-      padding: 0;
+    .quick-edit-btn {
+      vertical-align: middle;
     }
 
-    .buttons {
-      padding-left: 8px;
+    .quick-edit {
+      display: table;
+      left: -(@input-padding-horizontal-base + @border-width-base);
+      position: absolute;
+      right: 0;
+      top: -(@input-padding-vertical-base + @border-width-base);
 
-      .delimiter {
-        margin: 0 2px;
+      .input-col {
+        display: table-cell;
+        width: 100%;
       }
-      .return-icon {
-        vertical-align: middle;
-        margin-right: 7px;
+
+      .buttons {
+        display: table-cell;
+        padding-left: 8px;
+        white-space: nowrap;
+
+        .delimiter {
+          margin: 0 2px;
+        }
+        .return-icon {
+          vertical-align: middle;
+          margin-right: 7px;
+        }
       }
     }
   }

@@ -26,6 +26,7 @@
     "marked": "~0.7.0",
     "prop-types": "~15.7.2",
     "querystringify": "~2.1.1",
+    "rc-animate": "^2.10.2",
     "react": "~16.11.0",
     "react-dnd": "^9.4.0",
     "react-dnd-html5-backend": "^9.4.0",

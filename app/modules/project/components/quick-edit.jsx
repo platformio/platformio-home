@@ -16,6 +16,7 @@
 
 import { Button, Input, Tooltip } from 'antd';
 
+import Animate from 'rc-animate';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -32,7 +33,7 @@ export class QuickEdit extends React.PureComponent {
 
   constructor(...args) {
     super(...args);
-    this.state = {};
+    this.state = { editing: false };
   }
 
   beginEdit() {
@@ -59,29 +60,29 @@ export class QuickEdit extends React.PureComponent {
     this.setState({ editing: false });
   }
 
-  handleChange(e) {
+  handleChange = e => {
     this.setState({ value: e.target.value });
-  }
+  };
 
-  handleSaveClick(e) {
+  handleSaveClick = e => {
     e.preventDefault();
     e.stopPropagation();
     this.stopEdit(true);
-  }
+  };
 
-  handleCancelClick(e) {
+  handleCancelClick = e => {
     e.preventDefault();
     e.stopPropagation();
     this.stopEdit();
-  }
+  };
 
-  handleBeginEditClick(e) {
+  handleBeginEditClick = e => {
     e.preventDefault();
     e.stopPropagation();
     this.beginEdit();
-  }
+  };
 
-  handleKeyDown(e) {
+  handleKeyDown = e => {
     if (e.keyCode === 27) {
       // Escape
       this.stopEdit();
@@ -89,48 +90,58 @@ export class QuickEdit extends React.PureComponent {
       // Return
       this.stopEdit(true);
     }
+  };
+
+  handleUpdateRef = $el => {
+    this.$input = $el;
+  };
+
+  renderEditor() {
+    return (
+      <div className="quick-edit" key={'1'}>
+        <div className="input-col">
+          <Input
+            {...this.props.inputProps}
+            onBlur={this.handleSaveClick}
+            onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
+            placeholder={this.props.placeholder}
+            ref={this.handleUpdateRef}
+            value={this.state.value}
+          />
+        </div>
+        <span className="buttons">
+          <Button type="primary" onClick={this.handleSaveClick}>
+            <span className="return-icon">⏎</span>
+            Save
+          </Button>
+          <span className="delimiter"> or </span>
+          <a onClick={this.handleCancelClick}>Cancel</a>
+        </span>
+      </div>
+    );
   }
 
   render() {
-    if (this.state.editing) {
-      return (
-        <div className="quick-edit">
-          <Input
-            {...this.props.inputProps}
-            onBlur={::this.handleSaveClick}
-            onChange={::this.handleChange}
-            onKeyDown={::this.handleKeyDown}
-            placeholder={this.props.placeholder}
-            ref={$el => (this.$input = $el)}
-            value={this.state.value}
-          />
-          <span className="buttons">
-            <Button type="primary" onClick={::this.handleSaveClick}>
-              <span className="return-icon">⏎</span>
-              Save
-            </Button>
-            <span className="delimiter"> or </span>
-            <a onClick={::this.handleCancelClick}>Cancel</a>
-          </span>
-        </div>
-      );
-    }
-
     return (
-      <React.Fragment>
-        <span onClick={::this.handleBeginEditClick} style={{ cursor: 'text' }}>
+      <div className="quick-edit-target-container">
+        <span onClick={this.handleBeginEditClick} style={{ cursor: 'text' }}>
           {this.props.value || this.props.placeholder}
         </span>
         <Tooltip title="Inline edit description">
           <Button
+            className="quick-edit-btn"
             icon="edit"
             loading={this.state.saving}
             size="small"
             type="link"
-            onClick={::this.handleBeginEditClick}
+            onClick={this.handleBeginEditClick}
           ></Button>
         </Tooltip>
-      </React.Fragment>
+        <Animate transitionName="fade" transitionAppear>
+          {this.state.editing ? this.renderEditor() : null}
+        </Animate>
+      </div>
     );
   }
 }
