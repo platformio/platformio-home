@@ -175,3 +175,22 @@ export function formatFrequency(f, digitsAfterPoint = 1, hideZeroesAfterPoint = 
   }
   return `${value}${FREQ_UNITS[order]}`;
 }
+
+/**
+ * Replacement for Array.flat()
+ */
+export function arrayFlat(array, result) {
+  if (!result) {
+    result = [];
+  }
+  for (let i = 0; i < array.length; i++) {
+    const value = array[i];
+
+    if (Array.isArray(value)) {
+      arrayFlat(value, result);
+    } else {
+      result.push(value);
+    }
+  }
+  return result;
+}

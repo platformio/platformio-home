@@ -102,7 +102,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { osFsGlob }
-)(PlatformProjectExamples);
+export default connect(mapStateToProps, { osFsGlob })(PlatformProjectExamples);

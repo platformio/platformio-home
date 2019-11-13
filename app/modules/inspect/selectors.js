@@ -14,12 +14,37 @@
  * limitations under the License.
  */
 
-import { CONFIG_KEY, RESULT_KEY, SEVERITY_LEVEL } from '@inspect/constants';
+import {
+  CONFIG_KEY,
+  METRICS_KEY,
+  RESULT_KEY,
+  SEVERITY_LEVEL,
+  STORAGE_KEY
+} from '@inspect/constants';
+import {
+  arrayFlat,
+  resolveRelativePathSegments,
+  shallowCompare,
+  windowsToPosixPath
+} from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
-import { shallowCompare, windowsToPosixPath } from '@inspect/helpers';
+
+export function selectInspectStorage(state, namespace) {
+  const root = selectStorageItem(state, STORAGE_KEY) || {};
+  return namespace ? root[namespace] : root;
+}
+
+export function selectMetrics(state) {
+  return selectInspectStorage(state, METRICS_KEY) || {};
+}
+
+export function selectMetric(state, name, projectDir, env) {
+  const key = [projectDir, env, name].join(':');
+  return selectMetrics(state)[key];
+}
 
 export function selectSavedConfiguration(state) {
-  return selectStorageItem(state, CONFIG_KEY);
+  return selectInspectStorage(state, CONFIG_KEY);
 }
 
 export function selectIsConfigurationDifferent(state, newConfiguration) {
@@ -45,15 +70,15 @@ export function selectCodeCheckDefects(state) {
   if (!codeChecks) {
     return;
   }
-  return codeChecks
-    .map(({ tool, defects }) => {
+  return arrayFlat(
+    codeChecks.map(({ tool, defects }) => {
       return defects.map(item => {
         item['tool'] = tool;
         item['level'] = SEVERITY_LEVEL[item.severity.toUpperCase()];
         return item;
       });
     })
-    .flat();
+  );
 }
 
 export function selectExplorerSizeData(state) {
@@ -73,7 +98,7 @@ export function selectExplorerSizeData(state) {
   return files.map(v => ({
     flash: v.flash_size,
     isDir: false,
-    path: windowsToPosixPath(v.path),
+    path: resolveRelativePathSegments(windowsToPosixPath(v.path), '/'),
     ram: v.ram_size,
     symbols: (v.symbols || []).map(s => ({
       ...s,
@@ -87,10 +112,7 @@ export function selectSymbolsSizeData(state) {
   if (!files) {
     return;
   }
-  return files
-    .map(({ symbols }) => symbols)
-    .filter(x => x && x.length)
-    .flat();
+  return arrayFlat(files.map(({ symbols }) => symbols).filter(x => x && x.length));
 }
 
 export function selectMemoryStats(state) {
@@ -166,7 +188,7 @@ export function selectSectionsSizeData(state) {
   return sections.map(({ flags, size, type, start_addr: startAddr, name }) => ({
     flags,
     size,
-    type,
+    type: type != undefined ? type.toString() : '',
     startAddr,
     name
   }));

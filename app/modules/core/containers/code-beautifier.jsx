@@ -127,7 +127,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { requestContent }
-)(CodeBeautifier);
+export default connect(mapStateToProps, { requestContent })(CodeBeautifier);

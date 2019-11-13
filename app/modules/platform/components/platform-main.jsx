@@ -107,7 +107,11 @@ export default class PlatformMain extends React.Component {
         <h3>Installation</h3>
         <ul className="block list-inline">
           <li>
-            <Select defaultValue={versions[0]} onChange={::this.onDidVersionChange}>
+            <Select
+              defaultValue={versions[0]}
+              dropdownMatchSelectWidth={false}
+              onChange={::this.onDidVersionChange}
+            >
               {versions.map(name => (
                 <Select.Option key={name} value={name}>
                   {name}

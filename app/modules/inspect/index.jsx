@@ -15,8 +15,8 @@
  */
 
 import MultiPage from '@core/components/multipage';
-import { PREFIX } from '@inspect/constants';
 import PropTypes from 'prop-types';
+import { RESULT_KEY } from '@inspect/constants';
 import React from 'react';
 import { connect } from 'react-redux';
 import { deleteEntity } from '@store/actions';
@@ -28,9 +28,8 @@ class InspectPage extends React.Component {
   };
 
   componentWillUnmount() {
-    // Delete all entities containing inspection results
-    // But keep saved form
-    this.props.deleteEntity(new RegExp(`^${PREFIX}:`));
+    // Delete inspection result
+    this.props.deleteEntity(new RegExp(`^${RESULT_KEY}:`));
   }
 
   render() {
@@ -46,7 +45,4 @@ const mapDispatchToProps = {
   deleteEntity
 };
 
-export default connect(
-  undefined,
-  mapDispatchToProps
-)(InspectPage);
+export default connect(undefined, mapDispatchToProps)(InspectPage);

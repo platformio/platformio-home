@@ -163,10 +163,7 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    ...actions,
-    osOpenUrl
-  }
-)(DeviceSerialPage);
+export default connect(mapStateToProps, {
+  ...actions,
+  osOpenUrl
+})(DeviceSerialPage);

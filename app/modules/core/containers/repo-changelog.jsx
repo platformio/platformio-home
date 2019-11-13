@@ -134,7 +134,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { requestContent }
-)(RepositoryChangelog);
+export default connect(mapStateToProps, { requestContent })(RepositoryChangelog);

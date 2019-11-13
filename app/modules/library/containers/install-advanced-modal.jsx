@@ -297,11 +297,8 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  {
-    installLibrary,
-    loadProjects,
-    osOpenUrl
-  }
-)(LibraryInstallAdvancedModal);
+export default connect(mapStateToProps, {
+  installLibrary,
+  loadProjects,
+  osOpenUrl
+})(LibraryInstallAdvancedModal);

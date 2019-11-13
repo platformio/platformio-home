@@ -59,7 +59,4 @@ const dispatchToProps = {
   openTextDocument
 };
 
-export default connect(
-  mapStateToProps,
-  dispatchToProps
-)(SymbolsPage);
+export default connect(mapStateToProps, dispatchToProps)(SymbolsPage);

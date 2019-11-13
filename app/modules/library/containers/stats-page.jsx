@@ -75,7 +75,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { ...actions, osOpenUrl }
-)(LibraryStatsPage);
+export default connect(mapStateToProps, { ...actions, osOpenUrl })(LibraryStatsPage);

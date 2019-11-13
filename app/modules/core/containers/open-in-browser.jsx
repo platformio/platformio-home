@@ -46,9 +46,6 @@ class OpenInBrowser extends React.Component {
 
 // Redux
 
-export default connect(
-  null,
-  {
-    osOpenUrl
-  }
-)(OpenInBrowser);
+export default connect(null, {
+  osOpenUrl
+})(OpenInBrowser);

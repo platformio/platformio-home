@@ -147,7 +147,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  { connectRouter }
-)(RoutedMenu);
+export default connect(mapStateToProps, { connectRouter })(RoutedMenu);

@@ -76,7 +76,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FrameworksPage);
+export default connect(mapStateToProps, mapDispatchToProps)(FrameworksPage);

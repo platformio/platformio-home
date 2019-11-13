@@ -82,7 +82,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PlatformEmbeddedPage);
+export default connect(mapStateToProps, mapDispatchToProps)(PlatformEmbeddedPage);
