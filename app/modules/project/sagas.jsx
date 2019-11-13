@@ -72,7 +72,7 @@ function* watchAddProject() {
       yield put(
         updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, [...result, projectDir])
       );
-      yield put(saveState()); // force state saving when new project is opening in new window (VSCode issue)
+      yield put(saveState());
     }
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());
@@ -96,8 +96,12 @@ function* watchHideProject() {
         storageItems.filter(item => item !== projectDir)
       )
     );
+    yield put(saveState());
     yield put(
-      updateEntity('projects', entityItems.filter(item => item.path !== projectDir))
+      updateEntity(
+        'projects',
+        entityItems.filter(item => item.path !== projectDir)
+      )
     );
   });
 }
@@ -118,6 +122,7 @@ function* watchProjectRename() {
         storageItems.filter(item => item !== src)
       )
     );
+    yield put(saveState());
     if (yield select(selectors.selectProjects)) {
       yield put(deleteEntity(/^projects/));
       yield put(actions.loadProjects());
@@ -170,8 +175,7 @@ function* watchLoadProjects() {
     }
     try {
       items = yield call(apiFetchData, {
-        query: 'project.get_projects',
-        params: [yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)]
+        query: 'project.get_projects'
       });
       yield put(updateEntity('projects', items));
       yield put(actions.projectsLoaded());
