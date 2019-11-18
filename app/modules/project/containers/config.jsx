@@ -38,6 +38,7 @@ import {
   selectProjectInfo
 } from '@project/selectors';
 
+import { AddSectionOptionModal } from '@project/components/add-option-modal';
 import { ConfigSectionForm } from '@project/components/config-section';
 import { DraggableTabs } from '@project/components/draggable-tabs';
 import PropTypes from 'prop-types';
@@ -80,6 +81,7 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
+      addOptionModalVisible: false,
       showToc: false
     };
     this.forms = {};
@@ -354,6 +356,24 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
+  handleShowAddOption = sectionName => {
+    this.setState({
+      addOptionModalVisible: true,
+      addOptionModalSection: sectionName
+    });
+  };
+
+  handleAddOptionModalClose = names => {
+    this.setState({
+      addOptionModalVisible: false
+    });
+    if (!names) {
+      return;
+    }
+    // TODO: add option
+    console.warn(names);
+  };
+
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
@@ -435,6 +455,7 @@ class ProjectConfig extends React.PureComponent {
       search: this.state.search,
       type,
       onDocumentationClick: this.handleDocumentationClick,
+      onShowAddOption: this.handleShowAddOption,
       onTocToggle: this.handleTocToggle
     };
     return (
@@ -477,8 +498,20 @@ class ProjectConfig extends React.PureComponent {
   }
 
   render() {
+    const modalSection = this.state.addOptionModalSection;
+    const modalScope =
+      modalSection && this.getSectionScope(this.getSectionType(modalSection));
+    const modalSchema =
+      modalScope && this.props.schema && this.props.schema[modalScope];
+
     return (
       <div className="project-config-page">
+        <AddSectionOptionModal
+          onClose={this.handleAddOptionModalClose}
+          schema={modalSchema}
+          sectionName={modalSection}
+          visible={this.state.addOptionModalVisible}
+        />
         <h1 className="block clearfix">
           <span>{this.props.project.name}</span>
           {this.renderFormActions()}

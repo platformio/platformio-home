@@ -28,7 +28,6 @@ import {
 } from 'antd';
 import { ConfigOptionType, SchemaType } from '@project/types';
 import {
-  SCOPE_PLATFORMIO,
   SECTIONS,
   SECTION_GLOBAL_ENV,
   SECTION_NAME_KEY,
@@ -44,9 +43,11 @@ import {
 
 import { ConfigFormItem } from '@project/components/config-form-item';
 import { ConfigSectionToc } from '@project/components/config-section-toc';
+import { DocumentationLink } from '@project/components/documentation-link';
 import { IS_WINDOWS } from '@app/config';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { getDocumentationUrl } from '@project/helpers';
 
 // Feature flag
 const FEATURE_RESET_LINK = false;
@@ -70,46 +71,6 @@ function splitMultipleField(v) {
   return v.split(/[,\n]/).filter((v, i) => v.length || i);
 }
 
-function getDocumentationUrl(scope, group, name) {
-  const pageParts = [scope];
-  if (scope !== SCOPE_PLATFORMIO) {
-    pageParts.push(group);
-  }
-  const page = `section_${pageParts.join('_')}.html`;
-  const hash =
-    name !== undefined
-      ? name.replace(/[^a-z]/g, '-')
-      : `${group.toLowerCase()}-options`;
-
-  return `https://docs.platformio.org/en/latest/projectconf/${encodeURIComponent(
-    page
-  )}#${encodeURIComponent(hash)}`;
-}
-
-class DocumentationLink extends React.PureComponent {
-  static propTypes = {
-    // data
-    url: PropTypes.string.isRequired,
-    // callbacks
-    onClick: PropTypes.func.isRequired
-  };
-
-  handleClick = e => {
-    e.preventDefault();
-    this.props.onClick(this.props.url);
-  };
-
-  render() {
-    return (
-      <div className="documentation-link">
-        <a onClick={this.handleClick} title={this.props.url}>
-          <Icon type="question-circle" />
-        </a>
-      </div>
-    );
-  }
-}
-
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
@@ -125,7 +86,8 @@ class ConfigSectionComponent extends React.PureComponent {
     // callbacks
     onDocumentationClick: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
-    onTocToggle: PropTypes.func.isRequired
+    onTocToggle: PropTypes.func.isRequired,
+    onShowAddOption: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -278,6 +240,10 @@ class ConfigSectionComponent extends React.PureComponent {
 
   handleToggleTocClick = () => {
     this.props.onTocToggle(!this.props.showToc);
+  };
+
+  handleShowAddOptionClick = () => {
+    this.props.onShowAddOption(this.props.name);
   };
 
   renderEmptyMessage(fields, filteredFields) {
@@ -474,9 +440,16 @@ class ConfigSectionComponent extends React.PureComponent {
       <React.Fragment>
         <h2 className="config-section-group" id={this.generateGroupAnchorId('Section')}>
           Section Options{' '}
-          <Button size="small" onClick={this.handleToggleTocClick}>
-            <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-          </Button>
+          <Tooltip title="Toggle Table of Contents">
+            <Button size="small" onClick={this.handleToggleTocClick}>
+              <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+            </Button>
+          </Tooltip>{' '}
+          <Tooltip title="Add Option">
+            <Button size="small" onClick={this.handleShowAddOptionClick}>
+              <Icon type="plus" />
+            </Button>
+          </Tooltip>
         </h2>
         <ConfigFormItem key={SECTION_NAME_KEY} label="Section Name">
           <Input
