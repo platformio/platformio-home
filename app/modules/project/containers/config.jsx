@@ -80,6 +80,7 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
+      showToc: false,
       showOverridden: false
     };
     this.forms = {};
@@ -354,6 +355,12 @@ class ProjectConfig extends React.PureComponent {
     this.props.osOpenUrl(reportIssueUrl);
   };
 
+  handleTocToggle = showToc => {
+    this.setState({
+      showToc
+    });
+  };
+
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
@@ -459,9 +466,11 @@ class ProjectConfig extends React.PureComponent {
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
       showOverridden: this.state.showOverridden,
+      showToc: this.state.showToc,
       search: this.state.search,
       type,
-      onDocumentationClick: this.handleDocumentationClick
+      onDocumentationClick: this.handleDocumentationClick,
+      onTocToggle: this.handleTocToggle
     };
     return (
       <Tabs.TabPane

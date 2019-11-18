@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-import { Checkbox, Col, Form, Icon, Input, Row, Select, Tag, Tooltip } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Icon,
+  Input,
+  Row,
+  Select,
+  Tag,
+  Tooltip
+} from 'antd';
 import { ConfigOptionType, SchemaType } from '@project/types';
 import {
   SCOPE_PLATFORMIO,
@@ -110,10 +121,12 @@ class ConfigSectionComponent extends React.PureComponent {
     schema: SchemaType.isRequired,
     search: PropTypes.string,
     showOverridden: PropTypes.bool,
+    showToc: PropTypes.bool,
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
     onDocumentationClick: PropTypes.func.isRequired,
-    onRename: PropTypes.func.isRequired
+    onRename: PropTypes.func.isRequired,
+    onTocToggle: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -262,6 +275,10 @@ class ConfigSectionComponent extends React.PureComponent {
     this.props.form.setFieldsValue({
       [id]: value
     });
+  };
+
+  handleToggleTocClick = () => {
+    this.props.onTocToggle(!this.props.showToc);
   };
 
   renderEmptyMessage(fields, filteredFields) {
@@ -457,7 +474,10 @@ class ConfigSectionComponent extends React.PureComponent {
     return (
       <React.Fragment>
         <h2 className="config-section-group" id={this.generateGroupAnchorId('Section')}>
-          Section Options
+          Section Options{' '}
+          <Button size="small" onClick={this.handleToggleTocClick}>
+            <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+          </Button>
         </h2>
         <ConfigFormItem key={SECTION_NAME_KEY} label="Section Name">
           <Input
@@ -530,17 +550,27 @@ class ConfigSectionComponent extends React.PureComponent {
     });
 
     const values = this.transformIntoFormValues(this.props.initialValues);
-
+    const mainColProps = this.props.showToc
+      ? {
+          xs: 24,
+          xm: 15,
+          md: 18
+        }
+      : {
+          span: 24
+        };
     return (
       <Row gutter={0}>
-        <Col xs={24} sm={9} md={6}>
-          <ConfigSectionToc
-            fields={filteredFields}
-            schema={this.props.schema}
-            onCreateId={this.handleCreateTocId}
-          />
-        </Col>
-        <Col xs={24} sm={15} md={18}>
+        {this.props.showToc && (
+          <Col key="toc" xs={24} sm={9} md={6}>
+            <ConfigSectionToc
+              fields={filteredFields}
+              schema={this.props.schema}
+              onCreateId={this.handleCreateTocId}
+            />
+          </Col>
+        )}
+        <Col key="main" {...mainColProps}>
           <Form layout="vertical" className="config-form">
             {!this.props.search && this.renderSectionName()}
             {this.renderEmptyMessage(fields, filteredFields)}
