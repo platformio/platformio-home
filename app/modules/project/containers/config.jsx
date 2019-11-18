@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
+import { Alert, Button, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -80,8 +80,7 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      showToc: false,
-      showOverridden: false
+      showToc: false
     };
     this.forms = {};
   }
@@ -309,12 +308,6 @@ class ProjectConfig extends React.PureComponent {
     );
   };
 
-  handleShowOverriddenChange = e => {
-    this.setState({
-      showOverridden: e.target.checked
-    });
-  };
-
   handleTabChange = activeTabKey => {
     this.setState({ activeTabKey });
   };
@@ -399,33 +392,6 @@ class ProjectConfig extends React.PureComponent {
     );
   }
 
-  renderFilter() {
-    return (
-      <div style={{ overflow: 'hidden' }}>
-        <div className="block search-row">
-          <div className="search-block">
-            <Input.Search
-              allowClear
-              disabled={!this.isLoaded()}
-              placeholder="Search settings"
-              onSearch={this.handleSearch}
-              style={{ width: '100%' }}
-            />
-          </div>
-        </div>
-        <div className="filter-right">
-          <Checkbox
-            checked={this.state.showOverridden}
-            disabled={!this.isLoaded()}
-            onChange={this.handleShowOverriddenChange}
-          >
-            Show only overridden
-          </Checkbox>
-        </div>
-      </div>
-    );
-  }
-
   renderNewSectionBtn() {
     const newSectionMenu = (
       <Menu onClick={this.handleNewSectionMenuClick}>
@@ -465,7 +431,6 @@ class ProjectConfig extends React.PureComponent {
       initialValues: section.items,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
-      showOverridden: this.state.showOverridden,
       showToc: this.state.showToc,
       search: this.state.search,
       type,
@@ -530,7 +495,15 @@ class ProjectConfig extends React.PureComponent {
           type="warning"
           showIcon
         />
-        {this.renderFilter()}
+        <div className="block">
+          <Input.Search
+            allowClear
+            disabled={!this.isLoaded()}
+            placeholder="Search settings"
+            onSearch={this.handleSearch}
+            style={{ width: '100%' }}
+          />
+        </div>
         {this.renderConfig()}
       </div>
     );

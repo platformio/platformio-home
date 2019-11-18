@@ -81,7 +81,6 @@
 }
 
 .project-config-page {
-  @fixedFilterWidth: 180px;
   @filterGutter: 8px;
 
   .form-actions-block {
@@ -90,22 +89,6 @@
     .ant-btn-group {
       margin-left: @filterGutter;
     }
-  }
-
-  .search-row {
-    float: left;
-    margin-right: -@fixedFilterWidth;
-    width: 100%;
-
-    .search-block {
-      margin-right: @fixedFilterWidth;
-    }
-  }
-
-  .filter-right {
-    float: right;
-    padding: 4px 0 4px @filterGutter;
-    width: @fixedFilterWidth;
   }
 
   .toc {

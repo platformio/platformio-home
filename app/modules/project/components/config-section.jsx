@@ -120,7 +120,6 @@ class ConfigSectionComponent extends React.PureComponent {
     name: PropTypes.string.isRequired,
     schema: SchemaType.isRequired,
     search: PropTypes.string,
-    showOverridden: PropTypes.bool,
     showToc: PropTypes.bool,
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
@@ -517,15 +516,7 @@ class ConfigSectionComponent extends React.PureComponent {
 
   render() {
     const schema = this.generateIndexedSchema();
-    const configFields = this.props.initialValues.map(({ name }) => name);
-    let fields;
-
-    if (this.props.showOverridden || !Object.keys(schema).length) {
-      fields = configFields;
-    } else {
-      const schemaFields = this.props.schema.map(({ name }) => name);
-      fields = [...new Set([...schemaFields, ...configFields])];
-    }
+    const fields = this.props.initialValues.map(({ name }) => name);
 
     const searchFilter = name =>
       name.includes(this.props.search) ||
