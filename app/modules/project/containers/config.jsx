@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
+import { Alert, Button, Dropdown, Icon, Input, Menu, Spin, Tabs, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -38,9 +38,9 @@ import {
   selectProjectInfo
 } from '@project/selectors';
 
-import { AddSectionOptionModal } from '@project/components/add-option-modal';
 import { ConfigSectionForm } from '@project/components/config-section';
 import { DraggableTabs } from '@project/components/draggable-tabs';
+import { ManageSectionOptionsModal } from '@project/components/manage-options-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -81,7 +81,7 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      addOptionModalVisible: false,
+      manageOptionsModalVisible: false,
       showToc: false
     };
     this.forms = {};
@@ -272,6 +272,40 @@ class ProjectConfig extends React.PureComponent {
     });
   }
 
+  addSectionField(sectionName, name, value = '') {
+    this.setState(prevState => {
+      const field = {
+        name,
+        value
+      };
+      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const newSection = {
+        ...oldSection,
+        items: [...oldSection.items, field]
+      };
+      return {
+        config: prevState.config.map(section =>
+          section !== oldSection ? section : newSection
+        )
+      };
+    });
+  }
+
+  removeSectionField(sectionName, name) {
+    this.setState(prevState => {
+      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const newSection = {
+        ...oldSection,
+        items: oldSection.items.filter(item => item.name !== name)
+      };
+      return {
+        config: prevState.config.map(section =>
+          section !== oldSection ? section : newSection
+        )
+      };
+    });
+  }
+
   renameSection(tabId, name) {
     this.setState(state => ({
       config: state.config.map(section => {
@@ -300,7 +334,7 @@ class ProjectConfig extends React.PureComponent {
     this.save();
   };
 
-  handleResetClick = () => {
+  handleRevertClick = () => {
     this.load();
   };
 
@@ -356,22 +390,39 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
-  handleShowAddOption = sectionName => {
+  handleShowManageOptionsModal = sectionName => {
     this.setState({
-      addOptionModalVisible: true,
-      addOptionModalSection: sectionName
+      manageOptionsModalVisible: true,
+      manageOptionsModalArgs: {
+        sectionName,
+        initialOptions: this.state.config
+          .find(s => s.section === sectionName)
+          .items.map(option => option.name)
+      }
     });
   };
 
-  handleAddOptionModalClose = names => {
+  handleManageOptionsModalClose = result => {
     this.setState({
-      addOptionModalVisible: false
+      manageOptionsModalVisible: false
     });
-    if (!names) {
+    if (!result) {
       return;
     }
-    // TODO: add option
-    console.warn(names);
+    if (result.add) {
+      result.add.forEach(name => {
+        this.addSectionField(result.sectionName, name);
+      });
+    }
+    if (result.remove) {
+      result.remove.forEach(name => {
+        this.removeSectionField(result.sectionName, name);
+      });
+    }
+  };
+
+  handleOptionRemove = (section, name) => {
+    this.removeSectionField(section, name);
   };
 
   isLoaded() {
@@ -390,8 +441,8 @@ class ProjectConfig extends React.PureComponent {
       <div className="form-actions-block">
         <Button.Group>{this.renderNewSectionBtn()}</Button.Group>
         <Button.Group>
-          <Button icon="reload" onClick={this.handleResetClick}>
-            Reset
+          <Button icon="undo" onClick={this.handleRevertClick}>
+            Revert
           </Button>
         </Button.Group>
         <Button.Group>
@@ -416,19 +467,27 @@ class ProjectConfig extends React.PureComponent {
     const newSectionMenu = (
       <Menu onClick={this.handleNewSectionMenuClick}>
         {!this.sectionExists(SECTION_PLATFORMIO) && (
-          <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
-            [platformio]
+          <Menu.Item
+            key={SECTION_PLATFORMIO}
+            title="Saved as [platformio] section in the platformio.ini file"
+          >
+            PlatformIO Core
           </Menu.Item>
         )}
         {!this.sectionExists(SECTION_GLOBAL_ENV) && (
           <Menu.Item
             key={SECTION_GLOBAL_ENV}
-            title='Every "User [env:***]" section automatically extends "Global [env]" options'
+            title="Saved as [env] section in the platformio.ini file"
           >
-            Global [env]
+            Global environment
           </Menu.Item>
         )}
-        <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
+        <Menu.Item
+          key={SECTION_USER_ENV}
+          title='Every "User [env:***]" section automatically extends "Global [env]" options'
+        >
+          User environment
+        </Menu.Item>
         {/* <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item> */}
       </Menu>
     );
@@ -436,7 +495,7 @@ class ProjectConfig extends React.PureComponent {
     return (
       <Dropdown overlay={newSectionMenu} disabled={!this.isLoaded()}>
         <Button className="add-section-btn" icon="plus">
-          Section <Icon type="down" />
+          Configuration <Icon type="down" />
         </Button>
       </Dropdown>
     );
@@ -455,7 +514,8 @@ class ProjectConfig extends React.PureComponent {
       search: this.state.search,
       type,
       onDocumentationClick: this.handleDocumentationClick,
-      onShowAddOption: this.handleShowAddOption,
+      onOptionRemove: this.handleOptionRemove,
+      onShowManageOptions: this.handleShowManageOptionsModal,
       onTocToggle: this.handleTocToggle
     };
     return (
@@ -463,10 +523,10 @@ class ProjectConfig extends React.PureComponent {
         key={key}
         size="small"
         tab={
-          <span>
+          <Tooltip title={`Section [${section.section}]`}>
             <Icon type={this.getScopeIcon(section.section)} />
-            {section.section}
-          </span>
+            {section.section.replace(SECTION_USER_ENV, '')}
+          </Tooltip>
         }
       >
         <ConfigSectionForm wrappedComponentRef={this.handleChildRefUpdate} {...props} />
@@ -498,19 +558,21 @@ class ProjectConfig extends React.PureComponent {
   }
 
   render() {
-    const modalSection = this.state.addOptionModalSection;
+    const modalOptions = this.state.manageOptionsModalArgs || {};
     const modalScope =
-      modalSection && this.getSectionScope(this.getSectionType(modalSection));
+      modalOptions.sectionName &&
+      this.getSectionScope(this.getSectionType(modalOptions.sectionName));
     const modalSchema =
       modalScope && this.props.schema && this.props.schema[modalScope];
 
     return (
       <div className="project-config-page">
-        <AddSectionOptionModal
-          onClose={this.handleAddOptionModalClose}
+        <ManageSectionOptionsModal
+          initialOptions={modalOptions.initialOptions || []}
+          onClose={this.handleManageOptionsModalClose}
           schema={modalSchema}
-          sectionName={modalSection}
-          visible={this.state.addOptionModalVisible}
+          sectionName={modalOptions.sectionName}
+          visible={this.state.manageOptionsModalVisible}
         />
         <h1 className="block clearfix">
           <span>{this.props.project.name}</span>

@@ -29,6 +29,7 @@ import {
 import { ConfigOptionType, SchemaType } from '@project/types';
 import {
   SECTIONS,
+  SECTION_CUSTOM,
   SECTION_GLOBAL_ENV,
   SECTION_NAME_KEY,
   SECTION_PLATFORMIO,
@@ -87,7 +88,8 @@ class ConfigSectionComponent extends React.PureComponent {
     onDocumentationClick: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
     onTocToggle: PropTypes.func.isRequired,
-    onShowAddOption: PropTypes.func.isRequired
+    onOptionRemove: PropTypes.func.isRequired,
+    onShowManageOptions: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -242,8 +244,12 @@ class ConfigSectionComponent extends React.PureComponent {
     this.props.onTocToggle(!this.props.showToc);
   };
 
-  handleShowAddOptionClick = () => {
-    this.props.onShowAddOption(this.props.name);
+  handleShowManageOptionsClick = () => {
+    this.props.onShowManageOptions(this.props.name);
+  };
+
+  handleRemoveOptionClick = e => {
+    this.props.onOptionRemove(this.props.name, e.target.closest('a').dataset.name);
   };
 
   renderEmptyMessage(fields, filteredFields) {
@@ -275,12 +281,24 @@ class ConfigSectionComponent extends React.PureComponent {
 
     label = (
       <React.Fragment>
-        {schema && (
-          <DocumentationLink
-            url={getDocumentationUrl(schema.scope, schema.group, name)}
-            onClick={this.handleDocumentationClick}
-          />
-        )}
+        <div className="option-actions">
+          {schema && (
+            <DocumentationLink
+              url={getDocumentationUrl(schema.scope, schema.group, name)}
+              onClick={this.handleDocumentationClick}
+            />
+          )}
+          <Tooltip placement="right" title="Remove Option">
+            <a
+              className="remove-option-btn"
+              data-name={name}
+              onClick={this.handleRemoveOptionClick}
+            >
+              <Icon type="delete" />
+            </a>
+          </Tooltip>
+        </div>
+
         {label}
       </React.Fragment>
     );
@@ -439,37 +457,47 @@ class ConfigSectionComponent extends React.PureComponent {
     return (
       <React.Fragment>
         <h2 className="config-section-group" id={this.generateGroupAnchorId('Section')}>
-          Section Options{' '}
-          <Tooltip title="Toggle Table of Contents">
-            <Button size="small" onClick={this.handleToggleTocClick}>
-              <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-            </Button>
-          </Tooltip>{' '}
-          <Tooltip title="Add Option">
-            <Button size="small" onClick={this.handleShowAddOptionClick}>
-              <Icon type="plus" />
-            </Button>
-          </Tooltip>
+          <div className="block">
+            <Tooltip title="Toggle Table of Contents">
+              <Button size="small" onClick={this.handleToggleTocClick}>
+                <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+              </Button>
+            </Tooltip>
+            {this.props.type !== SECTION_CUSTOM && (
+              <React.Fragment>
+                {' '}
+                <Tooltip title="Manage Options">
+                  <Button
+                    size="small"
+                    onClick={this.handleShowManageOptionsClick}
+                    type="primary"
+                  >
+                    <Icon type="form" /> Manage Options
+                  </Button>
+                </Tooltip>
+              </React.Fragment>
+            )}
+          </div>
+          <ConfigFormItem key={SECTION_NAME_KEY} label="Section Name">
+            <Input
+              addonBefore={
+                this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
+              }
+              defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
+              readOnly={
+                this.props.type === SECTION_PLATFORMIO ||
+                this.props.type === SECTION_GLOBAL_ENV
+              }
+              onChange={this.handleRename}
+            />
+          </ConfigFormItem>
         </h2>
-        <ConfigFormItem key={SECTION_NAME_KEY} label="Section Name">
-          <Input
-            addonBefore={
-              this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
-            }
-            defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
-            readOnly={
-              this.props.type === SECTION_PLATFORMIO ||
-              this.props.type === SECTION_GLOBAL_ENV
-            }
-            onChange={this.handleRename}
-          />
-        </ConfigFormItem>
       </React.Fragment>
     );
   }
 
   renderGroup(groupName, fields, schema, values) {
-    const groupHidden = fields.every(x => x.hidden);
+    const groupHidden = fields.length && fields.every(x => x.hidden);
     return (
       <div key={groupName} className={groupHidden ? 'hide' : undefined}>
         {groupName.length !== 0 && (

@@ -144,7 +144,7 @@
         overflow: visible;
       }
 
-      .documentation-link {
+      .option-actions {
         @icon-size: 16px;
         @width: @icon-size*2;
 
@@ -154,20 +154,37 @@
         left: -@width;
         position: absolute;
         text-align: center;
-        top: -3px;
+        top: -2px;
         width: @width;
 
-        .anticon {
-          color: @text-color;
+        > a {
+          display: block;
+        }
 
-          &:hover {
-            color: @link-hover-color;
+        .documentation-link {
+          // top: -3px;
+          .anticon {
+            // color: @text-color;
+
+            &:hover {
+              // color: @link-hover-color;
+            }
           }
+        }
+
+        .remove-option-btn {
+          // display: none;
+          /* left: -28px;
+          position: absolute;
+          top: -2px; */
         }
       }
 
       &:hover {
-        .documentation-link {
+        .option-actions
+        // .documentation-link,
+        // .remove-option-btn 
+ {
           display: block;
         }
       }
