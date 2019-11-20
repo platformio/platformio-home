@@ -75,7 +75,6 @@ function splitMultipleField(v) {
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
-    // fields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     form: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
@@ -85,31 +84,13 @@ class ConfigSectionComponent extends React.PureComponent {
     showToc: PropTypes.bool,
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
+    onChange: PropTypes.func.isRequired,
     onDocumentationClick: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
     onTocToggle: PropTypes.func.isRequired,
     onOptionRemove: PropTypes.func.isRequired,
     onShowManageOptions: PropTypes.func.isRequired
   };
-
-  constructor(...args) {
-    super(...args);
-    this.state = {};
-  }
-
-  componentDidMount() {
-    this.setFormValuesFromProps();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.initialValues !== prevProps.initialValues) {
-      this.setFormValuesFromProps();
-    }
-  }
-
-  setFormValuesFromProps() {
-    this.setFormValuesFromData(this.props.initialValues);
-  }
 
   generateIndexedSchema() {
     const result = {};
@@ -129,38 +110,6 @@ class ConfigSectionComponent extends React.PureComponent {
 
   generateGroupAnchorId(groupName) {
     return `${this.props.id}-g-${groupName}`;
-  }
-
-  transformFormValue(rawValue, fieldSchema) {
-    let value = rawValue;
-    if (fieldSchema && fieldSchema.multiple && fieldSchema.type === TYPE_TEXT) {
-      value = splitMultipleField(rawValue);
-    }
-    return value;
-  }
-
-  getValues() {
-    // TODO: validate
-    // this.props.form.validateFields((err, fieldsValue) => {
-    const values = this.props.form.getFieldsValue()[this.props.id] || {};
-    const schema = this.generateIndexedSchema();
-    const allOptions = Object.entries(values)
-      .filter(([, v]) => {
-        if (v == undefined) {
-          return false;
-        }
-        if ((typeof v === 'string' || Array.isArray(v)) && !v.length) {
-          return false;
-        }
-        return true;
-      })
-      .map(([name, rawValue]) => {
-        return {
-          name: unescapeFieldName(name),
-          value: this.transformFormValue(rawValue, schema[name])
-        };
-      });
-    return allOptions;
   }
 
   transformIntoFormValues(initialValues, transformName) {
@@ -577,4 +526,37 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 }
 
-export const ConfigSectionForm = Form.create()(ConfigSectionComponent);
+export const ConfigSectionForm = Form.create({
+  onFieldsChange(props, changedFields) {
+    props.onChange(
+      props.name,
+      Object.fromEntries(
+        Object.entries(changedFields[props.id]).map(([escapedName, field]) => {
+          const name = unescapeFieldName(escapedName);
+          let value = field.value;
+          const fieldSchema = props.schema.find(s => s.name === name);
+          if (fieldSchema && fieldSchema.multiple && fieldSchema.type === TYPE_TEXT) {
+            value = splitMultipleField(field.value);
+          }
+          return [
+            name,
+            {
+              ...field,
+              value
+            }
+          ];
+        })
+      )
+    );
+  },
+  mapPropsToFields(props) {
+    // TODO: load "dirty", "touched", "name" field state
+    const result = Object.fromEntries(
+      props.initialValues.map(option => [
+        escapeFieldName(option.name),
+        Form.createFormField({ value: option.value })
+      ])
+    );
+    return result;
+  }
+})(ConfigSectionComponent);

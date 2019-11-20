@@ -24,7 +24,8 @@ import {
   SECTION_CUSTOM,
   SECTION_GLOBAL_ENV,
   SECTION_PLATFORMIO,
-  SECTION_USER_ENV
+  SECTION_USER_ENV,
+  TYPE_BOOL
 } from '@project/constants';
 import {
   loadConfigSchema,
@@ -84,7 +85,7 @@ class ProjectConfig extends React.PureComponent {
       manageOptionsModalVisible: false,
       showToc: false
     };
-    this.forms = {};
+    // this.forms = {};
   }
 
   componentDidMount() {
@@ -99,31 +100,19 @@ class ProjectConfig extends React.PureComponent {
   }
 
   save() {
-    // Tabs use lazy render, so not all sections are present
-    // FIXME: use validateFields?
-    const renderedSectionsArr = Object.values(this.forms)
-      .filter(
-        section => !!section && this.state.config.find(s => s.id === section.props.id)
-      )
-      .map(section => ({
-        section: this.state.config.find(s => s.id === section.props.id).section,
-        items: section.getValues()
-      }));
-    const renderedItemsBySection = Object.fromEntries(
-      renderedSectionsArr.map(({ section, items }) => [section, items])
-    );
-    const defaultItemsBySection = Object.fromEntries(
-      this.props.initialConfig.map(({ section, items }) => [section, items])
-    );
-
-    const stateConfig = this.sectionsOrder
-      .map(tabKey => this.state.config.find(s => s.id === tabKey))
-      .filter(s => !!s)
-      .map(({ section, id }) => ({
-        section,
-        id,
-        items: renderedItemsBySection[section] || defaultItemsBySection[section]
-      }));
+    const stateConfig = this.state.config.map(section => ({
+      ...section,
+      items: section.items.filter(option => {
+        const scope = this.getSectionScope(this.getSectionType(section.section));
+        const scopeSchema = (scope && this.props.schema[scope]) || [];
+        const schema = scopeSchema.find(s => s.name === option.name);
+        if (schema && schema.type === TYPE_BOOL && option.value === schema.default) {
+          // Skip saving checkboxes with default values
+          return false;
+        }
+        return true;
+      })
+    }));
 
     this.setState({
       config: stateConfig,
@@ -134,6 +123,7 @@ class ProjectConfig extends React.PureComponent {
       section,
       items.map(({ name, value }) => [name, value])
     ]);
+
     this.props.saveProjectConfig(
       this.props.location.state.projectDir,
       apiConfig,
@@ -161,7 +151,6 @@ class ProjectConfig extends React.PureComponent {
       this.setState({
         config
       });
-      this.sectionsOrder = config.map(s => s.id);
 
       // Restore active tab if section is present, otherwise display first
       this.setState(state => {
@@ -234,18 +223,12 @@ class ProjectConfig extends React.PureComponent {
     };
     newSection.id = this.generateSectionId(newSection);
 
-    this.setState(
-      state => {
-        const config = [...state.config, newSection];
-        return {
-          config,
-          activeTabKey: newSection.id
-        };
-      },
-      () => {
-        this.sectionsOrder.push(newSection.id);
-      }
-    );
+    this.setState(prevState => {
+      return {
+        config: [...prevState.config, newSection],
+        activeTabKey: newSection.id
+      };
+    });
   }
 
   removeSection(targetKey) {
@@ -255,7 +238,6 @@ class ProjectConfig extends React.PureComponent {
         return;
       }
 
-      this.sectionsOrder = this.sectionsOrder.filter(key => key !== targetKey);
       const config = oldState.config.filter(s => s.id !== targetKey);
       const state = { config };
 
@@ -297,6 +279,23 @@ class ProjectConfig extends React.PureComponent {
       const newSection = {
         ...oldSection,
         items: oldSection.items.filter(item => item.name !== name)
+      };
+      return {
+        config: prevState.config.map(section =>
+          section !== oldSection ? section : newSection
+        )
+      };
+    });
+  }
+
+  updateSectionValue(sectionName, name, value) {
+    this.setState(prevState => {
+      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const newSection = {
+        ...oldSection,
+        items: oldSection.items.map(item =>
+          item.name !== name ? item : { ...item, value }
+        )
       };
       return {
         config: prevState.config.map(section =>
@@ -349,7 +348,28 @@ class ProjectConfig extends React.PureComponent {
   };
 
   handleTabOrderChange = order => {
-    this.sectionsOrder = order;
+    this.setState(prevState => {
+      const prevConfig = prevState.config;
+      const config = prevConfig.slice().sort((a, b) => {
+        const orderA = order.indexOf(a.id);
+        const orderB = order.indexOf(b.id);
+
+        if (orderA !== -1 && orderB !== -1) {
+          return orderA - orderB;
+        }
+        if (orderA !== -1) {
+          return -1;
+        }
+        if (orderB !== -1) {
+          return 1;
+        }
+        // Preserve original order if is not overridden
+        const ia = prevConfig.indexOf(a);
+        const ib = prevConfig.indexOf(b);
+        return ia - ib;
+      });
+      return { config };
+    });
   };
 
   handleDocumentationClick = url => {
@@ -365,13 +385,6 @@ class ProjectConfig extends React.PureComponent {
   handleTabEdit = (targetKey, action) => {
     if (action === 'remove') {
       this.removeSection(targetKey);
-    }
-  };
-
-  handleChildRefUpdate = form => {
-    if (form) {
-      // FIXME: gargabe collection?
-      this.forms[form.props.id] = form;
     }
   };
 
@@ -423,6 +436,12 @@ class ProjectConfig extends React.PureComponent {
 
   handleOptionRemove = (section, name) => {
     this.removeSectionField(section, name);
+  };
+
+  handleSectionChange = (section, values) => {
+    Object.entries(values).forEach(([name, field]) => {
+      this.updateSectionValue(section, name, field.value);
+    });
   };
 
   isLoaded() {
@@ -513,6 +532,7 @@ class ProjectConfig extends React.PureComponent {
       showToc: this.state.showToc,
       search: this.state.search,
       type,
+      onChange: this.handleSectionChange,
       onDocumentationClick: this.handleDocumentationClick,
       onOptionRemove: this.handleOptionRemove,
       onShowManageOptions: this.handleShowManageOptionsModal,
@@ -529,7 +549,7 @@ class ProjectConfig extends React.PureComponent {
           </Tooltip>
         }
       >
-        <ConfigSectionForm wrappedComponentRef={this.handleChildRefUpdate} {...props} />
+        <ConfigSectionForm {...props} />
       </Tabs.TabPane>
     );
   }
