@@ -101,13 +101,20 @@
   }
 
   .config-form {
-    @gutter: 32px;
+    @gutter: 16px;
 
-    padding-left: @gutter;
+    .option-like {
+      padding: 0px @gutter 5px;
+    }
 
     .config-section-group {
-      margin-left: -@gutter / 2;
-      text-transform: capitalize;
+      h2 {
+        text-transform: capitalize;
+      }
+    }
+
+    .config-section-group + .config-section-group {
+      margin-top: 90px;
     }
 
     .ant-form-explain {
@@ -128,7 +135,7 @@
     }
 
     .ant-form-item {
-      margin-left: -@gutter;
+      margin-bottom: 5px;
       overflow: hidden;
       padding: 0px @gutter 5px;
 
@@ -148,23 +155,19 @@
         @icon-size: 16px;
         @width: @icon-size*2;
 
-        display: none;
         font-size: @icon-size;
         height: 82px;
-        left: -@width;
-        position: absolute;
-        text-align: center;
-        top: -2px;
-        width: @width;
+        margin-left: 16px;
+        visibility: hidden;
 
         > a {
-          display: block;
+          margin-left: 3px;
         }
       }
 
       &:hover {
         .option-actions {
-          display: block;
+          visibility: visible;
         }
       }
     }
@@ -176,13 +179,14 @@
   }
 }
 
-.project-config-add-option-modal {
-  .scrollable {
-    max-height: 50vh;
-    overflow: auto;
+.select-add-new-option {
+  .option-description {
+    display: none;
   }
+}
 
-  .col-name {
-    white-space: nowrap;
+.dropdown-add-new-option {
+  .option-description {
+    &:extend(small);
   }
 }

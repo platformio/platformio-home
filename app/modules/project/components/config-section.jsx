@@ -75,6 +75,7 @@ function splitMultipleField(v) {
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
+    autoFocus: PropTypes.string,
     form: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
@@ -88,9 +89,15 @@ class ConfigSectionComponent extends React.PureComponent {
     onDocumentationClick: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
     onTocToggle: PropTypes.func.isRequired,
+    onOptionAdd: PropTypes.func.isRequired,
     onOptionRemove: PropTypes.func.isRequired,
-    onShowManageOptions: PropTypes.func.isRequired
+    onResetOption: PropTypes.func.isRequired
   };
+
+  constructor(...args) {
+    super(...args);
+    this.state = {};
+  }
 
   generateIndexedSchema() {
     const result = {};
@@ -179,32 +186,25 @@ class ConfigSectionComponent extends React.PureComponent {
   handleResetLinkClick = e => {
     e.preventDefault();
     const { name } = e.target.closest('a').dataset;
-    const schema = this.props.schema.find(s => s.name === name);
-    const value = this.transformIntoFormValue(schema.default, schema);
-    const id = this.generateFieldId(name);
-
-    // TODO: doesn't work since we use defaultValue to improve performance
-    this.props.form.setFieldsValue({
-      [id]: value
-    });
+    this.props.onResetOption(this.props.name, name);
   };
 
   handleToggleTocClick = () => {
     this.props.onTocToggle(!this.props.showToc);
   };
 
-  handleShowManageOptionsClick = () => {
-    this.props.onShowManageOptions(this.props.name);
-  };
-
   handleRemoveOptionClick = e => {
     this.props.onOptionRemove(this.props.name, e.target.closest('a').dataset.name);
+  };
+
+  handleNewOptionSelect = name => {
+    this.props.onOptionAdd(this.props.name, name);
   };
 
   renderEmptyMessage(fields, filteredFields) {
     if (!this.props.search && fields.length === 0) {
       return (
-        <ul className="background-message">
+        <ul className="background-message option-like">
           <li>No options defined!</li>
         </ul>
       );
@@ -212,45 +212,17 @@ class ConfigSectionComponent extends React.PureComponent {
 
     if (this.props.search && filteredFields.length === 0) {
       return (
-        <ul className="background-message">
+        <ul className="background-message option-like">
           <li>No matched options found</li>
         </ul>
       );
     }
   }
 
-  renderDocLink(scope, group, name) {
-    if (name.startsWith('__')) {
-      return;
-    }
-  }
-
   renderLabel(name, schema, { multiple, valueOverridden }) {
     let label = schema && schema.label ? schema.label : name;
 
-    label = (
-      <React.Fragment>
-        <div className="option-actions">
-          {schema && (
-            <DocumentationLink
-              url={getDocumentationUrl(schema.scope, schema.group, name)}
-              onClick={this.handleDocumentationClick}
-            />
-          )}
-          <Tooltip placement="right" title="Remove Option">
-            <a
-              className="remove-option-btn"
-              data-name={name}
-              onClick={this.handleRemoveOptionClick}
-            >
-              <Icon type="delete" />
-            </a>
-          </Tooltip>
-        </div>
-
-        {label}
-      </React.Fragment>
-    );
+    label = <React.Fragment>{label}</React.Fragment>;
 
     if (multiple) {
       label = (
@@ -283,24 +255,41 @@ class ConfigSectionComponent extends React.PureComponent {
       );
     }
 
-    if (FEATURE_RESET_LINK && valueOverridden && schema) {
-      label = (
-        <React.Fragment>
-          {label}{' '}
-          <Tooltip
-            title={`Reset to default ${
-              schema.default != undefined && schema.default.toString().length
-                ? `"${schema.default}"`
-                : '"" (empty string)'
-            }`}
-          >
-            <a data-name={name} onClick={this.handleResetLinkClick}>
-              Reset
+    label = (
+      <React.Fragment>
+        {label}
+        <span className="option-actions">
+          {schema && (
+            <DocumentationLink
+              url={getDocumentationUrl(schema.scope, schema.group, name)}
+              onClick={this.handleDocumentationClick}
+            />
+          )}
+          {FEATURE_RESET_LINK && valueOverridden && schema && (
+            <Tooltip
+              title={`Reset to default ${
+                schema.default != undefined && schema.default.toString().length
+                  ? `"${schema.default}"`
+                  : '"" (empty string)'
+              }`}
+            >
+              <a data-name={name} onClick={this.handleResetLinkClick}>
+                Reset
+              </a>
+            </Tooltip>
+          )}
+          <Tooltip placement="right" title="Remove Option">
+            <a
+              className="remove-option-btn"
+              data-name={name}
+              onClick={this.handleRemoveOptionClick}
+            >
+              <Icon type="delete" />
             </a>
           </Tooltip>
-        </React.Fragment>
-      );
-    }
+        </span>
+      </React.Fragment>
+    );
 
     return label;
   }
@@ -315,9 +304,10 @@ class ConfigSectionComponent extends React.PureComponent {
       ? this.transformIntoFormValue(schema.default, schema)
       : undefined;
     const id = this.generateFieldId(name);
-    const formValue = this.props.form.getFieldValue(id);
+    const formValue = initialValue;
     const valueOverridden =
       schema && formValue != undefined && formValue !== '' && formValue != defaultValue;
+    const autoFocus = this.props.autoFocus === name;
 
     const decoratorOptions = {
       trigger: 'onBlur',
@@ -347,7 +337,7 @@ class ConfigSectionComponent extends React.PureComponent {
     let input;
     switch (type) {
       case TYPE_BOOL:
-        input = <Checkbox>{description}</Checkbox>;
+        input = <Checkbox autoFocus={autoFocus}>{description}</Checkbox>;
         decoratorOptions.valuePropName = 'defaultChecked';
         decoratorOptions.trigger = 'onChange';
         itemProps.help = undefined;
@@ -360,6 +350,7 @@ class ConfigSectionComponent extends React.PureComponent {
       case TYPE_CHOICE:
         input = (
           <Select
+            autoFocus={autoFocus}
             placeholder={defaultValue}
             mode={multiple ? 'multiple' : 'default'}
             tokenSeparators={[',', '\n']}
@@ -381,6 +372,7 @@ class ConfigSectionComponent extends React.PureComponent {
         if (multiple) {
           input = (
             <Input.TextArea
+              autoFocus={autoFocus}
               placeholder={defaultValue}
               autoSize={{ minRows: 1, maxRows: 20 }}
               rows={1}
@@ -388,7 +380,11 @@ class ConfigSectionComponent extends React.PureComponent {
           );
         } else {
           input = (
-            <Input placeholder={defaultValue} readOnly={schema && schema.readonly} />
+            <Input
+              autoFocus={autoFocus}
+              placeholder={defaultValue}
+              readOnly={schema && schema.readonly}
+            />
           );
         }
         if (!type) {
@@ -402,45 +398,88 @@ class ConfigSectionComponent extends React.PureComponent {
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
   }
 
+  getNewOptionsData(group) {
+    const alreadyAdded = new Set(this.props.initialValues.map(option => option.name));
+    const result = new Map();
+    this.props.schema.forEach(schema => {
+      if ((group && schema.group !== group) || alreadyAdded.has(schema.name)) {
+        return;
+      }
+
+      if (!result.has(schema.group)) {
+        result.set(schema.group, []);
+      }
+      result.get(schema.group).push(schema);
+    });
+    return result;
+  }
+
+  renderNewOption() {
+    const ds = this.getNewOptionsData();
+    return (
+      <ConfigFormItem key="__add_new_option" label="New Option">
+        <Select
+          className="select-add-new-option"
+          dropdownClassName="dropdown-add-new-option"
+          showSearch
+          style={{ width: '100%' }}
+          // size="large"
+          placeholder="Option to add"
+          filterOption={(input, option) =>
+            option.key.toLowerCase().includes(input.toLowerCase())
+          }
+          onSelect={this.handleNewOptionSelect}
+          value={undefined}
+        >
+          {[...ds].map(([group, items]) => (
+            <Select.OptGroup
+              key={group}
+              label={`${group.substr(0, 1).toUpperCase()}${group.substr(1)} Options`}
+            >
+              {items.map(schema => (
+                <Select.Option key={schema.name} value={schema.name}>
+                  {schema.name}
+                  {schema.description && (
+                    <div className="option-description">{schema.description}</div>
+                  )}
+                </Select.Option>
+              ))}
+            </Select.OptGroup>
+          ))}
+        </Select>
+      </ConfigFormItem>
+    );
+  }
+
   renderSectionName() {
     return (
       <React.Fragment>
-        <h2 className="config-section-group" id={this.generateGroupAnchorId('Section')}>
-          <div className="block">
-            <Tooltip title="Toggle Table of Contents">
-              <Button size="small" onClick={this.handleToggleTocClick}>
-                <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-              </Button>
-            </Tooltip>
-            {this.props.type !== SECTION_CUSTOM && (
-              <React.Fragment>
-                {' '}
-                <Tooltip title="Manage Options">
-                  <Button
-                    size="small"
-                    onClick={this.handleShowManageOptionsClick}
-                    type="primary"
-                  >
-                    <Icon type="form" /> Manage Options
-                  </Button>
-                </Tooltip>
-              </React.Fragment>
-            )}
-          </div>
-          <ConfigFormItem key={SECTION_NAME_KEY} label="Section Name">
-            <Input
-              addonBefore={
-                this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
-              }
-              defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
-              readOnly={
-                this.props.type === SECTION_PLATFORMIO ||
-                this.props.type === SECTION_GLOBAL_ENV
-              }
-              onChange={this.handleRename}
-            />
-          </ConfigFormItem>
-        </h2>
+        <ConfigFormItem
+          key={SECTION_NAME_KEY}
+          label={
+            <span>
+              Configuration{' '}
+              <Tooltip title="Toggle Table of Contents">
+                <Button size="small" onClick={this.handleToggleTocClick}>
+                  <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+                </Button>
+              </Tooltip>
+            </span>
+          }
+        >
+          <Input
+            addonBefore={
+              this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
+            }
+            defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
+            readOnly={
+              this.props.type === SECTION_PLATFORMIO ||
+              this.props.type === SECTION_GLOBAL_ENV
+            }
+            onChange={this.handleRename}
+          />
+        </ConfigFormItem>
+        {this.props.type !== SECTION_CUSTOM && this.renderNewOption()}
       </React.Fragment>
     );
   }
@@ -448,14 +487,12 @@ class ConfigSectionComponent extends React.PureComponent {
   renderGroup(groupName, fields, schema, values) {
     const groupHidden = fields.length && fields.every(x => x.hidden);
     return (
-      <div key={groupName} className={groupHidden ? 'hide' : undefined}>
+      <div
+        key={groupName}
+        className={'config-section-group' + (groupHidden ? ' hide' : '')}
+      >
         {groupName.length !== 0 && (
-          <h2
-            className="config-section-group"
-            id={this.generateGroupAnchorId(groupName)}
-          >
-            {groupName} Options
-          </h2>
+          <h2 id={this.generateGroupAnchorId(groupName)}>{groupName} Options</h2>
         )}
         {fields.map(({ name, hidden }) =>
           this.renderFormItem(name, schema, values[name], hidden)

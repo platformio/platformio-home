@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Dropdown, Icon, Input, Menu, Spin, Tabs, Tooltip } from 'antd';
+import { Alert, Button, Dropdown, Icon, Menu, Select, Spin, Tabs, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -41,7 +41,6 @@ import {
 
 import { ConfigSectionForm } from '@project/components/config-section';
 import { DraggableTabs } from '@project/components/draggable-tabs';
-import { ManageSectionOptionsModal } from '@project/components/manage-options-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -82,10 +81,8 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      manageOptionsModalVisible: false,
       showToc: false
     };
-    // this.forms = {};
   }
 
   componentDidMount() {
@@ -153,13 +150,10 @@ class ProjectConfig extends React.PureComponent {
       });
 
       // Restore active tab if section is present, otherwise display first
-      this.setState(state => {
-        if (
-          state.activeTabKey === undefined ||
-          !state.config.find(s => s.id === state.activeTabKey)
-        ) {
+      this.setState(prevState => {
+        if (prevState.activeTabKey === undefined || !this.getActiveSection(prevState)) {
           return {
-            activeTabKey: state.config.length ? state.config[0].id : undefined
+            activeTabKey: prevState.config.length ? prevState.config[0].id : undefined
           };
         }
       });
@@ -187,6 +181,16 @@ class ProjectConfig extends React.PureComponent {
 
   getScopeIcon(name) {
     return ProjectConfig.iconBySectionType[this.getSectionType(name)];
+  }
+
+  getActiveSection(state) {
+    if (!state) {
+      state = this.state;
+    }
+    if (!state.config) {
+      return;
+    }
+    return state.config.find(s => s.id === state.activeTabKey);
   }
 
   sectionExists(name) {
@@ -323,12 +327,6 @@ class ProjectConfig extends React.PureComponent {
     this.addSection(key);
   };
 
-  handleSearch = search => {
-    this.setState({
-      search
-    });
-  };
-
   handleSaveClick = () => {
     this.save();
   };
@@ -403,35 +401,14 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
-  handleShowManageOptionsModal = sectionName => {
+  handleOptionAdd = (section, name) => {
+    this.addSectionField(section, name);
     this.setState({
-      manageOptionsModalVisible: true,
-      manageOptionsModalArgs: {
-        sectionName,
-        initialOptions: this.state.config
-          .find(s => s.section === sectionName)
-          .items.map(option => option.name)
+      autoFocus: {
+        section,
+        option: name
       }
     });
-  };
-
-  handleManageOptionsModalClose = result => {
-    this.setState({
-      manageOptionsModalVisible: false
-    });
-    if (!result) {
-      return;
-    }
-    if (result.add) {
-      result.add.forEach(name => {
-        this.addSectionField(result.sectionName, name);
-      });
-    }
-    if (result.remove) {
-      result.remove.forEach(name => {
-        this.removeSectionField(result.sectionName, name);
-      });
-    }
   };
 
   handleOptionRemove = (section, name) => {
@@ -442,6 +419,22 @@ class ProjectConfig extends React.PureComponent {
     Object.entries(values).forEach(([name, field]) => {
       this.updateSectionValue(section, name, field.value);
     });
+  };
+
+  handleNewOptionSelect = name => {
+    const sectionName = this.getActiveSection().section;
+    this.addSectionField(sectionName, name);
+    this.setState({
+      autoFocus: {
+        section: sectionName,
+        option: name
+      }
+    });
+  };
+
+  handleResetOption = (section, name) => {
+    const value = '';
+    this.updateSectionValue(section, name, value);
   };
 
   isLoaded() {
@@ -521,21 +514,26 @@ class ProjectConfig extends React.PureComponent {
   }
 
   renderConfigSection(key, section) {
-    const type = this.getSectionType(section.section);
+    const name = section.section;
+    const type = this.getSectionType(name);
     const props = {
+      autoFocus:
+        this.state.autoFocus && this.state.autoFocus.section === name
+          ? this.state.autoFocus.option
+          : undefined,
       // WARN: must be unique to avoid collisions between ids of subform fields
       id: key,
-      name: section.section,
+      name,
       initialValues: section.items,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
       showToc: this.state.showToc,
-      search: this.state.search,
       type,
       onChange: this.handleSectionChange,
       onDocumentationClick: this.handleDocumentationClick,
+      onOptionAdd: this.handleOptionAdd,
       onOptionRemove: this.handleOptionRemove,
-      onShowManageOptions: this.handleShowManageOptionsModal,
+      onResetOption: this.handleResetOption,
       onTocToggle: this.handleTocToggle
     };
     return (
@@ -543,9 +541,9 @@ class ProjectConfig extends React.PureComponent {
         key={key}
         size="small"
         tab={
-          <Tooltip title={`Section [${section.section}]`}>
-            <Icon type={this.getScopeIcon(section.section)} />
-            {section.section.replace(SECTION_USER_ENV, '')}
+          <Tooltip title={`Section [${name}]`}>
+            <Icon type={this.getScopeIcon(name)} />
+            {name.replace(SECTION_USER_ENV, '')}
           </Tooltip>
         }
       >
@@ -578,22 +576,8 @@ class ProjectConfig extends React.PureComponent {
   }
 
   render() {
-    const modalOptions = this.state.manageOptionsModalArgs || {};
-    const modalScope =
-      modalOptions.sectionName &&
-      this.getSectionScope(this.getSectionType(modalOptions.sectionName));
-    const modalSchema =
-      modalScope && this.props.schema && this.props.schema[modalScope];
-
     return (
       <div className="project-config-page">
-        <ManageSectionOptionsModal
-          initialOptions={modalOptions.initialOptions || []}
-          onClose={this.handleManageOptionsModalClose}
-          schema={modalSchema}
-          sectionName={modalOptions.sectionName}
-          visible={this.state.manageOptionsModalVisible}
-        />
         <h1 className="block clearfix">
           <span>{this.props.project.name}</span>
           {this.renderFormActions()}
@@ -610,15 +594,6 @@ class ProjectConfig extends React.PureComponent {
           type="warning"
           showIcon
         />
-        <div className="block">
-          <Input.Search
-            allowClear
-            disabled={!this.isLoaded()}
-            placeholder="Search settings"
-            onSearch={this.handleSearch}
-            style={{ width: '100%' }}
-          />
-        </div>
         {this.renderConfig()}
       </div>
     );
