@@ -78,7 +78,6 @@ class ConfigSectionComponent extends React.PureComponent {
     initialValues: PropTypes.arrayOf(ConfigOptionType),
     name: PropTypes.string.isRequired,
     schema: SchemaType.isRequired,
-    search: PropTypes.string,
     showToc: PropTypes.bool,
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
@@ -195,19 +194,11 @@ class ConfigSectionComponent extends React.PureComponent {
     e.preventDefault();
   };
 
-  renderEmptyMessage(fields, filteredFields) {
-    if (!this.props.search && fields.length === 0) {
+  renderEmptyMessage(fields) {
+    if (fields.length === 0) {
       return (
         <ul className="background-message option-like">
           <li>No options defined!</li>
-        </ul>
-      );
-    }
-
-    if (this.props.search && filteredFields.length === 0) {
-      return (
-        <ul className="background-message option-like">
-          <li>No matched options found</li>
         </ul>
       );
     }
@@ -275,7 +266,7 @@ class ConfigSectionComponent extends React.PureComponent {
     return label;
   }
 
-  renderFormItem(name, schemaByName, initialValue, hidden) {
+  renderFormItem(name, schemaByName, initialValue) {
     const schema = schemaByName[name];
     const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
@@ -305,9 +296,6 @@ class ConfigSectionComponent extends React.PureComponent {
         id: this.generateFieldLabelId(name)
       }
     };
-    if (hidden) {
-      itemProps.className += ' hide';
-    }
 
     let input;
     switch (type) {
@@ -469,18 +457,12 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   renderGroup(groupName, fields, schema, values) {
-    const groupHidden = fields.length && fields.every(x => x.hidden);
     return (
-      <div
-        key={groupName}
-        className={'config-section-group' + (groupHidden ? ' hide' : '')}
-      >
+      <div key={groupName} className="config-section-group">
         {groupName.length !== 0 && (
           <h2 id={this.generateGroupAnchorId(groupName)}>{groupName} Options</h2>
         )}
-        {fields.map(({ name, hidden }) =>
-          this.renderFormItem(name, schema, values[name], hidden)
-        )}
+        {fields.map(({ name }) => this.renderFormItem(name, schema, values[name]))}
       </div>
     );
   }
@@ -488,18 +470,6 @@ class ConfigSectionComponent extends React.PureComponent {
   render() {
     const schema = this.generateIndexedSchema();
     const fields = this.props.initialValues.map(({ name }) => name);
-
-    const searchFilter = name =>
-      name.includes(this.props.search) ||
-      (schema[name] &&
-        schema[name].description &&
-        schema[name].description
-          .toLowerCase()
-          .includes(this.props.search.toLowerCase()));
-
-    const filteredFields = this.props.search ? fields.filter(searchFilter) : fields;
-    const filteredFieldsSet = new Set(filteredFields);
-
     const groups = new Set();
     const fieldsByGroup = [];
     fields.forEach(name => {
@@ -508,7 +478,7 @@ class ConfigSectionComponent extends React.PureComponent {
         groups.add(group);
         fieldsByGroup[group] = [];
       }
-      fieldsByGroup[group].push({ name, hidden: !filteredFieldsSet.has(name) });
+      fieldsByGroup[group].push({ name });
     });
 
     const values = this.transformIntoFormValues(this.props.initialValues);
@@ -526,16 +496,16 @@ class ConfigSectionComponent extends React.PureComponent {
         {this.props.showToc && (
           <Col key="toc" xs={24} sm={9} md={6}>
             <ConfigSectionToc
-              fields={filteredFields}
+              fields={fields}
               schema={this.props.schema}
               onCreateId={this.handleCreateTocId}
             />
           </Col>
         )}
         <Col key="main" {...mainColProps}>
-          {!this.props.search && this.renderSectionName()}
+          {this.renderSectionName()}
           <Form layout="vertical" className="config-form">
-            {this.renderEmptyMessage(fields, filteredFields)}
+            {this.renderEmptyMessage(fields)}
             {fields.length !== 0 &&
               [...groups].map(groupName =>
                 this.renderGroup(groupName, fieldsByGroup[groupName], schema, values)
