@@ -50,9 +50,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { getDocumentationUrl } from '@project/helpers';
 
-// Feature flag
-const FEATURE_RESET_LINK = false;
-
 function escapeFieldName(x) {
   return x.replace(/\./g, '@');
 }
@@ -90,8 +87,7 @@ class ConfigSectionComponent extends React.PureComponent {
     onRename: PropTypes.func.isRequired,
     onTocToggle: PropTypes.func.isRequired,
     onOptionAdd: PropTypes.func.isRequired,
-    onOptionRemove: PropTypes.func.isRequired,
-    onResetOption: PropTypes.func.isRequired
+    onOptionRemove: PropTypes.func.isRequired
   };
 
   constructor(...args) {
@@ -183,12 +179,6 @@ class ConfigSectionComponent extends React.PureComponent {
     this.props.onRename(name, this.props.id);
   };
 
-  handleResetLinkClick = e => {
-    e.preventDefault();
-    const { name } = e.target.closest('a').dataset;
-    this.props.onResetOption(this.props.name, name);
-  };
-
   handleToggleTocClick = () => {
     this.props.onTocToggle(!this.props.showToc);
   };
@@ -219,7 +209,7 @@ class ConfigSectionComponent extends React.PureComponent {
     }
   }
 
-  renderLabel(name, schema, { multiple, valueOverridden }) {
+  renderLabel(name, schema, { multiple }) {
     let label = schema && schema.label ? schema.label : name;
 
     label = <React.Fragment>{label}</React.Fragment>;
@@ -265,19 +255,6 @@ class ConfigSectionComponent extends React.PureComponent {
               onClick={this.handleDocumentationClick}
             />
           )}
-          {FEATURE_RESET_LINK && valueOverridden && schema && (
-            <Tooltip
-              title={`Reset to default ${
-                schema.default != undefined && schema.default.toString().length
-                  ? `"${schema.default}"`
-                  : '"" (empty string)'
-              }`}
-            >
-              <a data-name={name} onClick={this.handleResetLinkClick}>
-                Reset
-              </a>
-            </Tooltip>
-          )}
           <Tooltip placement="right" title="Remove Option">
             <a
               className="remove-option-btn"
@@ -304,9 +281,6 @@ class ConfigSectionComponent extends React.PureComponent {
       ? this.transformIntoFormValue(schema.default, schema)
       : undefined;
     const id = this.generateFieldId(name);
-    const formValue = initialValue;
-    const valueOverridden =
-      schema && formValue != undefined && formValue !== '' && formValue != defaultValue;
     const autoFocus = this.props.autoFocus === name;
 
     const decoratorOptions = {
@@ -316,7 +290,7 @@ class ConfigSectionComponent extends React.PureComponent {
       initialValue
     };
 
-    const label = this.renderLabel(name, schema, { multiple, valueOverridden });
+    const label = this.renderLabel(name, schema, { multiple });
 
     const itemProps = {
       className: '',
@@ -327,9 +301,6 @@ class ConfigSectionComponent extends React.PureComponent {
         id: this.generateFieldLabelId(name)
       }
     };
-    if (valueOverridden) {
-      itemProps.className += ' value-overridden';
-    }
     if (hidden) {
       itemProps.className += ' hide';
     }

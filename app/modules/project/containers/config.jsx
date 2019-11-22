@@ -432,11 +432,6 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
-  handleResetOption = (section, name) => {
-    const value = '';
-    this.updateSectionValue(section, name, value);
-  };
-
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
@@ -533,7 +528,6 @@ class ProjectConfig extends React.PureComponent {
       onDocumentationClick: this.handleDocumentationClick,
       onOptionAdd: this.handleOptionAdd,
       onOptionRemove: this.handleOptionRemove,
-      onResetOption: this.handleResetOption,
       onTocToggle: this.handleTocToggle
     };
     return (
