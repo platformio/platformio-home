@@ -250,7 +250,7 @@ class ConfigSectionComponent extends React.PureComponent {
               onClick={this.handleDocumentationClick}
             />
           )}
-          <Tooltip placement="right" title="Remove Option">
+          <Tooltip title="Remove Option">
             <a
               className="remove-option-btn"
               data-name={name}

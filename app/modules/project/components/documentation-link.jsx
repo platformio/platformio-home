@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Icon } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -35,9 +35,11 @@ export class DocumentationLink extends React.PureComponent {
   render() {
     return (
       <span className="documentation-link">
-        <a onClick={this.handleClick} title={this.props.url}>
-          <Icon type="question-circle" />
-        </a>
+        <Tooltip title="Documentation">
+          <a onClick={this.handleClick} title={this.props.url}>
+            <Icon type="question-circle" />
+          </a>
+        </Tooltip>
       </span>
     );
   }
