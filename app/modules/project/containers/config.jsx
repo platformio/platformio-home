@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Checkbox, Dropdown, Icon, Input, Menu, Spin, Tabs } from 'antd';
+import { Alert, Button, Dropdown, Icon, Menu, Spin, Tabs, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -24,7 +24,8 @@ import {
   SECTION_CUSTOM,
   SECTION_GLOBAL_ENV,
   SECTION_PLATFORMIO,
-  SECTION_USER_ENV
+  SECTION_USER_ENV,
+  TYPE_BOOL
 } from '@project/constants';
 import {
   loadConfigSchema,
@@ -80,9 +81,8 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      showOverridden: false
+      showToc: false
     };
-    this.forms = {};
   }
 
   componentDidMount() {
@@ -97,31 +97,19 @@ class ProjectConfig extends React.PureComponent {
   }
 
   save() {
-    // Tabs use lazy render, so not all sections are present
-    // FIXME: use validateFields?
-    const renderedSectionsArr = Object.values(this.forms)
-      .filter(
-        section => !!section && this.state.config.find(s => s.id === section.props.id)
-      )
-      .map(section => ({
-        section: this.state.config.find(s => s.id === section.props.id).section,
-        items: section.getValues()
-      }));
-    const renderedItemsBySection = Object.fromEntries(
-      renderedSectionsArr.map(({ section, items }) => [section, items])
-    );
-    const defaultItemsBySection = Object.fromEntries(
-      this.props.initialConfig.map(({ section, items }) => [section, items])
-    );
-
-    const stateConfig = this.sectionsOrder
-      .map(tabKey => this.state.config.find(s => s.id === tabKey))
-      .filter(s => !!s)
-      .map(({ section, id }) => ({
-        section,
-        id,
-        items: renderedItemsBySection[section] || defaultItemsBySection[section]
-      }));
+    const stateConfig = this.state.config.map(section => ({
+      ...section,
+      items: section.items.filter(option => {
+        const scope = this.getSectionScope(this.getSectionType(section.section));
+        const scopeSchema = (scope && this.props.schema[scope]) || [];
+        const schema = scopeSchema.find(s => s.name === option.name);
+        if (schema && schema.type === TYPE_BOOL && option.value === schema.default) {
+          // Skip saving checkboxes with default values
+          return false;
+        }
+        return true;
+      })
+    }));
 
     this.setState({
       config: stateConfig,
@@ -132,6 +120,7 @@ class ProjectConfig extends React.PureComponent {
       section,
       items.map(({ name, value }) => [name, value])
     ]);
+
     this.props.saveProjectConfig(
       this.props.location.state.projectDir,
       apiConfig,
@@ -159,16 +148,12 @@ class ProjectConfig extends React.PureComponent {
       this.setState({
         config
       });
-      this.sectionsOrder = config.map(s => s.id);
 
       // Restore active tab if section is present, otherwise display first
-      this.setState(state => {
-        if (
-          state.activeTabKey === undefined ||
-          !state.config.find(s => s.id === state.activeTabKey)
-        ) {
+      this.setState(prevState => {
+        if (prevState.activeTabKey === undefined || !this.getActiveSection(prevState)) {
           return {
-            activeTabKey: state.config.length ? state.config[0].id : undefined
+            activeTabKey: prevState.config.length ? prevState.config[0].id : undefined
           };
         }
       });
@@ -196,6 +181,16 @@ class ProjectConfig extends React.PureComponent {
 
   getScopeIcon(name) {
     return ProjectConfig.iconBySectionType[this.getSectionType(name)];
+  }
+
+  getActiveSection(state) {
+    if (!state) {
+      state = this.state;
+    }
+    if (!state.config) {
+      return;
+    }
+    return state.config.find(s => s.id === state.activeTabKey);
   }
 
   sectionExists(name) {
@@ -232,18 +227,12 @@ class ProjectConfig extends React.PureComponent {
     };
     newSection.id = this.generateSectionId(newSection);
 
-    this.setState(
-      state => {
-        const config = [...state.config, newSection];
-        return {
-          config,
-          activeTabKey: newSection.id
-        };
-      },
-      () => {
-        this.sectionsOrder.push(newSection.id);
-      }
-    );
+    this.setState(prevState => {
+      return {
+        config: [...prevState.config, newSection],
+        activeTabKey: newSection.id
+      };
+    });
   }
 
   removeSection(targetKey) {
@@ -253,7 +242,6 @@ class ProjectConfig extends React.PureComponent {
         return;
       }
 
-      this.sectionsOrder = this.sectionsOrder.filter(key => key !== targetKey);
       const config = oldState.config.filter(s => s.id !== targetKey);
       const state = { config };
 
@@ -267,6 +255,57 @@ class ProjectConfig extends React.PureComponent {
       }
 
       return state;
+    });
+  }
+
+  addSectionField(sectionName, name, value = '') {
+    this.setState(prevState => {
+      const field = {
+        name,
+        value
+      };
+      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const newSection = {
+        ...oldSection,
+        items: [...oldSection.items, field]
+      };
+      return {
+        config: prevState.config.map(section =>
+          section !== oldSection ? section : newSection
+        )
+      };
+    });
+  }
+
+  removeSectionField(sectionName, name) {
+    this.setState(prevState => {
+      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const newSection = {
+        ...oldSection,
+        items: oldSection.items.filter(item => item.name !== name)
+      };
+      return {
+        config: prevState.config.map(section =>
+          section !== oldSection ? section : newSection
+        )
+      };
+    });
+  }
+
+  updateSectionValue(sectionName, name, value) {
+    this.setState(prevState => {
+      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const newSection = {
+        ...oldSection,
+        items: oldSection.items.map(item =>
+          item.name !== name ? item : { ...item, value }
+        )
+      };
+      return {
+        config: prevState.config.map(section =>
+          section !== oldSection ? section : newSection
+        )
+      };
     });
   }
 
@@ -288,17 +327,11 @@ class ProjectConfig extends React.PureComponent {
     this.addSection(key);
   };
 
-  handleSearch = search => {
-    this.setState({
-      search
-    });
-  };
-
   handleSaveClick = () => {
     this.save();
   };
 
-  handleResetClick = () => {
+  handleRevertClick = () => {
     this.load();
   };
 
@@ -308,18 +341,33 @@ class ProjectConfig extends React.PureComponent {
     );
   };
 
-  handleShowOverriddenChange = e => {
-    this.setState({
-      showOverridden: e.target.checked
-    });
-  };
-
   handleTabChange = activeTabKey => {
     this.setState({ activeTabKey });
   };
 
   handleTabOrderChange = order => {
-    this.sectionsOrder = order;
+    this.setState(prevState => {
+      const prevConfig = prevState.config;
+      const config = prevConfig.slice().sort((a, b) => {
+        const orderA = order.indexOf(a.id);
+        const orderB = order.indexOf(b.id);
+
+        if (orderA !== -1 && orderB !== -1) {
+          return orderA - orderB;
+        }
+        if (orderA !== -1) {
+          return -1;
+        }
+        if (orderB !== -1) {
+          return 1;
+        }
+        // Preserve original order if is not overridden
+        const ia = prevConfig.indexOf(a);
+        const ib = prevConfig.indexOf(b);
+        return ia - ib;
+      });
+      return { config };
+    });
   };
 
   handleDocumentationClick = url => {
@@ -338,13 +386,6 @@ class ProjectConfig extends React.PureComponent {
     }
   };
 
-  handleChildRefUpdate = form => {
-    if (form) {
-      // FIXME: gargabe collection?
-      this.forms[form.props.id] = form;
-    }
-  };
-
   handleReportIssueClick = () => {
     const reportIssueUrl =
       'https://github.com/platformio/platformio-home/issues/new?' +
@@ -352,6 +393,43 @@ class ProjectConfig extends React.PureComponent {
         title: 'Edit Project Config'
       });
     this.props.osOpenUrl(reportIssueUrl);
+  };
+
+  handleTocToggle = showToc => {
+    this.setState({
+      showToc
+    });
+  };
+
+  handleOptionAdd = (section, name) => {
+    this.addSectionField(section, name);
+    this.setState({
+      autoFocus: {
+        section,
+        option: name
+      }
+    });
+  };
+
+  handleOptionRemove = (section, name) => {
+    this.removeSectionField(section, name);
+  };
+
+  handleSectionChange = (section, values) => {
+    Object.entries(values).forEach(([name, field]) => {
+      this.updateSectionValue(section, name, field.value);
+    });
+  };
+
+  handleNewOptionSelect = name => {
+    const sectionName = this.getActiveSection().section;
+    this.addSectionField(sectionName, name);
+    this.setState({
+      autoFocus: {
+        section: sectionName,
+        option: name
+      }
+    });
   };
 
   isLoaded() {
@@ -370,8 +448,8 @@ class ProjectConfig extends React.PureComponent {
       <div className="form-actions-block">
         <Button.Group>{this.renderNewSectionBtn()}</Button.Group>
         <Button.Group>
-          <Button icon="reload" onClick={this.handleResetClick}>
-            Reset
+          <Button icon="undo" onClick={this.handleRevertClick}>
+            Revert
           </Button>
         </Button.Group>
         <Button.Group>
@@ -392,50 +470,31 @@ class ProjectConfig extends React.PureComponent {
     );
   }
 
-  renderFilter() {
-    return (
-      <div style={{ overflow: 'hidden' }}>
-        <div className="block search-row">
-          <div className="search-block">
-            <Input.Search
-              allowClear
-              disabled={!this.isLoaded()}
-              placeholder="Search settings"
-              onSearch={this.handleSearch}
-              style={{ width: '100%' }}
-            />
-          </div>
-        </div>
-        <div className="filter-right">
-          <Checkbox
-            checked={this.state.showOverridden}
-            disabled={!this.isLoaded()}
-            onChange={this.handleShowOverriddenChange}
-          >
-            Show only overridden
-          </Checkbox>
-        </div>
-      </div>
-    );
-  }
-
   renderNewSectionBtn() {
     const newSectionMenu = (
       <Menu onClick={this.handleNewSectionMenuClick}>
         {!this.sectionExists(SECTION_PLATFORMIO) && (
-          <Menu.Item key={SECTION_PLATFORMIO} title="PlatformIO Core options">
-            [platformio]
+          <Menu.Item
+            key={SECTION_PLATFORMIO}
+            title="Saved as [platformio] section in the platformio.ini file"
+          >
+            PlatformIO Core
           </Menu.Item>
         )}
         {!this.sectionExists(SECTION_GLOBAL_ENV) && (
           <Menu.Item
             key={SECTION_GLOBAL_ENV}
-            title='Every "User [env:***]" section automatically extends "Global [env]" options'
+            title="Saved as [env] section in the platformio.ini file"
           >
-            Global [env]
+            Global environment
           </Menu.Item>
         )}
-        <Menu.Item key={SECTION_USER_ENV}>User [env:***]</Menu.Item>
+        <Menu.Item
+          key={SECTION_USER_ENV}
+          title='Every "User [env:***]" section automatically extends "Global [env]" options'
+        >
+          User environment
+        </Menu.Item>
         {/* <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item> */}
       </Menu>
     );
@@ -443,38 +502,46 @@ class ProjectConfig extends React.PureComponent {
     return (
       <Dropdown overlay={newSectionMenu} disabled={!this.isLoaded()}>
         <Button className="add-section-btn" icon="plus">
-          Section <Icon type="down" />
+          Configuration <Icon type="down" />
         </Button>
       </Dropdown>
     );
   }
 
   renderConfigSection(key, section) {
-    const type = this.getSectionType(section.section);
+    const name = section.section;
+    const type = this.getSectionType(name);
     const props = {
+      autoFocus:
+        this.state.autoFocus && this.state.autoFocus.section === name
+          ? this.state.autoFocus.option
+          : undefined,
       // WARN: must be unique to avoid collisions between ids of subform fields
       id: key,
-      name: section.section,
+      name,
       initialValues: section.items,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
-      showOverridden: this.state.showOverridden,
-      search: this.state.search,
+      showToc: this.state.showToc,
       type,
-      onDocumentationClick: this.handleDocumentationClick
+      onChange: this.handleSectionChange,
+      onDocumentationClick: this.handleDocumentationClick,
+      onOptionAdd: this.handleOptionAdd,
+      onOptionRemove: this.handleOptionRemove,
+      onTocToggle: this.handleTocToggle
     };
     return (
       <Tabs.TabPane
         key={key}
         size="small"
         tab={
-          <span>
-            <Icon type={this.getScopeIcon(section.section)} />
-            {section.section}
-          </span>
+          <Tooltip title={`Section [${name}]`}>
+            <Icon type={this.getScopeIcon(name)} />
+            {name.replace(SECTION_USER_ENV, '')}
+          </Tooltip>
         }
       >
-        <ConfigSectionForm wrappedComponentRef={this.handleChildRefUpdate} {...props} />
+        <ConfigSectionForm {...props} />
       </Tabs.TabPane>
     );
   }
@@ -521,7 +588,6 @@ class ProjectConfig extends React.PureComponent {
           type="warning"
           showIcon
         />
-        {this.renderFilter()}
         {this.renderConfig()}
       </div>
     );

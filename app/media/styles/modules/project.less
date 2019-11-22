@@ -44,6 +44,10 @@
     margin-right: 8px;
   }
 
+  .list-item-card {
+    cursor: default;
+  }
+
   .quick-edit-target-container {
     position: relative;
 
@@ -81,7 +85,6 @@
 }
 
 .project-config-page {
-  @fixedFilterWidth: 180px;
   @filterGutter: 8px;
 
   .form-actions-block {
@@ -90,22 +93,6 @@
     .ant-btn-group {
       margin-left: @filterGutter;
     }
-  }
-
-  .search-row {
-    float: left;
-    margin-right: -@fixedFilterWidth;
-    width: 100%;
-
-    .search-block {
-      margin-right: @fixedFilterWidth;
-    }
-  }
-
-  .filter-right {
-    float: right;
-    padding: 4px 0 4px @filterGutter;
-    width: @fixedFilterWidth;
   }
 
   .toc {
@@ -117,14 +104,33 @@
     }
   }
 
-  .config-form {
-    @gutter: 32px;
+  .config-section-configuration {
+    .ant-form-item {
+      margin-bottom: 5px;
+    }
+  }
 
-    padding-left: @gutter;
+  .config-form {
+    @gutter: 16px;
+
+    .option-like {
+      padding: 0px @gutter 5px;
+    }
 
     .config-section-group {
-      margin-left: -@gutter / 2;
-      text-transform: capitalize;
+      h2 {
+        text-transform: capitalize;
+      }
+    }
+
+    .config-section-group {
+      margin-top: 30px;
+
+      .ant-form-item {
+        &:hover {
+          background-color: lighten(@layout-body-background, 4%);
+        }
+      }
     }
 
     .ant-form-explain {
@@ -145,54 +151,58 @@
     }
 
     .ant-form-item {
-      margin-left: -@gutter;
+      margin-bottom: 5px;
       overflow: hidden;
       padding: 0px @gutter 5px;
-
-      &.value-overridden {
-        background-color: lighten(@layout-body-background, 2%);
-      }
-
-      &:hover {
-        background-color: lighten(@layout-body-background, 4%);
-      }
 
       .ant-form-item-label {
         overflow: visible;
       }
 
-      .documentation-link {
+      .option-actions {
         @icon-size: 16px;
         @width: @icon-size*2;
 
-        display: none;
         font-size: @icon-size;
         height: 82px;
-        left: -@width;
-        position: absolute;
-        text-align: center;
-        top: -3px;
-        width: @width;
+        margin-left: 16px;
+        visibility: hidden;
 
-        .anticon {
-          color: @text-color;
+        a {
+          margin-right: 6px;
+        }
 
-          &:hover {
-            color: @link-hover-color;
-          }
+        .remove-option-btn {
+          color: @error-color;
         }
       }
 
       &:hover {
-        .documentation-link {
-          display: block;
+        .option-actions {
+          visibility: visible;
         }
       }
+    }
+
+    .ant-input::placeholder {
+      color: @placeholder-color;
     }
   }
 
   .ant-anchor-wrapper {
     padding-left: 7px;
     background-color: initial;
+  }
+}
+
+.select-add-new-option {
+  .option-description {
+    display: none;
+  }
+}
+
+.dropdown-add-new-option {
+  .option-description {
+    &:extend(small);
   }
 }

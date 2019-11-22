@@ -97,7 +97,8 @@
       "@tag-kbd-bg": "#333",
       "@table-header-sort-active-bg": "darken(@table-header-bg, 3%)",
       "@alert-error-message-color": "@heading-color",
-      "@alert-warning-message-color": "fade(@black, 65%)"
+      "@alert-warning-message-color": "lighten(@black, 35%)",
+      "@placeholder-color": "lighten(@black, 65%)"
     },
     "dark": {
       "hljs-theme": "monokai-sublime",
@@ -137,6 +138,7 @@
       "@table-header-sort-active-bg": "darken(@table-header-bg, 4%)",
       "@table-header-sort-bg": "darken(@table-header-bg, 3%)",
       "@table-body-sort-bg": "@table-header-sort-bg",
+      "@table-selected-row-bg": "lighten(@component-background, 4%)",
       "@carousel-dot-width": "20px",
       "@carousel-dot-height": "4px",
       "@carousel-dot-active-width": "28px",
@@ -146,8 +148,9 @@
       "@tag-kbd-color": "@body-background",
       "@tag-kbd-bg": "@text-color",
       "@badge-text-color": "@light",
-      "@alert-error-message-color": "fade(@black, 65%)",
-      "@alert-warning-message-color": "fade(@black, 65%)"
+      "@alert-error-message-color": "lighten(@black, 35%)",
+      "@alert-warning-message-color": "lighten(@black, 35%)",
+      "@placeholder-color": "darken(@text-color, 20%)"
     }
   },
   "workspaces": {
