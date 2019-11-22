@@ -55,12 +55,10 @@ export class ProjectListItem extends React.PureComponent {
     this.props.updateConfigDescription(this.props.data.path, description, onEnd);
   }
 
-  handleClick(e) {
-    if (e.target.closest('button') || e.target.closest('input')) {
-      return;
-    }
+  handleClick = e => {
+    e.preventDefault();
     this.props.onClick(e);
-  }
+  };
 
   renderBoards() {
     const set = new Set();
@@ -132,9 +130,7 @@ export class ProjectListItem extends React.PureComponent {
             {this.renderExtraActions()}
           </React.Fragment>
         }
-        hoverable
-        onClick={::this.handleClick}
-        title={<a>{this.props.data.name}</a>}
+        title={<a onClick={this.handleClick}>{this.props.data.name}</a>}
       >
         <div className="block">
           <QuickEdit
