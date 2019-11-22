@@ -17,26 +17,48 @@
 import { Icon, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { SCOPE_PLATFORMIO } from '@project/constants';
 
 export class DocumentationLink extends React.PureComponent {
   static propTypes = {
     // data
-    url: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    group: PropTypes.string.isRequired,
+    scope: PropTypes.string.isRequired,
+
     // callbacks
     onClick: PropTypes.func.isRequired
   };
 
+  getDocumentationUrl(scope, group, name) {
+    const pageParts = [scope];
+    if (scope !== SCOPE_PLATFORMIO) {
+      pageParts.push(group);
+    }
+    const page = `section_${pageParts.join('_')}.html`;
+    const hash =
+      name !== undefined
+        ? name.replace(/[^a-z]/g, '-')
+        : `${group.toLowerCase()}-options`;
+
+    return `https://docs.platformio.org/en/latest/projectconf/${encodeURIComponent(
+      page
+    )}#${encodeURIComponent(hash)}`;
+  }
+
   handleClick = e => {
     e.preventDefault();
     e.stopPropagation();
-    this.props.onClick(this.props.url);
+    this.props.onClick(
+      this.getDocumentationUrl(this.props.scope, this.props.group, this.props.name)
+    );
   };
 
   render() {
     return (
       <span className="documentation-link">
-        <Tooltip title="Documentation">
-          <a onClick={this.handleClick} title={this.props.url}>
+        <Tooltip title={`Open documentation for "${this.props.name}"`}>
+          <a onClick={this.handleClick}>
             <Icon type="question-circle" />
           </a>
         </Tooltip>

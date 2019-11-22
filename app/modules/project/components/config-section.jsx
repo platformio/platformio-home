@@ -48,7 +48,6 @@ import { DocumentationLink } from '@project/components/documentation-link';
 import { IS_WINDOWS } from '@app/config';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getDocumentationUrl } from '@project/helpers';
 
 function escapeFieldName(x) {
   return x.replace(/\./g, '@');
@@ -246,7 +245,9 @@ class ConfigSectionComponent extends React.PureComponent {
         <span className="option-actions">
           {schema && (
             <DocumentationLink
-              url={getDocumentationUrl(schema.scope, schema.group, name)}
+              group={schema.group}
+              name={name}
+              scope={schema.scope}
               onClick={this.handleDocumentationClick}
             />
           )}
