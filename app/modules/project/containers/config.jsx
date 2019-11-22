@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Dropdown, Icon, Menu, Select, Spin, Tabs, Tooltip } from 'antd';
+import { Alert, Button, Dropdown, Icon, Menu, Spin, Tabs, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,

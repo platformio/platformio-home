@@ -191,6 +191,10 @@ class ConfigSectionComponent extends React.PureComponent {
     this.props.onOptionAdd(this.props.name, name);
   };
 
+  blockSubmit = e => {
+    e.preventDefault();
+  };
+
   renderEmptyMessage(fields, filteredFields) {
     if (!this.props.search && fields.length === 0) {
       return (
@@ -388,69 +392,78 @@ class ConfigSectionComponent extends React.PureComponent {
   renderNewOption() {
     const ds = this.getNewOptionsData();
     return (
-      <ConfigFormItem key="__add_new_option" label="New Option">
-        <Select
-          className="select-add-new-option"
-          dropdownClassName="dropdown-add-new-option"
-          showSearch
-          style={{ width: '100%' }}
-          // size="large"
-          placeholder="Option to add"
-          filterOption={(input, option) =>
-            option.key.toLowerCase().includes(input.toLowerCase())
-          }
-          onSelect={this.handleNewOptionSelect}
-          value={undefined}
-        >
-          {[...ds].map(([group, items]) => (
-            <Select.OptGroup
-              key={group}
-              label={`${group.substr(0, 1).toUpperCase()}${group.substr(1)} Options`}
-            >
-              {items.map(schema => (
-                <Select.Option key={schema.name} value={schema.name}>
-                  {schema.name}
-                  {schema.description && (
-                    <div className="option-description">{schema.description}</div>
-                  )}
-                </Select.Option>
-              ))}
-            </Select.OptGroup>
-          ))}
-        </Select>
-      </ConfigFormItem>
+      <Select
+        className="select-add-new-option"
+        dropdownClassName="dropdown-add-new-option"
+        showSearch
+        style={{ width: '100%' }}
+        // size="large"
+        placeholder="Option to add"
+        filterOption={(input, option) =>
+          option.key.toLowerCase().includes(input.toLowerCase())
+        }
+        onSelect={this.handleNewOptionSelect}
+        value={undefined}
+      >
+        {[...ds].map(([group, items]) => (
+          <Select.OptGroup
+            key={group}
+            label={`${group.substr(0, 1).toUpperCase()}${group.substr(1)} Options`}
+          >
+            {items.map(schema => (
+              <Select.Option key={schema.name} value={schema.name}>
+                {schema.name}
+                {schema.description && (
+                  <div className="option-description">{schema.description}</div>
+                )}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ))}
+      </Select>
     );
   }
 
   renderSectionName() {
+    const itemLayout = {
+      labelCol: { xs: 24, sm: 5, md: 4, lg: 3 },
+      wrapperCol: { xs: 24, sm: 19, md: 20, lg: 21 }
+    };
     return (
       <React.Fragment>
-        <ConfigFormItem
-          key={SECTION_NAME_KEY}
-          label={
-            <span>
-              Configuration{' '}
-              <Tooltip title="Toggle Table of Contents">
-                <Button size="small" onClick={this.handleToggleTocClick}>
-                  <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-                </Button>
-              </Tooltip>
-            </span>
-          }
+        <h2>
+          Configuration{' '}
+          <Tooltip title="Toggle Table of Contents">
+            <Button size="small" onClick={this.handleToggleTocClick}>
+              <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+            </Button>
+          </Tooltip>
+        </h2>
+        <Form
+          className="config-section-configuration"
+          layout="horizontal"
+          labelAlign="left"
+          onSubmit={this.blockSubmit}
         >
-          <Input
-            addonBefore={
-              this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
-            }
-            defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
-            readOnly={
-              this.props.type === SECTION_PLATFORMIO ||
-              this.props.type === SECTION_GLOBAL_ENV
-            }
-            onChange={this.handleRename}
-          />
-        </ConfigFormItem>
-        {this.props.type !== SECTION_CUSTOM && this.renderNewOption()}
+          <Form.Item key={SECTION_NAME_KEY} label="Name" {...itemLayout}>
+            <Input
+              addonBefore={
+                this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
+              }
+              defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
+              readOnly={
+                this.props.type === SECTION_PLATFORMIO ||
+                this.props.type === SECTION_GLOBAL_ENV
+              }
+              onChange={this.handleRename}
+            />
+          </Form.Item>
+          {this.props.type !== SECTION_CUSTOM && (
+            <Form.Item key="add_option" label="New Option" {...itemLayout}>
+              {this.renderNewOption()}
+            </Form.Item>
+          )}
+        </Form>
       </React.Fragment>
     );
   }
@@ -520,8 +533,8 @@ class ConfigSectionComponent extends React.PureComponent {
           </Col>
         )}
         <Col key="main" {...mainColProps}>
+          {!this.props.search && this.renderSectionName()}
           <Form layout="vertical" className="config-form">
-            {!this.props.search && this.renderSectionName()}
             {this.renderEmptyMessage(fields, filteredFields)}
             {fields.length !== 0 &&
               [...groups].map(groupName =>
