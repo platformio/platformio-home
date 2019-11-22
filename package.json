@@ -97,7 +97,8 @@
       "@tag-kbd-bg": "#333",
       "@table-header-sort-active-bg": "darken(@table-header-bg, 3%)",
       "@alert-error-message-color": "@heading-color",
-      "@alert-warning-message-color": "fade(@black, 65%)"
+      "@alert-warning-message-color": "fade(@black, 65%)",
+      "@placeholder-color": "fade(#000, 35%)"
     },
     "dark": {
       "hljs-theme": "monokai-sublime",
@@ -148,7 +149,8 @@
       "@tag-kbd-bg": "@text-color",
       "@badge-text-color": "@light",
       "@alert-error-message-color": "fade(@black, 65%)",
-      "@alert-warning-message-color": "fade(@black, 65%)"
+      "@alert-warning-message-color": "fade(@black, 65%)",
+      "@placeholder-color": "fade(@text-color, 75%)"
     }
   },
   "workspaces": {
