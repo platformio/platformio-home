@@ -150,7 +150,7 @@
       "@badge-text-color": "@light",
       "@alert-error-message-color": "fade(@black, 65%)",
       "@alert-warning-message-color": "fade(@black, 65%)",
-      "@placeholder-color": "fade(@text-color, 75%)"
+      "@placeholder-color": "darken(@text-color, 25%)"
     }
   },
   "workspaces": {
