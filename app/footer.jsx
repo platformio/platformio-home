@@ -92,7 +92,7 @@ class AppFooter extends React.Component {
           <li>
             <a onClick={() => this.props.osOpenUrl('https://platformio.org')}>
               <img
-                src={require('./workspace/platformio/platformio_logo.png')}
+                src={require('./workspace/platformio/platformio_logo.png').default}
                 height="38"
               />
             </a>
