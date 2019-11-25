@@ -136,6 +136,7 @@ class ProjectConfig extends React.PureComponent {
         });
         if (!force && err instanceof ConfigFileModifiedError) {
           Modal.confirm({
+            autoFocusButton: 'cancel',
             content: (
               <p>
                 Press &ldquo;Override&rdquo; to override and loose external changes;
@@ -271,7 +272,11 @@ class ProjectConfig extends React.PureComponent {
       // Fix active tab
       if (targetKey === oldState.activeTabKey) {
         if (removedIdx >= config.length) {
-          state.activeTabKey = config[config.length - 1].id;
+          if (config.length !== 0) {
+            state.activeTabKey = config[config.length - 1].id;
+          } else {
+            state.activeTabKey = undefined;
+          }
         } else {
           state.activeTabKey = config[removedIdx].id;
         }
@@ -403,10 +408,8 @@ class ProjectConfig extends React.PureComponent {
     this.renameSection(tabId, name);
   };
 
-  handleTabEdit = (targetKey, action) => {
-    if (action === 'remove') {
-      this.removeSection(targetKey);
-    }
+  handleSectionRemove = targetKey => {
+    this.removeSection(targetKey);
   };
 
   handleReportIssueClick = () => {
@@ -543,6 +546,7 @@ class ProjectConfig extends React.PureComponent {
       id: key,
       name,
       initialValues: section.items,
+      onRemove: this.handleSectionRemove,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
       showToc: this.state.showToc,
@@ -558,7 +562,7 @@ class ProjectConfig extends React.PureComponent {
         key={key}
         size="small"
         tab={
-          <Tooltip title={`Section [${name}]`}>
+          <Tooltip title={`Configuration [${name}]`}>
             <Icon type={this.getScopeIcon(name)} />
             {name.replace(SECTION_USER_ENV, '')}
           </Tooltip>
@@ -573,6 +577,15 @@ class ProjectConfig extends React.PureComponent {
     if (!this.isLoaded()) {
       return this.renderLoader();
     }
+    if (!this.state.config.length) {
+      return (
+        <ul className="background-message option-like">
+          <li>
+            Please, use &ldquo;+ Configuration&rdquo; dropdown above to add new one
+          </li>
+        </ul>
+      );
+    }
     return (
       <DraggableTabs
         activeKey={this.state.activeTabKey}
@@ -582,8 +595,7 @@ class ProjectConfig extends React.PureComponent {
         hideAdd
         onOrderChange={this.handleTabOrderChange}
         onChange={this.handleTabChange}
-        onEdit={this.handleTabEdit}
-        type="editable-card"
+        type="card"
       >
         {this.state.config.map(section =>
           this.renderConfigSection(section.id, section)
