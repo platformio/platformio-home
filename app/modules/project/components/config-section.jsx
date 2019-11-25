@@ -218,8 +218,8 @@ class ConfigSectionComponent extends React.PureComponent {
   renderEmptyMessage(fields) {
     if (fields.length === 0) {
       return (
-        <ul className="background-message option-like">
-          <li>No options defined!</li>
+        <ul className="background-message option-like text-center">
+          <li>No options. Use &quot;New Option&quot; above to add a new one</li>
         </ul>
       );
     }
@@ -454,12 +454,19 @@ class ConfigSectionComponent extends React.PureComponent {
     return (
       <React.Fragment>
         <h2>
-          Configuration{' '}
-          <Tooltip title="Toggle Table of Contents">
-            <Button size="small" onClick={this.handleToggleTocClick}>
-              <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-            </Button>
-          </Tooltip>
+          Configuration
+          <span className="inline-buttons">
+            <Tooltip title="Toggle Table of Contents">
+              <Button size="small" onClick={this.handleToggleTocClick}>
+                <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Remove Configuration">
+              <Button onClick={this.handleRemoveClick} size="small">
+                <Icon type="delete" />
+              </Button>
+            </Tooltip>
+          </span>
         </h2>
         <Form
           className="config-section-configuration"
@@ -545,9 +552,6 @@ class ConfigSectionComponent extends React.PureComponent {
                 this.renderGroup(groupName, fieldsByGroup[groupName], schema, values)
               )}
           </Form>
-          <Button onClick={this.handleRemoveClick} type="danger">
-            Remove Configuration
-          </Button>
         </Col>
       </Row>
     );

@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Dropdown, Icon, Menu, Modal, Spin, Tabs, Tooltip } from 'antd';
+import { Button, Dropdown, Icon, Menu, Modal, Spin, Tabs, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -609,21 +609,11 @@ class ProjectConfig extends React.PureComponent {
     return (
       <div className="project-config-page">
         <h1 className="block clearfix">
-          <span>{this.props.project.name}</span>
+          <span>
+            {this.props.project.name} <span className="label-preview">Preview</span>
+          </span>
           {this.renderFormActions()}
         </h1>
-        <Alert
-          className="block"
-          message={
-            <span>
-              This a beta version of Project Configuration. Please back up{' '}
-              <code>platformio.ini</code> before saving new changes. If you have any
-              issues, <a onClick={this.handleReportIssueClick}>please report us</a>
-            </span>
-          }
-          type="warning"
-          showIcon
-        />
         {this.renderConfig()}
       </div>
     );
