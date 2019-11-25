@@ -355,6 +355,10 @@ class ProjectConfig extends React.PureComponent {
     this.addSection(key);
   };
 
+  handleNewSectionBtnClick = () => {
+    this.addSection(SECTION_USER_ENV);
+  };
+
   handleSaveClick = () => {
     this.save();
   };
@@ -408,8 +412,8 @@ class ProjectConfig extends React.PureComponent {
     this.renameSection(tabId, name);
   };
 
-  handleSectionRemove = targetKey => {
-    this.removeSection(targetKey);
+  handleSectionRemove = (_name, tabId) => {
+    this.removeSection(tabId);
   };
 
   handleReportIssueClick = () => {
@@ -472,7 +476,7 @@ class ProjectConfig extends React.PureComponent {
   renderFormActions() {
     return (
       <div className="form-actions-block">
-        <Button.Group>{this.renderNewSectionBtn()}</Button.Group>
+        {this.renderNewSectionBtn()}
         <Button.Group>
           <Button icon="undo" onClick={this.handleRevertClick}>
             Revert
@@ -499,6 +503,14 @@ class ProjectConfig extends React.PureComponent {
   renderNewSectionBtn() {
     const newSectionMenu = (
       <Menu onClick={this.handleNewSectionMenuClick}>
+        {!this.sectionExists(SECTION_GLOBAL_ENV) && (
+          <Menu.Item
+            key={SECTION_GLOBAL_ENV}
+            title="Global configuration for all environments. Saved as [env] section in the platformio.ini file"
+          >
+            Global configuration
+          </Menu.Item>
+        )}
         {!this.sectionExists(SECTION_PLATFORMIO) && (
           <Menu.Item
             key={SECTION_PLATFORMIO}
@@ -507,30 +519,19 @@ class ProjectConfig extends React.PureComponent {
             PlatformIO Core
           </Menu.Item>
         )}
-        {!this.sectionExists(SECTION_GLOBAL_ENV) && (
-          <Menu.Item
-            key={SECTION_GLOBAL_ENV}
-            title="Saved as [env] section in the platformio.ini file"
-          >
-            Global environment
-          </Menu.Item>
-        )}
-        <Menu.Item
-          key={SECTION_USER_ENV}
-          title='Every "User [env:***]" section automatically extends "Global [env]" options'
-        >
-          User environment
-        </Menu.Item>
         {/* <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item> */}
       </Menu>
     );
 
     return (
-      <Dropdown overlay={newSectionMenu} disabled={!this.isLoaded()}>
-        <Button className="add-section-btn" icon="plus">
-          Configuration <Icon type="down" />
-        </Button>
-      </Dropdown>
+      <Dropdown.Button
+        className="add-section-btn"
+        disabled={!this.isLoaded()}
+        overlay={newSectionMenu}
+        onClick={this.handleNewSectionBtnClick}
+      >
+        <Icon type="plus" /> Configuration
+      </Dropdown.Button>
     );
   }
 
