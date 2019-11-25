@@ -60,8 +60,8 @@ export const loadConfigSchema = () => createAction(LOAD_CONFIG_SCHEMA);
 export const loadProjectConfig = projectDir =>
   createAction(LOAD_PROJECT_CONFIG, { projectDir });
 
-export const saveProjectConfig = (projectDir, data, onEnd) =>
-  createAction(SAVE_PROJECT_CONFIG, { projectDir, data, onEnd });
+export const saveProjectConfig = (projectDir, data, options, onEnd) =>
+  createAction(SAVE_PROJECT_CONFIG, { projectDir, data, options, onEnd });
 
 export const updateConfigDescription = (projectDir, description, onEnd) =>
   createAction(UPDATE_CONFIG_DESCRIPTION, { projectDir, description, onEnd });
