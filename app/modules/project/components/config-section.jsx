@@ -21,6 +21,7 @@ import {
   Form,
   Icon,
   Input,
+  Modal,
   Row,
   Select,
   Tag,
@@ -82,6 +83,7 @@ class ConfigSectionComponent extends React.PureComponent {
     // callbacks
     onChange: PropTypes.func.isRequired,
     onDocumentationClick: PropTypes.func.isRequired,
+    onRemove: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
     onTocToggle: PropTypes.func.isRequired,
     onOptionAdd: PropTypes.func.isRequired,
@@ -187,6 +189,26 @@ class ConfigSectionComponent extends React.PureComponent {
 
   handleNewOptionSelect = name => {
     this.props.onOptionAdd(this.props.name, name);
+  };
+
+  handleRemoveClick = () => {
+    Modal.confirm({
+      autoFocusButton: 'cancel',
+      content: (
+        <p>
+          Press &ldquo;Remove&rdquo; to remove without possibility to restore
+          <br />
+          Press &ldquo;Cancel&rdquo; to continue editing without removing
+        </p>
+      ),
+      onOk: () => {
+        this.props.onRemove(this.props.name);
+      },
+      okText: 'Remove',
+      okType: 'danger',
+      title: 'Do you really want to remove configuration?',
+      type: 'error'
+    });
   };
 
   blockSubmit = e => {
@@ -512,6 +534,9 @@ class ConfigSectionComponent extends React.PureComponent {
                 this.renderGroup(groupName, fieldsByGroup[groupName], schema, values)
               )}
           </Form>
+          <Button onClick={this.handleRemoveClick} type="danger">
+            Remove Configuration
+          </Button>
         </Col>
       </Row>
     );
