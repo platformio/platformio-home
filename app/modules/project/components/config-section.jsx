@@ -387,7 +387,7 @@ class ConfigSectionComponent extends React.PureComponent {
         showSearch
         style={{ width: '100%' }}
         // size="large"
-        placeholder="Option to add"
+        placeholder="Click to start searching available options"
         filterOption={(input, option) =>
           option.key.toLowerCase().includes(input.toLowerCase())
         }
