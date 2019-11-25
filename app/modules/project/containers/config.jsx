@@ -136,9 +136,13 @@ class ProjectConfig extends React.PureComponent {
         });
         if (!force && err instanceof ConfigFileModifiedError) {
           Modal.confirm({
-            content: `Config file was edited by external application.
-              Press "Override" to override and loose external changes;
-              Press "Cancel" to continue editing without saving`,
+            content: (
+              <p>
+                Press &ldquo;Override&rdquo; to override and loose external changes;
+                <br />
+                Press &ldquo;Cancel&rdquo; to continue editing without saving
+              </p>
+            ),
             okText: 'Override',
             okType: 'danger',
             title: 'Do you want to override externally modified config?',
