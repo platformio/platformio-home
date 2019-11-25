@@ -16,7 +16,7 @@
 
 import * as pathlib from '@core/path';
 
-import { Alert, Button, Dropdown, Icon, Menu, Spin, Tabs, Tooltip } from 'antd';
+import { Alert, Button, Dropdown, Icon, Menu, Modal, Spin, Tabs, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SCOPE_ENV,
@@ -39,6 +39,7 @@ import {
   selectProjectInfo
 } from '@project/selectors';
 
+import { ConfigFileModifiedError } from '@project/errors';
 import { ConfigSectionForm } from '@project/components/config-section';
 import { DraggableTabs } from '@project/components/draggable-tabs';
 import PropTypes from 'prop-types';
@@ -50,6 +51,7 @@ class ProjectConfig extends React.PureComponent {
   static propTypes = {
     // data
     location: PropTypes.object.isRequired,
+    mtime: PropTypes.number,
     project: ProjectType.isRequired,
     initialConfig: PropTypes.arrayOf(
       PropTypes.shape({
@@ -96,7 +98,7 @@ class ProjectConfig extends React.PureComponent {
     this.props.loadProjectConfig(this.props.location.state.projectDir);
   }
 
-  save() {
+  save(force) {
     const stateConfig = this.state.config.map(section => ({
       ...section,
       items: section.items.filter(option => {
@@ -124,10 +126,31 @@ class ProjectConfig extends React.PureComponent {
     this.props.saveProjectConfig(
       this.props.location.state.projectDir,
       apiConfig,
-      () => {
+      {
+        force,
+        mtime: this.props.mtime
+      },
+      err => {
         this.setState({
           saving: false
         });
+        if (!force && err instanceof ConfigFileModifiedError) {
+          Modal.confirm({
+            content: (
+              <p>
+                Press &ldquo;Override&rdquo; to override and loose external changes;
+                <br />
+                Press &ldquo;Cancel&rdquo; to continue editing without saving
+              </p>
+            ),
+            okText: 'Override',
+            okType: 'danger',
+            title: 'Do you want to override externally modified config?',
+            onOk: () => {
+              this.save(true);
+            }
+          });
+        }
       }
     );
   }
@@ -596,11 +619,12 @@ class ProjectConfig extends React.PureComponent {
 
 const mapStateToProps = function(state, ownProps) {
   const { projectDir } = ownProps.location.state;
-
+  const config = selectProjectConfig(state) || {};
   return {
     project: selectProjectInfo(state, projectDir),
     schema: selectConfigSchema(state),
-    initialConfig: selectProjectConfig(state)
+    initialConfig: config.config,
+    mtime: config.mtime
   };
 };
 

@@ -40,13 +40,14 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
+import { selectEntity, selectStorageItem } from '../../store/selectors';
 
+import { ConfigFileModifiedError } from '@project/errors';
 import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { getSessionId } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
-import { selectStorageItem } from '../../store/selectors';
 
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
@@ -358,9 +359,14 @@ function* watchLoadProjectConfig() {
   yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
     try {
       yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`), config));
+      const configPath = pathlib.join(projectDir, 'platformio.ini');
       const tupleConfig = yield call(apiFetchData, {
         query: 'project.config_load',
-        params: [pathlib.join(projectDir, 'platformio.ini')]
+        params: [configPath]
+      });
+      const mtime = yield call(apiFetchData, {
+        query: 'os.get_file_mtime',
+        params: [configPath]
       });
       const config = tupleConfig.map(([section, items]) => ({
         section,
@@ -369,7 +375,7 @@ function* watchLoadProjectConfig() {
           value
         }))
       }));
-      yield put(updateEntity(PROJECT_CONFIG_KEY, config));
+      yield put(updateEntity(PROJECT_CONFIG_KEY, { config, mtime }));
     } catch (e) {
       if (!(e instanceof jsonrpc.JsonRpcError)) {
         yield put(notifyError('Could not load project config', e));
@@ -379,19 +385,49 @@ function* watchLoadProjectConfig() {
 }
 
 function* watchSaveProjectConfig() {
-  yield takeLatest(actions.SAVE_PROJECT_CONFIG, function*({ projectDir, data, onEnd }) {
+  yield takeLatest(actions.SAVE_PROJECT_CONFIG, function*({
+    projectDir,
+    data,
+    options,
+    onEnd
+  }) {
+    const { mtime, force } = options || {};
+    let error;
     try {
+      const configPath = pathlib.join(projectDir, 'platformio.ini');
+      if (!force) {
+        const currentMtime = yield call(apiFetchData, {
+          query: 'os.get_file_mtime',
+          params: [configPath]
+        });
+        if (currentMtime - mtime > 0.00001) {
+          throw new ConfigFileModifiedError({
+            loadedAt: mtime,
+            modifiedAt: currentMtime
+          });
+        }
+      }
       yield call(apiFetchData, {
         query: 'project.config_dump',
-        params: [pathlib.join(projectDir, 'platformio.ini'), data]
+        params: [configPath, data]
       });
       message.success('Project configuration saved');
+      // Refresh mtime
+      const newMtime = yield call(apiFetchData, {
+        query: 'os.get_file_mtime',
+        params: [configPath]
+      });
+      const entity = yield select(selectEntity, PROJECT_CONFIG_KEY);
+      yield put(updateEntity(PROJECT_CONFIG_KEY, { ...entity, mtime: newMtime }));
     } catch (e) {
-      if (!(e instanceof jsonrpc.JsonRpcError)) {
+      error = e;
+      if (
+        !(e instanceof jsonrpc.JsonRpcError || e instanceof ConfigFileModifiedError)
+      ) {
         yield put(notifyError('Could not save project config', e));
       }
     } finally {
-      yield call(onEnd);
+      yield call(onEnd, error);
     }
   });
 }
