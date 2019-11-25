@@ -202,7 +202,7 @@ class ConfigSectionComponent extends React.PureComponent {
         </p>
       ),
       onOk: () => {
-        this.props.onRemove(this.props.name);
+        this.props.onRemove(this.props.name, this.props.id);
       },
       okText: 'Remove',
       okType: 'danger',
@@ -421,14 +421,25 @@ class ConfigSectionComponent extends React.PureComponent {
             key={group}
             label={`${group.substr(0, 1).toUpperCase()}${group.substr(1)} Options`}
           >
-            {items.map(schema => (
-              <Select.Option key={schema.name} value={schema.name}>
-                {schema.name}
-                {schema.description && (
-                  <div className="option-description">{schema.description}</div>
-                )}
-              </Select.Option>
-            ))}
+            {items.map(schema => {
+              const lines = [];
+              if (schema.description) {
+                lines.push(schema.description);
+              }
+              if (schema.default != undefined) {
+                lines.push(
+                  `Default is "${this.transformIntoFormValue(schema.default, schema)}"`
+                );
+              }
+              return (
+                <Select.Option key={schema.name} value={schema.name}>
+                  {schema.name}
+                  {lines.length !== 0 && (
+                    <div className="option-description">{lines.join('. ')}</div>
+                  )}
+                </Select.Option>
+              );
+            })}
           </Select.OptGroup>
         ))}
       </Select>
