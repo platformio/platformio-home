@@ -218,9 +218,13 @@ class ConfigSectionComponent extends React.PureComponent {
   renderEmptyMessage(fields) {
     if (fields.length === 0) {
       return (
-        <ul className="background-message option-like text-center">
-          <li>No options. Use &quot;New Option&quot; above to add a new one</li>
-        </ul>
+        <div className="text-center">
+          <br />
+          <h1>
+            No options <br />
+            <small>Use &quot;New Option&quot; above to add a new one</small>
+          </h1>
+        </div>
       );
     }
   }
