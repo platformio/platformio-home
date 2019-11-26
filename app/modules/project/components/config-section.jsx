@@ -199,7 +199,7 @@ class ConfigSectionComponent extends React.PureComponent {
       autoFocusButton: 'cancel',
       content: (
         <p>
-          Press &ldquo;Remove&rdquo; to remove without possibility to restore
+          Press &ldquo;Remove&rdquo; to remove without ability to restore
           <br />
           Press &ldquo;Cancel&rdquo; to continue editing without removing
         </p>
