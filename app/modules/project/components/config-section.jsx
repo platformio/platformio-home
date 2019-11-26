@@ -66,7 +66,10 @@ function splitMultipleField(v) {
   if (v == undefined) {
     return;
   }
-  return v.split(/[,\n]/).filter((v, i) => v.length || i);
+  return v
+    .split(v.includes('\n') ? /\n/ : /, /)
+    .map(v => v.replace(/^\s+|\s+$/g, ''))
+    .filter((v, i) => v.length || i);
 }
 
 class ConfigSectionComponent extends React.PureComponent {
