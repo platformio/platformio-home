@@ -506,9 +506,9 @@ class ProjectConfig extends React.PureComponent {
         {!this.sectionExists(SECTION_GLOBAL_ENV) && (
           <Menu.Item
             key={SECTION_GLOBAL_ENV}
-            title="Global configuration for all environments. Saved as [env] section in the platformio.ini file"
+            title="Common configuration for all environments. Saved as [env] section in the `platformio.ini` file"
           >
-            Global configuration
+            Common Configuration
           </Menu.Item>
         )}
         {!this.sectionExists(SECTION_PLATFORMIO) && (
@@ -516,10 +516,9 @@ class ProjectConfig extends React.PureComponent {
             key={SECTION_PLATFORMIO}
             title="Saved as [platformio] section in the platformio.ini file"
           >
-            PlatformIO Core
+            PlatformIO Settings
           </Menu.Item>
         )}
-        {/* <Menu.Item key={SECTION_CUSTOM}>Custom section</Menu.Item> */}
       </Menu>
     );
 
