@@ -30,6 +30,7 @@ export const LOAD_PROJECT_CONFIG = 'LOAD_PROJECT_CONFIG';
 export const SAVE_PROJECT_CONFIG = 'SAVE_PROJECT_CONFIG';
 
 export const UPDATE_CONFIG_DESCRIPTION = 'UPDATE_CONFIG_DESCRIPTION';
+export const LOAD_SERIAL_PORTS = 'LOAD_SERIAL_PORTS';
 
 export const addProject = (projectDir, withOpen = true, onEnd) =>
   createAction(ADD_PROJECT, { projectDir, withOpen, onEnd });
@@ -65,3 +66,7 @@ export const saveProjectConfig = (projectDir, data, options, onEnd) =>
 
 export const updateConfigDescription = (projectDir, description, onEnd) =>
   createAction(UPDATE_CONFIG_DESCRIPTION, { projectDir, description, onEnd });
+
+export function loadSerialPorts(onEnd) {
+  return createAction(LOAD_SERIAL_PORTS, { onEnd });
+}

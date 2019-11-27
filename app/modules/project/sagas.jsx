@@ -20,7 +20,11 @@ import * as actions from './actions';
 import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
-import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
+import {
+  CONFIG_SCHEMA_KEY,
+  PROJECT_CONFIG_KEY,
+  SERIAL_PORTS_KEY
+} from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
@@ -480,6 +484,30 @@ function* watchUpdateConfigDescription() {
   });
 }
 
+function* watchLoadSerialPorts() {
+  yield takeLatest(actions.LOAD_SERIAL_PORTS, function*({ onEnd }) {
+    let err;
+    try {
+      // Patch file via RPC
+      const ports = yield call(apiFetchData, {
+        query: 'core.call',
+        params: [['device', 'list', '--serial', '--json-output']]
+      });
+      yield put(updateEntity(SERIAL_PORTS_KEY, ports));
+    } catch (e) {
+      err = e;
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not save project config', e));
+      }
+      console.error(e);
+    } finally {
+      if (onEnd) {
+        yield call(onEnd, err);
+      }
+    }
+  });
+}
+
 export default [
   watchAddProject,
   watchHideProject,
@@ -494,5 +522,6 @@ export default [
   watchLoadConfigSchema,
   watchLoadProjectConfig,
   watchSaveProjectConfig,
-  watchUpdateConfigDescription
+  watchUpdateConfigDescription,
+  watchLoadSerialPorts
 ];

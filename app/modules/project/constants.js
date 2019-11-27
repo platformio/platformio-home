@@ -17,6 +17,8 @@
 export const PROJECT_CONFIG_KEY = 'projectConfig';
 export const CONFIG_SCHEMA_KEY = 'projectConfigSchema';
 
+export const SERIAL_PORTS_KEY = 'serialPorts';
+
 export const TYPE_TEXT = 'string';
 export const TYPE_CHOICE = 'choice';
 export const TYPE_INT = 'integer';

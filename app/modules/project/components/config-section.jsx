@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// Force dependency
+import '@project/containers/port-autocomplete';
 
 import { Button, Col, Form, Icon, Input, Modal, Row, Select, Tag, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
