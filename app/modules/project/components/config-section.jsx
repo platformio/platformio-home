@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Icon,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Tag,
-  Tooltip
-} from 'antd';
-import { ConfigOptionType, SchemaType } from '@project/types';
+
+import { Button, Col, Form, Icon, Input, Modal, Row, Select, Tag, Tooltip } from 'antd';
+import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SECTIONS,
   SECTION_CUSTOM,
@@ -35,11 +24,6 @@ import {
   SECTION_NAME_KEY,
   SECTION_PLATFORMIO,
   SECTION_USER_ENV,
-  TYPE_BOOL,
-  TYPE_CHOICE,
-  TYPE_FILE,
-  TYPE_INT,
-  TYPE_INT_RANGE,
   TYPE_TEXT
 } from '@project/constants';
 
@@ -47,6 +31,7 @@ import { ConfigFormItem } from '@project/components/config-form-item';
 import { ConfigSectionToc } from '@project/components/config-section-toc';
 import { DocumentationLink } from '@project/components/documentation-link';
 import { IS_WINDOWS } from '@app/config';
+import { OptionEditorFactory } from '@project/helpers';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -298,7 +283,6 @@ class ConfigSectionComponent extends React.PureComponent {
 
   renderFormItem(name, schemaByName, initialValue) {
     const schema = schemaByName[name];
-    const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
     const description = schema ? schema.description : undefined;
 
@@ -316,7 +300,6 @@ class ConfigSectionComponent extends React.PureComponent {
     };
 
     const label = this.renderLabel(name, schema, { multiple });
-
     const itemProps = {
       className: '',
       help: description,
@@ -327,65 +310,17 @@ class ConfigSectionComponent extends React.PureComponent {
       }
     };
 
-    let input;
-    switch (type) {
-      case TYPE_BOOL:
-        input = <Checkbox autoFocus={autoFocus}>{description}</Checkbox>;
-        decoratorOptions.valuePropName = 'defaultChecked';
-        decoratorOptions.trigger = 'onChange';
-        itemProps.help = undefined;
-
-        if (initialValue === undefined) {
-          decoratorOptions.initialValue = defaultValue;
-        }
-        break;
-
-      case TYPE_CHOICE:
-        input = (
-          <Select
-            autoFocus={autoFocus}
-            placeholder={defaultValue}
-            mode={multiple ? 'multiple' : 'default'}
-            tokenSeparators={[',', '\n']}
-          >
-            {schema.choices.map(value => (
-              <Select.Option key={value} value={value}>
-                {value}
-              </Select.Option>
-            ))}
-          </Select>
-        );
-        break;
-
-      case TYPE_TEXT:
-      case TYPE_FILE:
-      case TYPE_INT:
-      case TYPE_INT_RANGE:
-      default:
-        if (multiple) {
-          input = (
-            <Input.TextArea
-              autoFocus={autoFocus}
-              placeholder={defaultValue}
-              autoSize={{ minRows: 1, maxRows: 20 }}
-              rows={1}
-            />
-          );
-        } else {
-          input = (
-            <Input
-              autoFocus={autoFocus}
-              placeholder={defaultValue}
-              readOnly={schema && schema.readonly}
-            />
-          );
-        }
-        if (!type) {
-          console.warn(`Unsupported item type: "${type}" for name: "${name}"`);
-          // throw new Error(`Unsupported item type: "${type}"`);
-        }
-        break;
-    }
+    const inputProps = {
+      autoFocus,
+      defaultValue
+    };
+    const input = OptionEditorFactory.factory(
+      schema,
+      inputProps,
+      itemProps,
+      decoratorOptions,
+      this.props.project
+    );
 
     const wrappedInput = this.props.form.getFieldDecorator(id, decoratorOptions)(input);
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
