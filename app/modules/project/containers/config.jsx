@@ -546,6 +546,7 @@ class ProjectConfig extends React.PureComponent {
       id: key,
       name,
       initialValues: section.items,
+      project: this.props.project,
       onRemove: this.handleSectionRemove,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],

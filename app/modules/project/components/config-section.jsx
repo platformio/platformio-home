@@ -16,6 +16,7 @@
 
 // Force dependency
 import '@project/containers/port-autocomplete';
+import '@project/components/env-autocomplete';
 
 import { Button, Col, Form, Icon, Input, Modal, Row, Select, Tag, Tooltip } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
@@ -67,6 +68,7 @@ class ConfigSectionComponent extends React.PureComponent {
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
     name: PropTypes.string.isRequired,
+    project: ProjectType.isRequired,
     schema: SchemaType.isRequired,
     showToc: PropTypes.bool,
     type: PropTypes.oneOf(SECTIONS).isRequired,
