@@ -22,6 +22,7 @@ import { SCOPE_PLATFORMIO } from '@project/constants';
 export class DocumentationLink extends React.PureComponent {
   static propTypes = {
     // data
+    children: PropTypes.any,
     name: PropTypes.string,
     group: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
@@ -60,6 +61,8 @@ export class DocumentationLink extends React.PureComponent {
         <Tooltip title={`Open documentation for "${this.props.name}"`}>
           <a onClick={this.handleClick}>
             <Icon type="question-circle" />
+            {this.props.children ? ' ' : undefined}
+            {this.props.children ? this.props.children : undefined}
           </a>
         </Tooltip>
       </span>
