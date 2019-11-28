@@ -405,7 +405,7 @@ class ConfigSectionComponent extends React.PureComponent {
             size="small"
             onClick={this.handleToggleTocClick}
           >
-            ToC
+            Contents
           </Button>
         </Tooltip>
         {this.props.type === SECTION_USER_ENV && (
