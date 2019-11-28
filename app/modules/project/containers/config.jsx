@@ -364,11 +364,20 @@ class ProjectConfig extends React.PureComponent {
         };
         oldSection.id = this.generateSectionId(oldSection);
       }
+      const items = oldSection.items.slice();
+      const optionIdx = oldSection.items.findIndex(item => item.name === name);
+      if (optionIdx === -1) {
+        items.push({
+          name,
+          value: valueUpdater()
+        });
+      } else {
+        const oldItem = items[optionIdx];
+        items[optionIdx] = { ...oldItem, value: valueUpdater(oldItem.value) };
+      }
       const newSection = {
         ...oldSection,
-        items: oldSection.items.map(item =>
-          item.name !== name ? item : { ...item, value: valueUpdater(item.value) }
-        )
+        items
       };
       return {
         config: prevState.config.map(section =>
