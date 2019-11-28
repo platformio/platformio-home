@@ -417,6 +417,8 @@ function* watchSaveProjectConfig() {
       });
       const entity = yield select(selectEntity, PROJECT_CONFIG_KEY);
       yield put(updateEntity(PROJECT_CONFIG_KEY, { ...entity, mtime: newMtime }));
+      // Reload list because displaying of config required project in the state
+      yield put(actions.loadProjects(true));
     } catch (e) {
       error = e;
       yield put(notifyError('Could not save project config', e));
