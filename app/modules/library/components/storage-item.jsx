@@ -150,6 +150,7 @@ export default class LibraryStorageItem extends React.Component {
                   title="Are you sure?"
                   okText="Yes"
                   cancelText="No"
+                  onCancel={e => e.stopPropagation()}
                   onClick={e => e.stopPropagation()}
                   onConfirm={e => this.onDidUninstallOrUpdateItem(e, 'uninstall')}
                 >
