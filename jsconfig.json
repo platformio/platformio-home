@@ -6,6 +6,7 @@
     "jsx": "react",
     "paths": {
       "@core/*": ["app/core/*"],
+      "@device/*": ["app/modules/device/*"],
       "@inspect/*": ["app/modules/inspect/*"],
       "@platform/*": ["app/modules/platform/*"],
       "@project/*": ["app/modules/project/*"],

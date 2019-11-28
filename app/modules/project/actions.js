@@ -66,7 +66,3 @@ export const saveProjectConfig = (projectDir, data, options, onEnd) =>
 
 export const updateConfigDescription = (projectDir, description, onEnd) =>
   createAction(UPDATE_CONFIG_DESCRIPTION, { projectDir, description, onEnd });
-
-export function loadSerialPorts(onEnd) {
-  return createAction(LOAD_SERIAL_PORTS, { onEnd });
-}

@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  CONFIG_SCHEMA_KEY,
-  PROJECT_CONFIG_KEY,
-  SERIAL_PORTS_KEY
-} from '@project/constants';
+import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
 import { selectEntity, selectInputValue } from '@store/selectors';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
@@ -67,16 +63,4 @@ export function selectConfigSchema(state) {
 
 export function selectProjectConfig(state) {
   return selectEntity(state, PROJECT_CONFIG_KEY);
-}
-
-export function selectSerialPorts(state) {
-  return selectEntity(state, SERIAL_PORTS_KEY);
-}
-
-export function selectSerialPortsList(state) {
-  const entity = selectSerialPorts(state);
-  if (!entity) {
-    return;
-  }
-  return entity.map(port => ({ name: port.port, value: port.port }));
 }

@@ -18,17 +18,17 @@ import { OptionAutocomplete } from '@project/components/option-autocomplete';
 import { OptionEditorFactory } from '@project/helpers';
 import React from 'react';
 import { connect } from 'react-redux';
-import { loadSerialPorts } from '@project/actions';
-import { selectSerialPortsList } from '@project/selectors';
+import { loadSerialDevices } from '@device/actions';
+import { selectSerialDevicesList } from '@device/selectors';
 
 function mapStateToProps(state) {
   return {
-    items: selectSerialPortsList(state)
+    items: selectSerialDevicesList(state)
   };
 }
 
 const dispatchToProps = {
-  onLoad: loadSerialPorts
+  onLoad: () => loadSerialDevices(true)
 };
 
 export const PortAutocomplete = connect(
