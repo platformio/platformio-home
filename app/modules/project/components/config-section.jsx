@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+// Force dependency
+import '@project/containers/port-autocomplete';
+import '@project/components/env-autocomplete';
+
 import {
   Button,
-  Checkbox,
   Col,
   Form,
   Icon,
