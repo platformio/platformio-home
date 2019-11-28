@@ -508,15 +508,16 @@ class ProjectConfig extends React.PureComponent {
   };
 
   handleDefaultToggle = (sectionName, isDefault) => {
+    const env = sectionName.replace(SECTION_USER_ENV, '');
     const updater = isDefault
       ? oldValue => {
           const set = new Set(oldValue);
-          set.add(sectionName);
+          set.add(env);
           return [...set];
         }
       : oldValue => {
           const set = new Set(oldValue);
-          set.delete(sectionName);
+          set.delete(env);
           return [...set];
         };
     this._updateSectionValue(SECTION_PLATFORMIO, 'default_envs', updater);
@@ -641,7 +642,9 @@ class ProjectConfig extends React.PureComponent {
       initialValues: section.items,
       defaultEnv:
         type === SECTION_USER_ENV &&
-        this.getSectionValue(SECTION_PLATFORMIO, 'default_envs', []).includes(name),
+        this.getSectionValue(SECTION_PLATFORMIO, 'default_envs', []).includes(
+          name.replace(SECTION_USER_ENV, '')
+        ),
       onRemove: this.handleSectionRemove,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],

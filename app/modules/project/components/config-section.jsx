@@ -21,7 +21,7 @@ import {
   Form,
   Icon,
   Input,
-  Modal,
+  Popconfirm,
   Row,
   Select,
   Tag,
@@ -198,23 +198,7 @@ class ConfigSectionComponent extends React.PureComponent {
   };
 
   handleRemoveClick = () => {
-    Modal.confirm({
-      autoFocusButton: 'cancel',
-      content: (
-        <p>
-          Press &ldquo;Remove&rdquo; to remove without ability to restore
-          <br />
-          Press &ldquo;Cancel&rdquo; to continue editing without removing
-        </p>
-      ),
-      onOk: () => {
-        this.props.onRemove(this.props.name, this.props.id);
-      },
-      okText: 'Remove',
-      okType: 'danger',
-      title: 'Do you really want to remove configuration?',
-      type: 'error'
-    });
+    this.props.onRemove(this.props.name, this.props.id);
   };
 
   handleToggleMakeDefaultClick = () => {
@@ -462,21 +446,39 @@ class ConfigSectionComponent extends React.PureComponent {
 
   renderSectionActions() {
     return (
-      <span className="inline-buttons">
+      <span className="pull-right inline-buttons">
         <Tooltip title="Toggle Table of Contents">
-          <Button size="small" onClick={this.handleToggleTocClick}>
-            <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+          <Button
+            icon={this.props.showToc ? 'menu-fold' : 'menu-unfold'}
+            size="small"
+            onClick={this.handleToggleTocClick}
+          >
+            ToC
           </Button>
         </Tooltip>
         {this.props.type === SECTION_USER_ENV && (
-          <Button icon="home" size="small" onClick={this.handleToggleMakeDefaultClick}>
-            {this.props.defaultEnv ? 'Remove From Default' : 'Make Default'}
-          </Button>
+          <Tooltip title="Add/remove from default_envs">
+            <Button
+              icon="environment"
+              size="small"
+              onClick={this.handleToggleMakeDefaultClick}
+            >
+              {this.props.defaultEnv ? 'Remove From Default' : 'Make Default'}
+            </Button>
+          </Tooltip>
         )}
         <Tooltip title="Remove Configuration">
-          <Button onClick={this.handleRemoveClick} size="small">
-            <Icon type="delete" />
-          </Button>
+          <Popconfirm
+            title="Are you sure?"
+            okText="Yes"
+            okType="danger"
+            cancelText="No"
+            onConfirm={this.handleRemoveClick}
+          >
+            <Button icon="delete" size="small">
+              Delete
+            </Button>
+          </Popconfirm>
         </Tooltip>
       </span>
     );
