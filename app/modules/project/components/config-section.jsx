@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-// Force dependency
-import '@project/containers/port-autocomplete';
-import '@project/components/env-autocomplete';
-
-import { Button, Col, Form, Icon, Input, Modal, Row, Select, Tag, Tooltip } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Icon,
+  Input,
+  Popconfirm,
+  Row,
+  Select,
+  Tag,
+  Tooltip
+} from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import {
   SECTIONS,
@@ -64,6 +72,7 @@ class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
     autoFocus: PropTypes.string,
+    defaultEnv: PropTypes.bool,
     form: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
@@ -71,9 +80,11 @@ class ConfigSectionComponent extends React.PureComponent {
     project: ProjectType.isRequired,
     schema: SchemaType.isRequired,
     showToc: PropTypes.bool,
+    title: PropTypes.string.isRequired,
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
     onChange: PropTypes.func.isRequired,
+    onDefaultToggle: PropTypes.func.isRequired,
     onDocumentationClick: PropTypes.func.isRequired,
     onRemove: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
@@ -184,23 +195,11 @@ class ConfigSectionComponent extends React.PureComponent {
   };
 
   handleRemoveClick = () => {
-    Modal.confirm({
-      autoFocusButton: 'cancel',
-      content: (
-        <p>
-          Press &ldquo;Remove&rdquo; to remove without ability to restore
-          <br />
-          Press &ldquo;Cancel&rdquo; to continue editing without removing
-        </p>
-      ),
-      onOk: () => {
-        this.props.onRemove(this.props.name, this.props.id);
-      },
-      okText: 'Remove',
-      okType: 'danger',
-      title: 'Do you really want to remove configuration?',
-      type: 'error'
-    });
+    this.props.onRemove(this.props.name, this.props.id);
+  };
+
+  handleToggleMakeDefaultClick = () => {
+    this.props.onDefaultToggle(this.props.name, !this.props.defaultEnv);
   };
 
   blockSubmit = e => {
@@ -267,7 +266,9 @@ class ConfigSectionComponent extends React.PureComponent {
               name={name}
               scope={schema.scope}
               onClick={this.handleDocumentationClick}
-            />
+            >
+              Docs
+            </DocumentationLink>
           )}
           <Tooltip title="Remove Option">
             <a
@@ -275,7 +276,7 @@ class ConfigSectionComponent extends React.PureComponent {
               data-name={name}
               onClick={this.handleRemoveOptionClick}
             >
-              <Icon type="delete" />
+              <Icon type="delete" /> Delete
             </a>
           </Tooltip>
         </span>
@@ -392,6 +393,44 @@ class ConfigSectionComponent extends React.PureComponent {
     );
   }
 
+  renderSectionActions() {
+    return (
+      <span className="pull-right inline-buttons">
+        <Tooltip title="Toggle Table of Contents">
+          <Button
+            icon={this.props.showToc ? 'menu-fold' : 'menu-unfold'}
+            size="small"
+            onClick={this.handleToggleTocClick}
+          >
+            ToC
+          </Button>
+        </Tooltip>
+        {this.props.type === SECTION_USER_ENV && (
+          <Tooltip title="Default configuration for building, uploading, debugging, etc">
+            <Button
+              icon="environment"
+              size="small"
+              onClick={this.handleToggleMakeDefaultClick}
+            >
+              {this.props.defaultEnv ? 'Remove From Default' : 'Make Default'}
+            </Button>
+          </Tooltip>
+        )}
+        <Popconfirm
+          title="Are you sure?"
+          okText="Yes"
+          okType="danger"
+          cancelText="No"
+          onConfirm={this.handleRemoveClick}
+        >
+          <Button icon="delete" size="small">
+            Delete
+          </Button>
+        </Popconfirm>
+      </span>
+    );
+  }
+
   renderSectionName() {
     const itemLayout = {
       labelCol: { xs: 24, sm: 5, md: 4, lg: 3 },
@@ -400,19 +439,8 @@ class ConfigSectionComponent extends React.PureComponent {
     return (
       <React.Fragment>
         <h2>
-          Configuration
-          <span className="inline-buttons">
-            <Tooltip title="Toggle Table of Contents">
-              <Button size="small" onClick={this.handleToggleTocClick}>
-                <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Remove Configuration">
-              <Button onClick={this.handleRemoveClick} size="small">
-                <Icon type="delete" />
-              </Button>
-            </Tooltip>
-          </span>
+          {this.props.title}
+          {this.renderSectionActions()}
         </h2>
         <Form
           className="config-section-configuration"
@@ -420,19 +448,18 @@ class ConfigSectionComponent extends React.PureComponent {
           labelAlign="left"
           onSubmit={this.blockSubmit}
         >
-          <Form.Item key={SECTION_NAME_KEY} label="Name" {...itemLayout}>
-            <Input
-              addonBefore={
-                this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
-              }
-              defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
-              readOnly={
-                this.props.type === SECTION_PLATFORMIO ||
-                this.props.type === SECTION_GLOBAL_ENV
-              }
-              onChange={this.handleRename}
-            />
-          </Form.Item>
+          {this.props.type !== SECTION_PLATFORMIO &&
+            this.props.type !== SECTION_GLOBAL_ENV && (
+              <Form.Item key={SECTION_NAME_KEY} label="Name" {...itemLayout}>
+                <Input
+                  addonBefore={
+                    this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
+                  }
+                  defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
+                  onChange={this.handleRename}
+                />
+              </Form.Item>
+            )}
           {this.props.type !== SECTION_CUSTOM && (
             <Form.Item key="add_option" label="New Option" {...itemLayout}>
               {this.renderNewOption()}

@@ -87,6 +87,17 @@
 .project-config-page {
   @filterGutter: 8px;
 
+  .section-platformio-icon,
+  .section-env-icon {
+    color: @warning-color;
+    font-size: 125%;
+  }
+
+  .default-env-icon {
+    color: @primary-color;
+    font-size: 125%;
+  }
+
   .inline-buttons {
     margin-left: 10px;
     button {
@@ -165,20 +176,11 @@
       }
 
       .option-actions {
-        @icon-size: 16px;
-        @width: @icon-size*2;
-
-        font-size: @icon-size;
-        height: 82px;
-        margin-left: 16px;
+        margin-left: @padding-md;
         visibility: hidden;
 
         a {
-          margin-right: 6px;
-        }
-
-        .remove-option-btn {
-          color: @error-color;
+          margin-left: 15px;
         }
       }
 
