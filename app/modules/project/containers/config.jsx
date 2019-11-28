@@ -252,8 +252,32 @@ class ProjectConfig extends React.PureComponent {
     newSection.id = this.generateSectionId(newSection);
 
     this.setState(prevState => {
+      let config;
+      if (type === SECTION_PLATFORMIO) {
+        config = [newSection, ...prevState.config];
+      } else if (type === SECTION_GLOBAL_ENV) {
+        let insertIdx = 0;
+        const pioIdx = prevState.config.findIndex(
+          s => s.section === SECTION_PLATFORMIO
+        );
+        if (pioIdx !== -1) {
+          insertIdx = pioIdx + 1;
+        } else {
+          const firstEnvIdx = prevState.config.findIndex(
+            s => this.getSectionType(s.section) === SECTION_USER_ENV
+          );
+          if (firstEnvIdx !== -1) {
+            insertIdx = firstEnvIdx;
+          }
+        }
+        config = prevState.config.slice();
+        config.splice(insertIdx, 0, newSection);
+      } else {
+        config = [...prevState.config, newSection];
+      }
+
       return {
-        config: [...prevState.config, newSection],
+        config,
         activeTabKey: newSection.id
       };
     });
@@ -320,13 +344,30 @@ class ProjectConfig extends React.PureComponent {
     });
   }
 
-  updateSectionValue(sectionName, name, value) {
+  getSectionValue(sectionName, name, defaultValue) {
+    const section = this.state.config.find(s => s.section === sectionName);
+    if (!section) {
+      return defaultValue;
+    }
+    const option = section.items.find(o => o.name === name);
+    return option && option.value != undefined ? option.value : defaultValue;
+  }
+
+  _updateSectionValue(sectionName, name, valueUpdater) {
     this.setState(prevState => {
-      const oldSection = prevState.config.find(s => s.section === sectionName);
+      let oldSection = prevState.config.find(s => s.section === sectionName);
+      if (!oldSection) {
+        // Create new section
+        oldSection = {
+          section: sectionName,
+          items: []
+        };
+        oldSection.id = this.generateSectionId(oldSection);
+      }
       const newSection = {
         ...oldSection,
         items: oldSection.items.map(item =>
-          item.name !== name ? item : { ...item, value }
+          item.name !== name ? item : { ...item, value: valueUpdater(item.value) }
         )
       };
       return {
@@ -335,6 +376,10 @@ class ProjectConfig extends React.PureComponent {
         )
       };
     });
+  }
+
+  updateSectionValue(sectionName, name, value) {
+    this._updateSectionValue(sectionName, name, () => value);
   }
 
   renameSection(tabId, name) {
@@ -462,6 +507,34 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
+  handleDefaultToggle = (sectionName, isDefault) => {
+    const updater = isDefault
+      ? oldValue => {
+          const set = new Set(oldValue);
+          set.add(sectionName);
+          return [...set];
+        }
+      : oldValue => {
+          const set = new Set(oldValue);
+          set.delete(sectionName);
+          return [...set];
+        };
+    this._updateSectionValue(SECTION_PLATFORMIO, 'default_envs', updater);
+
+    // Force section rerender by changing id (used as key to render)
+    this.setState(state => ({
+      config: state.config.map(section => {
+        if (section.section !== SECTION_PLATFORMIO) {
+          return section;
+        }
+        return {
+          ...section,
+          id: this.generateSectionId(section)
+        };
+      })
+    }));
+  };
+
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
   }
@@ -521,22 +594,42 @@ class ProjectConfig extends React.PureComponent {
         )}
       </Menu>
     );
-
+    if (newSectionMenu.props.children.filter(x => !!x).length) {
+      return (
+        <Dropdown.Button
+          className="add-section-btn"
+          disabled={!this.isLoaded()}
+          overlay={newSectionMenu}
+          onClick={this.handleNewSectionBtnClick}
+        >
+          <Icon type="plus" /> Configuration
+        </Dropdown.Button>
+      );
+    }
     return (
-      <Dropdown.Button
+      <Button
         className="add-section-btn"
         disabled={!this.isLoaded()}
-        overlay={newSectionMenu}
         onClick={this.handleNewSectionBtnClick}
       >
         <Icon type="plus" /> Configuration
-      </Dropdown.Button>
+      </Button>
     );
   }
 
   renderConfigSection(key, section) {
     const name = section.section;
     const type = this.getSectionType(name);
+    let tabName = name.replace(SECTION_USER_ENV, '');
+    let title = 'Configuration';
+    if (type === SECTION_GLOBAL_ENV) {
+      title = tabName = 'Common Configuration';
+    } else if (type === SECTION_PLATFORMIO) {
+      title = tabName = 'PlatformIO Configuration';
+    } else if (type === SECTION_USER_ENV) {
+      title = 'Working Configuration';
+    }
+
     const props = {
       autoFocus:
         this.state.autoFocus && this.state.autoFocus.section === name
@@ -546,25 +639,35 @@ class ProjectConfig extends React.PureComponent {
       id: key,
       name,
       initialValues: section.items,
+      defaultEnv:
+        type === SECTION_USER_ENV &&
+        this.getSectionValue(SECTION_PLATFORMIO, 'default_envs', []).includes(name),
       onRemove: this.handleSectionRemove,
       onRename: this.handleSectionRename,
       schema: this.props.schema[this.getSectionScope(type)] || [],
       showToc: this.state.showToc,
+      title,
       type,
       onChange: this.handleSectionChange,
+      onDefaultToggle: this.handleDefaultToggle,
       onDocumentationClick: this.handleDocumentationClick,
       onOptionAdd: this.handleOptionAdd,
       onOptionRemove: this.handleOptionRemove,
       onTocToggle: this.handleTocToggle
     };
+    const tabCls = [`section-${type}-icon`];
+    if (props.defaultEnv) {
+      tabCls.push('default-env-icon');
+    }
+
     return (
       <Tabs.TabPane
         key={key}
         size="small"
         tab={
           <Tooltip title={`Configuration [${name}]`}>
-            <Icon type={this.getScopeIcon(name)} />
-            {name.replace(SECTION_USER_ENV, '')}
+            <Icon className={tabCls.join(' ')} type={this.getScopeIcon(name)} />
+            {tabName}
           </Tooltip>
         }
       >

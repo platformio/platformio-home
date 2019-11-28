@@ -76,15 +76,18 @@ class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
     autoFocus: PropTypes.string,
+    defaultEnv: PropTypes.bool,
     form: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
     name: PropTypes.string.isRequired,
     schema: SchemaType.isRequired,
     showToc: PropTypes.bool,
+    title: PropTypes.string.isRequired,
     type: PropTypes.oneOf(SECTIONS).isRequired,
     // callbacks
     onChange: PropTypes.func.isRequired,
+    onDefaultToggle: PropTypes.func.isRequired,
     onDocumentationClick: PropTypes.func.isRequired,
     onRemove: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
@@ -212,6 +215,10 @@ class ConfigSectionComponent extends React.PureComponent {
       title: 'Do you really want to remove configuration?',
       type: 'error'
     });
+  };
+
+  handleToggleMakeDefaultClick = () => {
+    this.props.onDefaultToggle(this.props.name, !this.props.defaultEnv);
   };
 
   blockSubmit = e => {
@@ -453,6 +460,28 @@ class ConfigSectionComponent extends React.PureComponent {
     );
   }
 
+  renderSectionActions() {
+    return (
+      <span className="inline-buttons">
+        <Tooltip title="Toggle Table of Contents">
+          <Button size="small" onClick={this.handleToggleTocClick}>
+            <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
+          </Button>
+        </Tooltip>
+        {this.props.type === SECTION_USER_ENV && (
+          <Button icon="home" size="small" onClick={this.handleToggleMakeDefaultClick}>
+            {this.props.defaultEnv ? 'Remove From Default' : 'Make Default'}
+          </Button>
+        )}
+        <Tooltip title="Remove Configuration">
+          <Button onClick={this.handleRemoveClick} size="small">
+            <Icon type="delete" />
+          </Button>
+        </Tooltip>
+      </span>
+    );
+  }
+
   renderSectionName() {
     const itemLayout = {
       labelCol: { xs: 24, sm: 5, md: 4, lg: 3 },
@@ -461,19 +490,8 @@ class ConfigSectionComponent extends React.PureComponent {
     return (
       <React.Fragment>
         <h2>
-          Configuration
-          <span className="inline-buttons">
-            <Tooltip title="Toggle Table of Contents">
-              <Button size="small" onClick={this.handleToggleTocClick}>
-                <Icon type={this.props.showToc ? 'menu-fold' : 'menu-unfold'} />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Remove Configuration">
-              <Button onClick={this.handleRemoveClick} size="small">
-                <Icon type="delete" />
-              </Button>
-            </Tooltip>
-          </span>
+          {this.props.title}
+          {this.renderSectionActions()}
         </h2>
         <Form
           className="config-section-configuration"
@@ -481,19 +499,18 @@ class ConfigSectionComponent extends React.PureComponent {
           labelAlign="left"
           onSubmit={this.blockSubmit}
         >
-          <Form.Item key={SECTION_NAME_KEY} label="Name" {...itemLayout}>
-            <Input
-              addonBefore={
-                this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
-              }
-              defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
-              readOnly={
-                this.props.type === SECTION_PLATFORMIO ||
-                this.props.type === SECTION_GLOBAL_ENV
-              }
-              onChange={this.handleRename}
-            />
-          </Form.Item>
+          {this.props.type !== SECTION_PLATFORMIO &&
+            this.props.type !== SECTION_GLOBAL_ENV && (
+              <Form.Item key={SECTION_NAME_KEY} label="Name" {...itemLayout}>
+                <Input
+                  addonBefore={
+                    this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined
+                  }
+                  defaultValue={this.props.name.replace(SECTION_USER_ENV, '')}
+                  onChange={this.handleRename}
+                />
+              </Form.Item>
+            )}
           {this.props.type !== SECTION_CUSTOM && (
             <Form.Item key="add_option" label="New Option" {...itemLayout}>
               {this.renderNewOption()}
