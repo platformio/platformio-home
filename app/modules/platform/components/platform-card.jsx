@@ -156,6 +156,7 @@ export default class PlatformCard extends React.Component {
                   title="Are you sure?"
                   okText="Yes"
                   cancelText="No"
+                  onCancel={e => e.stopPropagation()}
                   onClick={e => e.stopPropagation()}
                   onConfirm={e => this.onDidUninstallOrUpdate(e, 'uninstall')}
                 >
