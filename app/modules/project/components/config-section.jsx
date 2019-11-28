@@ -457,7 +457,7 @@ class ConfigSectionComponent extends React.PureComponent {
           </Button>
         </Tooltip>
         {this.props.type === SECTION_USER_ENV && (
-          <Tooltip title="Add/remove from default_envs">
+          <Tooltip title="Default configuration for building, uploading, debugging, etc">
             <Button
               icon="environment"
               size="small"
@@ -467,19 +467,17 @@ class ConfigSectionComponent extends React.PureComponent {
             </Button>
           </Tooltip>
         )}
-        <Tooltip title="Remove Configuration">
-          <Popconfirm
-            title="Are you sure?"
-            okText="Yes"
-            okType="danger"
-            cancelText="No"
-            onConfirm={this.handleRemoveClick}
-          >
-            <Button icon="delete" size="small">
-              Delete
-            </Button>
-          </Popconfirm>
-        </Tooltip>
+        <Popconfirm
+          title="Are you sure?"
+          okText="Yes"
+          okType="danger"
+          cancelText="No"
+          onConfirm={this.handleRemoveClick}
+        >
+          <Button icon="delete" size="small">
+            Delete
+          </Button>
+        </Popconfirm>
       </span>
     );
   }
