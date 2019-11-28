@@ -377,9 +377,7 @@ function* watchLoadProjectConfig() {
       }));
       yield put(updateEntity(PROJECT_CONFIG_KEY, { config, mtime }));
     } catch (e) {
-      if (!(e instanceof jsonrpc.JsonRpcError)) {
-        yield put(notifyError('Could not load project config', e));
-      }
+      yield put(notifyError('Could not load project config', e));
     }
   });
 }
@@ -421,11 +419,7 @@ function* watchSaveProjectConfig() {
       yield put(updateEntity(PROJECT_CONFIG_KEY, { ...entity, mtime: newMtime }));
     } catch (e) {
       error = e;
-      if (
-        !(e instanceof jsonrpc.JsonRpcError || e instanceof ConfigFileModifiedError)
-      ) {
-        yield put(notifyError('Could not save project config', e));
-      }
+      yield put(notifyError('Could not save project config', e));
     } finally {
       yield call(onEnd, error);
     }
@@ -464,9 +458,7 @@ function* watchUpdateConfigDescription() {
       message.success('Project description is saved into configuration file');
     } catch (e) {
       err = e;
-      if (!(e instanceof jsonrpc.JsonRpcError)) {
-        yield put(notifyError('Could not save project config', e));
-      }
+      yield put(notifyError('Could not update project description', e));
       // Rollback edit
       if (undo) {
         yield _patchProjectState(projectDir, { description: undo.description });
