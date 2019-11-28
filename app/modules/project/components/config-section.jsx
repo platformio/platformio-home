@@ -269,7 +269,9 @@ class ConfigSectionComponent extends React.PureComponent {
               name={name}
               scope={schema.scope}
               onClick={this.handleDocumentationClick}
-            />
+            >
+              Docs
+            </DocumentationLink>
           )}
           <Tooltip title="Remove Option">
             <a
@@ -277,7 +279,7 @@ class ConfigSectionComponent extends React.PureComponent {
               data-name={name}
               onClick={this.handleRemoveOptionClick}
             >
-              <Icon type="delete" />
+              <Icon type="delete" /> Delete
             </a>
           </Tooltip>
         </span>
