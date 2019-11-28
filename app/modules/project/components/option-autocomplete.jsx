@@ -46,7 +46,7 @@ export class OptionAutocomplete extends React.PureComponent {
   }
 
   handleInputFocus = () => {
-    if (!this.props.items && this.props.onLoad) {
+    if (this.props.onLoad) {
       this.setState({
         loading: true
       });
