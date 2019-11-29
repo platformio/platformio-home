@@ -26,6 +26,16 @@ import {
 
 import React from 'react';
 
+export function splitMultipleField(v) {
+  if (v == undefined) {
+    return;
+  }
+  return v
+    .split(v.includes('\n') ? /\n/ : /, /)
+    .map(v => v.replace(/^\s+|\s+$/g, ''))
+    .filter((v, i) => v.length || i);
+}
+
 class OptionEditorFactoryImpl {
   constructor() {
     this.factories = [];

@@ -31,6 +31,7 @@ import {
   Tooltip
 } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
+import { OptionEditorFactory, splitMultipleField } from '@project/helpers';
 import {
   SECTIONS,
   SECTION_CUSTOM,
@@ -45,7 +46,6 @@ import { ConfigFormItem } from '@project/components/config-form-item';
 import { ConfigSectionToc } from '@project/components/config-section-toc';
 import { DocumentationLink } from '@project/components/documentation-link';
 import { IS_WINDOWS } from '@app/config';
-import { OptionEditorFactory } from '@project/helpers';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -59,16 +59,6 @@ function unescapeFieldName(x) {
 
 function formatEnvVar(name) {
   return IS_WINDOWS ? `%${name}%` : `$${name}`;
-}
-
-function splitMultipleField(v) {
-  if (v == undefined) {
-    return;
-  }
-  return v
-    .split(v.includes('\n') ? /\n/ : /, /)
-    .map(v => v.replace(/^\s+|\s+$/g, ''))
-    .filter((v, i) => v.length || i);
 }
 
 class ConfigSectionComponent extends React.PureComponent {

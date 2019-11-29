@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import { OptionAutocomplete } from '@project/components/option-autocomplete';
+import {
+  MODE_SELECT,
+  OptionAutocomplete
+} from '@project/components/option-autocomplete';
+
 import { OptionEditorFactory } from '@project/helpers';
 import React from 'react';
 
 OptionEditorFactory.register(
   schema => schema && schema.name === 'default_envs',
-  (schema, inputProps, _itemProps, _decoratorOptions, project) => (
+  (schema, inputProps, _itemProps, decoratorOptions, project) => (
     <OptionAutocomplete
-      {...inputProps}
+      inputProps={inputProps}
+      mode={MODE_SELECT}
       multiple={!schema || schema.multiple}
       items={project.envs.map(name => ({
         name,
