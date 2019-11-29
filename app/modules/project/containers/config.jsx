@@ -479,10 +479,10 @@ class ProjectConfig extends React.PureComponent {
     this.props.osOpenUrl(reportIssueUrl);
   };
 
-  handleTocToggle = showToc => {
-    this.setState({
-      showToc
-    });
+  handleToggleTocClick = () => {
+    this.setState(prevState => ({
+      showToc: !prevState.showToc
+    }));
   };
 
   handleOptionAdd = (section, name) => {
@@ -559,6 +559,12 @@ class ProjectConfig extends React.PureComponent {
   renderFormActions() {
     return (
       <div className="form-actions-block">
+        <Tooltip title={`${this.state.showToc ? 'Hide' : 'Show'} Table of Contents`}>
+          <Button
+            icon={this.state.showToc ? 'menu-fold' : 'menu-unfold'}
+            onClick={this.handleToggleTocClick}
+          />
+        </Tooltip>
         {this.renderNewSectionBtn()}
         <Button.Group>
           <Button icon="undo" onClick={this.handleRevertClick}>
