@@ -635,7 +635,7 @@ class ProjectConfig extends React.PureComponent {
     if (type === SECTION_GLOBAL_ENV) {
       title = tabName = 'Common Configuration';
     } else if (type === SECTION_PLATFORMIO) {
-      title = tabName = 'PlatformIO Configuration';
+      title = tabName = 'PIO Configuration';
     } else if (type === SECTION_USER_ENV) {
       title = 'Working Configuration';
     }
