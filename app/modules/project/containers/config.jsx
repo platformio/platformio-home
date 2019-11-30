@@ -559,22 +559,29 @@ class ProjectConfig extends React.PureComponent {
   renderFormActions() {
     return (
       <div className="form-actions-block">
-        <Tooltip title={`${this.state.showToc ? 'Hide' : 'Show'} Table of Contents`}>
-          <Button
-            icon={this.state.showToc ? 'menu-fold' : 'menu-unfold'}
-            onClick={this.handleToggleTocClick}
-          />
-        </Tooltip>
+        <Button.Group>
+          <Tooltip
+            placement="bottom"
+            title={`${this.state.showToc ? 'Hide' : 'Show'} Table of Contents`}
+          >
+            <Button
+              icon={this.state.showToc ? 'menu-fold' : 'menu-unfold'}
+              onClick={this.handleToggleTocClick}
+            />
+          </Tooltip>
+
+          <Tooltip
+            placement="bottom"
+            title="Cancel current changes and revert configuration to the initial state"
+          >
+            <Button icon="undo" onClick={this.handleRevertClick} />
+          </Tooltip>
+          <Tooltip placement="bottom" title="Open configuration file in a text editor">
+            <Button icon="folder-open" onClick={this.handleOpen} />
+          </Tooltip>
+        </Button.Group>
         {this.renderNewSectionBtn()}
         <Button.Group>
-          <Button icon="undo" onClick={this.handleRevertClick}>
-            Revert
-          </Button>
-        </Button.Group>
-        <Button.Group>
-          <Button icon="folder-open" onClick={this.handleOpen}>
-            Open
-          </Button>
           <Button
             disabled={!this.isLoaded()}
             icon="save"
