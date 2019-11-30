@@ -729,9 +729,7 @@ class ProjectConfig extends React.PureComponent {
     return (
       <div className="project-config-page">
         <h1 className="block clearfix">
-          <span>
-            {this.props.project.name} <span className="label-preview">Preview</span>
-          </span>
+          <span>{this.props.project.name}</span>
           {this.renderFormActions()}
         </h1>
         {this.renderConfig()}
