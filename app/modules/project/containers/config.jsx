@@ -577,7 +577,7 @@ class ProjectConfig extends React.PureComponent {
             <Button icon="undo" onClick={this.handleRevertClick} />
           </Tooltip>
           <Tooltip placement="bottom" title="Open configuration file in a text editor">
-            <Button icon="folder-open" onClick={this.handleOpen} />
+            <Button icon="edit" onClick={this.handleOpen} />
           </Tooltip>
         </Button.Group>
         {this.renderNewSectionBtn()}
