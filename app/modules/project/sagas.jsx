@@ -435,8 +435,13 @@ function* watchSaveProjectConfig() {
       // Reload list because displaying of config required project in the state
       yield put(actions.loadProjects(true));
     } catch (e) {
-      if (!(e && e instanceof ConsentRejectedError)) {
-        error = e;
+      error = e;
+      if (
+        !(
+          e &&
+          (e instanceof ConsentRejectedError || e instanceof ConfigFileModifiedError)
+        )
+      ) {
         yield put(notifyError('Could not save project config', e));
       }
     } finally {
