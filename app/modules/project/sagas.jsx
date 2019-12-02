@@ -20,7 +20,11 @@ import * as actions from './actions';
 import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
-import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
+import {
+  CONFIG_SCHEMA_KEY,
+  PROJECT_CONFIG_KEY,
+  PROJECT_CONFIG_SAVE_CONSENT_ID
+} from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
@@ -29,6 +33,7 @@ import {
 import { Modal, message } from 'antd';
 import {
   OS_RENAME_FILE,
+  // ensureUserConsent,
   notifyError,
   notifySuccess,
   osRevealFile
@@ -43,10 +48,12 @@ import {
 import { selectEntity, selectStorageItem } from '../../store/selectors';
 
 import { ConfigFileModifiedError } from '@project/errors';
+import { ConsentRejectedError } from '@core/errors';
 import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
-import { getSessionId } from '../core/helpers';
+import { ensureUserConsent } from '@core/sagas';
+import { getSessionId } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
@@ -392,6 +399,13 @@ function* watchSaveProjectConfig() {
     const { mtime, force } = options || {};
     let error;
     try {
+      yield call(ensureUserConsent, PROJECT_CONFIG_SAVE_CONSENT_ID, {
+        content: `Warning!
+          The entire file contents or platformio.ini will be rewritten with the current
+          configuration defined in this UI.
+          Continue to save the configuration?`,
+        okText: 'Save'
+      });
       const configPath = pathlib.join(projectDir, 'platformio.ini');
       if (!force) {
         const currentMtime = yield call(apiFetchData, {
@@ -405,6 +419,7 @@ function* watchSaveProjectConfig() {
           });
         }
       }
+
       yield call(apiFetchData, {
         query: 'project.config_dump',
         params: [configPath, data]
@@ -420,8 +435,10 @@ function* watchSaveProjectConfig() {
       // Reload list because displaying of config required project in the state
       yield put(actions.loadProjects(true));
     } catch (e) {
-      error = e;
-      yield put(notifyError('Could not save project config', e));
+      if (!(e && e instanceof ConsentRejectedError)) {
+        error = e;
+        yield put(notifyError('Could not save project config', e));
+      }
     } finally {
       yield call(onEnd, error);
     }
