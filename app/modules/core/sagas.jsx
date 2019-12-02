@@ -24,8 +24,10 @@ import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
 import { getSessionId, inIframe, reportException } from './helpers';
 
+import { ConsentRejectedError } from '@core/errors';
 import React from 'react';
 import URL from 'url-parse';
+import { USER_CONSENTS_KEY } from '@core/constants';
 import { apiFetchData } from '../../store/api';
 import { getStore } from '../../store/index';
 import jsonrpc from 'jsonrpc-lite';
@@ -450,6 +452,34 @@ function* watchOpenTextDocument() {
       });
     }
   });
+}
+
+export function* ensureUserConsent(id, modalOptions) {
+  const consents = yield select(selectors.selectUserConsents);
+  const consent = consents[id];
+  if (!consent) {
+    const showModal = () => {
+      return new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: 'Confirm',
+          ...modalOptions,
+          onOk: () => {
+            resolve();
+          },
+          onCancel: () => {
+            reject(new ConsentRejectedError());
+          }
+        });
+      });
+    };
+    yield call(showModal);
+    yield put(
+      updateStorageItem(USER_CONSENTS_KEY, {
+        ...consents,
+        [id]: Date.now().valueOf()
+      })
+    );
+  }
 }
 
 export default [
