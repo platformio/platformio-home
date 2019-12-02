@@ -217,17 +217,18 @@ class ProjectConfig extends React.PureComponent {
     return state.config.find(s => s.id === state.activeTabKey);
   }
 
-  sectionExists(name) {
-    return (
-      this.state.config && this.state.config.findIndex(s => s.section === name) !== -1
-    );
+  sectionExists(name, state) {
+    if (!state) {
+      state = this.state;
+    }
+    return state.config && state.config.findIndex(s => s.section === name) !== -1;
   }
 
   generateSectionId(section) {
     return `${++this.sectionIdCounter}-${section.section}`;
   }
 
-  addSection(type) {
+  addSectionOfType(type, items) {
     let name;
     if ([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(type)) {
       if (this.sectionExists(type)) {
@@ -245,9 +246,27 @@ class ProjectConfig extends React.PureComponent {
         i++;
       }
     }
+    this.addSection(name, items);
+    this.setActiveSection(name);
+  }
+
+  setActiveSection(name) {
+    this.setStrate(prevState => {
+      const section = prevState.config.find(s => s.section === name);
+      if (section) {
+        return { activeTabKey: section.id };
+      }
+    });
+  }
+
+  addSection(name, items) {
+    if (!items) {
+      items = [];
+    }
+    const type = this.getSectionType(name);
     const newSection = {
       section: name,
-      items: []
+      items
     };
     newSection.id = this.generateSectionId(newSection);
 
@@ -277,8 +296,7 @@ class ProjectConfig extends React.PureComponent {
       }
 
       return {
-        config,
-        activeTabKey: newSection.id
+        config
       };
     });
   }
@@ -354,15 +372,21 @@ class ProjectConfig extends React.PureComponent {
   }
 
   _updateSectionValue(sectionName, name, valueUpdater) {
+    const oldSection = this.state.config.find(s => s.section === sectionName);
+    if (!oldSection) {
+      this.addSection(sectionName, [
+        {
+          name,
+          value: valueUpdater()
+        }
+      ]);
+      return;
+    }
+
     this.setState(prevState => {
-      let oldSection = prevState.config.find(s => s.section === sectionName);
+      const oldSection = prevState.config.find(s => s.section === sectionName);
       if (!oldSection) {
-        // Create new section
-        oldSection = {
-          section: sectionName,
-          items: []
-        };
-        oldSection.id = this.generateSectionId(oldSection);
+        return;
       }
       const items = oldSection.items.slice();
       const optionIdx = oldSection.items.findIndex(item => item.name === name);
@@ -406,11 +430,11 @@ class ProjectConfig extends React.PureComponent {
   }
 
   handleNewSectionMenuClick = ({ key }) => {
-    this.addSection(key);
+    this.addSectionOfType(key);
   };
 
   handleNewSectionBtnClick = () => {
-    this.addSection(SECTION_USER_ENV);
+    this.addSectionOfType(SECTION_USER_ENV);
   };
 
   handleSaveClick = () => {
