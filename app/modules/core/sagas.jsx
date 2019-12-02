@@ -89,6 +89,10 @@ function* watchNotifyError() {
       [
         /Error: You are not connected to the Internet/g,
         'https://github.com/platformio/platformio-core/issues/1348'
+      ],
+      [
+        /Updating.+VCS.+recurse-submodules/g,
+        'https://github.com/platformio/platformio-home/issues/143'
       ]
     ];
     for (const [regex, url] of knownIssues) {
