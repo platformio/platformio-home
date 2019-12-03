@@ -217,17 +217,18 @@ class ProjectConfig extends React.PureComponent {
     return state.config.find(s => s.id === state.activeTabKey);
   }
 
-  sectionExists(name) {
-    return (
-      this.state.config && this.state.config.findIndex(s => s.section === name) !== -1
-    );
+  sectionExists(name, state) {
+    if (!state) {
+      state = this.state;
+    }
+    return state.config && state.config.findIndex(s => s.section === name) !== -1;
   }
 
   generateSectionId(section) {
     return `${++this.sectionIdCounter}-${section.section}`;
   }
 
-  addSection(type) {
+  addSectionOfType(type, items) {
     let name;
     if ([SECTION_PLATFORMIO, SECTION_GLOBAL_ENV].includes(type)) {
       if (this.sectionExists(type)) {
@@ -245,9 +246,27 @@ class ProjectConfig extends React.PureComponent {
         i++;
       }
     }
+    this.addSection(name, items);
+    this.setActiveSection(name);
+  }
+
+  setActiveSection(name) {
+    this.setStrate(prevState => {
+      const section = prevState.config.find(s => s.section === name);
+      if (section) {
+        return { activeTabKey: section.id };
+      }
+    });
+  }
+
+  addSection(name, items) {
+    if (!items) {
+      items = [];
+    }
+    const type = this.getSectionType(name);
     const newSection = {
       section: name,
-      items: []
+      items
     };
     newSection.id = this.generateSectionId(newSection);
 
@@ -277,8 +296,7 @@ class ProjectConfig extends React.PureComponent {
       }
 
       return {
-        config,
-        activeTabKey: newSection.id
+        config
       };
     });
   }
@@ -354,15 +372,21 @@ class ProjectConfig extends React.PureComponent {
   }
 
   _updateSectionValue(sectionName, name, valueUpdater) {
+    const oldSection = this.state.config.find(s => s.section === sectionName);
+    if (!oldSection) {
+      this.addSection(sectionName, [
+        {
+          name,
+          value: valueUpdater()
+        }
+      ]);
+      return;
+    }
+
     this.setState(prevState => {
-      let oldSection = prevState.config.find(s => s.section === sectionName);
+      const oldSection = prevState.config.find(s => s.section === sectionName);
       if (!oldSection) {
-        // Create new section
-        oldSection = {
-          section: sectionName,
-          items: []
-        };
-        oldSection.id = this.generateSectionId(oldSection);
+        return;
       }
       const items = oldSection.items.slice();
       const optionIdx = oldSection.items.findIndex(item => item.name === name);
@@ -406,11 +430,11 @@ class ProjectConfig extends React.PureComponent {
   }
 
   handleNewSectionMenuClick = ({ key }) => {
-    this.addSection(key);
+    this.addSectionOfType(key);
   };
 
   handleNewSectionBtnClick = () => {
-    this.addSection(SECTION_USER_ENV);
+    this.addSectionOfType(SECTION_USER_ENV);
   };
 
   handleSaveClick = () => {
@@ -479,10 +503,10 @@ class ProjectConfig extends React.PureComponent {
     this.props.osOpenUrl(reportIssueUrl);
   };
 
-  handleTocToggle = showToc => {
-    this.setState({
-      showToc
-    });
+  handleToggleTocClick = () => {
+    this.setState(prevState => ({
+      showToc: !prevState.showToc
+    }));
   };
 
   handleOptionAdd = (section, name) => {
@@ -559,16 +583,29 @@ class ProjectConfig extends React.PureComponent {
   renderFormActions() {
     return (
       <div className="form-actions-block">
+        <Button.Group>
+          <Tooltip
+            placement="bottom"
+            title={`${this.state.showToc ? 'Hide' : 'Show'} Table of Contents`}
+          >
+            <Button
+              icon={this.state.showToc ? 'menu-fold' : 'menu-unfold'}
+              onClick={this.handleToggleTocClick}
+            />
+          </Tooltip>
+
+          <Tooltip
+            placement="bottom"
+            title="Cancel current changes and revert configuration to the initial state"
+          >
+            <Button icon="undo" onClick={this.handleRevertClick} />
+          </Tooltip>
+          <Tooltip placement="bottom" title="Open configuration file in a text editor">
+            <Button icon="edit" onClick={this.handleOpen} />
+          </Tooltip>
+        </Button.Group>
         {this.renderNewSectionBtn()}
         <Button.Group>
-          <Button icon="undo" onClick={this.handleRevertClick}>
-            Revert
-          </Button>
-        </Button.Group>
-        <Button.Group>
-          <Button icon="folder-open" onClick={this.handleOpen}>
-            Open
-          </Button>
           <Button
             disabled={!this.isLoaded()}
             icon="save"
@@ -635,7 +672,7 @@ class ProjectConfig extends React.PureComponent {
     if (type === SECTION_GLOBAL_ENV) {
       title = tabName = 'Common Configuration';
     } else if (type === SECTION_PLATFORMIO) {
-      title = tabName = 'PlatformIO Configuration';
+      title = tabName = 'PIO Configuration';
     } else if (type === SECTION_USER_ENV) {
       title = 'Working Configuration';
     }
@@ -724,9 +761,7 @@ class ProjectConfig extends React.PureComponent {
     return (
       <div className="project-config-page">
         <h1 className="block clearfix">
-          <span>
-            {this.props.project.name} <span className="label-preview">Preview</span>
-          </span>
+          <span>{this.props.project.name}</span>
           {this.renderFormActions()}
         </h1>
         {this.renderConfig()}

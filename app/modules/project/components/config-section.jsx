@@ -81,7 +81,6 @@ class ConfigSectionComponent extends React.PureComponent {
     onDocumentationClick: PropTypes.func.isRequired,
     onRemove: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
-    onTocToggle: PropTypes.func.isRequired,
     onOptionAdd: PropTypes.func.isRequired,
     onOptionRemove: PropTypes.func.isRequired
   };
@@ -173,10 +172,6 @@ class ConfigSectionComponent extends React.PureComponent {
       name = SECTION_USER_ENV + name;
     }
     this.props.onRename(name, this.props.id);
-  };
-
-  handleToggleTocClick = () => {
-    this.props.onTocToggle(!this.props.showToc);
   };
 
   handleRemoveOptionClick = e => {
@@ -389,15 +384,6 @@ class ConfigSectionComponent extends React.PureComponent {
   renderSectionActions() {
     return (
       <span className="pull-right inline-buttons">
-        <Tooltip title="Toggle Table of Contents">
-          <Button
-            icon={this.props.showToc ? 'menu-fold' : 'menu-unfold'}
-            size="small"
-            onClick={this.handleToggleTocClick}
-          >
-            Contents
-          </Button>
-        </Tooltip>
         {this.props.type === SECTION_USER_ENV && (
           <Tooltip title="Default configuration for building, uploading, debugging, etc">
             <Button

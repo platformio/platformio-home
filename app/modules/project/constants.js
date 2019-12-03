@@ -50,3 +50,5 @@ export const SECTIONS = Object.freeze([
   SECTION_USER_ENV,
   SECTION_CUSTOM
 ]);
+
+export const PROJECT_CONFIG_SAVE_CONSENT_ID = 'project-config-save';
