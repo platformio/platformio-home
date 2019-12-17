@@ -328,8 +328,19 @@ class ProjectConfig extends React.PureComponent {
     });
   }
 
-  addSectionField(sectionName, name, value = '') {
+  addSectionField(sectionName, name, value) {
     this.setState(prevState => {
+      const scope = this.getSectionScope(this.getSectionType(sectionName));
+      const scopeSchema = (scope && this.props.schema[scope]) || [];
+      const schema = scopeSchema.find(s => s.name === name);
+      if (value === undefined) {
+        if (schema && schema.multiple) {
+          value = [];
+        } else {
+          value = '';
+        }
+      }
+
       const field = {
         name,
         value

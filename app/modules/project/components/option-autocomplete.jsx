@@ -35,6 +35,7 @@ export class OptionAutocomplete extends React.PureComponent {
     addIcon: PropTypes.string,
     addPlaceholder: PropTypes.string,
     addText: PropTypes.string,
+    autoFocus: PropTypes.bool,
     defaultValue: PropTypes.string,
     inputProps: PropTypes.object,
     items: PropTypes.arrayOf(
@@ -202,6 +203,7 @@ export class OptionAutocomplete extends React.PureComponent {
   render() {
     const ds = this.getData();
     const commonProps = {
+      autoFocus: this.props.autoFocus,
       defaultValue: this.transformValueIn(this.props.defaultValue),
       loading: this.state.loading,
       onBlur: this.handleBlur,
@@ -222,6 +224,7 @@ export class OptionAutocomplete extends React.PureComponent {
           </div>
           {!this.state.autocompleterVisible && (
             <Button
+              autoFocus={this.props.autoFocus}
               onClick={this.handleAddValueBtnClick}
               // style={{ background: '#fff', borderStyle: 'dashed' }}
             >
