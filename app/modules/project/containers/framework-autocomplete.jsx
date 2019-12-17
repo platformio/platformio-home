@@ -28,20 +28,20 @@ function mapStateToProps(state, ownProps) {
   if (rawItems) {
     const sectionData = ownProps.configSectionData || [];
     const platform = getConfigOptionValue(sectionData, 'platform');
-
-    items = rawItems.filter(
-      framework =>
-        !platform ||
-        !framework.platforms ||
-        !framework.platforms.length ||
-        framework.platforms.includes(platform)
-    );
-    if (!items.length) {
-      // If there are no filtered results - display without filter
-      items = rawItems;
+    if (platform && !platform.toLowerCase().includes('github')) {
+      items = rawItems.filter(
+        framework =>
+          !framework.platforms ||
+          !framework.platforms.length ||
+          framework.platforms.includes(platform)
+      );
+      items = items.map(framework => ({
+        name: framework.title,
+        value: framework.name
+      }));
     }
-    items = items.map(framework => ({ name: framework.title, value: framework.name }));
   }
+
   return {
     items
   };

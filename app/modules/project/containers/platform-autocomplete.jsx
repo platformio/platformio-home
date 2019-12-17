@@ -14,33 +14,21 @@
  * limitations under the License.
  */
 
-import { OptionEditorFactory, getConfigOptionValue } from '@project/helpers';
-
 import { OptionAutocomplete } from '@project/components/option-autocomplete';
+import { OptionEditorFactory } from '@project/helpers';
 import React from 'react';
 import { connect } from 'react-redux';
 import { loadRegistryPlatforms } from '@platform/actions';
 import { selectRegistryPlatforms } from '@platform/selectors';
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   const rawItems = selectRegistryPlatforms(state);
   let items;
   if (rawItems) {
-    const sectionData = ownProps.configSectionData || [];
-    const frameworks = getConfigOptionValue(sectionData, 'framework') || [];
-
-    items = rawItems
-      .filter(
-        platform =>
-          !frameworks.length ||
-          !platform.frameworks ||
-          !platform.frameworks.length ||
-          platform.frameworks.some(framework => frameworks.includes(framework))
-      )
-      .map(platform => ({
-        name: platform.title,
-        value: platform.name
-      }));
+    items = rawItems.map(platform => ({
+      name: platform.title,
+      value: platform.name
+    }));
   }
   return {
     items
