@@ -36,6 +36,11 @@ export function splitMultipleField(v) {
     .filter((v, i) => v.length || i);
 }
 
+export function getConfigOptionValue(data, name) {
+  const option = data.find(o => o.name === name) || {};
+  return option.value;
+}
+
 class OptionEditorFactoryImpl {
   constructor() {
     this.factories = [];
@@ -48,6 +53,10 @@ class OptionEditorFactoryImpl {
         factoryCallback
       });
     }
+  }
+
+  isCustomized(schema) {
+    return this.factories.findIndex(f => f.matcher(schema)) !== -1;
   }
 
   factory(schema, inputProps, itemProps, decoratorOptions, project) {

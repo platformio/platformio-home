@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-import { AutoComplete, Icon, Input, Select } from 'antd';
+import { AutoComplete, Button, Icon, Input, Select, Tag } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { splitMultipleField } from '@project/helpers';
 
 export const MODE_AUTOCOMPLETE = 'autocomplete';
 export const MODE_SELECT = 'select';
+export const MODE_TAGS = 'tags';
 
 export class OptionAutocomplete extends React.PureComponent {
   static defaultProps = {
+    addIcon: 'plus',
+    addText: 'Add',
     mode: MODE_AUTOCOMPLETE
   };
 
   static propTypes = {
     // data
+    addIcon: PropTypes.string,
+    addPlaceholder: PropTypes.string,
+    addText: PropTypes.string,
     defaultValue: PropTypes.string,
     inputProps: PropTypes.object,
     items: PropTypes.arrayOf(
@@ -37,8 +43,9 @@ export class OptionAutocomplete extends React.PureComponent {
         value: PropTypes.string.isRequired
       })
     ),
-    mode: PropTypes.oneOf([MODE_AUTOCOMPLETE, MODE_SELECT]),
+    mode: PropTypes.oneOf([MODE_AUTOCOMPLETE, MODE_SELECT, MODE_TAGS]),
     multiple: PropTypes.bool,
+    remote: PropTypes.bool,
     // callbacks
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
@@ -47,18 +54,41 @@ export class OptionAutocomplete extends React.PureComponent {
 
   constructor(...args) {
     super(...args);
-    this.state = { loading: false, values: [] };
+    this.state = { loading: false, values: [], autocompleterValue: '' };
   }
 
   componentDidMount() {
     this.updateStateValues(this.props.defaultValue);
   }
 
+  load() {
+    this.setState({
+      loading: true
+    });
+    const load = this.props.onLoad(() => {
+      this.setState({
+        loading: false
+      });
+    });
+    if (this.props.remote && load && load.then) {
+      load
+        .then(items => {
+          this.setState({
+            items
+          });
+        })
+        .catch(() => {
+          this.setState({ items: [] });
+        });
+    }
+  }
+
   getData() {
+    const items = this.props.remote ? this.state.items : this.props.items;
     const selectedValues = this.state.values;
     return (
-      (this.props.items &&
-        this.props.items
+      (items &&
+        items
           .filter(o => !this.props.multiple || !selectedValues.includes(o.value))
           .map(o => {
             let name = o.name;
@@ -78,39 +108,33 @@ export class OptionAutocomplete extends React.PureComponent {
   }
 
   transformValueIn(value) {
-    if (this.props.mode === MODE_SELECT && this.props.multiple) {
-      return value && value.length ? splitMultipleField(value) : [];
+    if (this.props.mode === MODE_AUTOCOMPLETE && this.props.multiple) {
+      return value && value.length ? value.join('\n') : [];
     }
     return value;
   }
 
   transformValueOut(value) {
-    return this.props.mode === MODE_SELECT && this.props.multiple && value
-      ? value.join('\n')
-      : '';
+    if (this.props.mode === MODE_AUTOCOMPLETE && this.props.multiple) {
+      return value && value.length ? splitMultipleField(value) : [];
+    }
+    return value;
   }
 
   updateStateValues(values) {
     this.setState({
       values:
-        this.props.mode === MODE_SELECT
-          ? values
-          : values && values.length
+        typeof values === 'string'
           ? values.split('\n')
+          : Array.isArray(values)
+          ? values
           : []
     });
   }
 
   handleInputFocus = () => {
     if (this.props.onLoad) {
-      this.setState({
-        loading: true
-      });
-      this.props.onLoad(() => {
-        this.setState({
-          loading: false
-        });
-      });
+      this.load();
     }
   };
 
@@ -129,11 +153,51 @@ export class OptionAutocomplete extends React.PureComponent {
 
   handleSearch = value => {
     this.updateStateValues(value);
+    if (this.props.remote) {
+      // TODO: load
+    }
+  };
+
+  handleSelect = () => {
+    // this.updateStateValues(value);
   };
 
   handleFilter = (inputValue, option) =>
     this.props.multiple ||
     option.props.value.toLowerCase().includes(inputValue.toLowerCase());
+
+  handleTagClose = value => {
+    this.setState({
+      values: this.state.values.filter(v => v !== value)
+    });
+  };
+
+  handleAddValueBtnClick = () => {
+    this.setState({ autocompleterVisible: true }, () => this.autocomplete.focus());
+  };
+
+  handleAutocompleteRef = autocomplete => {
+    this.autocomplete = autocomplete;
+  };
+
+  handleKeyUp = e => {
+    if (e.keyCode === 13) {
+      if (this.state.autocompleterValue && this.state.autocompleterValue.length) {
+        this.handleChange([
+          ...(this.state.values || []),
+          this.state.autocompleterValue
+        ]);
+      }
+      this.setState({
+        autocompleterValue: '',
+        autocompleterVisible: false
+      });
+    }
+  };
+
+  handleAddValueChange = value => {
+    this.setState({ autocompleterValue: value });
+  };
 
   render() {
     const ds = this.getData();
@@ -145,6 +209,46 @@ export class OptionAutocomplete extends React.PureComponent {
       onChange: this.handleChange,
       onSearch: this.handleSearch
     };
+
+    if (this.props.mode === MODE_TAGS) {
+      return (
+        <div className="option-autocomplete mode-tags">
+          <div className="block">
+            {(this.state.values || []).map(value => (
+              <Tag closable key={value} onClose={() => this.handleTagClose(value)}>
+                {value}
+              </Tag>
+            ))}
+          </div>
+          {!this.state.autocompleterVisible && (
+            <Button
+              onClick={this.handleAddValueBtnClick}
+              // style={{ background: '#fff', borderStyle: 'dashed' }}
+            >
+              {this.props.addIcon && <Icon type={this.props.addIcon} />}{' '}
+              {this.props.addText}
+            </Button>
+          )}
+          {this.state.autocompleterVisible && (
+            <AutoComplete
+              {...this.props.inputProps}
+              dataSource={ds.map(({ name, value }) => (
+                <AutoComplete.Option key={value} value={value}>
+                  {name}
+                </AutoComplete.Option>
+              ))}
+              filterOption={this.handleFilter}
+              onChange={this.handleAddValueChange}
+              optionLabelProp="value"
+              ref={this.handleAutocompleteRef}
+              value={this.state.autocompleterValue}
+            >
+              <Input suffix={<Icon type="search" />} onKeyUp={this.handleKeyUp} />
+            </AutoComplete>
+          )}
+        </div>
+      );
+    }
 
     if (this.props.mode === MODE_AUTOCOMPLETE) {
       return (
@@ -158,6 +262,7 @@ export class OptionAutocomplete extends React.PureComponent {
           filterOption={this.handleFilter}
           optionLabelProp="value"
           {...commonProps}
+          onSelect={this.handleSelect}
         >
           {this.props.multiple ? (
             <Input.TextArea />
@@ -167,6 +272,7 @@ export class OptionAutocomplete extends React.PureComponent {
         </AutoComplete>
       );
     }
+
     if (this.props.mode === MODE_SELECT) {
       return (
         <Select

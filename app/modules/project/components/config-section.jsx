@@ -15,8 +15,12 @@
  */
 
 // Force dependency
-import '@project/containers/port-autocomplete';
 import '@project/components/env-autocomplete';
+import '@project/containers/board-autocomplete';
+import '@project/containers/framework-autocomplete';
+import '@project/containers/libdeps-autocomplete';
+import '@project/containers/platform-autocomplete';
+import '@project/containers/port-autocomplete';
 
 import {
   Button,
@@ -122,8 +126,8 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   transformIntoFormValue(rawValue, schema) {
-    if (rawValue == undefined) {
-      return;
+    if (rawValue == undefined || OptionEditorFactory.isCustomized(schema)) {
+      return rawValue;
     }
 
     let value;
@@ -305,7 +309,8 @@ class ConfigSectionComponent extends React.PureComponent {
 
     const inputProps = {
       autoFocus,
-      defaultValue
+      defaultValue,
+      configSectionData: this.props.initialValues
     };
     const input = OptionEditorFactory.factory(
       schema,
@@ -519,7 +524,12 @@ export const ConfigSectionForm = Form.create({
           const name = unescapeFieldName(escapedName);
           let value = field.value;
           const fieldSchema = props.schema.find(s => s.name === name);
-          if (fieldSchema && fieldSchema.multiple && fieldSchema.type === TYPE_TEXT) {
+          if (
+            fieldSchema &&
+            fieldSchema.multiple &&
+            fieldSchema.type === TYPE_TEXT &&
+            !OptionEditorFactory.isCustomized(fieldSchema)
+          ) {
             value = splitMultipleField(field.value);
           }
           return [

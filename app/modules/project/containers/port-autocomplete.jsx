@@ -35,6 +35,7 @@ export const PortAutocomplete = connect(
   mapStateToProps,
   dispatchToProps
 )(OptionAutocomplete);
+PortAutocomplete.displayName = 'PortAutocomplete';
 
 OptionEditorFactory.register(
   schema => schema && schema.name.endsWith('_port'),
