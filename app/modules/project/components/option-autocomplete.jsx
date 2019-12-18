@@ -36,7 +36,7 @@ export class OptionAutocomplete extends React.PureComponent {
     addPlaceholder: PropTypes.string,
     addText: PropTypes.string,
     autoFocus: PropTypes.bool,
-    defaultValue: PropTypes.string,
+    defaultValue: PropTypes.any,
     inputProps: PropTypes.object,
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -46,11 +46,11 @@ export class OptionAutocomplete extends React.PureComponent {
     ),
     mode: PropTypes.oneOf([MODE_AUTOCOMPLETE, MODE_SELECT, MODE_TAGS]),
     multiple: PropTypes.bool,
-    remote: PropTypes.bool,
     // callbacks
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
-    onLoad: PropTypes.func
+    onLoad: PropTypes.func,
+    onSearch: PropTypes.func
   };
 
   constructor(...args) {
@@ -66,34 +66,23 @@ export class OptionAutocomplete extends React.PureComponent {
     this.setState({
       loading: true
     });
-    const load = this.props.onLoad(() => {
+    this.props.onLoad(() => {
       this.setState({
         loading: false
       });
     });
-    if (this.props.remote && load && load.then) {
-      load
-        .then(items => {
-          this.setState({
-            items
-          });
-        })
-        .catch(() => {
-          this.setState({ items: [] });
-        });
-    }
   }
 
   getData() {
-    const items = this.props.remote ? this.state.items : this.props.items;
     const selectedValues = this.state.values;
     return (
-      (items &&
-        items
+      (this.props.items &&
+        this.props.items
           .filter(o => !this.props.multiple || !selectedValues.includes(o.value))
           .map(o => {
             let name = o.name;
             let value = o.value;
+            const key = o.key !== undefined ? o.key : o.value;
             if (
               this.props.multiple &&
               selectedValues.length &&
@@ -102,7 +91,7 @@ export class OptionAutocomplete extends React.PureComponent {
               name = `… ${value}`;
               value = [...selectedValues, value].join('\n');
             }
-            return { name, value };
+            return { name, value, key };
           })) ||
       []
     );
@@ -152,15 +141,19 @@ export class OptionAutocomplete extends React.PureComponent {
     }
   };
 
-  handleSearch = value => {
-    this.updateStateValues(value);
-    if (this.props.remote) {
-      // TODO: load
+  handleSearch = query => {
+    if (this.props.mode === MODE_TAGS) {
+      if (this.props.onSearch) {
+        this.props.onSearch(query);
+      }
+      // WARN: if use query from props we get prev value because setState in the parent
+      // component is async
+      this.props.onLoad({
+        query
+      });
+    } else {
+      this.updateStateValues(query);
     }
-  };
-
-  handleSelect = () => {
-    // this.updateStateValues(value);
   };
 
   handleFilter = (inputValue, option) =>
@@ -202,16 +195,6 @@ export class OptionAutocomplete extends React.PureComponent {
 
   render() {
     const ds = this.getData();
-    const commonProps = {
-      autoFocus: this.props.autoFocus,
-      defaultValue: this.transformValueIn(this.props.defaultValue),
-      loading: this.state.loading,
-      onBlur: this.handleBlur,
-      onFocus: this.handleInputFocus,
-      onChange: this.handleChange,
-      onSearch: this.handleSearch
-    };
-
     if (this.props.mode === MODE_TAGS) {
       return (
         <div className="option-autocomplete mode-tags">
@@ -226,7 +209,6 @@ export class OptionAutocomplete extends React.PureComponent {
             <Button
               autoFocus={this.props.autoFocus}
               onClick={this.handleAddValueBtnClick}
-              // style={{ background: '#fff', borderStyle: 'dashed' }}
             >
               {this.props.addIcon && <Icon type={this.props.addIcon} />}{' '}
               {this.props.addText}
@@ -235,13 +217,15 @@ export class OptionAutocomplete extends React.PureComponent {
           {this.state.autocompleterVisible && (
             <AutoComplete
               {...this.props.inputProps}
-              dataSource={ds.map(({ name, value }) => (
-                <AutoComplete.Option key={value} value={value}>
+              dataSource={ds.map(({ key, name, value }) => (
+                <AutoComplete.Option key={key} value={value}>
                   {name}
                 </AutoComplete.Option>
               ))}
               filterOption={this.handleFilter}
+              loading={this.state.loading}
               onChange={this.handleAddValueChange}
+              onSearch={this.handleSearch}
               optionLabelProp="value"
               ref={this.handleAutocompleteRef}
               value={this.state.autocompleterValue}
@@ -253,19 +237,28 @@ export class OptionAutocomplete extends React.PureComponent {
       );
     }
 
+    const commonProps = {
+      autoFocus: this.props.autoFocus,
+      defaultValue: this.transformValueIn(this.props.defaultValue),
+      loading: this.state.loading,
+      onBlur: this.handleBlur,
+      onFocus: this.handleInputFocus,
+      onChange: this.handleChange,
+      onSearch: this.handleSearch
+    };
+
     if (this.props.mode === MODE_AUTOCOMPLETE) {
       return (
         <AutoComplete
           {...this.props.inputProps}
-          dataSource={ds.map(({ name, value }) => (
-            <AutoComplete.Option key={value} value={value}>
+          dataSource={ds.map(({ key, name, value }) => (
+            <AutoComplete.Option key={key} value={value}>
               {name}
             </AutoComplete.Option>
           ))}
           filterOption={this.handleFilter}
           optionLabelProp="value"
           {...commonProps}
-          onSelect={this.handleSelect}
         >
           {this.props.multiple ? (
             <Input.TextArea />
@@ -284,8 +277,8 @@ export class OptionAutocomplete extends React.PureComponent {
           mode={this.props.multiple ? 'multiple' : 'default'}
           {...commonProps}
         >
-          {ds.map(({ name, value }) => (
-            <Select.Option key={value} value={value} title={value}>
+          {ds.map(({ key, name, value }) => (
+            <Select.Option key={key} value={value} title={value}>
               {name}
             </Select.Option>
           ))}

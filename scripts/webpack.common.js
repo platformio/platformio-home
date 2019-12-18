@@ -40,6 +40,7 @@ module.exports = {
       '@core': path.resolve(__dirname, '../app/modules/core/'),
       '@device': path.resolve(__dirname, '../app/modules/device/'),
       '@inspect': path.resolve(__dirname, '../app/modules/inspect/'),
+      '@library': path.resolve(__dirname, '../app/modules/library/'),
       '@project': path.resolve(__dirname, '../app/modules/project/'),
       '@platform': path.resolve(__dirname, '../app/modules/platform/'),
       '@store': path.resolve(__dirname, '../app/store/'),

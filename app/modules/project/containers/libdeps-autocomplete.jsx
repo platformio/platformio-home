@@ -15,27 +15,76 @@
  */
 
 import { MODE_TAGS, OptionAutocomplete } from '@project/components/option-autocomplete';
-import { OptionEditorFactory, getConfigOptionValue } from '@project/helpers';
 
+import { OptionEditorFactory } from '@project/helpers';
 import React from 'react';
 import { connect } from 'react-redux';
+import { loadSearchResult } from '@library/actions';
+import { selectSearchResult } from '@library/selectors';
 
-function dispatchToProps(dispatch, ownProps) {
+function mapStateToProps(state, ownProps) {
+  let items;
+  const searchResult = selectSearchResult(state, ownProps.query);
+  if (searchResult) {
+    const names = new Set();
+    items = searchResult.items
+      // Filter out duplicate names, antd Select doesn't support duplicate Option values
+      .filter(s => {
+        if (names.has(s.name)) {
+          return false;
+        }
+        names.add(s.name);
+        return true;
+      })
+      .map(s => ({
+        data: s,
+        key: s.id,
+        name: s.name,
+        value: s.name
+      }));
+  }
+  return { items };
+}
+
+function dispatchToProps(dispatch) {
   return {
-    onLoad: () => {
-      const sectionData = ownProps.configSectionData || [];
-      const platform = getConfigOptionValue(sectionData, 'platform');
-      // TODO: load data filtered by platform&framework
-      return Promise.resolve([]);
+    onLoad: options => {
+      const query = options.query;
+      // TODO: filter by platform&framework
+      // const sectionData = ownProps.configSectionData || [];
+      // const platform = getConfigOptionValue(sectionData, 'platform');
+      // const frameworks = getConfigOptionValue(sectionData, 'framework');
+      dispatch(loadSearchResult(query));
     }
   };
 }
 
-export const LibDepsAutocomplete = connect(
-  undefined,
+export const LibDepsAutocompleteInner = connect(
+  mapStateToProps,
   dispatchToProps
 )(OptionAutocomplete);
-LibDepsAutocomplete.displayName = 'LibDepsAutocomplete';
+LibDepsAutocompleteInner.displayName = 'LibDepsAutocompleteInner';
+
+class LibDepsAutocomplete extends React.Component {
+  constructor(...args) {
+    super(...args);
+    this.state = {};
+  }
+
+  handleSearch = query => {
+    this.setState({ query });
+  };
+
+  render() {
+    return (
+      <LibDepsAutocompleteInner
+        {...this.props}
+        query={this.state.query}
+        onSearch={this.handleSearch}
+      />
+    );
+  }
+}
 
 OptionEditorFactory.register(
   schema => schema && schema.name === 'lib_deps',
