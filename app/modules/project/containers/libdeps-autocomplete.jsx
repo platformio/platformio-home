@@ -15,16 +15,26 @@
  */
 
 import { MODE_TAGS, OptionAutocomplete } from '@project/components/option-autocomplete';
+import { OptionEditorFactory, getConfigOptionValue } from '@project/helpers';
 
-import { OptionEditorFactory } from '@project/helpers';
 import React from 'react';
 import { connect } from 'react-redux';
 import { loadSearchResult } from '@library/actions';
 import { selectSearchResult } from '@library/selectors';
 
+function getFullQuery(query, ownProps) {
+  const sectionData = ownProps.configSectionData || [];
+  const frameworks = getConfigOptionValue(sectionData, 'framework') || [];
+  const q = [query, ...frameworks.map(f => `framework:"${f.replace(/"/g, '&quot;')}"`)];
+  return q.join(' ');
+}
+
 function mapStateToProps(state, ownProps) {
   let items;
-  const searchResult = selectSearchResult(state, ownProps.query);
+  const searchResult = selectSearchResult(
+    state,
+    getFullQuery(ownProps.query, ownProps)
+  );
   if (searchResult) {
     const names = new Set();
     items = searchResult.items
@@ -46,15 +56,10 @@ function mapStateToProps(state, ownProps) {
   return { items };
 }
 
-function dispatchToProps(dispatch) {
+function dispatchToProps(dispatch, ownProps) {
   return {
     onLoad: options => {
-      const query = options.query;
-      // TODO: filter by platform&framework
-      // const sectionData = ownProps.configSectionData || [];
-      // const platform = getConfigOptionValue(sectionData, 'platform');
-      // const frameworks = getConfigOptionValue(sectionData, 'framework');
-      dispatch(loadSearchResult(query));
+      dispatch(loadSearchResult(getFullQuery(options.query, ownProps)));
     }
   };
 }
