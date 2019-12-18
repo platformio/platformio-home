@@ -230,7 +230,11 @@ export class OptionAutocomplete extends React.PureComponent {
               ref={this.handleAutocompleteRef}
               value={this.state.autocompleterValue}
             >
-              <Input suffix={<Icon type="search" />} onKeyUp={this.handleKeyUp} />
+              <Input
+                allowClear
+                suffix={<Icon type="search" />}
+                onKeyUp={this.handleKeyUp}
+              />
             </AutoComplete>
           )}
         </div>
