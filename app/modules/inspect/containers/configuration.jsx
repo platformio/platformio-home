@@ -15,22 +15,22 @@
  */
 
 import { Button, Col, Form, Icon, Row, Select, Switch } from 'antd';
+import { selectInspectionError, selectSavedConfiguration } from '@inspect/selectors';
 
 import ProjectOpenModal from '@project/containers/open-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { goTo } from '@core/helpers';
 import { inspectProject } from '@inspect/actions';
 import { loadProjects } from '@project/actions';
 import { osOpenUrl } from '@core/actions';
 import { selectProjects } from '@project/selectors';
-import { selectSavedConfiguration } from '@inspect/selectors';
 import { shallowCompare } from '@inspect/helpers';
 
 class InspectionFormComponent extends React.Component {
   static propTypes = {
     // data
+    error: PropTypes.string,
     form: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     projects: PropTypes.arrayOf(
@@ -98,12 +98,9 @@ class InspectionFormComponent extends React.Component {
     const { projectDir, env, memory, code } = this.props.form.getFieldsValue();
     const configuration = { projectDir, env, memory, code };
     this.setState({ running: true, error: undefined });
-    this.props.inspectProject(configuration, (_result, error) => {
+    this.props.inspectProject(configuration, () => {
       if (this._isMounted) {
-        this.setState({ running: false, error });
-        if (!error) {
-          goTo(this.props.history, '/inspect/result/stats', undefined, true);
-        }
+        this.setState({ running: false });
       }
     });
   }
@@ -272,12 +269,12 @@ class InspectionFormComponent extends React.Component {
             </Button>
           </Form.Item>
         </Form>
-        {this.state.error && (
+        {this.props.error && (
           <div>
             <div className="ant-form-item-label">
               <label>Errors</label>
             </div>
-            <div className="inspect-config-console">{this.state.error}</div>
+            <div className="inspect-config-console">{this.props.error}</div>
           </div>
         )}
       </div>
@@ -287,6 +284,7 @@ class InspectionFormComponent extends React.Component {
 
 function mapStateToProps(state) {
   return {
+    error: selectInspectionError(state),
     projects: selectProjects(state),
     savedConfiguration: selectSavedConfiguration(state)
   };

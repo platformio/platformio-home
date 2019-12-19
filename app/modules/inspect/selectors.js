@@ -55,6 +55,10 @@ export function selectInspectionResult(state) {
   return selectEntity(state, RESULT_KEY);
 }
 
+export function selectInspectionError(state) {
+  return (selectEntity(state, RESULT_KEY) || {}).error;
+}
+
 export function selectMemoryInspectionResult(state) {
   const data = selectInspectionResult(state) || {};
   return data.memory;
