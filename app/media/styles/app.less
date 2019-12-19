@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@sider-width: 70px;
+@sider-width: 64px;
 @max-content-width: @screen-xl - @sider-width;
 
 .app-container {
@@ -26,8 +26,8 @@
 
     .logo {
       text-align: center;
-      height: 48px;
-      padding-top: 10px;
+      height: 44px;
+      padding-top: 8px;
     }
 
     .anticon {
@@ -37,8 +37,8 @@
     }
 
     .ant-menu-item {
-      height: 70px;
-      padding: 12px 0 !important;
+      height: @sider-width;
+      padding: 10px 0 12px 0 !important;
       text-align: center;
 
       .menu-item-label {
@@ -51,10 +51,10 @@
 
   .main-container {
     padding: 0;
-    margin-left: 70px;
+    margin-left: @sider-width;
 
     .ant-layout-header {
-      padding: 0px 10px 10px 3px;
+      padding: 0px 10px 8px 3px;
       margin: 0;
       height: unset;
       line-height: inherit;
@@ -64,18 +64,15 @@
         max-width: @max-content-width;
       }
 
-      .account-bar {
-        padding-top: 10px;
-      }
-
+      .account-bar,
       .ant-btn-group {
-        margin-top: 10px;
+        padding-top: 8px;
       }
     }
 
     .ant-layout-content {
       overflow: initial;
-      padding: 0 20px;
+      padding: 0 18px;
       margin: 0;
 
       .ant-menu-horizontal {
