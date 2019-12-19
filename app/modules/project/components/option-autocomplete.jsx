@@ -17,6 +17,7 @@
 import { AutoComplete, Button, Icon, Input, Select, Tag } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { debounce } from '@core/helpers';
 import { splitMultipleField } from '@project/helpers';
 
 export const MODE_AUTOCOMPLETE = 'autocomplete';
@@ -56,10 +57,15 @@ export class OptionAutocomplete extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = { loading: false, values: [], autocompleterValue: '' };
+    this.debouncedOnLoad = debounce((...args) => this.props.onLoad(...args), 500);
   }
 
   componentDidMount() {
     this.updateStateValues(this.props.defaultValue);
+  }
+
+  componentWillUnmount() {
+    this.debouncedOnLoad.cancel();
   }
 
   load() {
@@ -148,7 +154,7 @@ export class OptionAutocomplete extends React.PureComponent {
       }
       // WARN: if use query from props we get prev value because setState in the parent
       // component is async
-      this.props.onLoad({
+      this.debouncedOnLoad({
         query
       });
     } else {

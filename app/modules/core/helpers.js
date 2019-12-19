@@ -112,3 +112,13 @@ export function cmpArray(a, b) {
   }
   return true;
 }
+
+export function debounce(fn, time) {
+  let timeout;
+  const task = function(...args) {
+    task.cancel();
+    timeout = setTimeout(() => fn.apply(this, args), time);
+  };
+  task.cancel = () => clearTimeout(timeout);
+  return task;
+}
