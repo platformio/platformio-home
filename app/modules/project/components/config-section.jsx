@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
+// Force dependency
+import '@project/components/env-autocomplete';
+import '@project/containers/board-autocomplete';
+import '@project/containers/framework-autocomplete';
+import '@project/containers/libdeps-autocomplete';
+import '@project/containers/platform-autocomplete';
+import '@project/containers/port-autocomplete';
+
 import {
   Button,
-  Checkbox,
   Col,
   Form,
   Icon,
@@ -27,7 +34,8 @@ import {
   Tag,
   Tooltip
 } from 'antd';
-import { ConfigOptionType, SchemaType } from '@project/types';
+import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
+import { OptionEditorFactory, splitMultipleField } from '@project/helpers';
 import {
   SECTIONS,
   SECTION_CUSTOM,
@@ -35,11 +43,6 @@ import {
   SECTION_NAME_KEY,
   SECTION_PLATFORMIO,
   SECTION_USER_ENV,
-  TYPE_BOOL,
-  TYPE_CHOICE,
-  TYPE_FILE,
-  TYPE_INT,
-  TYPE_INT_RANGE,
   TYPE_TEXT
 } from '@project/constants';
 
@@ -62,16 +65,6 @@ function formatEnvVar(name) {
   return IS_WINDOWS ? `%${name}%` : `$${name}`;
 }
 
-function splitMultipleField(v) {
-  if (v == undefined) {
-    return;
-  }
-  return v
-    .split(v.includes('\n') ? /\n/ : /, /)
-    .map(v => v.replace(/^\s+|\s+$/g, ''))
-    .filter((v, i) => v.length || i);
-}
-
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
@@ -81,6 +74,7 @@ class ConfigSectionComponent extends React.PureComponent {
     id: PropTypes.string.isRequired,
     initialValues: PropTypes.arrayOf(ConfigOptionType),
     name: PropTypes.string.isRequired,
+    project: ProjectType.isRequired,
     schema: SchemaType.isRequired,
     showToc: PropTypes.bool,
     title: PropTypes.string.isRequired,
@@ -132,8 +126,8 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   transformIntoFormValue(rawValue, schema) {
-    if (rawValue == undefined) {
-      return;
+    if (rawValue == undefined || OptionEditorFactory.isCustomized(schema)) {
+      return rawValue;
     }
 
     let value;
@@ -286,7 +280,6 @@ class ConfigSectionComponent extends React.PureComponent {
 
   renderFormItem(name, schemaByName, initialValue) {
     const schema = schemaByName[name];
-    const type = schema ? schema.type : TYPE_TEXT;
     const multiple = !schema || schema.multiple;
     const description = schema ? schema.description : undefined;
 
@@ -304,7 +297,6 @@ class ConfigSectionComponent extends React.PureComponent {
     };
 
     const label = this.renderLabel(name, schema, { multiple });
-
     const itemProps = {
       className: '',
       help: description,
@@ -315,65 +307,18 @@ class ConfigSectionComponent extends React.PureComponent {
       }
     };
 
-    let input;
-    switch (type) {
-      case TYPE_BOOL:
-        input = <Checkbox autoFocus={autoFocus}>{description}</Checkbox>;
-        decoratorOptions.valuePropName = 'defaultChecked';
-        decoratorOptions.trigger = 'onChange';
-        itemProps.help = undefined;
-
-        if (initialValue === undefined) {
-          decoratorOptions.initialValue = defaultValue;
-        }
-        break;
-
-      case TYPE_CHOICE:
-        input = (
-          <Select
-            autoFocus={autoFocus}
-            placeholder={defaultValue}
-            mode={multiple ? 'multiple' : 'default'}
-            tokenSeparators={[',', '\n']}
-          >
-            {schema.choices.map(value => (
-              <Select.Option key={value} value={value}>
-                {value}
-              </Select.Option>
-            ))}
-          </Select>
-        );
-        break;
-
-      case TYPE_TEXT:
-      case TYPE_FILE:
-      case TYPE_INT:
-      case TYPE_INT_RANGE:
-      default:
-        if (multiple) {
-          input = (
-            <Input.TextArea
-              autoFocus={autoFocus}
-              placeholder={defaultValue}
-              autoSize={{ minRows: 1, maxRows: 20 }}
-              rows={1}
-            />
-          );
-        } else {
-          input = (
-            <Input
-              autoFocus={autoFocus}
-              placeholder={defaultValue}
-              readOnly={schema && schema.readonly}
-            />
-          );
-        }
-        if (!type) {
-          console.warn(`Unsupported item type: "${type}" for name: "${name}"`);
-          // throw new Error(`Unsupported item type: "${type}"`);
-        }
-        break;
-    }
+    const inputProps = {
+      autoFocus,
+      defaultValue,
+      configSectionData: this.props.initialValues
+    };
+    const input = OptionEditorFactory.factory(
+      schema,
+      inputProps,
+      itemProps,
+      decoratorOptions,
+      this.props.project
+    );
 
     const wrappedInput = this.props.form.getFieldDecorator(id, decoratorOptions)(input);
     return <ConfigFormItem {...itemProps}>{wrappedInput}</ConfigFormItem>;
@@ -579,7 +524,12 @@ export const ConfigSectionForm = Form.create({
           const name = unescapeFieldName(escapedName);
           let value = field.value;
           const fieldSchema = props.schema.find(s => s.name === name);
-          if (fieldSchema && fieldSchema.multiple && fieldSchema.type === TYPE_TEXT) {
+          if (
+            fieldSchema &&
+            fieldSchema.multiple &&
+            fieldSchema.type === TYPE_TEXT &&
+            !OptionEditorFactory.isCustomized(fieldSchema)
+          ) {
             value = splitMultipleField(field.value);
           }
           return [

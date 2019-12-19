@@ -328,8 +328,19 @@ class ProjectConfig extends React.PureComponent {
     });
   }
 
-  addSectionField(sectionName, name, value = '') {
+  addSectionField(sectionName, name, value) {
     this.setState(prevState => {
+      const scope = this.getSectionScope(this.getSectionType(sectionName));
+      const scopeSchema = (scope && this.props.schema[scope]) || [];
+      const schema = scopeSchema.find(s => s.name === name);
+      if (value === undefined) {
+        if (schema && schema.multiple) {
+          value = [];
+        } else {
+          value = '';
+        }
+      }
+
       const field = {
         name,
         value
@@ -524,9 +535,23 @@ class ProjectConfig extends React.PureComponent {
   };
 
   handleSectionChange = (section, values) => {
+    let platformChanged = false;
     Object.entries(values).forEach(([name, field]) => {
       this.updateSectionValue(section, name, field.value);
+      if (name === 'platform') {
+        platformChanged = true;
+      }
     });
+    if (platformChanged) {
+      for (const name of ['framework', 'board']) {
+        this.updateSectionValue(section, name, undefined);
+      }
+      // Causes Warning: Can't perform a React state update on an unmounted component
+      // if run inline
+      setTimeout(() => {
+        this.forceRerenderSection(section);
+      }, 10);
+    }
   };
 
   handleNewOptionSelect = name => {
@@ -554,20 +579,30 @@ class ProjectConfig extends React.PureComponent {
           return [...set];
         };
     this._updateSectionValue(SECTION_PLATFORMIO, 'default_envs', updater);
+    this.forceRerenderSection(SECTION_PLATFORMIO);
+  };
 
-    // Force section rerender by changing id (used as key to render)
-    this.setState(state => ({
-      config: state.config.map(section => {
-        if (section.section !== SECTION_PLATFORMIO) {
+  forceRerenderSection(name) {
+    // Force section rerender to overcome defaultValue side effect
+    // by changing component id (used as key to render)
+    this.setState(prevState => {
+      const state = {};
+      state.config = prevState.config.map(section => {
+        if (section.section !== name) {
           return section;
+        }
+        const newId = this.generateSectionId(section);
+        if (section.id === prevState.activeTabKey) {
+          state.activeTabKey = newId;
         }
         return {
           ...section,
-          id: this.generateSectionId(section)
+          id: newId
         };
-      })
-    }));
-  };
+      });
+      return state;
+    });
+  }
 
   isLoaded() {
     return Boolean(this.props.schema && this.props.initialConfig && this.state.config);
@@ -686,6 +721,7 @@ class ProjectConfig extends React.PureComponent {
       id: key,
       name,
       initialValues: section.items,
+      project: this.props.project,
       defaultEnv:
         type === SECTION_USER_ENV &&
         this.getSectionValue(SECTION_PLATFORMIO, 'default_envs', []).includes(

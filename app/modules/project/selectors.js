@@ -15,7 +15,7 @@
  */
 
 import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
-import { selectEntity, selectInputValue } from '../../store/selectors';
+import { selectEntity, selectInputValue } from '@store/selectors';
 
 import fuzzaldrin from 'fuzzaldrin-plus';
 
