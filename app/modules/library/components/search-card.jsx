@@ -28,7 +28,7 @@ export default class LibrarySearchCard extends React.Component {
       examplenums: PropTypes.number.isRequired,
       dllifetime: PropTypes.number.isRequired,
       frameworks: PropTypes.arrayOf(PropTypes.object).isRequired,
-      platforms: PropTypes.arrayOf(PropTypes.string).isRequired,
+      platforms: PropTypes.arrayOf(PropTypes.object).isRequired,
       keywords: PropTypes.arrayOf(PropTypes.string).isRequired,
       authornames: PropTypes.arrayOf(PropTypes.string).isRequired
     }),
