@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { debounce } from '@core/helpers';
 import { splitMultipleField } from '@project/helpers';
+import { CONFIG_TEXTAREA_AUTOSIZE } from '@project/constants';
 
 export const MODE_AUTOCOMPLETE = 'autocomplete';
 export const MODE_SELECT = 'select';
@@ -94,7 +95,7 @@ export class OptionAutocomplete extends React.PureComponent {
               selectedValues.length &&
               this.props.mode === MODE_AUTOCOMPLETE
             ) {
-              name = `… ${value}`;
+              name = value;
               value = [...selectedValues, value].join('\n');
             }
             return { name, value, key };
@@ -271,7 +272,7 @@ export class OptionAutocomplete extends React.PureComponent {
           {...commonProps}
         >
           {this.props.multiple ? (
-            <Input.TextArea />
+            <Input.TextArea autoSize={CONFIG_TEXTAREA_AUTOSIZE} />
           ) : (
             <Input suffix={<Icon type="search" />} />
           )}

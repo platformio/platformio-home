@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Checkbox, Input, Select } from 'antd';
 import {
+  CONFIG_TEXTAREA_AUTOSIZE,
   TYPE_BOOL,
   TYPE_CHOICE,
   TYPE_FILE,
@@ -23,6 +23,7 @@ import {
   TYPE_INT_RANGE,
   TYPE_TEXT
 } from '@project/constants';
+import { Checkbox, Input, Select } from 'antd';
 
 import React from 'react';
 
@@ -124,7 +125,7 @@ class OptionEditorFactoryImpl {
             <Input.TextArea
               autoFocus={inputProps.autoFocus}
               placeholder={inputProps.defaultValue}
-              autoSize={{ minRows: 1, maxRows: 20 }}
+              autoSize={CONFIG_TEXTAREA_AUTOSIZE}
               rows={1}
             />
           );

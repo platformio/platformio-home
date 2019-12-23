@@ -52,3 +52,4 @@ export const SECTIONS = Object.freeze([
 ]);
 
 export const PROJECT_CONFIG_SAVE_CONSENT_ID = 'project-config-save';
+export const CONFIG_TEXTAREA_AUTOSIZE = Object.freeze({ minRows: 1, maxRows: 20 });
