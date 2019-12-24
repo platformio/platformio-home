@@ -15,11 +15,12 @@
  */
 
 import { AutoComplete, Button, Icon, Input, Select, Tag } from 'antd';
+
+import { CONFIG_TEXTAREA_AUTOSIZE } from '@project/constants';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { debounce } from '@core/helpers';
 import { splitMultipleField } from '@project/helpers';
-import { CONFIG_TEXTAREA_AUTOSIZE } from '@project/constants';
 
 export const MODE_AUTOCOMPLETE = 'autocomplete';
 export const MODE_SELECT = 'select';
@@ -39,6 +40,7 @@ export class OptionAutocomplete extends React.PureComponent {
     addText: PropTypes.string,
     autoFocus: PropTypes.bool,
     defaultValue: PropTypes.any,
+    forceSingle: PropTypes.bool,
     inputProps: PropTypes.object,
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -93,7 +95,8 @@ export class OptionAutocomplete extends React.PureComponent {
             if (
               this.props.multiple &&
               selectedValues.length &&
-              this.props.mode === MODE_AUTOCOMPLETE
+              this.props.mode === MODE_AUTOCOMPLETE &&
+              !this.props.forceSingle
             ) {
               name = value;
               value = [...selectedValues, value].join('\n');
@@ -271,10 +274,10 @@ export class OptionAutocomplete extends React.PureComponent {
           optionLabelProp="value"
           {...commonProps}
         >
-          {this.props.multiple ? (
-            <Input.TextArea autoSize={CONFIG_TEXTAREA_AUTOSIZE} />
+          {this.props.multiple && !this.props.forceSingle ? (
+            <Input.TextArea allowClear autoSize={CONFIG_TEXTAREA_AUTOSIZE} />
           ) : (
-            <Input suffix={<Icon type="search" />} />
+            <Input allowClear suffix={<Icon type="search" />} />
           )}
         </AutoComplete>
       );

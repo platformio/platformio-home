@@ -60,6 +60,10 @@ FrameworkAutocomplete.displayName = 'FrameworkAutocomplete';
 OptionEditorFactory.register(
   schema => schema && schema.name.endsWith('framework'),
   (schema, inputProps) => (
-    <FrameworkAutocomplete {...inputProps} multiple={schema && schema.multiple} />
+    <FrameworkAutocomplete
+      {...inputProps}
+      forceSingle
+      multiple={schema && schema.multiple}
+    />
   )
 );
