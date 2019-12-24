@@ -99,7 +99,7 @@ OptionEditorFactory.register(
       <LibDepsAutocomplete
         {...inputProps}
         mode={MODE_TAGS}
-        remote
+        remoteFilter
         addText="Add Library"
         addPlaceholder="Search library"
       />

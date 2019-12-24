@@ -50,6 +50,7 @@ export class OptionAutocomplete extends React.PureComponent {
     ),
     mode: PropTypes.oneOf([MODE_AUTOCOMPLETE, MODE_SELECT, MODE_TAGS]),
     multiple: PropTypes.bool,
+    remoteFilter: PropTypes.bool,
     // callbacks
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
@@ -167,6 +168,7 @@ export class OptionAutocomplete extends React.PureComponent {
   };
 
   handleFilter = (inputValue, option) =>
+    this.props.remoteFilter ||
     this.props.multiple ||
     option.props.value.toLowerCase().includes(inputValue.toLowerCase());
 
