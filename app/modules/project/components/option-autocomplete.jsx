@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { AutoComplete, Button, Icon, Input, Select, Tag } from 'antd';
+import { AutoComplete, Button, Icon, Input, Select, Spin, Tag } from 'antd';
+
+import { CONFIG_TEXTAREA_AUTOSIZE } from '@project/constants';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { debounce } from '@core/helpers';
 import { splitMultipleField } from '@project/helpers';
-import { CONFIG_TEXTAREA_AUTOSIZE } from '@project/constants';
 
 export const MODE_AUTOCOMPLETE = 'autocomplete';
 export const MODE_SELECT = 'select';
@@ -39,6 +40,7 @@ export class OptionAutocomplete extends React.PureComponent {
     addText: PropTypes.string,
     autoFocus: PropTypes.bool,
     defaultValue: PropTypes.any,
+    forceSingle: PropTypes.bool,
     inputProps: PropTypes.object,
     items: PropTypes.arrayOf(
       PropTypes.shape({
@@ -48,6 +50,7 @@ export class OptionAutocomplete extends React.PureComponent {
     ),
     mode: PropTypes.oneOf([MODE_AUTOCOMPLETE, MODE_SELECT, MODE_TAGS]),
     multiple: PropTypes.bool,
+    remoteFilter: PropTypes.bool,
     // callbacks
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
@@ -58,7 +61,7 @@ export class OptionAutocomplete extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = { loading: false, values: [], autocompleterValue: '' };
-    this.debouncedOnLoad = debounce((...args) => this.props.onLoad(...args), 500);
+    this.debouncedOnLoad = debounce((...args) => this.load(...args), 500);
   }
 
   componentDidMount() {
@@ -69,11 +72,11 @@ export class OptionAutocomplete extends React.PureComponent {
     this.debouncedOnLoad.cancel();
   }
 
-  load() {
+  load(...args) {
     this.setState({
       loading: true
     });
-    this.props.onLoad(() => {
+    this.props.onLoad(...args, () => {
       this.setState({
         loading: false
       });
@@ -93,7 +96,8 @@ export class OptionAutocomplete extends React.PureComponent {
             if (
               this.props.multiple &&
               selectedValues.length &&
-              this.props.mode === MODE_AUTOCOMPLETE
+              this.props.mode === MODE_AUTOCOMPLETE &&
+              !this.props.forceSingle
             ) {
               name = value;
               value = [...selectedValues, value].join('\n');
@@ -164,6 +168,7 @@ export class OptionAutocomplete extends React.PureComponent {
   };
 
   handleFilter = (inputValue, option) =>
+    this.props.remoteFilter ||
     this.props.multiple ||
     option.props.value.toLowerCase().includes(inputValue.toLowerCase());
 
@@ -230,7 +235,6 @@ export class OptionAutocomplete extends React.PureComponent {
                 </AutoComplete.Option>
               ))}
               filterOption={this.handleFilter}
-              loading={this.state.loading}
               onChange={this.handleAddValueChange}
               onSearch={this.handleSearch}
               optionLabelProp="value"
@@ -239,7 +243,12 @@ export class OptionAutocomplete extends React.PureComponent {
             >
               <Input
                 allowClear
-                suffix={<Icon type="search" />}
+                suffix={
+                  <React.Fragment>
+                    <Icon type="search" />
+                    {this.state.loading && <Spin size="small" />}
+                  </React.Fragment>
+                }
                 onKeyUp={this.handleKeyUp}
               />
             </AutoComplete>
@@ -271,10 +280,10 @@ export class OptionAutocomplete extends React.PureComponent {
           optionLabelProp="value"
           {...commonProps}
         >
-          {this.props.multiple ? (
-            <Input.TextArea autoSize={CONFIG_TEXTAREA_AUTOSIZE} />
+          {this.props.multiple && !this.props.forceSingle ? (
+            <Input.TextArea allowClear autoSize={CONFIG_TEXTAREA_AUTOSIZE} />
           ) : (
-            <Input suffix={<Icon type="search" />} />
+            <Input allowClear suffix={<Icon type="search" />} />
           )}
         </AutoComplete>
       );

@@ -28,8 +28,8 @@ export const UNINSTALL_LIBRARY = 'UNINSTALL_LIBRARY';
 export const UPDATE_LIBRARY = 'UPDATE_LIBRARY';
 
 export const loadStats = () => createAction(LOAD_STATS);
-export const loadSearchResult = (query, page = 1) =>
-  createAction(LOAD_SEARCH_RESULT, { query, page });
+export const loadSearchResult = (query, page = 1, onEnd) =>
+  createAction(LOAD_SEARCH_RESULT, { query, page, onEnd });
 export const loadLibraryData = idOrManifest =>
   createAction(LOAD_LIBRARY_DATA, { idOrManifest });
 export const loadBuiltinLibs = () => createAction(LOAD_BUILTIN_LIBS);
