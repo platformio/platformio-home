@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AutoComplete, Button, Icon, Input, Select, Tag } from 'antd';
+import { AutoComplete, Button, Icon, Input, Select, Spin, Tag } from 'antd';
 
 import { CONFIG_TEXTAREA_AUTOSIZE } from '@project/constants';
 import PropTypes from 'prop-types';
@@ -60,7 +60,7 @@ export class OptionAutocomplete extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = { loading: false, values: [], autocompleterValue: '' };
-    this.debouncedOnLoad = debounce((...args) => this.props.onLoad(...args), 500);
+    this.debouncedOnLoad = debounce((...args) => this.load(...args), 500);
   }
 
   componentDidMount() {
@@ -71,11 +71,11 @@ export class OptionAutocomplete extends React.PureComponent {
     this.debouncedOnLoad.cancel();
   }
 
-  load() {
+  load(...args) {
     this.setState({
       loading: true
     });
-    this.props.onLoad(() => {
+    this.props.onLoad(...args, () => {
       this.setState({
         loading: false
       });
@@ -233,7 +233,6 @@ export class OptionAutocomplete extends React.PureComponent {
                 </AutoComplete.Option>
               ))}
               filterOption={this.handleFilter}
-              loading={this.state.loading}
               onChange={this.handleAddValueChange}
               onSearch={this.handleSearch}
               optionLabelProp="value"
@@ -242,7 +241,12 @@ export class OptionAutocomplete extends React.PureComponent {
             >
               <Input
                 allowClear
-                suffix={<Icon type="search" />}
+                suffix={
+                  <React.Fragment>
+                    <Icon type="search" />
+                    {this.state.loading && <Spin size="small" />}
+                  </React.Fragment>
+                }
                 onKeyUp={this.handleKeyUp}
               />
             </AutoComplete>

@@ -58,8 +58,8 @@ function mapStateToProps(state, ownProps) {
 
 function dispatchToProps(dispatch, ownProps) {
   return {
-    onLoad: options => {
-      dispatch(loadSearchResult(getFullQuery(options.query, ownProps)));
+    onLoad: (options, onEnd) => {
+      dispatch(loadSearchResult(getFullQuery(options.query, ownProps), 1, onEnd));
     }
   };
 }

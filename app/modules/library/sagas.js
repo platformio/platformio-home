@@ -75,9 +75,12 @@ function* watchLoadStats() {
 }
 
 function* watchLoadSearchResult() {
-  yield takeLatest(actions.LOAD_SEARCH_RESULT, function*({ query, page }) {
+  yield takeLatest(actions.LOAD_SEARCH_RESULT, function*({ query, page, onEnd }) {
     let result = yield select(selectors.selectSearchResult, query, page);
     if (result) {
+      if (onEnd) {
+        onEnd();
+      }
       return;
     }
     try {
@@ -91,6 +94,9 @@ function* watchLoadSearchResult() {
         params: [args]
       });
     } catch (err) {
+      if (onEnd) {
+        onEnd(err);
+      }
       return yield put(notifyError('Libraries: Search', err));
     }
     const results = (yield select(selectors.selectSearchResults)) || [];
@@ -99,6 +105,9 @@ function* watchLoadSearchResult() {
       result
     });
     yield put(updateEntity('libSearch', results.slice(SEARCH_RESULTS_CACHE_SIZE * -1)));
+    if (onEnd) {
+      onEnd();
+    }
   });
 }
 
