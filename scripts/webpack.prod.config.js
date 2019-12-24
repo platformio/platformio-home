@@ -24,6 +24,25 @@ const extractThemeCSS = new MiniCssExtractPlugin({
   ignoreOrder: false // Enable to remove warnings about conflicting order
 });
 
+const plugins = [
+  ...common.plugins,
+  new webpack.optimize.OccurrenceOrderPlugin(),
+  extractThemeCSS,
+  new HtmlWebpackPlugin({
+    template: path.join(common.appDir, 'index.html'),
+    inject: 'body',
+    favicon: path.join(common.mediaDir, 'images', 'favicon.ico')
+  }),
+  new webpack.ContextReplacementPlugin(
+    /highlight\.js\/lib\/languages$/,
+    new RegExp(`^./(${['plaintext', 'cpp', 'json', 'ini'].join('|')})$`)
+  )
+];
+
+if (process.env.ANALYZE) {
+  plugins.push(new BundleAnalyzerPlugin());
+}
+
 module.exports = {
   mode: 'production',
   optimization: {
@@ -84,22 +103,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    ...common.plugins,
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    extractThemeCSS,
-    new HtmlWebpackPlugin({
-      template: path.join(common.appDir, 'index.html'),
-      inject: 'body',
-      favicon: path.join(common.mediaDir, 'images', 'favicon.ico')
-    }),
-    new webpack.ContextReplacementPlugin(
-      /highlight\.js\/lib\/languages$/,
-      new RegExp(`^./(${['plaintext', 'cpp', 'json', 'ini'].join('|')})$`)
-    ),
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      openAnalyzer: false
-    })
-  ]
+  plugins
 };
