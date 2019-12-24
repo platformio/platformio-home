@@ -21,9 +21,14 @@ import { Icon, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/highlight';
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
+
+['plaintext', 'cpp', 'json', 'ini'].forEach(langName => {
+  const langModule = require(`highlight.js/lib/languages/${langName}`);
+  hljs.registerLanguage(langName, langModule);
+});
 
 class CodeBeautifier extends React.Component {
   static propTypes = {

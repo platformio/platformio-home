@@ -12,7 +12,7 @@ const webpack = require('webpack');
 const path = require('path');
 const common = require('./webpack.common');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
@@ -37,7 +37,12 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          'style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === 'development'
+            }
+          },
           'css-loader',
           {
             loader: 'less-loader',
@@ -72,8 +77,9 @@ module.exports = {
     ...common.plugins,
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
       filename: 'style.css',
+      ignoreOrder: false, // Enable to remove warnings about conflicting order
       allChunks: true
     }),
     new HtmlWebpackPlugin({
