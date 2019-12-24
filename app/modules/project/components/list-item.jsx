@@ -156,7 +156,7 @@ export class ProjectListItem extends React.PureComponent {
               </Button.Group>
             ))}
         </div>
-        <div>
+        <div className="environments-list">
           <Tooltip title="Environments">
             <Icon type="environment" />
           </Tooltip>{' '}
