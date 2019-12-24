@@ -535,23 +535,9 @@ class ProjectConfig extends React.PureComponent {
   };
 
   handleSectionChange = (section, values) => {
-    let platformChanged = false;
     Object.entries(values).forEach(([name, field]) => {
       this.updateSectionValue(section, name, field.value);
-      if (name === 'platform') {
-        platformChanged = true;
-      }
     });
-    if (platformChanged) {
-      for (const name of ['framework', 'board']) {
-        this.updateSectionValue(section, name, undefined);
-      }
-      // Causes Warning: Can't perform a React state update on an unmounted component
-      // if run inline
-      setTimeout(() => {
-        this.forceRerenderSection(section);
-      }, 10);
-    }
   };
 
   handleNewOptionSelect = name => {
