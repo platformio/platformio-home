@@ -8,7 +8,7 @@
   },
   "main": "''",
   "scripts": {
-    "start": "webpack-dashboard --port 3001 -- webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors",
+    "start": "webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors",
     "start:light": "PIOHOME_THEME=light webpack-dev-server --config ./scripts/webpack.dev.config.js --progress --profile --colors --port 9001",
     "build": "NODE_ENV=production webpack --config ./scripts/webpack.prod.config.js --progress --profile --colors",
     "lint": "eslint --ext js --ext jsx app",
@@ -76,7 +76,6 @@
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cleanup-plugin": "~0.5.1",
     "webpack-cli": "~3.3.9",
-    "webpack-dashboard": "^3.2.0",
     "webpack-dev-server": "~3.10.1"
   },
   "themes": {

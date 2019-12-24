@@ -13,7 +13,6 @@ const path = require('path');
 const common = require('./webpack.common');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 
 module.exports = {
   mode: 'development',
@@ -87,7 +86,6 @@ module.exports = {
       template: path.join(common.appDir, 'index.html'),
       inject: 'body',
       favicon: path.join(common.mediaDir, 'images', 'favicon.ico')
-    }),
-    new DashboardPlugin({ port: 3001 })
+    })
   ]
 };
