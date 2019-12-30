@@ -122,3 +122,17 @@ export function debounce(fn, time) {
   task.cancel = () => clearTimeout(timeout);
   return task;
 }
+
+export function fuzzySearch(items, query, propertyName) {
+  let getter;
+  if (typeof propertyName !== 'function') {
+    getter = item => item[propertyName];
+  } else {
+    getter = propertyName;
+  }
+  return items.filter(item =>
+    getter(item)
+      .toLowerCase()
+      .includes(query.toLowerCase())
+  );
+}

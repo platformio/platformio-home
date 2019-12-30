@@ -17,12 +17,11 @@
 import * as workspaceSettings from '../../../workspace/settings';
 
 import { Alert, Badge, Button, Icon, Input, Spin, Table, Tooltip, message } from 'antd';
+import { cmpSort, fuzzySearch } from '@core/helpers';
 
 import ClipboardJS from 'clipboard';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { cmpSort } from '../../core/helpers';
-import fuzzaldrin from 'fuzzaldrin-plus';
 import humanize from 'humanize';
 
 export default class Boards extends React.Component {
@@ -115,22 +114,15 @@ export default class Boards extends React.Component {
     let result = items.slice(0);
 
     if (this.state.filterValue) {
-      items = fuzzaldrin.filter(
-        items.map(item => {
-          item._fuzzy = [
-            item.vendor,
-            item.id,
-            item.name,
-            item.mcu,
-            JSON.stringify(item.platforms),
-            JSON.stringify(item.frameworks)
-          ].join(' ');
-          return item;
-        }),
-        this.state.filterValue,
-        {
-          key: '_fuzzy'
-        }
+      items = fuzzySearch(items, this.state.filterValue, item =>
+        [
+          item.vendor,
+          item.id,
+          item.name,
+          item.mcu,
+          JSON.stringify(item.platforms),
+          JSON.stringify(item.frameworks)
+        ].join(' ')
       );
     }
 
@@ -151,10 +143,7 @@ export default class Boards extends React.Component {
       if ((item.connectivity || []).some(c => Boards.IoTConnectivity.includes(c))) {
         item.extra.push('iot');
       }
-      // remove fuzzy helper data
-      if (item._fuzzy) {
-        delete item._fuzzy;
-      }
+
       return item;
     });
     if (this.state.filterValue) {

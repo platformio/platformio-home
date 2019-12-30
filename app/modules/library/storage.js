@@ -16,7 +16,7 @@
 
 import * as path from '../core/path';
 
-import fuzzaldrin from 'fuzzaldrin-plus';
+import { fuzzySearch } from '@core/helpers';
 
 export class LibraryStorage {
   static ACTION_REVEAL = 1;
@@ -63,9 +63,7 @@ export function filterStorageItems(storages, filterValue) {
   return storages.map(storage => {
     let items = storage.items;
     if (items && filterValue) {
-      items = fuzzaldrin.filter(items, filterValue, {
-        key: 'name'
-      });
+      items = fuzzySearch(items, filterValue, 'name');
     }
     return new LibraryStorage(storage.name, storage.path, items, storage.actions);
   });

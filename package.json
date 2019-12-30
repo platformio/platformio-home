@@ -20,7 +20,6 @@
   "dependencies": {
     "antd": "3.26.4",
     "clipboard": "~2.0.4",
-    "fuzzaldrin-plus": "~0.6.0",
     "highlight.js": "~9.17.1",
     "humanize": "~0.0.9",
     "jsonrpc-lite": "~2.0.7",
