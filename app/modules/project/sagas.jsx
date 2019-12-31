@@ -87,8 +87,6 @@ function* watchAddProject() {
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());
     if (withOpen) {
-      yield put(saveState());
-      yield asyncDelay(1000);
       yield put(actions.openProject(projectDir));
     }
     if (onEnd) {
@@ -145,6 +143,8 @@ function* watchProjectRename() {
 function* watchOpenProject() {
   yield takeEvery(actions.OPEN_PROJECT, function*({ projectDir }) {
     try {
+      yield put(saveState());
+      yield asyncDelay(1000);
       return yield call(apiFetchData, {
         query: 'ide.open_project',
         params: [getSessionId(), projectDir]
