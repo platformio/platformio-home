@@ -83,6 +83,13 @@ export class OptionAutocomplete extends React.PureComponent {
     });
   }
 
+  isForceSingle() {
+    return (
+      this.props.forceSingle &&
+      (!this.props.defaultValue || this.props.defaultValue.length < 2)
+    );
+  }
+
   getData() {
     const selectedValues = this.state.values;
     return (
@@ -97,7 +104,7 @@ export class OptionAutocomplete extends React.PureComponent {
               this.props.multiple &&
               selectedValues.length &&
               this.props.mode === MODE_AUTOCOMPLETE &&
-              !this.props.forceSingle
+              !this.isForceSingle()
             ) {
               name = value;
               value = [...selectedValues, value].join('\n');
@@ -109,6 +116,12 @@ export class OptionAutocomplete extends React.PureComponent {
   }
 
   transformValueIn(value) {
+    if (this.isForceSingle() && this.props.multiple) {
+      if (value && value.length) {
+        // leave first value
+        value = [value[0]];
+      }
+    }
     if (this.props.mode === MODE_AUTOCOMPLETE && this.props.multiple) {
       return value && value.length ? value.join('\n') : [];
     }
@@ -280,7 +293,7 @@ export class OptionAutocomplete extends React.PureComponent {
           optionLabelProp="value"
           {...commonProps}
         >
-          {this.props.multiple && !this.props.forceSingle ? (
+          {this.props.multiple && !this.isForceSingle() ? (
             <Input.TextArea allowClear autoSize={CONFIG_TEXTAREA_AUTOSIZE} />
           ) : (
             <Input allowClear suffix={<Icon type="search" />} />
