@@ -38,6 +38,7 @@ import {
   notifySuccess,
   osRevealFile
 } from '../core/actions';
+import { asyncDelay, getSessionId } from '@core/helpers';
 import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   deleteEntity,
@@ -53,7 +54,7 @@ import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { ensureUserConsent } from '@core/sagas';
-import { getSessionId } from '@core/helpers';
+
 import jsonrpc from 'jsonrpc-lite';
 
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
@@ -86,6 +87,8 @@ function* watchAddProject() {
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());
     if (withOpen) {
+      yield put(saveState());
+      yield asyncDelay(1000);
       yield put(actions.openProject(projectDir));
     }
     if (onEnd) {
