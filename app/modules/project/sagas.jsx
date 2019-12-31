@@ -54,7 +54,6 @@ import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { ensureUserConsent } from '@core/sagas';
 import { getSessionId } from '@core/helpers';
-
 import jsonrpc from 'jsonrpc-lite';
 
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
