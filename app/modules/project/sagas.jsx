@@ -143,7 +143,6 @@ function* watchProjectRename() {
 function* watchOpenProject() {
   yield takeEvery(actions.OPEN_PROJECT, function*({ projectDir }) {
     try {
-      yield asyncDelay(1000);
       return yield call(apiFetchData, {
         query: 'ide.open_project',
         params: [getSessionId(), projectDir]
