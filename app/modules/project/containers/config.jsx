@@ -251,7 +251,7 @@ class ProjectConfig extends React.PureComponent {
   }
 
   setActiveSection(name) {
-    this.setStrate(prevState => {
+    this.setState(prevState => {
       const section = prevState.config.find(s => s.section === name);
       if (section) {
         return { activeTabKey: section.id };
