@@ -38,7 +38,7 @@ function mapStateToProps(state, ownProps) {
             frameworks.some(framework => board.frameworks.includes(framework)))
       )
       .map(board => ({
-        name: board.name,
+        name: `${board.name} (${board.id})`,
         value: board.id
       }));
   }
