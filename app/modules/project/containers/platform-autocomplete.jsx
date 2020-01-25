@@ -26,7 +26,7 @@ function mapStateToProps(state) {
   let items;
   if (rawItems) {
     items = rawItems.map(platform => ({
-      name: platform.title,
+      name: `${platform.title} (${platform.name})`,
       value: platform.name
     }));
   }
