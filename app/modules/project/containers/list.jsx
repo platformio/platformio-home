@@ -95,8 +95,14 @@ class ProjectsListComponent extends React.PureComponent {
     }
   };
 
-  handleSearch = e => {
-    this.props.setFilter(e.target.value);
+  handleFilterChange = e => {
+    this.setState({
+      filterValue: e.target.value
+    });
+  };
+
+  handleSearch = () => {
+    this.props.setFilter(this.state.filterValue);
   };
 
   handleBoardClick = name => {
@@ -253,11 +259,12 @@ class ProjectsListComponent extends React.PureComponent {
             <div className="block">
               <Input.Search
                 allowClear
+                autoFocus
                 defaultValue={this.props.filterValue}
                 enterButton
                 placeholder="Search projects"
-                onChange={this.handleSearch}
-                ref={$el => ($el ? $el.focus() : null)}
+                onChange={this.handleFilterChange}
+                onSearch={this.handleSearch}
                 size="large"
                 style={{ width: '100%' }}
               />

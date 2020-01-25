@@ -36,7 +36,7 @@ function mapStateToProps(state, ownProps) {
           framework.platforms.includes(platform)
       );
       items = items.map(framework => ({
-        name: framework.title,
+        name: `${framework.title} (${framework.name})`,
         value: framework.name
       }));
     }

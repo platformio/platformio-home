@@ -498,7 +498,13 @@ class ProjectConfig extends React.PureComponent {
   };
 
   handleSectionRename = (name, tabId) => {
+    // Prevent duplicate names
+    const existingSection = this.state.config.find(s => s.section === name);
+    if (existingSection) {
+      return false;
+    }
     this.renameSection(tabId, name);
+    return true;
   };
 
   handleSectionRemove = (_name, tabId) => {

@@ -91,7 +91,7 @@ class ConfigSectionComponent extends React.PureComponent {
 
   constructor(...args) {
     super(...args);
-    this.state = {};
+    this.state = { nameValid: true };
   }
 
   generateIndexedSchema() {
@@ -175,7 +175,8 @@ class ConfigSectionComponent extends React.PureComponent {
     if (this.props.type === SECTION_USER_ENV) {
       name = SECTION_USER_ENV + name;
     }
-    this.props.onRename(name, this.props.id);
+    const nameValid = this.props.onRename(name, this.props.id);
+    this.setState({ nameValid });
   };
 
   handleRemoveOptionClick = e => {
@@ -345,6 +346,7 @@ class ConfigSectionComponent extends React.PureComponent {
     return (
       <Select
         className="select-add-new-option"
+        disabled={!this.state.nameValid}
         dropdownClassName="dropdown-add-new-option"
         showSearch
         style={{ width: '100%' }}
@@ -392,6 +394,7 @@ class ConfigSectionComponent extends React.PureComponent {
         {this.props.type === SECTION_USER_ENV && (
           <Tooltip title="Default configuration for building, uploading, debugging, etc">
             <Button
+              disabled={!this.state.nameValid}
               icon="environment"
               size="small"
               onClick={this.handleToggleMakeDefaultClick}
@@ -434,7 +437,12 @@ class ConfigSectionComponent extends React.PureComponent {
         >
           {this.props.type !== SECTION_PLATFORMIO &&
             this.props.type !== SECTION_GLOBAL_ENV && (
-              <Form.Item key={SECTION_NAME_KEY} label="Name" {...itemLayout}>
+              <Form.Item
+                key={SECTION_NAME_KEY}
+                label="Name"
+                {...itemLayout}
+                validateStatus={this.state.nameValid ? 'success' : 'error'}
+              >
                 <Input
                   addonBefore={
                     this.props.type === SECTION_USER_ENV ? SECTION_USER_ENV : undefined

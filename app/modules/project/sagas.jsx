@@ -45,6 +45,7 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
+import { getSessionId, goTo } from '@core/helpers';
 import { selectEntity, selectStorageItem } from '../../store/selectors';
 
 import { ConfigFileModifiedError } from '@project/errors';
@@ -53,7 +54,7 @@ import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
 import { ensureUserConsent } from '@core/sagas';
-import { getSessionId } from '@core/helpers';
+
 import jsonrpc from 'jsonrpc-lite';
 
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
@@ -385,6 +386,10 @@ function* watchLoadProjectConfig() {
       yield put(updateEntity(PROJECT_CONFIG_KEY, { config, mtime }));
     } catch (e) {
       yield put(notifyError('Could not load project config', e));
+      const state = yield select();
+      if (state.router) {
+        yield call(goTo, state.router.history, '/projects', undefined, true);
+      }
     }
   });
 }

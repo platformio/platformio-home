@@ -183,7 +183,8 @@ export class OptionAutocomplete extends React.PureComponent {
   handleFilter = (inputValue, option) =>
     this.props.remoteFilter ||
     this.props.multiple ||
-    option.props.value.toLowerCase().includes(inputValue.toLowerCase());
+    option.props.value.toLowerCase().includes(inputValue.toLowerCase()) ||
+    option.props.children.toLowerCase().includes(inputValue.toLowerCase());
 
   handleTagClose = value => {
     this.setState({
