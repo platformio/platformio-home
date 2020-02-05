@@ -50,19 +50,12 @@ module.exports = {
     minimize: true,
     moduleIds: 'hashed',
     nodeEnv: 'production',
-    runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/].*\.js?$/,
           name: 'vendor',
           chunks: 'all'
-        },
-        styles: {
-          name: 'styles',
-          test: /\.(?:less|css)$/,
-          chunks: 'all',
-          enforce: true
         }
       }
     }
