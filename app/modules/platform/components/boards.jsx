@@ -438,7 +438,9 @@ export default class Boards extends React.Component {
         ],
         filteredValue: dataFilters.extra || null,
         onFilter: (_, record) =>
-          this.state.dataFilters.extra.every(value => record.extra.includes(value)),
+          ((this.state.dataFilters || {}).extra || []).every(value =>
+            record.extra.includes(value)
+          ),
         render: (_, record) => this.renderExtraFeatures(record)
       }
     ];
