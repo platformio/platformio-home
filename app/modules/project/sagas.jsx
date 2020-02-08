@@ -366,7 +366,7 @@ function* watchLoadConfigSchema() {
 function* watchLoadProjectConfig() {
   yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
     try {
-      yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`), config));
+      yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`)));
       const configPath = pathlib.join(projectDir, 'platformio.ini');
       const tupleConfig = yield call(apiFetchData, {
         query: 'project.config_load',
