@@ -78,8 +78,7 @@ class ProjectExamplesModal extends React.Component {
         inProgress: false
       });
       if (!err) {
-        this.props.addProject(location);
-        this.props.openProject(location);
+        this.props.addProject(location, true);
         this.onDidCancel();
       }
     });
