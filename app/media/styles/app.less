@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@sider-width: 70px;
+@sider-width: 64px;
 @max-content-width: @screen-xl - @sider-width;
 
 .app-container {
@@ -26,24 +26,25 @@
 
     .logo {
       text-align: center;
-      height: 48px;
-      padding-top: 10px;
+      height: 44px;
+      padding-top: 8px;
     }
 
     .anticon {
+      display: block;
       font-size: 22px;
-      margin: 0;
+      margin: 0 0 8px;
     }
 
     .ant-menu-item {
-      height: 70px;
-      line-height: 35px;
+      height: @sider-width;
+      margin-top: 2px;
       padding: 12px 0 !important;
       text-align: center;
 
       .menu-item-label {
         display: block;
-        line-height: 12px;
+        line-height: 1;
         font-size: 12px;
       }
     }
@@ -51,10 +52,10 @@
 
   .main-container {
     padding: 0;
-    margin-left: 70px;
+    margin-left: @sider-width;
 
     .ant-layout-header {
-      padding: 0px 10px 10px 3px;
+      padding: 0px 10px 8px 3px;
       margin: 0;
       height: unset;
       line-height: inherit;
@@ -64,18 +65,15 @@
         max-width: @max-content-width;
       }
 
-      .account-bar {
-        padding-top: 10px;
-      }
-
+      .account-bar,
       .ant-btn-group {
-        margin-top: 10px;
+        padding-top: 8px;
       }
     }
 
     .ant-layout-content {
       overflow: initial;
-      padding: 0 20px;
+      padding: 0 18px;
       margin: 0;
 
       .ant-menu-horizontal {
@@ -162,4 +160,7 @@
 /* Alert */
 .ant-alert-error.ant-alert-with-description .ant-alert-message {
   color: @alert-error-message-color;
+}
+.ant-alert-warning .ant-alert-message {
+  color: @alert-warning-message-color;
 }

@@ -30,7 +30,7 @@ const messages = {
 export default {
   name: 'platformio',
   title: 'PlatformIO',
-  companyLogoSrc: require('./platformio_logo.png'),
+  companyLogoSrc: require('./platformio_logo.png').default,
   showPIOVersions: true,
   footerQuickLinks: [
     { title: 'Web', url: urls.home },

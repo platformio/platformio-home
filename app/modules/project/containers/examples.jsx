@@ -91,8 +91,7 @@ export class ProjectExamplesWrapped extends React.Component {
         importInProgress: false
       });
       if (!err) {
-        this.props.addProject(location);
-        this.props.openProject(location);
+        this.props.addProject(location, true);
       }
     });
   }

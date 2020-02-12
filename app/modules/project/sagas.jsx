@@ -21,6 +21,11 @@ import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
 import {
+  CONFIG_SCHEMA_KEY,
+  PROJECT_CONFIG_KEY,
+  PROJECT_CONFIG_SAVE_CONSENT_ID
+} from '@project/constants';
+import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
   UPDATE_PLATFORM
@@ -28,24 +33,29 @@ import {
 import { Modal, message } from 'antd';
 import {
   OS_RENAME_FILE,
+  // ensureUserConsent,
   notifyError,
   notifySuccess,
   osRevealFile
 } from '../core/actions';
-import { call, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   deleteEntity,
   saveState,
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
+import { getSessionId, goTo } from '@core/helpers';
+import { selectEntity, selectStorageItem } from '../../store/selectors';
 
+import { ConfigFileModifiedError } from '@project/errors';
+import { ConsentRejectedError } from '@core/errors';
 import React from 'react';
 import ReactGA from 'react-ga';
 import { apiFetchData } from '../../store/api';
-import { getSessionId } from '../core/helpers';
+import { ensureUserConsent } from '@core/sagas';
+
 import jsonrpc from 'jsonrpc-lite';
-import { selectStorageItem } from '../../store/selectors';
 
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
@@ -329,6 +339,168 @@ function* watchImportArduinoProject() {
   }
 }
 
+function* watchLoadConfigSchema() {
+  yield takeLatest(actions.LOAD_CONFIG_SCHEMA, function*() {
+    try {
+      const schema = yield call(apiFetchData, {
+        query: 'project.get_config_schema'
+      });
+      // group by scope to pass to section without extra processing
+      const schemaByScope = {};
+      for (const item of schema) {
+        const { scope } = item;
+        if (!schemaByScope[scope]) {
+          schemaByScope[scope] = [];
+        }
+        schemaByScope[scope].push(item);
+      }
+      yield put(updateEntity(CONFIG_SCHEMA_KEY, schemaByScope));
+    } catch (e) {
+      if (!(e instanceof jsonrpc.JsonRpcError)) {
+        yield put(notifyError('Could not load config schema', e));
+      }
+    }
+  });
+}
+
+function* watchLoadProjectConfig() {
+  yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
+    try {
+      yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`)));
+      const configPath = pathlib.join(projectDir, 'platformio.ini');
+      const tupleConfig = yield call(apiFetchData, {
+        query: 'project.config_load',
+        params: [configPath]
+      });
+      const mtime = yield call(apiFetchData, {
+        query: 'os.get_file_mtime',
+        params: [configPath]
+      });
+      const config = tupleConfig.map(([section, items]) => ({
+        section,
+        items: items.map(([name, value]) => ({
+          name,
+          value
+        }))
+      }));
+      yield put(updateEntity(PROJECT_CONFIG_KEY, { config, mtime }));
+    } catch (e) {
+      yield put(notifyError('Could not load project config', e));
+      const state = yield select();
+      if (state.router) {
+        yield call(goTo, state.router.history, '/projects', undefined, true);
+      }
+    }
+  });
+}
+
+function* watchSaveProjectConfig() {
+  yield takeLatest(actions.SAVE_PROJECT_CONFIG, function*({
+    projectDir,
+    data,
+    options,
+    onEnd
+  }) {
+    const { mtime, force } = options || {};
+    let error;
+    try {
+      yield call(ensureUserConsent, PROJECT_CONFIG_SAVE_CONSENT_ID, {
+        content: `Warning!
+          The entire file contents or platformio.ini will be rewritten with the current
+          configuration defined in this UI.
+          Continue to save the configuration?`,
+        okText: 'Save'
+      });
+      const configPath = pathlib.join(projectDir, 'platformio.ini');
+      if (!force) {
+        const currentMtime = yield call(apiFetchData, {
+          query: 'os.get_file_mtime',
+          params: [configPath]
+        });
+        if (currentMtime - mtime > 0.00001) {
+          throw new ConfigFileModifiedError({
+            loadedAt: mtime,
+            modifiedAt: currentMtime
+          });
+        }
+      }
+
+      yield call(apiFetchData, {
+        query: 'project.config_dump',
+        params: [configPath, data]
+      });
+      message.success('Project configuration saved');
+      // Refresh mtime
+      const newMtime = yield call(apiFetchData, {
+        query: 'os.get_file_mtime',
+        params: [configPath]
+      });
+      const entity = yield select(selectEntity, PROJECT_CONFIG_KEY);
+      yield put(updateEntity(PROJECT_CONFIG_KEY, { ...entity, mtime: newMtime }));
+      // Reload list because displaying of config required project in the state
+      yield put(actions.loadProjects(true));
+    } catch (e) {
+      error = e;
+      if (
+        !(
+          e &&
+          (e instanceof ConsentRejectedError || e instanceof ConfigFileModifiedError)
+        )
+      ) {
+        yield put(notifyError('Could not save project config', e));
+      }
+    } finally {
+      yield call(onEnd, error);
+    }
+  });
+}
+
+function* _patchProjectState(path, patch) {
+  const exProjects = (yield select(selectors.selectProjects)) || [];
+  const exProject = exProjects.find(x => x.path === path);
+  if (!exProject) {
+    return;
+  }
+  const project = { ...exProject, ...patch };
+  const projects = exProjects.map(p => (p === exProject ? project : p));
+  yield put(updateEntity('projects', projects));
+  return exProject;
+}
+
+function* watchUpdateConfigDescription() {
+  yield takeLatest(actions.UPDATE_CONFIG_DESCRIPTION, function*({
+    projectDir,
+    description,
+    onEnd
+  }) {
+    let err;
+    let undo;
+    try {
+      // Patch existing state if loaded
+      undo = yield _patchProjectState(projectDir, { description });
+
+      // Patch file via RPC
+      yield call(apiFetchData, {
+        query: 'project.config_update_description',
+        params: [pathlib.join(projectDir, 'platformio.ini'), description]
+      });
+      message.success('Project description is saved into configuration file');
+    } catch (e) {
+      err = e;
+      yield put(notifyError('Could not update project description', e));
+      // Rollback edit
+      if (undo) {
+        yield _patchProjectState(projectDir, { description: undo.description });
+      }
+      console.error(e);
+    } finally {
+      if (onEnd) {
+        yield call(onEnd, err);
+      }
+    }
+  });
+}
+
 export default [
   watchAddProject,
   watchHideProject,
@@ -339,5 +511,9 @@ export default [
   watchCleanupProjectExamples,
   watchImportProject,
   watchInitProject,
-  watchImportArduinoProject
+  watchImportArduinoProject,
+  watchLoadConfigSchema,
+  watchLoadProjectConfig,
+  watchSaveProjectConfig,
+  watchUpdateConfigDescription
 ];

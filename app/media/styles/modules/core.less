@@ -41,12 +41,15 @@
 
 .file-explorer {
   background-color: @layout-header-background;
+  @height: 350px;
 
   .fe-toolbar {
     padding: @padding-xs;
   }
 
   .fe-sidebar {
+    height: @height;
+    overflow: auto;
     padding: 0 @padding-sm;
 
     .fe-toolbar {
@@ -64,7 +67,7 @@
 
   .fe-tree {
     background-color: @layout-body-background;
-    height: 350px;
+    height: @height;
     overflow: auto;
     padding: @padding-xs @padding-sm;
     word-break: break-all;

@@ -109,7 +109,7 @@ function* watchInspectProject() {
 
       if (!(yield select(selectIsConfigurationDifferent, configuration))) {
         const currentResult = yield select(selectInspectionResult);
-        if (currentResult) {
+        if (currentResult && !currentResult.error) {
           // Result is already present
           if (onEnd) {
             onEnd(currentResult);

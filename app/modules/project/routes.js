@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
-}
+import { ProjectConfigPage } from '@project/containers/config';
+import { ProjectsListPage } from '@project/containers/list';
 
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
+const routes = [
+  {
+    path: '/projects',
+    component: ProjectsListPage
+  },
+  {
+    path: '/projects/config',
+    component: ProjectConfigPage
   }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
+];
 
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
-}
+export default routes;

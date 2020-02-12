@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
-}
+import {
+  MODE_SELECT,
+  OptionAutocomplete
+} from '@project/components/option-autocomplete';
 
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
-  }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
+import { OptionEditorFactory } from '@project/helpers';
+import React from 'react';
 
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
-}
+OptionEditorFactory.register(
+  schema => schema && schema.name === 'default_envs',
+  (schema, inputProps, _itemProps, decoratorOptions, project) => (
+    <OptionAutocomplete
+      inputProps={inputProps}
+      mode={MODE_SELECT}
+      multiple={!schema || schema.multiple}
+      items={project.envs.map(name => ({
+        name,
+        value: name
+      }))}
+    />
+  )
+);

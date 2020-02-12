@@ -41,7 +41,7 @@ export default {
   ignoreQuickAccessButtons: ['new-project', 'import-arduino-project'],
   filterProjectExample: item => item.platform.title === 'Aceinna IMU',
   filterPlatformCard: item => item.title === 'Aceinna IMU',
-  companyLogoSrc: require('./aceinna_logo.png'),
+  companyLogoSrc: require('./aceinna_logo.png').default,
   companyLogoHomeHeight: '150px',
   footerQuickLinks: [
     { title: 'Web', url: urls.home },

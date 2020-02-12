@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
-}
+import { Form } from 'antd';
 
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
+export class ConfigFormItem extends Form.Item {
+  renderChildren(prefixCls) {
+    const { children } = this.props;
+    return [
+      this.renderLabel(prefixCls),
+      this.renderHelp(prefixCls),
+      this.renderWrapper(
+        prefixCls,
+        this.renderValidateWrapper(
+          prefixCls,
+          children,
+          undefined,
+          this.renderExtra(prefixCls)
+        )
+      )
+    ];
   }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
-
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
 }

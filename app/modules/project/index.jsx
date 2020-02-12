@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
-}
+import MultiPage from '@core/components/multipage';
+import React from 'react';
+import routes from './routes';
 
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
+export default class ProjectsPage extends React.PureComponent {
+  static propTypes = {};
+
+  render() {
+    return (
+      <section className="page-container project-module">
+        <MultiPage routes={routes} disableMenu />
+      </section>
+    );
   }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
-
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
 }

@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
+import { DocumentationLink as DocumentationLinkComponent } from '@project/components/documentation-link';
+import { connect } from 'react-redux';
+import { osOpenUrl } from '@core/actions';
+
+function mapDispatch(dispatch) {
+  return {
+    onClick: url =>
+      dispatch(
+        osOpenUrl(url, {
+          target: '_blank'
+        })
+      )
+  };
 }
 
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
-  }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
-
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
-}
+export const DocumentationLink = connect(
+  undefined,
+  mapDispatch
+)(DocumentationLinkComponent);

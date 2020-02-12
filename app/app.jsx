@@ -83,7 +83,7 @@ export default class App extends React.Component {
   render() {
     return (
       <Layout hasSider className="app-container">
-        <Layout.Sider width={70}>
+        <Layout.Sider width={64}>
           <div className="logo">
             <Tooltip placement="right" title="Reload Home">
               <a href={window.location.href}>

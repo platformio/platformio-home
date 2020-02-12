@@ -14,18 +14,4 @@
  * limitations under the License.
  */
 
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
-}
-
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
-  }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
-
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
-}
+export const USER_CONSENTS_KEY = 'userConsents';

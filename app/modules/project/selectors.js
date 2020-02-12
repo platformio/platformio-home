@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { selectEntity, selectInputValue } from '../../store/selectors';
-
-import fuzzaldrin from 'fuzzaldrin-plus';
+import { CONFIG_SCHEMA_KEY, PROJECT_CONFIG_KEY } from '@project/constants';
+import { selectEntity, selectInputValue } from '@store/selectors';
+import { fuzzySearch } from '@core/helpers';
 
 export const INPUT_FILTER_KEY = 'projectFilter';
 
@@ -40,18 +40,19 @@ export function selectVisibleProjects(state) {
   } else if (!filterValue) {
     return items.sort((a, b) => b.modified - a.modified);
   }
-  return fuzzaldrin.filter(
-    items.map(item => {
-      item._fuzzy = [item.path, JSON.stringify(item.boards)].join(' ');
-      return item;
-    }),
-    filterValue,
-    {
-      key: '_fuzzy'
-    }
+  return fuzzySearch(items, filterValue, item =>
+    [item.path, JSON.stringify(item.boards)].join(' ')
   );
 }
 
 export function selectProjectInfo(state, path) {
   return (selectProjects(state) || []).find(item => item.path === path);
+}
+
+export function selectConfigSchema(state) {
+  return selectEntity(state, CONFIG_SCHEMA_KEY);
+}
+
+export function selectProjectConfig(state) {
+  return selectEntity(state, PROJECT_CONFIG_KEY);
 }

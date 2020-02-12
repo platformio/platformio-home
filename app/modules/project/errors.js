@@ -13,19 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-export function selectSerialDevices(state) {
-  return state.entities.serialDevices || null;
-}
-
-export function selectSerialDevicesList(state) {
-  const entity = selectSerialDevices(state);
-  if (!entity) {
-    return;
+export class ConfigFileModifiedError extends Error {
+  constructor(data) {
+    super('Cant override modified config file');
+    this.loadedAt = data.loadedAt;
+    this.modifiedAt = data.modifiedAt;
   }
-  return entity.map(port => ({ name: port.port, value: port.port }));
-}
-
-export function selectMDNSDevices(state) {
-  return state.entities.mDNSDevices || null;
 }

@@ -16,7 +16,6 @@
 
 import * as helpers from '../core/helpers';
 
-import fuzzaldrin from 'fuzzaldrin-plus';
 import { selectInputValue } from '../../store/selectors';
 
 // Data Filters
@@ -180,9 +179,7 @@ export function selectVisibleEmbeddedPlatforms(state) {
   if (!filterValue) {
     return items;
   }
-  return fuzzaldrin.filter(items, filterValue, {
-    key: 'name'
-  });
+  return helpers.fuzzySearch(items, filterValue, 'name');
 }
 
 export function selectVisibleDesktopPlatforms(state) {
@@ -204,9 +201,7 @@ export function selectVisibleDesktopPlatforms(state) {
   if (!filterValue) {
     return items;
   }
-  return fuzzaldrin.filter(items, filterValue, {
-    key: 'name'
-  });
+  return helpers.fuzzySearch(items, filterValue, 'name');
 }
 
 export function selectPlatformData(state, name) {
@@ -307,9 +302,7 @@ export function selectVisibleInstalledPlatforms(state) {
   if (!filterValue) {
     return items;
   }
-  return fuzzaldrin.filter(items, filterValue, {
-    key: 'name'
-  });
+  return helpers.fuzzySearch(items, filterValue, 'name');
 }
 
 export function selectVisiblePlatformUpdates(state) {
@@ -330,9 +323,7 @@ export function selectVisiblePlatformUpdates(state) {
   if (!filterValue) {
     return items;
   }
-  return fuzzaldrin.filter(items, filterValue, {
-    key: 'name'
-  });
+  return helpers.fuzzySearch(items, filterValue, 'name');
 }
 
 export function selectVisibleFrameworks(state) {
@@ -353,7 +344,5 @@ export function selectVisibleFrameworks(state) {
   if (!filterValue) {
     return items;
   }
-  return fuzzaldrin.filter(items, filterValue, {
-    key: 'name'
-  });
+  return helpers.fuzzySearch(items, filterValue, 'name');
 }

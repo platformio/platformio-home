@@ -33,3 +33,207 @@
     min-height: 230px;
   }
 }
+
+.project-config-page,
+.project-list-page {
+  padding-top: 12px;
+}
+
+.project-list-page {
+  .ant-btn-group {
+    margin-right: 8px;
+  }
+
+  .list-item-card {
+    cursor: default;
+
+    .environments-list {
+      .ant-tag {
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  .quick-edit-target-container {
+    position: relative;
+
+    .quick-edit-btn {
+      vertical-align: middle;
+    }
+
+    .quick-edit {
+      display: table;
+      left: -(@input-padding-horizontal-base + @border-width-base);
+      position: absolute;
+      right: 0;
+      top: -(@input-padding-vertical-base + @border-width-base);
+
+      .input-col {
+        display: table-cell;
+        width: 100%;
+      }
+
+      .buttons {
+        display: table-cell;
+        padding-left: 8px;
+        white-space: nowrap;
+
+        .delimiter {
+          margin: 0 2px;
+        }
+        .return-icon {
+          vertical-align: middle;
+          margin-right: 7px;
+        }
+      }
+    }
+  }
+}
+
+.project-config-page {
+  @filterGutter: 8px;
+
+  .section-platformio-icon,
+  .section-env-icon {
+    color: @warning-color;
+    font-size: 125%;
+  }
+
+  .default-env-icon {
+    color: @primary-color;
+    font-size: 125%;
+  }
+
+  .inline-buttons {
+    margin-left: 10px;
+    button {
+      margin-right: 10px;
+    }
+  }
+
+  .form-actions-block {
+    &:extend(.pull-right);
+
+    .ant-btn-group {
+      margin-left: @filterGutter;
+    }
+  }
+
+  .toc {
+    .config-section-group {
+      > .ant-anchor-link-title {
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .config-section-configuration {
+    .ant-form-item {
+      margin-bottom: 5px;
+    }
+  }
+
+  .config-form {
+    @gutter: 16px;
+
+    .option-like {
+      padding: 0px @gutter 5px;
+    }
+
+    .config-section-group {
+      margin-top: 45px;
+
+      h2 {
+        text-transform: capitalize;
+      }
+
+      .ant-form-item {
+        &:hover {
+          background-color: lighten(@layout-body-background, 4%);
+        }
+      }
+    }
+
+    .ant-form-explain {
+      &:extend(small);
+      margin: -3px 0 0;
+      padding-bottom: 8px;
+    }
+
+    .ant-checkbox-wrapper {
+      &:extend(small);
+      color: @text-color-secondary;
+    }
+
+    label {
+      .ant-tag {
+        &:extend(small);
+        line-height: @line-height-base;
+        margin-right: 0;
+      }
+    }
+
+    .ant-form-item {
+      margin-top: 5px;
+      overflow: hidden;
+      padding: 8px 0 8px 8px;
+
+      .ant-form-item-label {
+        overflow: visible;
+      }
+
+      .option-actions {
+        margin-left: @padding-md;
+        vertical-align: middle;
+        visibility: hidden;
+
+        a {
+          margin-left: 15px;
+        }
+      }
+
+      &:hover {
+        .option-actions {
+          visibility: visible;
+        }
+      }
+    }
+
+    .ant-input::placeholder {
+      color: @placeholder-color;
+    }
+  }
+
+  .ant-anchor-wrapper {
+    padding-left: 7px;
+    background-color: initial;
+  }
+
+  .option-autocomplete {
+    &.mode-tags {
+      .ant-tag {
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  .ant-input-textarea-clear-icon {
+    z-index: 2;
+  }
+}
+
+.select-add-new-option {
+  .option-description {
+    display: none;
+  }
+}
+
+.dropdown-add-new-option {
+  .option-description {
+    color: @text-color-secondary;
+    font-size: 12px;
+    line-height: 1.3em;
+    white-space: normal;
+  }
+}

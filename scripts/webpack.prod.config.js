@@ -11,18 +11,54 @@
 const webpack = require('webpack');
 const path = require('path');
 const common = require('./webpack.common');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // Create multiple instances
-const extractThemeCSS = new ExtractTextPlugin(
-  `themes/${common.workspace}-${common.theme}.css`
-);
+const cssOutputFile = `themes/${common.workspace}-${common.theme}.css`;
+const extractThemeCSS = new MiniCssExtractPlugin({
+  filename: cssOutputFile,
+  chunkFilename: cssOutputFile, // '[name].[contenthash].css',
+  ignoreOrder: false // Enable to remove warnings about conflicting order
+});
+
+const plugins = [
+  ...common.plugins,
+  new webpack.optimize.OccurrenceOrderPlugin(),
+  extractThemeCSS,
+  new HtmlWebpackPlugin({
+    template: path.join(common.appDir, 'index.html'),
+    inject: 'body',
+    favicon: path.join(common.mediaDir, 'images', 'favicon.ico')
+  }),
+  new webpack.ContextReplacementPlugin(
+    /highlight\.js\/lib\/languages$/,
+    new RegExp(`^./(${['plaintext', 'cpp', 'json', 'ini'].join('|')})$`)
+  )
+];
+
+if (process.env.ANALYZE) {
+  plugins.push(new BundleAnalyzerPlugin());
+}
 
 module.exports = {
   mode: 'production',
   optimization: {
-    nodeEnv: 'production'
+    concatenateModules: true,
+    minimize: true,
+    moduleIds: 'hashed',
+    nodeEnv: 'production',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/].*\.js?$/,
+          name: 'vendor',
+          chunks: 'all'
+        }
+      }
+    }
   },
   entry: [
     path.join(common.appDir, 'index.jsx'),
@@ -31,7 +67,7 @@ module.exports = {
   output: {
     publicPath: './',
     path: common.outputDir,
-    filename: '[hash].min.js'
+    filename: '[name].[contenthash].min.js'
   },
   resolve: {
     alias: common.resolve.alias,
@@ -42,19 +78,17 @@ module.exports = {
       ...common.rules,
       {
         test: /\.less$/,
-        use: extractThemeCSS.extract({
-          fallback: 'style-loader',
-          use: [
-            'css-loader',
-            {
-              loader: 'less-loader',
-              options: {
-                modifyVars: common.themeModifyVars,
-                javascriptEnabled: true
-              }
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader' },
+          {
+            loader: 'less-loader',
+            options: {
+              modifyVars: common.themeModifyVars,
+              javascriptEnabled: true
             }
-          ]
-        }),
+          }
+        ],
         include: [
           path.resolve(common.rootDir, 'node_modules/antd/lib'),
           path.join(common.mediaDir, 'styles')
@@ -62,15 +96,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    ...common.plugins,
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    extractThemeCSS,
-    new HtmlWebpackPlugin({
-      template: path.join(common.appDir, 'index.html'),
-      inject: 'body',
-      favicon: path.join(common.mediaDir, 'images', 'favicon.ico')
-    })
-  ]
+  plugins
 };

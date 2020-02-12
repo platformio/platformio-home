@@ -34,7 +34,7 @@ export function reportException(description, fatal = false) {
   }
   description = description.toString().replace(/@/g, '_');
   ReactGA.exception({
-    description: description.substring(0, 2048),
+    description: description.substring(0, 8192),
     fatal
   });
 }
@@ -95,4 +95,44 @@ export function cmpSort(a, b) {
     return 1;
   }
   return 0;
+}
+
+export function cmpArray(a, b) {
+  if (a === b) {
+    return true;
+  }
+  if (a.length !== b.length) {
+    return false;
+  }
+  let i = a.length;
+  while (i--) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function debounce(fn, time) {
+  let timeout;
+  const task = function(...args) {
+    task.cancel();
+    timeout = setTimeout(() => fn.apply(this, args), time);
+  };
+  task.cancel = () => clearTimeout(timeout);
+  return task;
+}
+
+export function fuzzySearch(items, query, propertyName) {
+  let getter;
+  if (typeof propertyName !== 'function') {
+    getter = item => item[propertyName];
+  } else {
+    getter = propertyName;
+  }
+  return items.filter(item =>
+    getter(item)
+      .toLowerCase()
+      .includes(query.toLowerCase())
+  );
 }
