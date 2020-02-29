@@ -65,6 +65,13 @@ function formatEnvVar(name) {
   return IS_WINDOWS ? `%${name}%` : `$${name}`;
 }
 
+function fromEntries(iterable) {
+  return [...iterable].reduce((obj, [key, val]) => {
+    obj[key] = val;
+    return obj;
+  }, {});
+}
+
 class ConfigSectionComponent extends React.PureComponent {
   static propTypes = {
     // data
@@ -527,7 +534,7 @@ export const ConfigSectionForm = Form.create({
   onFieldsChange(props, changedFields) {
     props.onChange(
       props.name,
-      Object.fromEntries(
+      fromEntries(
         Object.entries(changedFields[props.id]).map(([escapedName, field]) => {
           const name = unescapeFieldName(escapedName);
           let value = field.value;
@@ -553,7 +560,7 @@ export const ConfigSectionForm = Form.create({
   },
   mapPropsToFields(props) {
     // TODO: load "dirty", "touched", "name" field state
-    const result = Object.fromEntries(
+    const result = fromEntries(
       props.initialValues.map(option => [
         escapeFieldName(option.name),
         Form.createFormField({ value: option.value })
