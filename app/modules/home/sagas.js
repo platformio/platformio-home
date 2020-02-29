@@ -33,31 +33,11 @@ function* watchLoadLatestTweets() {
     try {
       items = yield call(apiFetchData, {
         query: 'misc.load_latest_tweets',
-        params: [`https://dl.platformio.org/tweets/${username}/data.json`]
+        params: [`https://news.platformio.org/tweets/${username}/data.json`]
       });
-    } catch (err1) {
-      console.error(err1);
-      // FIXME: Remove this code after PIO Core 4.1.1 release (begin)
-      try {
-        const cacheValid = '1d';
-        items = JSON.parse(
-          yield call(apiFetchData, {
-            query: 'os.request_content',
-            params: [
-              `https://dl.platformio.org/tweets/${username}/data.json`,
-              undefined,
-              undefined,
-              cacheValid
-            ]
-          })
-        );
-        // fallvback to backend cache
-        items = items.result ? items.result : items;
-      } catch (err2) {
-        console.error(err2);
-        items = err2;
-      }
-      // FIXME: Remove this code after PIO Core 4.1.1 release (end)
+    } catch (err) {
+      items = err;
+      console.error(err);
     }
     yield put(updateEntity('latestTweets', items));
   });

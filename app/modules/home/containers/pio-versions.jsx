@@ -39,6 +39,17 @@ class PioVersions extends React.Component {
       <div className="versions">
         <ul className="list-inline">
           <li>
+            Core{' '}
+            <a
+              onClick={() =>
+                this.props.osOpenUrl('https://docs.platformio.org/page/history.html')
+              }
+            >
+              {this.renderCoreVersion()}
+            </a>
+          </li>
+          <li>·</li>
+          <li>
             Home{' '}
             <a
               onClick={() =>
@@ -48,19 +59,6 @@ class PioVersions extends React.Component {
               }
             >
               <code>{APP_VERSION}</code>
-            </a>
-          </li>
-          <li>·</li>
-          <li>
-            Core{' '}
-            <a
-              onClick={() =>
-                this.props.osOpenUrl(
-                  'https://github.com/platformio/platformio/blob/develop/HISTORY.rst'
-                )
-              }
-            >
-              {this.renderCoreVersion()}
             </a>
           </li>
         </ul>
