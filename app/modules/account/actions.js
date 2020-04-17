@@ -22,6 +22,7 @@ export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';
 export const REGISTER_ACCOUNT = 'REGISTER_ACCOUNT';
 export const FORGOT_ACCOUNT = 'FORGOT_ACCOUNT';
 export const PASSWORD_ACCOUNT = 'PASSWORD_ACCOUNT';
+export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const SHOW_ACCOUNT_TOKEN = 'SHOW_ACCOUNT_TOKEN';
 
 export const loadAccountInfo = (extended = false) =>
@@ -43,6 +44,22 @@ export const registerAccount = (
     firstName,
     lastName,
     password,
+    onEnd
+  });
+export const updateProfile = (
+  username,
+  email,
+  firstName,
+  lastName,
+  currentPassword,
+  onEnd
+) =>
+  createAction(UPDATE_PROFILE, {
+    username,
+    email,
+    firstName,
+    lastName,
+    currentPassword,
     onEnd
   });
 export const forgotAccountPassword = (username, onEnd) =>

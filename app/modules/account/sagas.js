@@ -246,6 +246,68 @@ function* watchTokenAccount() {
   });
 }
 
+function* watchUpdateProfile() {
+  yield takeLatest(actions.UPDATE_PROFILE, function*({
+    username,
+    email,
+    firstName,
+    lastName,
+    currentPassword,
+    onEnd
+  }) {
+    let err = null;
+    try {
+      const response = yield call(apiFetchData, {
+        query: 'core.call',
+        params: [
+          [
+            'account',
+            'update',
+            '--username',
+            username,
+            '--email',
+            email,
+            '--first-name',
+            firstName,
+            '--last-name',
+            lastName,
+            '--current-password',
+            currentPassword
+          ]
+        ]
+      });
+      yield put(actions.loadAccountInfo(true));
+      if (response.includes('re-login')) {
+        yield put(updateEntity('accountInfo', {}));
+        if (response.includes('check your mail')) {
+          yield put(
+            notifySuccess(
+              'Congrats!',
+              'Successfully updated profile! Please check your mail to verify your new email address and re-login.'
+            )
+          );
+          return;
+        }
+        yield put(
+          notifySuccess('Congrats!', 'Successfully updated profile! Please re-login')
+        );
+        return;
+      }
+      yield put(notifySuccess('Congrats!', 'Successfully updated profile!'));
+    } catch (err_) {
+      err = err_;
+      if (err && err.data) {
+        return showAPIErrorMessage(err.data);
+      }
+      return yield put(notifyError('Could not update profile of PIO Account', err));
+    } finally {
+      if (onEnd) {
+        yield call(onEnd, err);
+      }
+    }
+  });
+}
+
 export default [
   watchLoadAccountInfo,
   watchLoginAccount,
@@ -253,5 +315,6 @@ export default [
   watchRegisterAccount,
   watchForgotAccount,
   watchPasswordAccount,
-  watchTokenAccount
+  watchTokenAccount,
+  watchUpdateProfile
 ];
