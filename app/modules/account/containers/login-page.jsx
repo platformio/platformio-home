@@ -30,8 +30,7 @@ class AccountLoginPage extends React.Component {
     data: PropTypes.shape({
       username: PropTypes.string,
       groups: PropTypes.array,
-      currentPlan: PropTypes.string,
-      upgradePlan: PropTypes.string
+      packages: PropTypes.array
     }),
     loginAccount: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,

@@ -132,15 +132,14 @@ export default class AccountLoginForm extends React.Component {
           {getFieldDecorator('username', {
             rules: [
               {
-                type: 'email',
                 required: true,
-                message: 'Please input your username (email)'
+                message: 'Please input your username or email'
               }
             ]
           })(
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
-              placeholder="Email"
+              placeholder="Username or email"
               ref={elm => elm.focus()}
             />
           )}

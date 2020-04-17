@@ -104,12 +104,34 @@ function* watchLogoutAccount() {
 }
 
 function* watchRegisterAccount() {
-  yield takeLatest(actions.REGISTER_ACCOUNT, function*({ username, onEnd }) {
+  yield takeLatest(actions.REGISTER_ACCOUNT, function*({
+    username,
+    email,
+    first_name,
+    last_name,
+    password,
+    onEnd
+  }) {
     let err = null;
     try {
       yield call(apiFetchData, {
         query: 'core.call',
-        params: [['account', 'register', '--username', username]]
+        params: [
+          [
+            'account',
+            'register',
+            '--username',
+            username,
+            '--email',
+            email,
+            '--first-name',
+            first_name,
+            '--last-name',
+            last_name,
+            '--password',
+            password
+          ]
+        ]
       });
       yield put(
         notifySuccess(

@@ -28,11 +28,9 @@ import { selectAccountInfo } from '../selectors';
 class AccountInformationPage extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
-      username: PropTypes.string,
-      groups: PropTypes.array,
-      subscriptions: PropTypes.array,
-      currentPlan: PropTypes.string,
-      upgradePlan: PropTypes.string
+      profile: PropTypes.object,
+      packages: PropTypes.array,
+      subscriptions: PropTypes.array
     }),
     loadAccountInfo: PropTypes.func.isRequired,
     logoutAccount: PropTypes.func.isRequired,
@@ -46,13 +44,13 @@ class AccountInformationPage extends React.Component {
   }
 
   render() {
-    if (this.props.data && !this.props.data.groups) {
+    if (this.props.data && !this.props.data.packages) {
       this.props.showLoginPage();
       return null;
     }
     return (
       <div className="page-container information-page">
-        {!this.props.data || !this.props.data.groups ? (
+        {!this.props.data || !this.props.data.packages ? (
           <div className="text-center" style={{ paddingTop: '15px' }}>
             <Spin tip="Loading..." size="large" />
           </div>
