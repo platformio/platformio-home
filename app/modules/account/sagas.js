@@ -107,8 +107,8 @@ function* watchRegisterAccount() {
   yield takeLatest(actions.REGISTER_ACCOUNT, function*({
     username,
     email,
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     password,
     onEnd
   }) {
@@ -125,9 +125,9 @@ function* watchRegisterAccount() {
             '--email',
             email,
             '--first-name',
-            first_name,
+            firstName,
             '--last-name',
-            last_name,
+            lastName,
             '--password',
             password
           ]

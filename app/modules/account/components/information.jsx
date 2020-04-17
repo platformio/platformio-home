@@ -23,7 +23,12 @@ import humanize from 'humanize';
 export default class AccountInformation extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
-      profile: PropTypes.object.isRequired,
+      profile: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        first_name: PropTypes.string,
+        last_name: PropTypes.string
+      }).isRequired,
       packages: PropTypes.array,
       subscriptions: PropTypes.array
     }).isRequired,
@@ -51,7 +56,7 @@ export default class AccountInformation extends React.Component {
           </dl>
         </div>
         {this.renderSubscriptions()}
-        {this.renderGroups()}
+        {this.renderPackages()}
       </div>
     );
   }
@@ -132,7 +137,7 @@ export default class AccountInformation extends React.Component {
     );
   }
 
-  renderGroups() {
+  renderPackages() {
     return (
       <div>
         <h1>Packages</h1>
@@ -174,7 +179,8 @@ export default class AccountInformation extends React.Component {
                     return (
                       <li key={key}>
                         <Icon type="check" />
-                        {' ' + (item[key].title ? item[key].title : item[key])}
+                        {' ' +
+                          (item[key] instanceof Object ? item[key].title : item[key])}
                       </li>
                     );
                   })}

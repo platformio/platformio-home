@@ -47,13 +47,16 @@ export default class AccountRegistrationForm extends React.Component {
       this.props.registerAccount(
         values.username,
         values.email,
-        values.first_name,
-        values.last_name,
+        values.firstName,
+        values.lastName,
         values.password,
-        () => {
+        err => {
           this.setState({
             loading: false
           });
+          if (!err) {
+            this.props.showLoginPage();
+          }
         }
       );
     });
@@ -105,7 +108,7 @@ export default class AccountRegistrationForm extends React.Component {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('first_name', {
+          {getFieldDecorator('firstName', {
             rules: [
               {
                 required: true,
@@ -121,7 +124,7 @@ export default class AccountRegistrationForm extends React.Component {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('last_name', {
+          {getFieldDecorator('lastName', {
             rules: [
               {
                 required: true,
@@ -157,7 +160,7 @@ export default class AccountRegistrationForm extends React.Component {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('confirm_password', {
+          {getFieldDecorator('confirmPassword', {
             rules: [
               {
                 required: true,

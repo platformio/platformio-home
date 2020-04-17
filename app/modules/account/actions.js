@@ -32,16 +32,16 @@ export const logoutAccount = () => createAction(LOGOUT_ACCOUNT);
 export const registerAccount = (
   username,
   email,
-  first_name,
-  last_name,
+  firstName,
+  lastName,
   password,
   onEnd
 ) =>
   createAction(REGISTER_ACCOUNT, {
     username,
     email,
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     password,
     onEnd
   });
