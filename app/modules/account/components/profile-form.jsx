@@ -25,8 +25,8 @@ export default class AccountProfileForm extends React.Component {
       profile: PropTypes.shape({
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
-        first_name: PropTypes.string,
-        last_name: PropTypes.string
+        firstname: PropTypes.string,
+        lastname: PropTypes.string
       }).isRequired
     }).isRequired,
     form: PropTypes.object.isRequired,
@@ -44,8 +44,8 @@ export default class AccountProfileForm extends React.Component {
     this.props.form.setFieldsValue({
       username: this.props.data.profile.username,
       email: this.props.data.profile.email,
-      firstName: this.props.data.profile.first_name,
-      lastName: this.props.data.profile.last_name
+      firstname: this.props.data.profile.firstname,
+      lastname: this.props.data.profile.lastname
     });
   }
 
@@ -61,8 +61,8 @@ export default class AccountProfileForm extends React.Component {
       this.props.updateProfile(
         values.username,
         values.email,
-        values.firstName,
-        values.lastName,
+        values.firstname,
+        values.lastname,
         values.currentPassword,
         () => {
           this.setState({
@@ -118,7 +118,7 @@ export default class AccountProfileForm extends React.Component {
             )}
           </Form.Item>
           <Form.Item>
-            {getFieldDecorator('firstName', {
+            {getFieldDecorator('firstname', {
               rules: [
                 {
                   required: true,
@@ -134,7 +134,7 @@ export default class AccountProfileForm extends React.Component {
             )}
           </Form.Item>
           <Form.Item>
-            {getFieldDecorator('lastName', {
+            {getFieldDecorator('lastname', {
               rules: [
                 {
                   required: true,

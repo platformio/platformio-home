@@ -33,32 +33,32 @@ export const logoutAccount = () => createAction(LOGOUT_ACCOUNT);
 export const registerAccount = (
   username,
   email,
-  firstName,
-  lastName,
+  firstname,
+  lastname,
   password,
   onEnd
 ) =>
   createAction(REGISTER_ACCOUNT, {
     username,
     email,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
     password,
     onEnd
   });
 export const updateProfile = (
   username,
   email,
-  firstName,
-  lastName,
+  firstname,
+  lastname,
   currentPassword,
   onEnd
 ) =>
   createAction(UPDATE_PROFILE, {
     username,
     email,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
     currentPassword,
     onEnd
   });

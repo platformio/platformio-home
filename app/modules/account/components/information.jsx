@@ -26,8 +26,8 @@ export default class AccountInformation extends React.Component {
       profile: PropTypes.shape({
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
-        first_name: PropTypes.string,
-        last_name: PropTypes.string
+        firstname: PropTypes.string,
+        lastname: PropTypes.string
       }).isRequired,
       packages: PropTypes.array,
       subscriptions: PropTypes.array
@@ -51,7 +51,7 @@ export default class AccountInformation extends React.Component {
             <dd>{this.props.data.profile.email}</dd>
             <dt>Full Name</dt>
             <dd>
-              {this.props.data.profile.first_name} {this.props.data.profile.last_name}
+              {this.props.data.profile.firstname} {this.props.data.profile.lastname}
             </dd>
           </dl>
         </div>

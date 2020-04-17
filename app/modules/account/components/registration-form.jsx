@@ -47,8 +47,8 @@ export default class AccountRegistrationForm extends React.Component {
       this.props.registerAccount(
         values.username,
         values.email,
-        values.firstName,
-        values.lastName,
+        values.firstname,
+        values.lastname,
         values.password,
         err => {
           this.setState({
@@ -108,7 +108,7 @@ export default class AccountRegistrationForm extends React.Component {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('firstName', {
+          {getFieldDecorator('firstname', {
             rules: [
               {
                 required: true,
@@ -124,7 +124,7 @@ export default class AccountRegistrationForm extends React.Component {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('lastName', {
+          {getFieldDecorator('lastname', {
             rules: [
               {
                 required: true,

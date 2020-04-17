@@ -31,8 +31,8 @@ class AccountInformationPage extends React.Component {
       profile: PropTypes.shape({
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
-        first_name: PropTypes.string,
-        last_name: PropTypes.string
+        firstname: PropTypes.string,
+        lastname: PropTypes.string
       }).isRequired,
       packages: PropTypes.array,
       subscriptions: PropTypes.array
