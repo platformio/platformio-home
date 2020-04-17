@@ -164,17 +164,17 @@ export default class AccountInformation extends React.Component {
                     : 'never'}
                 </Tooltip>
               </dd>
-              <dt>Permissions</dt>
+              <dt>Services</dt>
               <dd>
                 <ul>
                   {Object.keys(item).map(key => {
-                    if (!key.startsWith('service.') || !item[key].title) {
+                    if (!key.startsWith('service.')) {
                       return null;
                     }
                     return (
                       <li key={key}>
                         <Icon type="check" />
-                        {' ' + item[key].title}
+                        {' ' + (item[key].title ? item[key].title : item[key])}
                       </li>
                     );
                   })}
