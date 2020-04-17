@@ -55,7 +55,7 @@ function* watchLoadAccountInfo() {
       if (
         !(
           err instanceof jsonrpc.JsonRpcError &&
-          err.data.includes('`pio account login`')
+          err.data.includes('You are not authenticated!')
         )
       ) {
         yield put(notifyError('Could not load PIO Account information', err));
