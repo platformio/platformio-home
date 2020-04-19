@@ -16,16 +16,15 @@
 
 import * as actions from '../actions';
 
-import AccountInformation from '../components/information';
+import { selectAccountInfo, selectIsUserLogged } from '../selectors';
+import AccountProfileForm from '../components/profile-form';
+import { Form } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Spin } from 'antd';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { osOpenUrl } from '../../core/actions';
-import { selectAccountInfo } from '../selectors';
 
-class AccountInformationPage extends React.Component {
+class AccountProfilePage extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
       profile: PropTypes.shape({
@@ -33,35 +32,22 @@ class AccountInformationPage extends React.Component {
         email: PropTypes.string.isRequired,
         firstname: PropTypes.string,
         lastname: PropTypes.string
-      }).isRequired,
-      packages: PropTypes.array,
-      subscriptions: PropTypes.array
-    }).isRequired,
-    loadAccountInfo: PropTypes.func.isRequired,
-    logoutAccount: PropTypes.func.isRequired,
-    showLoginPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+      }).isRequired
+    }),
+    userLogged: PropTypes.bool,
+    updateProfile: PropTypes.func.isRequired,
+    showLoginPage: PropTypes.func.isRequired
   };
 
-  constructor() {
-    super(...arguments);
-    this.props.loadAccountInfo(true);
-  }
-
   render() {
-    if (this.props.data && !this.props.data.packages) {
+    if (!this.props.userLogged) {
       this.props.showLoginPage();
       return null;
     }
+    const WrappedForm = Form.create()(AccountProfileForm);
     return (
-      <div className="page-container information-page">
-        {!this.props.data || !this.props.data.packages ? (
-          <div className="text-center" style={{ paddingTop: '15px' }}>
-            <Spin tip="Loading..." size="large" />
-          </div>
-        ) : (
-          <AccountInformation {...this.props} />
-        )}
+      <div className="page-container profile-page">
+        <WrappedForm {...this.props} />
       </div>
     );
   }
@@ -72,10 +58,9 @@ class AccountInformationPage extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     data: selectAccountInfo(state),
+    userLogged: selectIsUserLogged(state),
     showLoginPage: () => goTo(ownProps.history, '/account/login', null, true)
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(
-  AccountInformationPage
-);
+export default connect(mapStateToProps, actions)(AccountProfilePage);

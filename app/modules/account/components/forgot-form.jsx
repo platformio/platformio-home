@@ -68,15 +68,14 @@ export default class AccountForgotForm extends React.Component {
           {getFieldDecorator('username', {
             rules: [
               {
-                type: 'email',
                 required: true,
-                message: 'Please input your email'
+                message: 'Please input your username or email'
               }
             ]
           })(
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
-              placeholder="Email"
+              placeholder="Username of email"
               ref={elm => elm.focus()}
             />
           )}

@@ -44,16 +44,26 @@ export default class AccountRegistrationForm extends React.Component {
       this.setState({
         loading: true
       });
-      this.props.registerAccount(values.username, () => {
-        this.setState({
-          loading: false
-        });
-      });
+      this.props.registerAccount(
+        values.username,
+        values.email,
+        values.firstname,
+        values.lastname,
+        values.password,
+        err => {
+          this.setState({
+            loading: false
+          });
+          if (!err) {
+            this.props.showLoginPage();
+          }
+        }
+      );
     });
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
     return (
       <Form onSubmit={::this.onDidSubmit} className="account-form">
         <Form.Item>
@@ -64,16 +74,112 @@ export default class AccountRegistrationForm extends React.Component {
           {getFieldDecorator('username', {
             rules: [
               {
-                type: 'email',
                 required: true,
-                message: "Please input valid email (we'll send further details)"
+                pattern: '^[a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){3,38}$',
+                message:
+                  'Please input valid username. ' +
+                  'Must contain at least 4 characters including' +
+                  ' single hyphens, and cannot begin or end with a hyphen'
               }
             ]
           })(
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
+              placeholder="Username"
+              ref={elm => elm.focus()}
+            />
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('email', {
+            rules: [
+              {
+                type: 'email',
+                required: true,
+                message: 'Please input valid email'
+              }
+            ]
+          })(
+            <Input
+              prefix={<Icon type="mail" style={{ fontSize: 13 }} />}
               placeholder="Email"
               ref={elm => elm.focus()}
+            />
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('firstname', {
+            rules: [
+              {
+                required: true,
+                message: 'Please input last name'
+              }
+            ]
+          })(
+            <Input
+              prefix={<Icon type="profile" style={{ fontSize: 13 }} />}
+              placeholder="First name"
+              ref={elm => elm.focus()}
+            />
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('lastname', {
+            rules: [
+              {
+                required: true,
+                message: 'Please input first name'
+              }
+            ]
+          })(
+            <Input
+              prefix={<Icon type="profile" style={{ fontSize: 13 }} />}
+              placeholder="Last Name"
+              ref={elm => elm.focus()}
+            />
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('password', {
+            rules: [
+              {
+                required: true,
+                pattern: '^(?=.*[a-z])(?=.*\\d).{8,}$',
+                message:
+                  'Please input valid password. ' +
+                  'Must contain at least 8 characters ' +
+                  'including a number and a lowercase letter'
+              }
+            ]
+          })(
+            <Input
+              prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+              type="password"
+              placeholder="Password"
+            />
+          )}
+        </Form.Item>
+        <Form.Item>
+          {getFieldDecorator('confirmPassword', {
+            rules: [
+              {
+                required: true,
+                message: 'Please confirm password'
+              },
+              (rule, value) => {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  'The two passwords that you entered do not match'
+                );
+              }
+            ]
+          })(
+            <Input
+              prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+              type="password"
+              placeholder="Confirm Password"
             />
           )}
         </Form.Item>

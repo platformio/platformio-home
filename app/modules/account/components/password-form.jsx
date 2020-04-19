@@ -77,7 +77,11 @@ export default class AccountPasswordForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input your new password'
+                  pattern: '^(?=.*[a-z])(?=.*\\d).{8,}$',
+                  message:
+                    'Please input valid new password. ' +
+                    'Must contain at least 8 characters ' +
+                    'including a number and a lowercase letter'
                 }
               ]
             })(

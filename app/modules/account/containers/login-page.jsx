@@ -28,10 +28,9 @@ import { selectAccountInfo } from '../selectors';
 class AccountLoginPage extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
-      username: PropTypes.string,
-      groups: PropTypes.array,
-      currentPlan: PropTypes.string,
-      upgradePlan: PropTypes.string
+      profile: PropTypes.object,
+      packages: PropTypes.array,
+      subscriptions: PropTypes.array
     }),
     loginAccount: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
@@ -41,7 +40,7 @@ class AccountLoginPage extends React.Component {
   };
 
   render() {
-    if (this.props.data && this.props.data.groups) {
+    if (this.props.data && this.props.data.packages) {
       this.props.showInformationPage();
       return null;
     }
