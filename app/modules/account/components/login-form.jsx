@@ -77,21 +77,13 @@ export default class AccountLoginForm extends React.Component {
     );
   }
 
-  renderProviders() {
-    return (
-      <Row>
-        <Button onClick={() => this.props.loginWithProvider('github')}>
-          <Icon type="github" style={{ fontSize: 13 }} />
-          Github
-        </Button>
-      </Row>
-    );
-  }
-
   renderForm() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={::this.onDidSubmit} className="account-form">
+        <Form.Item>
+          <h3>Log In with PlatformIO Account</h3>
+        </Form.Item>
         <Form.Item>
           {getFieldDecorator('username', {
             rules: [
@@ -102,8 +94,9 @@ export default class AccountLoginForm extends React.Component {
             ]
           })(
             <Input
-              prefix={<Icon type="user" style={{ fontSize: 13 }} />}
+              prefix={<Icon type="user" />}
               placeholder="Username or email"
+              size="large"
               ref={elm => elm.focus()}
             />
           )}
@@ -118,9 +111,10 @@ export default class AccountLoginForm extends React.Component {
             ]
           })(
             <Input
-              prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+              prefix={<Icon type="lock" />}
               type="password"
               placeholder="Password"
+              size="large"
             />
           )}
         </Form.Item>
@@ -129,6 +123,7 @@ export default class AccountLoginForm extends React.Component {
             loading={this.state.loading}
             type="primary"
             htmlType="submit"
+            size="large"
             className="block account-submit-button"
           >
             Log in
@@ -140,6 +135,82 @@ export default class AccountLoginForm extends React.Component {
             Need an Account?{' '}
             <a onClick={() => this.props.showRegistrationPage()}>Create a new one.</a>
           </div>
+        </Form.Item>
+      </Form>
+    );
+  }
+
+  renderProviders() {
+    return (
+      <Form className="login-providers">
+        <Form.Item>
+          <h3>Log In with ...</h3>
+        </Form.Item>
+        <Form.Item>
+          <Row>
+            <Col md={12}>
+              <Button
+                icon="github"
+                size="large"
+                onClick={() => this.props.loginWithProvider('github')}
+              >
+                Github
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                icon="gitlab"
+                size="large"
+                onClick={() => this.props.loginWithProvider('gitlab')}
+              >
+                Gitlab
+              </Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item>
+          <Row>
+            <Col md={12}>
+              <Button
+                icon="rest"
+                size="large"
+                onClick={() => this.props.loginWithProvider('bitbucket')}
+              >
+                BitBucket
+              </Button>
+            </Col>
+            <Col md={12}>
+              <Button
+                icon="google"
+                size="large"
+                onClick={() => this.props.loginWithProvider('google')}
+              >
+                Google
+              </Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item>
+          <Row>
+            <Col md={12}>
+              <Button
+                icon="linkedin"
+                size="large"
+                onClick={() => this.props.loginWithProvider('linkedin')}
+              >
+                LinkedIn
+              </Button>
+            </Col>
+            <Col md={12}>
+              <Button
+                icon="twitter"
+                size="large"
+                onClick={() => this.props.loginWithProvider('twitter')}
+              >
+                Twitter
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
     );

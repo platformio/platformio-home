@@ -28,14 +28,13 @@ import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
 import qs from 'querystringify';
 
-const CORE_API_EXCEPTION_PREFIX = '[API] ';
+const ACCOUNTS_AUTH_OPENID_ENDPOINT =
+  'https://auth.accounts.platformio.org/auth/realms/pioaccount/protocol/openid-connect/auth';
+const ACCOUNTS_AUTH_CLIENT_ID = 'piohome-app';
 
 function showAPIErrorMessage(output) {
   output = output.replace(/[\\r\\n]+\'/, '').trim();
-  const pos = output.indexOf(CORE_API_EXCEPTION_PREFIX);
-  return message.error(
-    pos !== -1 ? output.substr(pos + CORE_API_EXCEPTION_PREFIX.length) : output
-  );
+  return message.error(output);
 }
 
 function* watchLoadAccountInfo() {
@@ -51,7 +50,12 @@ function* watchLoadAccountInfo() {
         const redirectUri =
           decodeURIComponent(params._pioruri) +
           `&_pioruri=${encodeURIComponent(params._pioruri)}`;
-        yield call(loginAccountWithCode, 'js-app', params.code, redirectUri);
+        yield call(
+          loginAccountWithCode,
+          ACCOUNTS_AUTH_CLIENT_ID,
+          params.code,
+          redirectUri
+        );
         delete params.code;
         delete params.session_state;
         delete params.start;
@@ -107,9 +111,6 @@ function* watchLoginAccount() {
 
 function* watchLoginWithProvider() {
   yield takeLatest(actions.LOGIN_WITH_PROVIDER, function*({ provider }) {
-    const clientId = 'js-app';
-    const authUrl =
-      'http://127.0.0.1:8080/auth/realms/Pioaccount/protocol/openid-connect/auth';
     let redirectUri;
     if (window.location.toString().includes('?')) {
       redirectUri = window.location + '&start=/account';
@@ -118,8 +119,8 @@ function* watchLoginWithProvider() {
     }
     redirectUri += `&_pioruri=${encodeURIComponent(redirectUri)}`;
     const scopeList = 'openid offline_access email profile';
-    const url = `${authUrl}?client_id=${encodeURIComponent(
-      clientId
+    const url = `${ACCOUNTS_AUTH_OPENID_ENDPOINT}?client_id=${encodeURIComponent(
+      ACCOUNTS_AUTH_CLIENT_ID
     )}&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&response_type=code&scope=${encodeURIComponent(

@@ -76,6 +76,7 @@ export default class AccountForgotForm extends React.Component {
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
               placeholder="Username of email"
+              size="large"
               ref={elm => elm.focus()}
             />
           )}
@@ -85,6 +86,7 @@ export default class AccountForgotForm extends React.Component {
             loading={this.state.loading}
             type="primary"
             htmlType="submit"
+            size="large"
             className="block account-submit-button"
           >
             Send reset email
