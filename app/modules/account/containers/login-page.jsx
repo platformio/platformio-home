@@ -33,6 +33,7 @@ class AccountLoginPage extends React.Component {
       subscriptions: PropTypes.array
     }),
     loginAccount: PropTypes.func.isRequired,
+    loginWithProvider: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
     showForgotPage: PropTypes.func.isRequired,
