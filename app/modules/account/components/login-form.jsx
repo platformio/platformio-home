@@ -24,6 +24,7 @@ export default class AccountLoginForm extends React.Component {
   static propTypes = {
     form: PropTypes.object.isRequired,
     loginAccount: PropTypes.func.isRequired,
+    loginWithProvider: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
     showForgotPage: PropTypes.func.isRequired,
@@ -63,63 +64,26 @@ export default class AccountLoginForm extends React.Component {
         </div>
         <Row>
           <Col xs={11} className="login-left-side">
-            {this.renderBanner()}
+            {this.renderForm()}
           </Col>
           <Col xs={2}>
             <Divider type="vertical" />
           </Col>
           <Col xs={11} className="login-right-side">
-            {this.renderForm()}
+            {this.renderProviders()}
           </Col>
         </Row>
       </div>
     );
   }
 
-  renderBanner() {
+  renderProviders() {
     return (
-      <Row className="pioaccount-banner">
-        <Col span={3}>
-          <Icon type="info-circle-o" />
-        </Col>
-        <Col span={21}>
-          <h2>PIO Account</h2>
-          <p className="block">
-            Having{' '}
-            <a
-              onClick={() =>
-                this.props.osOpenUrl(
-                  'http://docs.platformio.org/page/plus/pio-account.html'
-                )
-              }
-            >
-              PIO Account
-            </a>{' '}
-            allows you to use extra professional features:
-          </p>
-          <ul className="list-styled block">
-            <li>
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl(
-                    'http://docs.platformio.org/page/plus/pio-remote.html'
-                  )
-                }
-              >
-                PIO Remote
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl('http://docs.platformio.org/page/ide.html')
-                }
-              >
-                Integration with Cloud IDEs
-              </a>
-            </li>
-          </ul>
-        </Col>
+      <Row>
+        <Button onClick={() => this.props.loginWithProvider('github')}>
+          <Icon type="github" style={{ fontSize: 13 }} />
+          Github
+        </Button>
       </Row>
     );
   }

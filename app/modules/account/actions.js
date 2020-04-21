@@ -18,6 +18,7 @@ import { createAction } from '../../store/actions';
 
 export const LOAD_ACCOUNT_INFO = 'LOAD_ACCOUNT_INFO';
 export const LOGIN_ACCOUNT = 'LOGIN_ACCOUNT';
+export const LOGIN_WITH_PROVIDER = 'LOGIN_WITH_PROVIDER';
 export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';
 export const REGISTER_ACCOUNT = 'REGISTER_ACCOUNT';
 export const FORGOT_ACCOUNT = 'FORGOT_ACCOUNT';
@@ -30,6 +31,8 @@ export const loadAccountInfo = (extended = false) =>
 export const loginAccount = (username, password, onEnd) =>
   createAction(LOGIN_ACCOUNT, { username, password, onEnd });
 export const logoutAccount = () => createAction(LOGOUT_ACCOUNT);
+export const loginWithProvider = provider =>
+  createAction(LOGIN_WITH_PROVIDER, { provider });
 export const registerAccount = (
   username,
   email,
