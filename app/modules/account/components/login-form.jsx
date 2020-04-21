@@ -154,7 +154,7 @@ export default class AccountLoginForm extends React.Component {
                 size="large"
                 onClick={() => this.props.loginWithProvider('github')}
               >
-                Github
+                GitHub
               </Button>
             </Col>
             <Col>
@@ -163,7 +163,7 @@ export default class AccountLoginForm extends React.Component {
                 size="large"
                 onClick={() => this.props.loginWithProvider('gitlab')}
               >
-                Gitlab
+                GitLab
               </Button>
             </Col>
           </Row>
