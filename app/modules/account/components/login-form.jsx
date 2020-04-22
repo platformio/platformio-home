@@ -157,7 +157,7 @@ export default class AccountLoginForm extends React.Component {
                 GitHub
               </Button>
             </Col>
-            <Col>
+            <Col md={12}>
               <Button
                 icon="gitlab"
                 size="large"
