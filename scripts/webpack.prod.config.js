@@ -84,8 +84,10 @@ module.exports = {
           {
             loader: 'less-loader',
             options: {
-              modifyVars: common.themeModifyVars,
-              javascriptEnabled: true
+              lessOptions: {
+                modifyVars: common.themeModifyVars,
+                javascriptEnabled: true
+              }
             }
           }
         ],
