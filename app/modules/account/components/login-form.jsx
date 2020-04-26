@@ -124,8 +124,8 @@ export default class AccountLoginForm extends React.Component {
             redirected back to PlatformIO Home <b>in your browser instead of IDE</b>.
           </p>
           <p>
-            The final step is to <b>back to IDE</b> and close this modal window. You should be
-            logged in automatically now!
+            The final step is to <b>back to IDE</b> and close this modal window. You
+            should be logged in automatically now!
           </p>
         </Modal>
         <div className="login-logo">
