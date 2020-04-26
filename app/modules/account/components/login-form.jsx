@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Button, Col, Divider, Form, Icon, Input, Row } from 'antd';
+import { Button, Col, Divider, Form, Icon, Input, Modal, Row } from 'antd';
 
 import CompanyLogo from '../../home/components/company-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { inIframe } from '../../core/helpers';
 
 export default class AccountLoginForm extends React.Component {
   static propTypes = {
@@ -27,14 +28,17 @@ export default class AccountLoginForm extends React.Component {
     loginWithProvider: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
-    showForgotPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    showForgotPage: PropTypes.func.isRequired
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
+      providerModalVisible: false,
+      providerOpenedInExteralBrowser: false,
+      providerModalOkText: 'Continue...',
+      providerName: ''
     };
   }
 
@@ -56,9 +60,74 @@ export default class AccountLoginForm extends React.Component {
     });
   }
 
+  onDidProviderLogin(provider) {
+    if (inIframe()) {
+      this.setState({
+        providerModalVisible: true,
+        providerName: provider
+      });
+      return;
+    }
+    this.props.loginWithProvider(provider);
+  }
+
+  onDidOkProviderModal() {
+    if (this.state.providerOpenedInExteralBrowser) {
+      this.onDidCloseProviderModal();
+      this.props.showInformationPage();
+      return;
+    }
+    this.setState({
+      providerOpenedInExteralBrowser: true,
+      loading: true,
+      providerModalOkText: 'Redirecting...'
+    });
+    setTimeout(() => {
+      this.setState({
+        loading: false,
+        providerModalOkText: 'Finish'
+      });
+    }, 5000);
+    this.props.loginWithProvider(this.state.providerName);
+  }
+
+  onDidCloseProviderModal() {
+    this.setState({
+      providerModalVisible: false,
+      providerOpenedInExteralBrowser: false,
+      loading: false,
+      providerModalOkText: 'Continue...'
+    });
+  }
+
   render() {
     return (
       <div>
+        <Modal
+          title={`You are being redirected to ${this.state.providerName.toUpperCase()}`}
+          visible={this.state.providerModalVisible}
+          okText={this.state.providerModalOkText}
+          okButtonProps={{
+            loading: this.state.loading,
+            disabled: this.state.loading
+          }}
+          onCancel={::this.onDidCloseProviderModal}
+          onOk={::this.onDidOkProviderModal}
+        >
+          <p>
+            You will be redirected to the <b>{this.state.providerName.toUpperCase()}</b>{' '}
+            provider using your default web browser.
+          </p>
+          <p>
+            Please provide valid credential details for{' '}
+            {this.state.providerName.toUpperCase()}. If everything is OK, you will be
+            redirected back to PlatformIO Home <b>in your browser instead of IDE</b>.
+          </p>
+          <p>
+            The final step is to <b>back to IDE</b> and close this modal window. You should be
+            logged in automatically now!
+          </p>
+        </Modal>
         <div className="login-logo">
           <CompanyLogo />
         </div>
@@ -152,7 +221,7 @@ export default class AccountLoginForm extends React.Component {
               <Button
                 icon="github"
                 size="large"
-                onClick={() => this.props.loginWithProvider('github')}
+                onClick={() => this.onDidProviderLogin('github')}
               >
                 GitHub
               </Button>
@@ -161,7 +230,7 @@ export default class AccountLoginForm extends React.Component {
               <Button
                 icon="gitlab"
                 size="large"
-                onClick={() => this.props.loginWithProvider('gitlab')}
+                onClick={() => this.onDidProviderLogin('gitlab')}
               >
                 GitLab
               </Button>
@@ -174,7 +243,7 @@ export default class AccountLoginForm extends React.Component {
               <Button
                 icon="rest"
                 size="large"
-                onClick={() => this.props.loginWithProvider('bitbucket')}
+                onClick={() => this.onDidProviderLogin('bitbucket')}
               >
                 BitBucket
               </Button>
@@ -183,7 +252,7 @@ export default class AccountLoginForm extends React.Component {
               <Button
                 icon="google"
                 size="large"
-                onClick={() => this.props.loginWithProvider('google')}
+                onClick={() => this.onDidProviderLogin('google')}
               >
                 Google
               </Button>
@@ -196,7 +265,7 @@ export default class AccountLoginForm extends React.Component {
               <Button
                 icon="linkedin"
                 size="large"
-                onClick={() => this.props.loginWithProvider('linkedin')}
+                onClick={() => this.onDidProviderLogin('linkedin')}
               >
                 LinkedIn
               </Button>
@@ -205,7 +274,7 @@ export default class AccountLoginForm extends React.Component {
               <Button
                 icon="twitter"
                 size="large"
-                onClick={() => this.props.loginWithProvider('twitter')}
+                onClick={() => this.onDidProviderLogin('twitter')}
               >
                 Twitter
               </Button>

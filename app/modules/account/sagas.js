@@ -21,9 +21,10 @@ import * as selectors from './selectors';
 
 import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '../../store/actions';
-import { notifyError, notifySuccess } from '../core/actions';
+import { notifyError, notifySuccess, osOpenUrl } from '../core/actions';
 
 import { apiFetchData } from '../../store/api';
+import { inIframe } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
 import qs from 'querystringify';
@@ -37,6 +38,16 @@ function showAPIErrorMessage(output) {
   return message.error(output);
 }
 
+function getRedirectUri() {
+  const currentSearch = qs.parse(window.location.search || '');
+  currentSearch.start = '/account';
+  const currentLocation =
+    window.location.origin +
+    window.location.pathname +
+    qs.stringify(currentSearch, true);
+  return currentLocation + `&piohomeacc_uri=${encodeURIComponent(currentLocation)}`;
+}
+
 function* watchLoadAccountInfo() {
   while (true) {
     const { extended } = yield take(actions.LOAD_ACCOUNT_INFO);
@@ -44,29 +55,24 @@ function* watchLoadAccountInfo() {
     if (data && (!extended || data.groups)) {
       continue;
     }
+
     if (window.location && window.location.search) {
-      const params = qs.parse(window.location.search);
-      if (params && params.code && params._pioruri) {
-        const redirectUri =
-          decodeURIComponent(params._pioruri) +
-          `&_pioruri=${encodeURIComponent(params._pioruri)}`;
+      const locSearch = qs.parse(window.location.search);
+      if (locSearch && locSearch.code && locSearch.piohomeacc_uri) {
+        window.history.pushState(
+          {},
+          document.title,
+          decodeURIComponent(locSearch.piohomeacc_uri)
+        );
         yield call(
           loginAccountWithCode,
           ACCOUNTS_AUTH_CLIENT_ID,
-          params.code,
-          redirectUri
+          locSearch.code,
+          getRedirectUri()
         );
-        delete params.code;
-        delete params.session_state;
-        delete params.start;
-        delete params._pioruri;
-        let path = '/?';
-        Object.keys(params).map(key => {
-          path += `${key}=${params[key]}&`;
-        });
-        window.history.pushState({}, document.title, path);
       }
     }
+
     try {
       data = yield call(apiFetchData, {
         query: 'core.call',
@@ -111,23 +117,19 @@ function* watchLoginAccount() {
 
 function* watchLoginWithProvider() {
   yield takeLatest(actions.LOGIN_WITH_PROVIDER, function*({ provider }) {
-    let redirectUri;
-    if (window.location.toString().includes('?')) {
-      redirectUri = window.location + '&start=/account';
-    } else {
-      redirectUri = window.location + '?start=/account';
-    }
-    redirectUri += `&_pioruri=${encodeURIComponent(redirectUri)}`;
     const scopeList = 'openid offline_access email profile';
     const url = `${ACCOUNTS_AUTH_OPENID_ENDPOINT}?client_id=${encodeURIComponent(
       ACCOUNTS_AUTH_CLIENT_ID
     )}&redirect_uri=${encodeURIComponent(
-      redirectUri
+      getRedirectUri()
     )}&response_type=code&scope=${encodeURIComponent(
       scopeList
     )}&kc_idp_hint=${encodeURIComponent(provider)}`;
-    yield put(deleteEntity(/^accountInfo/));
-    window.location = url;
+    if (inIframe()) {
+      yield put(osOpenUrl(url));
+    } else {
+      window.location = url;
+    }
   });
 }
 
@@ -137,7 +139,6 @@ function* loginAccountWithCode(client_id, code, redirectUri) {
       query: 'account.call_client',
       params: ['login_with_code', client_id, code, redirectUri]
     });
-    yield put(deleteEntity(/^accountInfo/));
   } catch (err) {
     if (err && err.data) {
       return showAPIErrorMessage(err.data);
