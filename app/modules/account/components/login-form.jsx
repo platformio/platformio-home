@@ -37,7 +37,7 @@ export default class AccountLoginForm extends React.Component {
       loading: false,
       providerModalVisible: false,
       providerOpenedInExteralBrowser: false,
-      providerModalOkText: 'Continue...',
+      providerModalOkText: 'Continue',
       providerName: ''
     };
   }
@@ -96,7 +96,7 @@ export default class AccountLoginForm extends React.Component {
       providerModalVisible: false,
       providerOpenedInExteralBrowser: false,
       loading: false,
-      providerModalOkText: 'Continue...'
+      providerModalOkText: 'Continue'
     });
   }
 
