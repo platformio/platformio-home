@@ -20,7 +20,7 @@ export function selectAccountInfo(state) {
 
 export function selectIsUserLogged(state) {
   const data = selectAccountInfo(state);
-  return data && data.username ? true : false;
+  return data && data.profile && data.profile.username ? true : false;
 }
 
 export function selectAccountToken(state) {

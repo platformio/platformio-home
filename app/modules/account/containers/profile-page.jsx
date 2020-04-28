@@ -16,38 +16,37 @@
 
 import * as actions from '../actions';
 
-import AccountLoginForm from '../components/login-form';
+import { selectAccountInfo, selectIsUserLogged } from '../selectors';
+import AccountProfileForm from '../components/profile-form';
 import { Form } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { goTo } from '../../core/helpers';
-import { osOpenUrl } from '../../core/actions';
-import { selectAccountInfo } from '../selectors';
 
-class AccountLoginPage extends React.Component {
+class AccountProfilePage extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
-      profile: PropTypes.object,
-      packages: PropTypes.array,
-      subscriptions: PropTypes.array
+      profile: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        firstname: PropTypes.string,
+        lastname: PropTypes.string
+      }).isRequired
     }),
-    loginAccount: PropTypes.func.isRequired,
-    loginWithProvider: PropTypes.func.isRequired,
-    showInformationPage: PropTypes.func.isRequired,
-    showRegistrationPage: PropTypes.func.isRequired,
-    showForgotPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    userLogged: PropTypes.bool,
+    updateProfile: PropTypes.func.isRequired,
+    showLoginPage: PropTypes.func.isRequired
   };
 
   render() {
-    if (this.props.data && this.props.data.packages) {
-      this.props.showInformationPage();
+    if (!this.props.userLogged) {
+      this.props.showLoginPage();
       return null;
     }
-    const WrappedForm = Form.create()(AccountLoginForm);
+    const WrappedForm = Form.create()(AccountProfileForm);
     return (
-      <div className="page-container login-page text-center">
+      <div className="page-container profile-page">
         <WrappedForm {...this.props} />
       </div>
     );
@@ -59,10 +58,9 @@ class AccountLoginPage extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     data: selectAccountInfo(state),
-    showInformationPage: () => goTo(ownProps.history, '/account', null, true),
-    showRegistrationPage: () => goTo(ownProps.history, '/account/registration'),
-    showForgotPage: () => goTo(ownProps.history, '/account/forgot')
+    userLogged: selectIsUserLogged(state),
+    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true)
   };
 }
 
-export default connect(mapStateToProps, { ...actions, osOpenUrl })(AccountLoginPage);
+export default connect(mapStateToProps, actions)(AccountProfilePage);

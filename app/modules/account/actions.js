@@ -18,10 +18,12 @@ import { createAction } from '../../store/actions';
 
 export const LOAD_ACCOUNT_INFO = 'LOAD_ACCOUNT_INFO';
 export const LOGIN_ACCOUNT = 'LOGIN_ACCOUNT';
+export const LOGIN_WITH_PROVIDER = 'LOGIN_WITH_PROVIDER';
 export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';
 export const REGISTER_ACCOUNT = 'REGISTER_ACCOUNT';
 export const FORGOT_ACCOUNT = 'FORGOT_ACCOUNT';
 export const PASSWORD_ACCOUNT = 'PASSWORD_ACCOUNT';
+export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const SHOW_ACCOUNT_TOKEN = 'SHOW_ACCOUNT_TOKEN';
 
 export const loadAccountInfo = (extended = false) =>
@@ -29,8 +31,40 @@ export const loadAccountInfo = (extended = false) =>
 export const loginAccount = (username, password, onEnd) =>
   createAction(LOGIN_ACCOUNT, { username, password, onEnd });
 export const logoutAccount = () => createAction(LOGOUT_ACCOUNT);
-export const registerAccount = (username, onEnd) =>
-  createAction(REGISTER_ACCOUNT, { username, onEnd });
+export const loginWithProvider = provider =>
+  createAction(LOGIN_WITH_PROVIDER, { provider });
+export const registerAccount = (
+  username,
+  email,
+  firstname,
+  lastname,
+  password,
+  onEnd
+) =>
+  createAction(REGISTER_ACCOUNT, {
+    username,
+    email,
+    firstname,
+    lastname,
+    password,
+    onEnd
+  });
+export const updateProfile = (
+  username,
+  email,
+  firstname,
+  lastname,
+  currentPassword,
+  onEnd
+) =>
+  createAction(UPDATE_PROFILE, {
+    username,
+    email,
+    firstname,
+    lastname,
+    currentPassword,
+    onEnd
+  });
 export const forgotAccountPassword = (username, onEnd) =>
   createAction(FORGOT_ACCOUNT, { username, onEnd });
 export const changeAccountPassword = (oldPassword, newPassword, onEnd) =>

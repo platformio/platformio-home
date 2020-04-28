@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-import { Button, Col, Divider, Form, Icon, Input, Row } from 'antd';
+import { Button, Col, Divider, Form, Icon, Input, Modal, Row } from 'antd';
 
 import CompanyLogo from '../../home/components/company-logo';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { inIframe } from '../../core/helpers';
 
 export default class AccountLoginForm extends React.Component {
   static propTypes = {
     form: PropTypes.object.isRequired,
     loginAccount: PropTypes.func.isRequired,
+    loginWithProvider: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
-    showForgotPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    showForgotPage: PropTypes.func.isRequired
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
+      providerModalVisible: false,
+      providerOpenedInExteralBrowser: false,
+      providerModalOkText: 'Continue',
+      providerName: ''
     };
   }
 
@@ -55,72 +60,89 @@ export default class AccountLoginForm extends React.Component {
     });
   }
 
+  onDidProviderLogin(provider) {
+    if (inIframe()) {
+      this.setState({
+        providerModalVisible: true,
+        providerName: provider
+      });
+      return;
+    }
+    this.props.loginWithProvider(provider);
+  }
+
+  onDidOkProviderModal() {
+    if (this.state.providerOpenedInExteralBrowser) {
+      this.onDidCloseProviderModal();
+      this.props.showInformationPage();
+      return;
+    }
+    this.setState({
+      providerOpenedInExteralBrowser: true,
+      loading: true,
+      providerModalOkText: 'Redirecting...'
+    });
+    setTimeout(() => {
+      this.setState({
+        loading: false,
+        providerModalOkText: 'Finish'
+      });
+    }, 5000);
+    this.props.loginWithProvider(this.state.providerName);
+  }
+
+  onDidCloseProviderModal() {
+    this.setState({
+      providerModalVisible: false,
+      providerOpenedInExteralBrowser: false,
+      loading: false,
+      providerModalOkText: 'Continue'
+    });
+  }
+
   render() {
     return (
       <div>
+        <Modal
+          title={`You are being redirected to ${this.state.providerName.toUpperCase()}`}
+          visible={this.state.providerModalVisible}
+          okText={this.state.providerModalOkText}
+          okButtonProps={{
+            loading: this.state.loading,
+            disabled: this.state.loading
+          }}
+          onCancel={::this.onDidCloseProviderModal}
+          onOk={::this.onDidOkProviderModal}
+        >
+          <p>
+            You will be redirected to the <b>{this.state.providerName.toUpperCase()}</b>{' '}
+            provider using your default web browser.
+          </p>
+          <p>
+            Please provide valid credential details for{' '}
+            {this.state.providerName.toUpperCase()}. If everything is OK, you will be
+            redirected back to PlatformIO Home <b>in your browser instead of IDE</b>.
+          </p>
+          <p>
+            The final step is to <b>back to IDE</b> and close this modal window. You
+            should be logged in automatically now!
+          </p>
+        </Modal>
         <div className="login-logo">
           <CompanyLogo />
         </div>
         <Row>
           <Col xs={11} className="login-left-side">
-            {this.renderBanner()}
+            {this.renderForm()}
           </Col>
           <Col xs={2}>
             <Divider type="vertical" />
           </Col>
           <Col xs={11} className="login-right-side">
-            {this.renderForm()}
+            {this.renderProviders()}
           </Col>
         </Row>
       </div>
-    );
-  }
-
-  renderBanner() {
-    return (
-      <Row className="pioaccount-banner">
-        <Col span={3}>
-          <Icon type="info-circle-o" />
-        </Col>
-        <Col span={21}>
-          <h2>PIO Account</h2>
-          <p className="block">
-            Having{' '}
-            <a
-              onClick={() =>
-                this.props.osOpenUrl(
-                  'http://docs.platformio.org/page/plus/pio-account.html'
-                )
-              }
-            >
-              PIO Account
-            </a>{' '}
-            allows you to use extra professional features:
-          </p>
-          <ul className="list-styled block">
-            <li>
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl(
-                    'http://docs.platformio.org/page/plus/pio-remote.html'
-                  )
-                }
-              >
-                PIO Remote
-              </a>
-            </li>
-            <li>
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl('http://docs.platformio.org/page/ide.html')
-                }
-              >
-                Integration with Cloud IDEs
-              </a>
-            </li>
-          </ul>
-        </Col>
-      </Row>
     );
   }
 
@@ -129,18 +151,21 @@ export default class AccountLoginForm extends React.Component {
     return (
       <Form onSubmit={::this.onDidSubmit} className="account-form">
         <Form.Item>
+          <h3>Log In with PlatformIO Account</h3>
+        </Form.Item>
+        <Form.Item>
           {getFieldDecorator('username', {
             rules: [
               {
-                type: 'email',
                 required: true,
-                message: 'Please input your username (email)'
+                message: 'Please input your username or email'
               }
             ]
           })(
             <Input
-              prefix={<Icon type="user" style={{ fontSize: 13 }} />}
-              placeholder="Email"
+              prefix={<Icon type="user" />}
+              placeholder="Username or email"
+              size="large"
               ref={elm => elm.focus()}
             />
           )}
@@ -155,9 +180,10 @@ export default class AccountLoginForm extends React.Component {
             ]
           })(
             <Input
-              prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+              prefix={<Icon type="lock" />}
               type="password"
               placeholder="Password"
+              size="large"
             />
           )}
         </Form.Item>
@@ -166,6 +192,7 @@ export default class AccountLoginForm extends React.Component {
             loading={this.state.loading}
             type="primary"
             htmlType="submit"
+            size="large"
             className="block account-submit-button"
           >
             Log in
@@ -177,6 +204,82 @@ export default class AccountLoginForm extends React.Component {
             Need an Account?{' '}
             <a onClick={() => this.props.showRegistrationPage()}>Create a new one.</a>
           </div>
+        </Form.Item>
+      </Form>
+    );
+  }
+
+  renderProviders() {
+    return (
+      <Form className="login-providers">
+        <Form.Item>
+          <h3>Log In with ...</h3>
+        </Form.Item>
+        <Form.Item>
+          <Row>
+            <Col md={12}>
+              <Button
+                icon="github"
+                size="large"
+                onClick={() => this.onDidProviderLogin('github')}
+              >
+                GitHub
+              </Button>
+            </Col>
+            <Col md={12}>
+              <Button
+                icon="gitlab"
+                size="large"
+                onClick={() => this.onDidProviderLogin('gitlab')}
+              >
+                GitLab
+              </Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item>
+          <Row>
+            <Col md={12}>
+              <Button
+                icon="rest"
+                size="large"
+                onClick={() => this.onDidProviderLogin('bitbucket')}
+              >
+                BitBucket
+              </Button>
+            </Col>
+            <Col md={12}>
+              <Button
+                icon="google"
+                size="large"
+                onClick={() => this.onDidProviderLogin('google')}
+              >
+                Google
+              </Button>
+            </Col>
+          </Row>
+        </Form.Item>
+        <Form.Item>
+          <Row>
+            <Col md={12}>
+              <Button
+                icon="linkedin"
+                size="large"
+                onClick={() => this.onDidProviderLogin('linkedin')}
+              >
+                LinkedIn
+              </Button>
+            </Col>
+            <Col md={12}>
+              <Button
+                icon="twitter"
+                size="large"
+                onClick={() => this.onDidProviderLogin('twitter')}
+              >
+                Twitter
+              </Button>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
     );

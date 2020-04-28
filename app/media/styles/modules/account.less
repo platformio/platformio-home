@@ -26,6 +26,7 @@
   .registration-page,
   .forgot-page,
   .password-page,
+  .profile-page,
   .token-page {
     max-width: 768px;
 
@@ -45,20 +46,14 @@
     .login-logo {
       margin: @padding-lg;
     }
+
+    h3 {
+      margin: 0;
+    }
+
     .login-left-side {
       text-align: right;
-      padding-right: @padding-lg;
-
-      .pioaccount-banner {
-        max-width: @form-max-width;
-        text-align: left;
-        float: right;
-
-        .anticon {
-          font-size: 28px;
-          margin-top: @padding-xs;
-        }
-      }
+      padding-right: @padding-xs;
     }
 
     .ant-divider {
@@ -66,11 +61,17 @@
     }
 
     .login-right-side {
-      text-align: left;
+      text-align: center;
       padding-left: @padding-xs;
 
-      .account-form {
-        margin: 0;
+      .login-providers {
+        .ant-row {
+          max-width: 350px;
+        }
+
+        button {
+          width: 160px;
+        }
       }
     }
   }

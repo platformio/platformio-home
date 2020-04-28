@@ -23,10 +23,14 @@ import humanize from 'humanize';
 export default class AccountInformation extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
-      username: PropTypes.string.isRequired,
-      groups: PropTypes.array,
-      subscriptions: PropTypes.array,
-      currentPlan: PropTypes.string
+      profile: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        firstname: PropTypes.string,
+        lastname: PropTypes.string
+      }).isRequired,
+      packages: PropTypes.array,
+      subscriptions: PropTypes.array
     }).isRequired,
     logoutAccount: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired
@@ -40,26 +44,19 @@ export default class AccountInformation extends React.Component {
           <dl className="dl-horizontal">
             <dt>Logged in as</dt>
             <dd>
-              {this.props.data.username} ({' '}
+              {this.props.data.profile.username} ({' '}
               <a onClick={() => this.props.logoutAccount()}>Log out</a> )
             </dd>
-            <dt>PIO Plus Plan</dt>
+            <dt>Email</dt>
+            <dd>{this.props.data.profile.email}</dd>
+            <dt>Full Name</dt>
             <dd>
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl(
-                    'https://platformio.org/pricing?utm_campaign=account-info'
-                  )
-                }
-                className="inline-block"
-              >
-                {this.props.data.currentPlan}
-              </a>
+              {this.props.data.profile.firstname} {this.props.data.profile.lastname}
             </dd>
           </dl>
         </div>
         {this.renderSubscriptions()}
-        {this.renderGroups()}
+        {this.renderPackages()}
       </div>
     );
   }
@@ -76,18 +73,18 @@ export default class AccountInformation extends React.Component {
       },
       {
         title: 'Start Date',
-        dataIndex: 'begin_time',
-        key: 'begin_time',
+        dataIndex: 'begin_at',
+        key: 'begin_at',
         render: text => (
-          <Tooltip title={new Date(parseInt(text) * 1000).toString()}>
-            {humanize.date('F j, Y', parseInt(text))}
+          <Tooltip title={new Date(text).toString()}>
+            {humanize.date('F j, Y', new Date(text))}
           </Tooltip>
         )
       },
       {
         title: 'End Date',
-        dataIndex: 'end_time',
-        key: 'end_time',
+        dataIndex: 'end_at',
+        key: 'end_at',
         render: text => (
           <Tooltip
             title={parseInt(text) ? new Date(parseInt(text) * 1000).toString() : ''}
@@ -98,11 +95,11 @@ export default class AccountInformation extends React.Component {
       },
       {
         title: 'Next Payment',
-        dataIndex: 'next_bill_time',
-        key: 'next_bill_time',
+        dataIndex: 'next_bill_at',
+        key: 'next_bill_at',
         render: text => (
-          <Tooltip title={new Date(parseInt(text) * 1000).toString()}>
-            {humanize.date('F j, Y', parseInt(text))}
+          <Tooltip title={new Date(text).toString()}>
+            {humanize.date('F j, Y', new Date(text))}
           </Tooltip>
         )
       },
@@ -140,32 +137,53 @@ export default class AccountInformation extends React.Component {
     );
   }
 
-  renderGroups() {
+  renderPackages() {
     return (
       <div>
-        <h1>Groups</h1>
-        {this.props.data.groups &&
-          this.props.data.groups.map(group => (
-            <dl key={group.name} className="dl-horizontal">
+        <h1>Packages</h1>
+        {this.props.data.packages &&
+          this.props.data.packages.map(item => (
+            <dl key={item.name} className="dl-horizontal">
               <dt>Name</dt>
-              <dd>{group.name}</dd>
+              <dd>{item.name}</dd>
               <dt>Expires</dt>
               <dd>
                 <Tooltip
-                  title={group.expire ? new Date(group.expire * 1000).toString() : ''}
+                  title={
+                    item.subscription &&
+                    (item.subscription.end_at || item.subscription.next_bill_at)
+                      ? new Date(
+                          item.subscription.end_at || item.subscription.next_bill_at
+                        ).toString()
+                      : ''
+                  }
                 >
-                  {group.expire ? humanize.date('F j, Y', group.expire) : 'never'}
+                  {item.subscription &&
+                  (item.subscription.end_at || item.subscription.next_bill_at)
+                    ? humanize.date(
+                        'F j, Y',
+                        new Date(
+                          item.subscription.end_at || item.subscription.next_bill_at
+                        )
+                      )
+                    : 'never'}
                 </Tooltip>
               </dd>
-              <dt>Permissions</dt>
+              <dt>Services</dt>
               <dd>
                 <ul>
-                  {group.permissions.map(permissionName => (
-                    <li key={permissionName}>
-                      <Icon type="check" />
-                      {' ' + permissionName}
-                    </li>
-                  ))}
+                  {Object.keys(item).map(key => {
+                    if (!key.startsWith('service.')) {
+                      return null;
+                    }
+                    return (
+                      <li key={key}>
+                        <Icon type="check" />
+                        {' ' +
+                          (item[key] instanceof Object ? item[key].title : item[key])}
+                      </li>
+                    );
+                  })}
                 </ul>
               </dd>
             </dl>

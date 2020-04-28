@@ -21,20 +21,31 @@ import * as selectors from './selectors';
 
 import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '../../store/actions';
-import { notifyError, notifySuccess } from '../core/actions';
+import { notifyError, notifySuccess, osOpenUrl } from '../core/actions';
 
 import { apiFetchData } from '../../store/api';
+import { inIframe } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
+import qs from 'querystringify';
 
-const CORE_API_EXCEPTION_PREFIX = '[API] ';
+const ACCOUNTS_AUTH_OPENID_ENDPOINT =
+  'https://auth.accounts.platformio.org/auth/realms/pioaccount/protocol/openid-connect/auth';
+const ACCOUNTS_AUTH_CLIENT_ID = 'piohome-app';
 
 function showAPIErrorMessage(output) {
   output = output.replace(/[\\r\\n]+\'/, '').trim();
-  const pos = output.indexOf(CORE_API_EXCEPTION_PREFIX);
-  return message.error(
-    pos !== -1 ? output.substr(pos + CORE_API_EXCEPTION_PREFIX.length) : output
-  );
+  return message.error(output);
+}
+
+function getRedirectUri() {
+  const currentSearch = qs.parse(window.location.search || '');
+  currentSearch.start = '/account';
+  const currentLocation =
+    window.location.origin +
+    window.location.pathname +
+    qs.stringify(currentSearch, true);
+  return currentLocation + `&piohomeacc_uri=${encodeURIComponent(currentLocation)}`;
 }
 
 function* watchLoadAccountInfo() {
@@ -44,6 +55,24 @@ function* watchLoadAccountInfo() {
     if (data && (!extended || data.groups)) {
       continue;
     }
+
+    if (window.location && window.location.search) {
+      const locSearch = qs.parse(window.location.search);
+      if (locSearch && locSearch.code && locSearch.piohomeacc_uri) {
+        window.history.pushState(
+          {},
+          document.title,
+          decodeURIComponent(locSearch.piohomeacc_uri)
+        );
+        yield call(
+          loginAccountWithCode,
+          ACCOUNTS_AUTH_CLIENT_ID,
+          locSearch.code,
+          getRedirectUri()
+        );
+      }
+    }
+
     try {
       data = yield call(apiFetchData, {
         query: 'core.call',
@@ -55,7 +84,7 @@ function* watchLoadAccountInfo() {
       if (
         !(
           err instanceof jsonrpc.JsonRpcError &&
-          err.data.includes('`pio account login`')
+          err.data.includes('You are not authenticated!')
         )
       ) {
         yield put(notifyError('Could not load PIO Account information', err));
@@ -86,6 +115,38 @@ function* watchLoginAccount() {
   });
 }
 
+function* watchLoginWithProvider() {
+  yield takeLatest(actions.LOGIN_WITH_PROVIDER, function*({ provider }) {
+    const scopeList = 'openid offline_access email profile';
+    const url = `${ACCOUNTS_AUTH_OPENID_ENDPOINT}?client_id=${encodeURIComponent(
+      ACCOUNTS_AUTH_CLIENT_ID
+    )}&redirect_uri=${encodeURIComponent(
+      getRedirectUri()
+    )}&response_type=code&scope=${encodeURIComponent(
+      scopeList
+    )}&kc_idp_hint=${encodeURIComponent(provider)}`;
+    if (inIframe()) {
+      yield put(osOpenUrl(url));
+    } else {
+      window.location = url;
+    }
+  });
+}
+
+function* loginAccountWithCode(client_id, code, redirectUri) {
+  try {
+    yield call(apiFetchData, {
+      query: 'account.call_client',
+      params: ['login_with_code', client_id, code, redirectUri]
+    });
+  } catch (err) {
+    if (err && err.data) {
+      return showAPIErrorMessage(err.data);
+    }
+    return yield put(notifyError('Could not log in PIO Account', err));
+  }
+}
+
 function* watchLogoutAccount() {
   yield takeLatest(actions.LOGOUT_ACCOUNT, function*() {
     try {
@@ -104,12 +165,34 @@ function* watchLogoutAccount() {
 }
 
 function* watchRegisterAccount() {
-  yield takeLatest(actions.REGISTER_ACCOUNT, function*({ username, onEnd }) {
+  yield takeLatest(actions.REGISTER_ACCOUNT, function*({
+    username,
+    email,
+    firstname,
+    lastname,
+    password,
+    onEnd
+  }) {
     let err = null;
     try {
       yield call(apiFetchData, {
         query: 'core.call',
-        params: [['account', 'register', '--username', username]]
+        params: [
+          [
+            'account',
+            'register',
+            '--username',
+            username,
+            '--email',
+            email,
+            '--firstname',
+            firstname,
+            '--lastname',
+            lastname,
+            '--password',
+            password
+          ]
+        ]
       });
       yield put(
         notifySuccess(
@@ -224,12 +307,76 @@ function* watchTokenAccount() {
   });
 }
 
+function* watchUpdateProfile() {
+  yield takeLatest(actions.UPDATE_PROFILE, function*({
+    username,
+    email,
+    firstname,
+    lastname,
+    currentPassword,
+    onEnd
+  }) {
+    let err = null;
+    try {
+      const response = yield call(apiFetchData, {
+        query: 'core.call',
+        params: [
+          [
+            'account',
+            'update',
+            '--username',
+            username,
+            '--email',
+            email,
+            '--firstname',
+            firstname,
+            '--lastname',
+            lastname,
+            '--current-password',
+            currentPassword
+          ]
+        ]
+      });
+      yield put(actions.loadAccountInfo(true));
+      if (response.includes('re-login')) {
+        yield put(updateEntity('accountInfo', {}));
+        if (response.includes('check your mail')) {
+          yield put(
+            notifySuccess(
+              'Congrats!',
+              'Successfully updated profile! Please check your mail to verify your new email address and re-login.'
+            )
+          );
+          return;
+        }
+        yield put(
+          notifySuccess('Congrats!', 'Successfully updated profile! Please re-login')
+        );
+        return;
+      }
+      yield put(notifySuccess('Congrats!', 'Successfully updated profile!'));
+    } catch (err_) {
+      err = err_;
+      if (err && err.data) {
+        return showAPIErrorMessage(err.data);
+      }
+      return yield put(notifyError('Could not update profile of PIO Account', err));
+    } finally {
+      if (onEnd) {
+        yield call(onEnd, err);
+      }
+    }
+  });
+}
+
 export default [
   watchLoadAccountInfo,
   watchLoginAccount,
+  watchLoginWithProvider,
   watchLogoutAccount,
   watchRegisterAccount,
   watchForgotAccount,
   watchPasswordAccount,
-  watchTokenAccount
+  watchTokenAccount,
+  watchUpdateProfile
 ];

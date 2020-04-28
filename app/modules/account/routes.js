@@ -19,6 +19,7 @@ import AccountLoginPage from './containers/login-page';
 import AccountMainPage from './containers/information-page';
 import AccountRegistrationPage from './containers/registration-page';
 import PasswordPage from './containers/password-page';
+import ProfilePage from './containers/profile-page';
 import TokenPage from './containers/token-page';
 
 const routes = [
@@ -39,6 +40,12 @@ const routes = [
   {
     path: '/account/forgot',
     component: AccountForgotPage
+  },
+  {
+    path: '/account/profile',
+    icon: 'user',
+    label: 'Profile',
+    component: ProfilePage
   },
   {
     path: '/account/password',

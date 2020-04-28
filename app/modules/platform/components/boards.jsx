@@ -500,7 +500,7 @@ export default class Boards extends React.Component {
   renderNotifications() {
     return (
       <div>
-        PlatformIO currently supports over 700 boards from leading manufacturers, and we
+        PlatformIO currently supports over 800 boards from leading manufacturers, and we
         are constantly adding new ones.
         <br />
         You can be part of the process by letting us know what board you wish to see
