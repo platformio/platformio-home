@@ -66,7 +66,6 @@ function* watchLoadAccountInfo() {
         );
         yield call(
           loginAccountWithCode,
-          ACCOUNTS_AUTH_CLIENT_ID,
           locSearch.code,
           getRedirectUri()
         );
@@ -133,11 +132,11 @@ function* watchLoginWithProvider() {
   });
 }
 
-function* loginAccountWithCode(client_id, code, redirectUri) {
+function* loginAccountWithCode(code, redirectUri) {
   try {
     yield call(apiFetchData, {
       query: 'account.call_client',
-      params: ['login_with_code', client_id, code, redirectUri]
+      params: ['login_with_code', code, redirectUri]
     });
   } catch (err) {
     if (err && err.data) {
