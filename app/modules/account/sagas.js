@@ -31,7 +31,7 @@ import qs from 'querystringify';
 
 const ACCOUNTS_AUTH_OPENID_ENDPOINT =
   'https://auth.accounts.platformio.org/auth/realms/pioaccount/protocol/openid-connect/auth';
-const ACCOUNTS_AUTH_CLIENT_ID = 'piohome-app';
+const ACCOUNTS_AUTH_CLIENT_ID = 'pio-user-api';
 
 function showAPIErrorMessage(output) {
   output = output.replace(/[\\r\\n]+\'/, '').trim();
