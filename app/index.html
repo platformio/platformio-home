@@ -9,6 +9,24 @@
       window.alert('Your browser is not supported. Please use one of the modern browsers (Chrome, Firefox, Opera, Safari, etc).');
       window.location = 'https://www.google.com/chrome/';
     }
+
+    document.addEventListener('keydown', e => {
+      const obj = {
+        altKey: e.altKey,
+        code: e.code,
+        ctrlKey: e.ctrlKey,
+        isComposing: e.isComposing,
+        key: e.key,
+        location: e.location,
+        metaKey: e.metaKey,
+        repeat: e.repeat,
+        shiftKey: e.shiftKey
+      };
+      try {
+        window.parent.postMessage({'command': 'kbd-event', 'data': obj}, '*');
+      } catch (err) {}
+    });
+
     function getQueryVariable(variable) {
       if (!window.location) {
         return null;

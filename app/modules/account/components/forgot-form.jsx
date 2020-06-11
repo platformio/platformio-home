@@ -75,7 +75,7 @@ export default class AccountForgotForm extends React.Component {
           })(
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
-              placeholder="Username of email"
+              placeholder="Username or email"
               size="large"
               ref={elm => elm.focus()}
             />
