@@ -263,21 +263,17 @@ export default class LibraryDetailMain extends React.Component {
   render() {
     let versions = null;
     if (this.props.data.versions) {
-      versions = this.props.data.versions
-        .slice(0)
-        .reverse()
-        .map(item => {
-          item.component = (
-            <span>
-              <strong>{item.name}</strong>{' '}
-              <small>
-                released{' '}
-                {humanize.relativeTime(new Date(item.released).getTime() / 1000)}
-              </small>
-            </span>
-          );
-          return item;
-        });
+      versions = this.props.data.versions.slice(0).map(item => {
+        item.component = (
+          <span>
+            <strong>{item.name}</strong>{' '}
+            <small>
+              released {humanize.relativeTime(new Date(item.released).getTime() / 1000)}
+            </small>
+          </span>
+        );
+        return item;
+      });
     }
     const authors = this.props.data.authors;
     return (

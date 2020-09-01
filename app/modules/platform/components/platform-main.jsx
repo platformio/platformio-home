@@ -189,7 +189,7 @@ export default class PlatformMain extends React.Component {
         </h1>
         <div className="lead">{this.props.data.description}</div>
         {this.props.data.versions &&
-          this.renderQuickInstallation(this.props.data.versions.slice(0).reverse())}
+          this.renderQuickInstallation(this.props.data.versions.slice(0))}
         <Row>
           <Col sm={20} className="tabs-block">
             <Tabs type="card">
@@ -343,15 +343,12 @@ export default class PlatformMain extends React.Component {
                 <li>
                   <h2>Versions</h2>
                   <ul>
-                    {this.props.data.versions
-                      .slice(0)
-                      .reverse()
-                      .map(name => (
-                        <li key={name}>
-                          <Icon type="environment-o" className="inline-block-tight" />
-                          {name}
-                        </li>
-                      ))}
+                    {this.props.data.versions.slice(0).map(name => (
+                      <li key={name}>
+                        <Icon type="environment-o" className="inline-block-tight" />
+                        {name}
+                      </li>
+                    ))}
                   </ul>
                 </li>
               )}
