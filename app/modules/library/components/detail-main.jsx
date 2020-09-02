@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-import * as path from '../../core/path';
-
-import {
-  Button,
-  Col,
-  Dropdown,
-  Icon,
-  Menu,
-  Popconfirm,
-  Row,
-  Select,
-  Tabs,
-  Tooltip
-} from 'antd';
+import { Button, Col, Icon, Row, Select, Tabs, Tooltip } from 'antd';
 
 import LibraryDetailExamplesBlock from '../containers/detail-examples-block';
 import LibraryDetailHeadersBlock from '../containers/detail-headers-block';
@@ -43,6 +30,7 @@ export default class LibraryDetailMain extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
       id: PropTypes.number,
+      ownername: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       homepage: PropTypes.string,
@@ -61,10 +49,8 @@ export default class LibraryDetailMain extends React.Component {
       __pkg_dir: PropTypes.string
     }),
     osOpenUrl: PropTypes.func.isRequired,
-    osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
-    uninstallLibrary: PropTypes.func.isRequired,
     showInstalledLibraries: PropTypes.func.isRequired
   };
 
@@ -117,24 +103,6 @@ export default class LibraryDetailMain extends React.Component {
     );
   }
 
-  onDidUninstall() {
-    this.setState({
-      uninstalling: true
-    });
-    this.props.uninstallLibrary(
-      path.dirname(this.props.data.__pkg_dir),
-      this.props.data.__pkg_dir,
-      err => {
-        this.setState({
-          uninstalling: false
-        });
-        if (!err) {
-          this.props.showInstalledLibraries();
-        }
-      }
-    );
-  }
-
   onDidAuthorSearch(name) {
     this.props.searchLibrary(`author:"${name}"`);
   }
@@ -153,18 +121,18 @@ export default class LibraryDetailMain extends React.Component {
 
   getLibraryForInstall() {
     const latestVersion = this.props.data.versions.length
-      ? this.props.data.versions[this.props.data.versions.length - 1].name
+      ? this.props.data.versions[0].name
       : '';
     if (
       this.state.selectedVersion &&
       (!latestVersion || this.state.selectedVersion !== latestVersion)
     ) {
-      return `id=${this.props.data.id}@${this.state.selectedVersion}`;
+      return `${this.props.data.ownername}/${this.props.data.name}@${this.state.selectedVersion}`;
     }
-    if (latestVersion.match(/^\d+\.\d+\.\d+$/)) {
-      return `id=${this.props.data.id}@^${latestVersion}`;
+    if (latestVersion.match(/^[\d\.]+$/)) {
+      return `${this.props.data.ownername}/${this.props.data.name}@^${latestVersion}`;
     }
-    return `id=${this.props.data.id}`;
+    return `${this.props.data.ownername}/${this.props.data.name}`;
   }
 
   renderQuickInstallation(versions) {
@@ -190,18 +158,13 @@ export default class LibraryDetailMain extends React.Component {
             </Select>
           </li>
           <li>
-            <Dropdown.Button
+            <Button
               type="primary"
-              overlay={
-                <Menu onClick={::this.onDidInstallTo}>
-                  <Menu.Item key="">Install to...</Menu.Item>
-                </Menu>
-              }
               disabled={this.state.installing}
-              onClick={::this.onDidInstall}
+              onClick={::this.onDidInstallTo}
             >
-              <Icon type="download" /> Install
-            </Dropdown.Button>
+              <Icon type="download" /> Add to Project
+            </Button>
           </li>
           <li>|</li>
           <li>
@@ -229,32 +192,6 @@ export default class LibraryDetailMain extends React.Component {
             />
             {this.props.data.version}
           </Tooltip>
-        </li>
-        <li>
-          <Button.Group>
-            <Button
-              type="primary"
-              icon="folder"
-              onClick={() => this.props.osRevealFile(this.props.data.__pkg_dir)}
-            >
-              Reveal
-            </Button>
-            <Popconfirm
-              title="Are you sure?"
-              okText="Yes"
-              cancelText="No"
-              onConfirm={::this.onDidUninstall}
-            >
-              <Button
-                type="primary"
-                icon="delete"
-                loading={this.state.uninstalling}
-                disabled={this.state.uninstalling}
-              >
-                Uninstall
-              </Button>
-            </Popconfirm>
-          </Button.Group>
         </li>
       </ul>
     );
@@ -429,10 +366,7 @@ export default class LibraryDetailMain extends React.Component {
                   }
                 >
                   Registry
-                </a>{' '}
-                <small>
-                  <kbd>ID: {this.props.data.id}</kbd>
-                </small>
+                </a>
               </div>
             )}
             {this.props.data.homepage && (

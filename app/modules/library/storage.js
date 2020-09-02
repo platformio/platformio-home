@@ -28,13 +28,15 @@ export class LibraryStorage {
     name,
     path = undefined,
     items = undefined,
-    actions = LibraryStorage.ACTION_REVEAL
+    actions = undefined,
+    options = undefined
   ) {
     this.name = name;
     this.path = path;
     this.initialPath = path;
     this._items = items;
-    this._actions = actions;
+    this._actions = actions || LibraryStorage.ACTION_REVEAL;
+    this.options = options || {};
   }
 
   get items() {
@@ -65,6 +67,12 @@ export function filterStorageItems(storages, filterValue) {
     if (items && filterValue) {
       items = fuzzySearch(items, filterValue, 'name');
     }
-    return new LibraryStorage(storage.name, storage.path, items, storage.actions);
+    return new LibraryStorage(
+      storage.name,
+      storage.path,
+      items,
+      storage.actions,
+      storage.options
+    );
   });
 }

@@ -53,10 +53,10 @@ export default class LibraryStorageItems extends React.Component {
     return this.props.item.items;
   }
 
-  onDidUninstallOrUpdateItem(item, cmd, onEnd) {
-    (cmd === 'uninstall' ? this.props.uninstallLibrary : this.props.updateLibrary)(
-      this.props.item.path,
-      item.__pkg_dir,
+  onDidUninstallOrUpdateItem(item, action, onEnd) {
+    (action === 'uninstall' ? this.props.uninstallLibrary : this.props.updateLibrary)(
+      this.props.item,
+      item,
       onEnd
     );
   }

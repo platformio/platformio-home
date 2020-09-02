@@ -38,7 +38,7 @@ export const loadLibUpdates = () => createAction(LOAD_LIB_UPDATES);
 
 export const installLibrary = (storageDir, lib, onEnd = null) =>
   createAction(INSTALL_LIBRARY, { storageDir, lib, onEnd });
-export const uninstallLibrary = (storageDir, pkgDir, onEnd = null) =>
-  createAction(UNINSTALL_LIBRARY, { storageDir, pkgDir, onEnd });
-export const updateLibrary = (storageDir, pkgDir, onEnd = null) =>
-  createAction(UPDATE_LIBRARY, { storageDir, pkgDir, onEnd });
+export const uninstallLibrary = (storage, pkg, onEnd = null) =>
+  createAction(UNINSTALL_LIBRARY, { storage, pkg, onEnd });
+export const updateLibrary = (storage, pkg, onEnd = null) =>
+  createAction(UPDATE_LIBRARY, { storage, pkg, onEnd });

@@ -308,19 +308,32 @@ function* watchUninstallOrUpdateLibrary() {
   yield takeEvery([actions.UNINSTALL_LIBRARY, actions.UPDATE_LIBRARY], function*(
     action
   ) {
-    const { storageDir, pkgDir, onEnd } = action;
+    const { storage, pkg, onEnd } = action;
     let err;
     try {
       const result = yield call(apiFetchData, {
         query: 'core.call',
         params: [
-          [
-            'lib',
-            '--storage-dir',
-            storageDir,
-            action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
-            pkgDir
-          ]
+          action.type === actions.UNINSTALL_LIBRARY &&
+          storage.options &&
+          storage.options.projectDir &&
+          storage.options.projectEnv
+            ? [
+                'lib',
+                '--storage-dir',
+                storage.options.projectDir,
+                '--environment',
+                storage.options.projectEnv,
+                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
+                `${pkg.ownername ? `${pkg.ownername}/` : ''}${pkg.name}@${pkg.version}`
+              ]
+            : [
+                'lib',
+                '--storage-dir',
+                storage.path,
+                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
+                pkg.__pkg_dir
+              ]
         ]
       });
 
@@ -333,11 +346,11 @@ function* watchUninstallOrUpdateLibrary() {
         if (!key.startsWith('installedLibs') && !key.startsWith('libUpdates')) {
           continue;
         }
-        if (state.entities[key].find(item => item.__pkg_dir === pkgDir)) {
+        if (state.entities[key].find(item => item.__pkg_dir === pkg.__pkg_dir)) {
           yield put(
             updateEntity(
               key,
-              state.entities[key].filter(item => item.__pkg_dir !== pkgDir)
+              state.entities[key].filter(item => item.__pkg_dir !== pkg.__pkg_dir)
             )
           );
         }

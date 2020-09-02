@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Alert, Icon } from 'antd';
-
 import CodeBeautifier from '../../core/containers/code-beautifier';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -23,7 +21,8 @@ import React from 'react';
 export default class LibraryDetailInstallationBlock extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
+      ownername: PropTypes.number,
       name: PropTypes.string.isRequired,
       version: PropTypes.oneOfType([
         PropTypes.object, // registry library
@@ -58,16 +57,10 @@ export default class LibraryDetailInstallationBlock extends React.Component {
 
   generatePIOProjectConf() {
     const versionName = this.getVersionName();
-
-    let content = `; PlatformIO Project Configuration File
-;
-;   Build options: build flags, source filter
-;   Upload options: custom upload port, speed and extra flags
-;   Library options: dependencies, extra library storages
-;   Advanced options: extra scripting
-;
-; Please visit documentation for the other options and examples
-; http://docs.platformio.org/page/projectconf.html
+    const ownedLib = this.props.data.ownername
+      ? `${this.props.data.ownername}/${this.props.data.name}`
+      : this.props.data.name;
+    let content = `; platformio.ini – project configuration file
 
 [env:my_build_env]`;
 
@@ -81,36 +74,35 @@ framework = ${this.props.data.frameworks[0].name}`;
     }
 
     content += `
-
-lib_deps =
-  # Using a library name
-  ${this.props.data.name}
-    `;
-
-    if (this.props.data.id) {
-      content += `
-  # ... or using library Id
-  ${this.props.data.id}
-      `;
-    }
+lib_deps =`;
 
     if (!versionName) {
+      content += `
+  ${ownedLib}
+      `;
+      return content;
+    }
+
+    if (!versionName.match(/^[\d\.]+$/)) {
+      content += `
+  ${ownedLib} @ ${versionName}
+      `;
       return content;
     }
 
     content += `
-  # ... or depend on a specific version
-  ${this.props.data.name}@${versionName}
+  # RECOMMENDED
+  # Accept new functionality in a backwards compatible manner and patches
+  ${ownedLib} @ ^${versionName}
+
+  # Acept only backwards compatible bug fixes
+  # (any version with the same major and minor versions, and an equal or greater patch version)
+  ${ownedLib} @ ~${versionName}
+
+  # The exact version
+  ${ownedLib} @ ${versionName}
     `;
 
-    if (versionName.includes('.')) {
-      content += `
-  # Semantic Versioning Rules
-  # http://docs.platformio.org/page/userguide/lib/cmd_install.html#description
-  ${this.props.data.name}@^${versionName}
-  ${this.props.data.name}@~${versionName}
-  ${this.props.data.name}@>=${versionName}`;
-    }
     return content;
   }
 
@@ -118,57 +110,28 @@ lib_deps =
     return (
       <div>
         <h2 style={{ marginTop: 0 }}>
-          Project Dependencies <small>platformio.ini</small>
+          Library Dependencies <small>platformio.ini</small>
         </h2>
         <div className="block">
-          PlatformIO Core has built-in powerful{' '}
-          <a
-            onClick={() =>
-              this.props.osOpenUrl(
-                'http://docs.platformio.org/page/librarymanager/index.html'
-              )
-            }
-          >
-            Library Manager
-          </a>{' '}
-          with a <i>Semantic Versioning</i> support. It allows you to specify custom
-          dependencies per project in{' '}
-          <a
-            onClick={() =>
-              this.props.osOpenUrl('http://docs.platformio.org/page/projectconf.html')
-            }
-          >
-            Project Configuration File &quot;platformio.ini&quot;
-          </a>{' '}
-          using <kbd>lib_deps</kbd> option.
-        </div>
-        <div className="block">
-          No need to install them manully. PlatformIO will install all dependencies into
-          a project <u>isolated storage</u> when you start building process.
-        </div>
-        <Alert
-          className="block"
-          showIcon
-          message="Recommendation"
-          description={
-            <span>
-              We highly recommend to specify all project dependecies with{' '}
-              <kbd>lib_deps</kbd> option and to avoid using{' '}
-              <strike>global libraries</strike>.
-            </span>
-          }
-        />
-        <div className="block">
-          <Icon type="caret-right" />{' '}
-          <a
-            onClick={() =>
-              this.props.osOpenUrl(
-                'http://docs.platformio.org/page/userguide/lib/cmd_install.html#description'
-              )
-            }
-          >
-            Semantic Versioning Rules
-          </a>
+          <p>
+            The PlatformIO Registry is fully compatible with{' '}
+            <a onClick={() => this.props.osOpenUrl('https://semver.org/')}>
+              Semantic Versioning
+            </a>{' '}
+            and its &quot;version&quot; scheme{' '}
+            <code>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</code>. You can declare
+            library dependencies in &quot;platformio.ini&quot; configuration file using{' '}
+            <a
+              onClick={() =>
+                this.props.osOpenUrl(
+                  'https://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps'
+                )
+              }
+            >
+              lib_deps
+            </a>{' '}
+            option.
+          </p>
         </div>
         <CodeBeautifier language="ini" content={this.generatePIOProjectConf()} />
       </div>

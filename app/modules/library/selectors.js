@@ -132,12 +132,26 @@ export function selectLibraryStorages(state) {
     if (project.envLibStorages) {
       project.envLibStorages.forEach(storage => {
         items.push(
-          new LibraryStorage(`Project: ${project.name} > ${storage.name}`, storage.path)
+          new LibraryStorage(
+            `Project: ${project.name} > ${storage.name}`,
+            storage.path,
+            undefined,
+            undefined,
+            { projectDir: project.path, projectEnv: storage.name }
+          )
         );
       });
     }
     project.extraLibStorages.forEach(storage => {
-      items.push(new LibraryStorage(`Storage: ${storage.name}`, storage.path));
+      items.push(
+        new LibraryStorage(
+          `Storage: ${storage.name}`,
+          storage.path,
+          undefined,
+          undefined,
+          { projectDir: project.path }
+        )
+      );
     });
   });
 
