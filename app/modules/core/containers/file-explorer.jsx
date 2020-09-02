@@ -346,8 +346,8 @@ class FileExplorer extends React.Component {
           {this.props.devices.map(item => (
             <li key={item.path}>
               <Icon type="hdd" />
-              <a onClick={() => this.onDidChangeRoot(item.path)}>
-                {item.name || item.path}
+              <a onClick={() => this.onDidChangeRoot(item.path)} title={item.name}>
+                {item.path}
               </a>
             </li>
           ))}
