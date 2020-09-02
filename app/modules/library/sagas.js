@@ -202,10 +202,17 @@ function* watchLoadInstalledLibs() {
   }
 }
 
-function* fetchStorageUpdates(storageDir) {
+function* fetchStorageUpdates(storage) {
   let args = ['lib'];
-  if (storageDir) {
-    args = args.concat(['--storage-dir', storageDir]);
+  if (storage.options && storage.options.projectDir && storage.options.projectEnv) {
+    args = args.concat([
+      '--storage-dir',
+      storage.options.projectDir,
+      '--environment',
+      storage.options.projectEnv
+    ]);
+  } else if (storage.path) {
+    args = args.concat(['--storage-dir', storage.path]);
   } else {
     args.push('--global');
   }
@@ -231,7 +238,7 @@ function* watchLoadLibUpdates() {
           yield put(
             updateEntity(
               `libUpdates${storage.initialPath}`,
-              yield call(fetchStorageUpdates, storage.path)
+              yield call(fetchStorageUpdates, storage)
             )
           );
         } catch (err) {
