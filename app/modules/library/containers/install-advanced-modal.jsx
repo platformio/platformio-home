@@ -159,7 +159,7 @@ class LibraryInstallAdvancedModal extends React.Component {
 
           <div>
             <small>
-              You can manage your projects in a &quot;Projects&quot; section: create a
+              You can manage your projects in the &quot;Projects&quot; section: create a
               new or add existing.
             </small>
           </div>

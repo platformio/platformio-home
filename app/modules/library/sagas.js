@@ -25,7 +25,7 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
-import { asyncDelay, goTo, lastLine } from '../core/helpers';
+import { asyncDelay, goTo } from '../core/helpers';
 import {
   call,
   fork,
@@ -46,6 +46,10 @@ import { selectStorageItem } from '../../store/selectors';
 // Cache size
 const SEARCH_RESULTS_CACHE_SIZE = 10;
 const REGISTRY_LIBS_CACHE_SIZE = 10;
+
+function cleanupPackageManagerOutput(output) {
+  return output.replace(/^Library Manager:/gm, '');
+}
 
 function* watchLoadStats() {
   function* resetCacheDelayed(expire) {
@@ -292,7 +296,7 @@ function* watchInstallLibrary() {
         query: 'core.call',
         params: [args]
       });
-      yield put(notifySuccess('Congrats!', lastLine(result)));
+      yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
     } catch (err_) {
       err = err_;
       yield put(notifyError('Libraries: Could not install library', err));
@@ -356,14 +360,17 @@ function* watchUninstallOrUpdateLibrary() {
         }
       }
 
-      yield put(notifySuccess('Congrats!', lastLine(result)));
+      yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
     } catch (err_) {
       err = err_;
       if (
         err instanceof jsonrpc.JsonRpcError &&
-        err.data.includes('Error: Detected unknown package')
+        err.data.includes('Error: Could not find the package')
       ) {
         yield put(deleteEntity(/^installedLibs/));
+        if (action.type === actions.UNINSTALL_LIBRARY) {
+          yield put(actions.loadInstalledLibs());
+        }
         const state = yield select();
         if (state.router) {
           return goTo(state.router.history, '/libraries/installed', undefined, true);
