@@ -36,22 +36,12 @@ function mapStateToProps(state, ownProps) {
     getFullQuery(ownProps.query, ownProps)
   );
   if (searchResult) {
-    const names = new Set();
-    items = searchResult.items
-      // Filter out duplicate names, antd Select doesn't support duplicate Option values
-      .filter(s => {
-        if (names.has(s.name)) {
-          return false;
-        }
-        names.add(s.name);
-        return true;
-      })
-      .map(s => ({
-        data: s,
-        key: s.id,
-        name: s.name,
-        value: s.name
-      }));
+    items = searchResult.items.map(s => ({
+      data: s,
+      key: s.id,
+      name: `${s.ownername}/${s.name}`,
+      value: `${s.ownername}/${s.name} @ ^${s.versionname}`
+    }));
   }
   return { items };
 }
