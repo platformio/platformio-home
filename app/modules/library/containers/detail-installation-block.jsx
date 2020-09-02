@@ -22,7 +22,7 @@ export default class LibraryDetailInstallationBlock extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
       id: PropTypes.number,
-      ownername: PropTypes.number,
+      ownername: PropTypes.string,
       name: PropTypes.string.isRequired,
       version: PropTypes.oneOfType([
         PropTypes.object, // registry library

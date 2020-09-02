@@ -19,7 +19,6 @@ import { Button, Col, Icon, Row, Select, Tabs, Tooltip } from 'antd';
 import LibraryDetailExamplesBlock from '../containers/detail-examples-block';
 import LibraryDetailHeadersBlock from '../containers/detail-headers-block';
 import LibraryDetailInstallationBlock from '../containers/detail-installation-block';
-import LibraryDetailManifestBlock from '../containers/detail-manifest-block';
 import LibraryInstallAdvancedModal from '../containers/install-advanced-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -261,17 +260,6 @@ export default class LibraryDetailMain extends React.Component {
                 key="headers"
               >
                 <LibraryDetailHeadersBlock data={this.props.data} />
-              </Tabs.TabPane>
-              <Tabs.TabPane
-                tab={
-                  <span>
-                    <Icon type="edit" />
-                    Manifest
-                  </span>
-                }
-                key="manifest"
-              >
-                <LibraryDetailManifestBlock {...this.props} />
               </Tabs.TabPane>
               <Tabs.TabPane
                 tab={
