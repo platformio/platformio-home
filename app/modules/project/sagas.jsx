@@ -325,7 +325,7 @@ function* watchImportArduinoProject() {
         err.message.includes('Not an Arduino project')
       ) {
         message.error(
-          `${err.message} (Project should countain .ino or .pde file with the same name as project folder)`,
+          `${err.message} (Project should contain .ino or .pde file with the same name as project folder)`,
           10
         );
       } else {

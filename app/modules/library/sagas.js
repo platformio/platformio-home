@@ -25,7 +25,7 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
-import { asyncDelay, goTo, lastLine } from '../core/helpers';
+import { asyncDelay, goTo } from '../core/helpers';
 import {
   call,
   fork,
@@ -46,6 +46,10 @@ import { selectStorageItem } from '../../store/selectors';
 // Cache size
 const SEARCH_RESULTS_CACHE_SIZE = 10;
 const REGISTRY_LIBS_CACHE_SIZE = 10;
+
+function cleanupPackageManagerOutput(output) {
+  return output.replace(/^Library Manager:/gm, '');
+}
 
 function* watchLoadStats() {
   function* resetCacheDelayed(expire) {
@@ -198,10 +202,17 @@ function* watchLoadInstalledLibs() {
   }
 }
 
-function* fetchStorageUpdates(storageDir) {
+function* fetchStorageUpdates(storage) {
   let args = ['lib'];
-  if (storageDir) {
-    args = args.concat(['--storage-dir', storageDir]);
+  if (storage.options && storage.options.projectDir && storage.options.projectEnv) {
+    args = args.concat([
+      '--storage-dir',
+      storage.options.projectDir,
+      '--environment',
+      storage.options.projectEnv
+    ]);
+  } else if (storage.path) {
+    args = args.concat(['--storage-dir', storage.path]);
   } else {
     args.push('--global');
   }
@@ -227,7 +238,7 @@ function* watchLoadLibUpdates() {
           yield put(
             updateEntity(
               `libUpdates${storage.initialPath}`,
-              yield call(fetchStorageUpdates, storage.path)
+              yield call(fetchStorageUpdates, storage)
             )
           );
         } catch (err) {
@@ -292,7 +303,7 @@ function* watchInstallLibrary() {
         query: 'core.call',
         params: [args]
       });
-      yield put(notifySuccess('Congrats!', lastLine(result)));
+      yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
     } catch (err_) {
       err = err_;
       yield put(notifyError('Libraries: Could not install library', err));
@@ -308,19 +319,32 @@ function* watchUninstallOrUpdateLibrary() {
   yield takeEvery([actions.UNINSTALL_LIBRARY, actions.UPDATE_LIBRARY], function*(
     action
   ) {
-    const { storageDir, pkgDir, onEnd } = action;
+    const { storage, pkg, onEnd } = action;
     let err;
     try {
       const result = yield call(apiFetchData, {
         query: 'core.call',
         params: [
-          [
-            'lib',
-            '--storage-dir',
-            storageDir,
-            action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
-            pkgDir
-          ]
+          action.type === actions.UNINSTALL_LIBRARY &&
+          storage.options &&
+          storage.options.projectDir &&
+          storage.options.projectEnv
+            ? [
+                'lib',
+                '--storage-dir',
+                storage.options.projectDir,
+                '--environment',
+                storage.options.projectEnv,
+                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
+                `${pkg.ownername ? `${pkg.ownername}/` : ''}${pkg.name}@${pkg.version}`
+              ]
+            : [
+                'lib',
+                '--storage-dir',
+                storage.path,
+                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
+                pkg.__pkg_dir
+              ]
         ]
       });
 
@@ -333,24 +357,27 @@ function* watchUninstallOrUpdateLibrary() {
         if (!key.startsWith('installedLibs') && !key.startsWith('libUpdates')) {
           continue;
         }
-        if (state.entities[key].find(item => item.__pkg_dir === pkgDir)) {
+        if (state.entities[key].find(item => item.__pkg_dir === pkg.__pkg_dir)) {
           yield put(
             updateEntity(
               key,
-              state.entities[key].filter(item => item.__pkg_dir !== pkgDir)
+              state.entities[key].filter(item => item.__pkg_dir !== pkg.__pkg_dir)
             )
           );
         }
       }
 
-      yield put(notifySuccess('Congrats!', lastLine(result)));
+      yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
     } catch (err_) {
       err = err_;
       if (
         err instanceof jsonrpc.JsonRpcError &&
-        err.data.includes('Error: Detected unknown package')
+        err.data.includes('Error: Could not find the package')
       ) {
         yield put(deleteEntity(/^installedLibs/));
+        if (action.type === actions.UNINSTALL_LIBRARY) {
+          yield put(actions.loadInstalledLibs());
+        }
         const state = yield select();
         if (state.router) {
           return goTo(state.router.history, '/libraries/installed', undefined, true);

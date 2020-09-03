@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Collapse, Divider, Input, Modal, Select } from 'antd';
+import { Collapse, Divider, Input, Modal, Select, message } from 'antd';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -79,6 +79,10 @@ class LibraryInstallAdvancedModal extends React.Component {
       this.focus();
       return;
     }
+    if (!this.state.storageDir) {
+      message.error('Please select a project!');
+      return;
+    }
     this.setState({
       installing: true
     });
@@ -111,9 +115,9 @@ class LibraryInstallAdvancedModal extends React.Component {
       <Modal
         visible={this.props.visible}
         confirmLoading={this.state.installing}
-        title="Advanced library installation"
-        width={600}
-        okText="Install"
+        title="Add project dependency"
+        width={700}
+        okText="Add"
         onOk={::this.onDidInstall}
         onCancel={::this.onDidCancel}
       >
@@ -130,12 +134,11 @@ class LibraryInstallAdvancedModal extends React.Component {
         </div>
         <div className="block">
           <Select
-            defaultValue=""
+            placeholder="Select a project"
             style={{ width: '100%' }}
             size="large"
             onChange={::this.onDidStorage}
           >
-            <Select.Option value="">Global storage</Select.Option>
             <Select.OptGroup label="Projects">
               {projects.map(item => (
                 <Select.Option key={item.path} value={item.path} title={item.path}>
@@ -153,103 +156,64 @@ class LibraryInstallAdvancedModal extends React.Component {
               )}
             </Select.OptGroup>
           </Select>
+
+          <div>
+            <small>
+              You can manage your projects in the &quot;Projects&quot; section: create a
+              new or add existing.
+            </small>
+          </div>
         </div>
 
         <Divider>Information</Divider>
         <Collapse>
-          <Collapse.Panel
-            header='Project dependencies in "platformio.ini"'
-            key="lib_deps"
-          >
-            <div>
-              PlatformIO Core has built-in powerful{' '}
-              <a
-                onClick={() =>
-                  this.props.osOpenUrl(
-                    'http://docs.platformio.org/page/librarymanager/index.html'
-                  )
-                }
-              >
-                Library Manager
+          <Collapse.Panel header="Registry and Specification" key="spec">
+            <p>
+              The PlatformIO Registry is fully compatible with{' '}
+              <a onClick={() => this.props.osOpenUrl('https://semver.org/')}>
+                Semantic Versioning
               </a>{' '}
-              that allows you to specify project dependencies in{' '}
-              <b>configuration file &quot;platformio.ini&quot;</b> using{' '}
+              and its &quot;version&quot; scheme{' '}
+              <code>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</code>. You can declare
+              library dependencies in &quot;platformio.ini&quot; configuration file
+              using{' '}
               <a
                 onClick={() =>
                   this.props.osOpenUrl(
-                    'http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps'
+                    'https://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps'
                   )
                 }
               >
                 lib_deps
               </a>{' '}
-              option. The dependent libraries will be installed automatically on the
-              first build of a project. <b>NO NEED TO INSTALL THEM MANUALLY.</b>
-            </div>
-          </Collapse.Panel>
-          <Collapse.Panel header="Storage types" key="storage">
-            <ul className="list-styled">
+              option. The following syntax is supported:
+            </p>
+            <ul>
               <li>
-                <b>Global storage</b> – libraries are visible for all projects
+                <code>^1.2.3</code> - any compatible version (new functionality in a
+                backwards compatible manner and patches are allowed, 1.x.x).{' '}
+                <b>RECOMMENDED</b>
               </li>
               <li>
-                <b>Project storage</b> – libraries are visible only for the specified
-                project
+                <code>~1.2.3</code> - any version with the same major and minor
+                versions, and an equal or greater patch version
               </li>
               <li>
-                <b>Custom storage</b> – libraries are visible for project via{' '}
-                <a
-                  onClick={() =>
-                    this.props.osOpenUrl(
-                      'http://docs.platformio.org/page/projectconf/section_env_library.html#projectconf-lib-extra-dirs'
-                    )
-                  }
-                >
-                  lib_extra_dirs
-                </a>{' '}
-                option.
+                <code>&gt;1.2.3</code> - any version greater than 1.2.3. &gt;=, &lt;,
+                and &lt;= are also possible
               </li>
               <li>
-                <a
-                  onClick={() =>
-                    this.props.osOpenUrl(
-                      'http://docs.platformio.org/page/librarymanager/ldf.html#storage'
-                    )
-                  }
-                >
-                  More storages...
-                </a>
+                <code>&gt;0.1.0,!=0.2.0,&lt;0.3.0</code> - any version greater than
+                0.1.0, not equal to 0.2.0 and less than 0.3.0
+              </li>
+              <li>
+                <code>1.2.3</code> - the exact version number. Use only this exact
+                version
               </li>
             </ul>
           </Collapse.Panel>
-          <Collapse.Panel header="Installation format" key="format">
+          <Collapse.Panel header="External resources" key="format">
             <ul className="list-styled">
-              <li>
-                <code>&lt;id&gt;</code> - 12345
-              </li>
-              <li>
-                <code>id=&lt;id&gt;</code> - id=12345
-              </li>
-              <li>
-                <code>&lt;id&gt;@&lt;version&gt;</code> - 12345@1.2.3 or 12345@^1.2.3 (
-                <a onClick={() => this.props.osOpenUrl('http://semver.org/')}>
-                  Semantic Versioning
-                </a>
-                )
-              </li>
-              <li>
-                <code>&lt;id&gt;@&lt;version range&gt;</code> -
-                12345@&gt;0.1.0,!=0.2.0,&lt;0.3.0
-              </li>
-              <li>
-                <code>&lt;name&gt;</code> - Foo
-              </li>
-              <li>
-                <code>&lt;name&gt;@&lt;version&gt;</code> - Foo@1.2.3 or Foo@~1.2.3
-              </li>
-              <li>
-                <code>&lt;name&gt;@&lt;version range&gt;</code> - Foo@!=1.2.0
-              </li>
               <li>
                 <code>&lt;zip or tarball url&gt;</code>
               </li>
@@ -263,8 +227,8 @@ class LibraryInstallAdvancedModal extends React.Component {
                 <code>&lt;repository&gt;</code>
               </li>
               <li>
-                <code>&lt;name&gt;=&lt;repository&gt;</code> (name it should have
-                locally)
+                <code>&lt;name&gt;=&lt;repository&gt;</code> (the &quot;name&quot; it
+                should have locally)
               </li>
               <li>
                 <code>&lt;repository#tag&gt;</code> (&quot;tag&quot; can be commit,
@@ -274,7 +238,7 @@ class LibraryInstallAdvancedModal extends React.Component {
                 <a
                   onClick={() =>
                     this.props.osOpenUrl(
-                      'http://docs.platformio.org/page/userguide/lib/cmd_install.html'
+                      'https://docs.platformio.org/page/userguide/lib/cmd_install.html'
                     )
                   }
                 >

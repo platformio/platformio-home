@@ -16,7 +16,6 @@
 
 import { Button, Col, Divider, Icon, Row, Tooltip } from 'antd';
 
-import LibraryInstallAdvancedModal from '../containers/install-advanced-modal';
 import PropTypes from 'prop-types';
 import React from 'react';
 import humanize from 'humanize';
@@ -37,13 +36,6 @@ export default class LibraryStats extends React.Component {
     showLibrary: PropTypes.func.isRequired
   };
 
-  constructor() {
-    super(...arguments);
-    this.state = {
-      advancedVisible: false
-    };
-  }
-
   getKeywordBtnSize(index) {
     if (index < 10) {
       return 'large';
@@ -63,25 +55,9 @@ export default class LibraryStats extends React.Component {
     );
   }
 
-  onDidAdvanced() {
-    this.setState({
-      advancedVisible: true
-    });
-  }
-
-  onDidCancelAdvanced() {
-    this.setState({
-      advancedVisible: false
-    });
-  }
-
   render() {
     return (
       <div>
-        <LibraryInstallAdvancedModal
-          visible={this.state.advancedVisible}
-          onCancel={::this.onDidCancelAdvanced}
-        />
         <div className="text-right">
           <Button.Group>
             <Button
@@ -93,16 +69,7 @@ export default class LibraryStats extends React.Component {
               All Libraries
             </Button>
             <Button ghost type="primary" icon="file-add" onClick={::this.onDidRegister}>
-              Register
-            </Button>
-            <Button
-              ghost
-              type="primary"
-              icon="download"
-              disabled={this.state.advancedVisible}
-              onClick={::this.onDidAdvanced}
-            >
-              Install
+              Publish
             </Button>
           </Button.Group>
         </div>

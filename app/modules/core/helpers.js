@@ -80,13 +80,6 @@ export function title(str) {
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export function lastLine(text) {
-  return text
-    .trim()
-    .split('\n')
-    .slice(-1)[0];
-}
-
 export function cmpSort(a, b) {
   if (a < b) {
     return -1;

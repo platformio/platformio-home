@@ -180,7 +180,7 @@ function* watchLoadPlatformData() {
         }
       }
     } else {
-      yield [call(checkBoards), call(checkRegistryPackages)];
+      yield all([call(checkBoards), call(checkRegistryPackages)]);
     }
   });
 }
@@ -188,7 +188,7 @@ function* watchLoadPlatformData() {
 function* watchLoadFrameworkData() {
   yield takeLatest(actions.LOAD_FRAMEWORK_DATA, function*() {
     const silent = false;
-    yield [call(checkRegistryPlatformsAndFrameworks, silent), call(checkBoards)];
+    yield all([call(checkRegistryPlatformsAndFrameworks, silent), call(checkBoards)]);
   });
 }
 

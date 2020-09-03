@@ -25,6 +25,7 @@ export default class LibraryStorageItem extends React.Component {
     item: PropTypes.shape({
       name: PropTypes.string.isRequired,
       version: PropTypes.string.isRequired,
+      versionWanted: PropTypes.string,
       versionLatest: PropTypes.string,
       description: PropTypes.string,
       url: PropTypes.string,
@@ -172,11 +173,18 @@ export default class LibraryStorageItem extends React.Component {
                   type="primary"
                   icon="cloud-download-o"
                   loading={this.state.actionInProgress}
-                  disabled={this.state.actionInProgress}
+                  disabled={
+                    this.state.actionInProgress ||
+                    this.props.item.versionWanted !== this.props.item.versionLatest
+                  }
                   onClick={e => this.onDidUninstallOrUpdateItem(e, 'update')}
                 >
-                  {this.props.item.versionLatest
-                    ? `Update to ${this.props.item.versionLatest}`
+                  {this.props.item.versionWanted
+                    ? `Update to ${this.props.item.versionLatest}${
+                        this.props.item.versionWanted !== this.props.item.versionLatest
+                          ? ' (incompatible)'
+                          : ''
+                      }`
                     : 'Update'}
                 </Button>
               ) : (

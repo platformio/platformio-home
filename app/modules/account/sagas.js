@@ -83,8 +83,7 @@ function* watchLoadAccountInfo() {
     } catch (err) {
       if (
         !(
-          err instanceof jsonrpc.JsonRpcError &&
-          err.data.includes('Error: You are not')
+          err instanceof jsonrpc.JsonRpcError && err.data.includes('Error: You are not')
         )
       ) {
         yield put(notifyError('Could not load PIO Account information', err));
