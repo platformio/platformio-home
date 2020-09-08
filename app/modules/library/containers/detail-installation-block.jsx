@@ -60,7 +60,7 @@ export default class LibraryDetailInstallationBlock extends React.Component {
     const ownedLib = this.props.data.ownername
       ? `${this.props.data.ownername}/${this.props.data.name}`
       : this.props.data.name;
-    let content = `; platformio.ini – project configuration file
+    let content = `# platformio.ini – project configuration file
 
 [env:my_build_env]`;
 
@@ -95,7 +95,7 @@ lib_deps =`;
   # Accept new functionality in a backwards compatible manner and patches
   ${ownedLib} @ ^${versionName}
 
-  # Acept only backwards compatible bug fixes
+  # Accept only backwards compatible bug fixes
   # (any version with the same major and minor versions, and an equal or greater patch version)
   ${ownedLib} @ ~${versionName}
 
