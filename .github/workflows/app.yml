@@ -1,0 +1,21 @@
+name: App
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+        
+    - run: npm lint
+    - run: npm build
