@@ -2,7 +2,7 @@ name: "Close stale issues"
 
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "0 0 * * *"
 
 jobs:
   stale:
@@ -11,7 +11,7 @@ jobs:
     - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.STALE_GITHUB_TOKEN }}
-        stale-issue-message: 'This issue is stale because it has been open 30 days with no activity. Please provide more details or this will be closed in 5 days'
+        stale-issue-message: "This issue is stale because it has been open 30 days with no activity. Please provide more details or this will be closed in 5 days."
         days-before-stale: 30
         days-before-close: 5
-        exempt-issue-labels: 'bug,known issue,project,feature,enhancement'
+        exempt-issue-labels: "bug,known issue,project,feature,enhancement"
