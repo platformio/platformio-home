@@ -143,7 +143,7 @@ class ProjectExamplesModal extends React.Component {
               </a>
               . Please install more platforms to see the new examples.
             </p>
-            Examples already contain pre-configured build environemnts (boards, flags,
+            Examples already contain pre-configured build environments (boards, flags,
             etc.). You can edit them later in{' '}
             <a
               onClick={() =>
@@ -152,7 +152,7 @@ class ProjectExamplesModal extends React.Component {
             >
               Project Configuration File &quot;platformio.ini&quot;
             </a>{' '}
-            located in a root of project.
+            located in the root of your project.
           </div>
         )}
         <Select
