@@ -103,7 +103,7 @@ export default class AccountTokenForm extends React.Component {
                   )
                 }
               >
-                PIO Remote™
+                Remote Development
               </a>{' '}
               operations when you can not authenticate manually.
               <div>

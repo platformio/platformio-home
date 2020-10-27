@@ -46,7 +46,10 @@ function* _inspectMemory({ projectDir, env }) {
   const start = Date.now();
   yield call(apiFetchData, {
     query: 'core.call',
-    params: [['run', '-d', projectDir, '-e', env, '-t', 'sizedata']]
+    params: [
+      ['run', '-d', projectDir, '-e', env, '-t', 'sizedata'],
+      { force_subprocess: true }
+    ]
   });
 
   const buildDir = yield call(apiFetchData, {
@@ -78,7 +81,10 @@ function* _inspectCode({ projectDir, env }) {
   try {
     codeCheckResults = yield call(apiFetchData, {
       query: 'core.call',
-      params: [['check', '-d', projectDir, '-e', env, '--json-output']]
+      params: [
+        ['check', '-d', projectDir, '-e', env, '--json-output'],
+        { force_subprocess: true }
+      ]
     });
     yield _updateMetric('code', projectDir, env, Date.now() - start);
 
