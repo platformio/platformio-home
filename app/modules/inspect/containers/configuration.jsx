@@ -274,7 +274,9 @@ class InspectionFormComponent extends React.Component {
             <div className="ant-form-item-label">
               <label>Errors</label>
             </div>
-            <div className="inspect-config-console">{this.props.error}</div>
+            <div className="inspect-config-console">
+              {this.props.error.replace(/\\\\n/g, '\n')}
+            </div>
           </div>
         )}
       </div>
