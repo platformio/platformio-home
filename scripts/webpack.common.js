@@ -52,58 +52,92 @@ module.exports = {
     {
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components|public\/)/,
-      loader: 'babel-loader',
-      options: {
-        plugins: [['import', { libraryName: 'antd', style: true }]]
-      }
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            plugins: [['import', { libraryName: 'antd', style: true }]]
+          }
+        }
+      ]
     },
     {
       test: /\.css$/,
-      loaders: ['style-loader', 'css-loader?importLoaders=1'],
+      use: [
+        { loader: 'style-loader' },
+        { loader: 'css-loader', options: { importLoaders: true } }
+      ],
       exclude: /node_modules/
     },
     {
       test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'file-loader'
+      use: [{ loader: 'file-loader' }]
     },
     {
       test: /\.(woff|woff2)$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'url-loader?prefix=font/&limit=5000'
+      use: [{ loader: 'url-loader', options: { prefix: 'font/', limit: 5000 } }]
     },
     {
       test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'url-loader?limit=10000&mimetype=application/octet-stream'
+      use: [
+        {
+          loader: 'url-loader',
+          options: { mimetype: 'application/octet-stream', limit: 10000 }
+        }
+      ]
     },
     {
       test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+      use: [
+        {
+          loader: 'url-loader',
+          options: { mimetype: 'image/svg+xml', limit: 10000 }
+        }
+      ]
     },
     {
       test: /\.gif/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'url-loader?limit=10000&mimetype=image/gif'
+      use: [
+        {
+          loader: 'url-loader',
+          options: { mimetype: 'image/gif', limit: 10000 }
+        }
+      ]
     },
     {
       test: /\.jpg/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'url-loader?limit=10000&mimetype=image/jpg'
+      use: [
+        {
+          loader: 'url-loader',
+          options: { mimetype: 'image/jpg', limit: 10000 }
+        }
+      ]
     },
     {
       test: /\.png/,
       exclude: /(node_modules|bower_components)/,
-      loader: 'url-loader?limit=10000&mimetype=image/png'
+      use: [
+        {
+          loader: 'url-loader',
+          options: { mimetype: 'image/image/png', limit: 10000 }
+        }
+      ]
     }
   ],
 
   plugins: [
-    new WebpackCleanupPlugin(),
+    // new WebpackCleanupPlugin(),
     new webpack.DefinePlugin({
       APP_VERSION: JSON.stringify(packageConfig.version)
     }),
-    new CopyWebpackPlugin([{ from: path.join(mediaDir, 'fonts'), to: 'fonts' }])
+    new CopyWebpackPlugin({
+      patterns: [{ from: path.join(mediaDir, 'fonts'), to: 'fonts' }]
+    })
   ]
 };
