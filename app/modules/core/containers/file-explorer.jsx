@@ -30,6 +30,7 @@ import {
   Tooltip
 } from 'antd';
 
+import { IS_WINDOWS } from '../../../config';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -347,7 +348,7 @@ class FileExplorer extends React.Component {
             <li key={item.path}>
               <Icon type="hdd" />
               <a onClick={() => this.onDidChangeRoot(item.path)} title={item.name}>
-                {item.path}
+                {!IS_WINDOWS && item.name ? item.name : item.path}
               </a>
             </li>
           ))}
