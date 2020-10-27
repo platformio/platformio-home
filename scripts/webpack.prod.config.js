@@ -26,7 +26,6 @@ const extractThemeCSS = new MiniCssExtractPlugin({
 
 const plugins = [
   ...common.plugins,
-  new webpack.optimize.OccurrenceOrderPlugin(),
   extractThemeCSS,
   new HtmlWebpackPlugin({
     template: path.join(common.appDir, 'index.html'),

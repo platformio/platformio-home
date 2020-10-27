@@ -225,7 +225,10 @@ function* watchLoadPlatformUpdates() {
       try {
         const items = yield call(apiFetchData, {
           query: 'core.call',
-          params: [['platform', 'update', '--only-check', '--json-output']]
+          params: [
+            ['platform', 'update', '--only-check', '--json-output'],
+            { force_subprocess: true }
+          ]
         });
         yield put(updateEntity('platformUpdates', items));
       } catch (err) {
@@ -256,7 +259,10 @@ function* watchAutoCheckPlatformUpdates() {
   try {
     const result = yield call(apiFetchData, {
       query: 'core.call',
-      params: [['platform', 'update', '--only-check', '--json-output']]
+      params: [
+        ['platform', 'update', '--only-check', '--json-output'],
+        { force_subprocess: true }
+      ]
     });
     yield put(updateRouteBadge('/platforms/updates', result.length));
   } catch (err) {
@@ -273,7 +279,7 @@ function* watchInstallPlatform() {
 
       result = yield call(apiFetchData, {
         query: 'core.call',
-        params: [['platform', 'install', platform]]
+        params: [['platform', 'install', platform], { force_subprocess: true }]
       });
 
       ReactGA.timing({
@@ -311,7 +317,8 @@ function* watchUninstallOrUpdatePlatform() {
             'platform',
             action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update',
             pkgDir
-          ]
+          ],
+          { force_subprocess: true }
         ]
       });
 

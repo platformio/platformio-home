@@ -156,7 +156,7 @@ function* watchLoadBuiltinLibs() {
     try {
       items = yield call(apiFetchData, {
         query: 'core.call',
-        params: [['lib', 'builtin', '--json-output']]
+        params: [['lib', 'builtin', '--json-output'], { force_subprocess: true }]
       });
       yield put(updateEntity('builtinLibs', items));
     } catch (err) {
@@ -185,7 +185,7 @@ function* watchLoadInstalledLibs() {
           args = args.concat(['list', '--json-output']);
           const items = yield call(apiFetchData, {
             query: 'core.call',
-            params: [args]
+            params: [args, { force_subprocess: true }]
           });
           yield put(updateEntity(`installedLibs${storage.initialPath}`, items));
         } catch (err) {
@@ -219,7 +219,7 @@ function* fetchStorageUpdates(storage) {
   args = args.concat(['update', '--only-check', '--json-output']);
   return yield call(apiFetchData, {
     query: 'core.call',
-    params: [args]
+    params: [args, { force_subprocess: true }]
   });
 }
 
@@ -301,7 +301,7 @@ function* watchInstallLibrary() {
       args = args.concat(['install', lib]);
       result = yield call(apiFetchData, {
         query: 'core.call',
-        params: [args]
+        params: [args, { force_subprocess: true }]
       });
       yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
     } catch (err_) {
@@ -344,7 +344,8 @@ function* watchUninstallOrUpdateLibrary() {
                 storage.path,
                 action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
                 pkg.__pkg_dir
-              ]
+              ],
+          { force_subprocess: true }
         ]
       });
 

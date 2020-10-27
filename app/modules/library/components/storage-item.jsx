@@ -175,12 +175,14 @@ export default class LibraryStorageItem extends React.Component {
                   loading={this.state.actionInProgress}
                   disabled={
                     this.state.actionInProgress ||
-                    this.props.item.versionWanted !== this.props.item.versionLatest
+                    (this.props.item.versionWanted &&
+                      this.props.item.versionWanted !== this.props.item.versionLatest)
                   }
                   onClick={e => this.onDidUninstallOrUpdateItem(e, 'update')}
                 >
                   {this.props.item.versionWanted
                     ? `Update to ${this.props.item.versionLatest}${
+                        this.props.item.versionWanted &&
                         this.props.item.versionWanted !== this.props.item.versionLatest
                           ? ' (incompatible)'
                           : ''

@@ -63,7 +63,10 @@ function* watchLoadMDNSDevices() {
       try {
         items = yield call(apiFetchData, {
           query: 'core.call',
-          params: [['device', 'list', '--mdns', '--json-output']]
+          params: [
+            ['device', 'list', '--mdns', '--json-output'],
+            { force_subprocess: true }
+          ]
         });
         yield put(updateEntity('mDNSDevices', items));
       } catch (err) {
