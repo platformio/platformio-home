@@ -91,7 +91,11 @@ function* watchNotifyError() {
       [
         /Updating.+VCS.+recurse-submodules/g,
         'https://github.com/platformio/platformio-home/issues/143'
-      ]
+      ],
+      [
+        /DLL load failed/g,
+        'https://github.com/platformio/platformio-home/issues/1772'
+      ],
     ];
     for (const [regex, url] of knownIssues) {
       if (description.match(regex)) {
