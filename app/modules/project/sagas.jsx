@@ -52,7 +52,7 @@ import { ConfigFileModifiedError } from '@project/errors';
 import { ConsentRejectedError } from '@core/errors';
 import React from 'react';
 import ReactGA from 'react-ga';
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { ensureUserConsent } from '@core/sagas';
 
 import jsonrpc from 'jsonrpc-lite';
@@ -62,7 +62,7 @@ const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 function* watchAddProject() {
   yield takeEvery(actions.ADD_PROJECT, function*({ projectDir, withOpen, onEnd }) {
     const iniPath = pathlib.join(projectDir, 'platformio.ini');
-    const fileExists = yield call(apiFetchData, {
+    const fileExists = yield call(backendFetchData, {
       query: 'os.is_file',
       params: [iniPath]
     });
@@ -143,7 +143,7 @@ function* watchProjectRename() {
 function* watchOpenProject() {
   yield takeEvery(actions.OPEN_PROJECT, function*({ projectDir }) {
     try {
-      return yield call(apiFetchData, {
+      return yield call(backendFetchData, {
         query: 'ide.open_project',
         params: [getSessionId(), projectDir]
       });
@@ -184,7 +184,7 @@ function* watchLoadProjects() {
       }
     }
     try {
-      items = yield call(apiFetchData, {
+      items = yield call(backendFetchData, {
         query: 'project.get_projects'
       });
       yield put(updateEntity('projects', items));
@@ -203,7 +203,7 @@ function* watchLoadProjectExamples() {
       continue;
     }
     try {
-      items = yield call(apiFetchData, {
+      items = yield call(backendFetchData, {
         query: 'project.get_project_examples'
       });
       yield put(updateEntity('projectExamples', items));
@@ -227,7 +227,7 @@ function* watchImportProject() {
     try {
       const start = new Date().getTime();
 
-      result = yield call(apiFetchData, {
+      result = yield call(backendFetchData, {
         query: 'project.import_pio',
         params: [projectDir]
       });
@@ -261,7 +261,7 @@ function* watchInitProject() {
     try {
       const start = new Date().getTime();
 
-      result = yield call(apiFetchData, {
+      result = yield call(backendFetchData, {
         query: 'project.init',
         params: [board, framework, projectDir]
       });
@@ -300,7 +300,7 @@ function* watchImportArduinoProject() {
     try {
       const start = new Date().getTime();
 
-      result = yield call(apiFetchData, {
+      result = yield call(backendFetchData, {
         query: 'project.import_arduino',
         params: [board, useArduinoLibs, arduinoProjectDir]
       });
@@ -342,7 +342,7 @@ function* watchImportArduinoProject() {
 function* watchLoadConfigSchema() {
   yield takeLatest(actions.LOAD_CONFIG_SCHEMA, function*() {
     try {
-      const schema = yield call(apiFetchData, {
+      const schema = yield call(backendFetchData, {
         query: 'project.get_config_schema'
       });
       // group by scope to pass to section without extra processing
@@ -368,11 +368,11 @@ function* watchLoadProjectConfig() {
     try {
       yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`)));
       const configPath = pathlib.join(projectDir, 'platformio.ini');
-      const tupleConfig = yield call(apiFetchData, {
+      const tupleConfig = yield call(backendFetchData, {
         query: 'project.config_load',
         params: [configPath]
       });
-      const mtime = yield call(apiFetchData, {
+      const mtime = yield call(backendFetchData, {
         query: 'os.get_file_mtime',
         params: [configPath]
       });
@@ -413,7 +413,7 @@ function* watchSaveProjectConfig() {
       });
       const configPath = pathlib.join(projectDir, 'platformio.ini');
       if (!force) {
-        const currentMtime = yield call(apiFetchData, {
+        const currentMtime = yield call(backendFetchData, {
           query: 'os.get_file_mtime',
           params: [configPath]
         });
@@ -425,13 +425,13 @@ function* watchSaveProjectConfig() {
         }
       }
 
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'project.config_dump',
         params: [configPath, data]
       });
       message.success('Project configuration saved');
       // Refresh mtime
-      const newMtime = yield call(apiFetchData, {
+      const newMtime = yield call(backendFetchData, {
         query: 'os.get_file_mtime',
         params: [configPath]
       });
@@ -480,7 +480,7 @@ function* watchUpdateConfigDescription() {
       undo = yield _patchProjectState(projectDir, { description });
 
       // Patch file via RPC
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'project.config_update_description',
         params: [pathlib.join(projectDir, 'platformio.ini'), description]
       });

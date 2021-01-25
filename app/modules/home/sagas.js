@@ -21,7 +21,7 @@ import * as selectors from './selectors';
 
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { updateEntity } from '../../store/actions';
 
 function* watchLoadLatestTweets() {
@@ -31,7 +31,7 @@ function* watchLoadLatestTweets() {
       return;
     }
     try {
-      items = yield call(apiFetchData, {
+      items = yield call(backendFetchData, {
         query: 'misc.load_latest_tweets',
         params: [`https://news.platformio.org/tweets/${username}/data.json`]
       });
