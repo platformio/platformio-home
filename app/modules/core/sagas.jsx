@@ -93,8 +93,12 @@ function* watchNotifyError() {
         'https://github.com/platformio/platformio-home/issues/143'
       ],
       [
-        /DLL load failed/g,
-        'https://github.com/platformio/platformio-home/issues/1772'
+        /Error: Detected a whitespace character/g,
+        'https://github.com/platformio/platform-espressif32/issues/470'
+      ],
+      [
+        /Error: Could not find the package/g,
+        'https://github.com/platformio/platformio-home/issues/2144'
       ],
     ];
     for (const [regex, url] of knownIssues) {
