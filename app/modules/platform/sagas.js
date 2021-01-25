@@ -193,24 +193,35 @@ function* watchLoadFrameworkData() {
 }
 
 function* watchLoadInstalledPlatforms() {
-  while (true) {
-    yield take(actions.LOAD_INSTALLED_PLATFORMS);
+  yield takeLatest(actions.LOAD_INSTALLED_PLATFORMS, function*() {
     const items = yield select(selectors.selectInstalledPlatforms);
     if (items) {
-      continue;
+      return;
     }
     yield call(function*() {
-      try {
-        const items = yield call(backendFetchData, {
-          query: 'core.call',
-          params: [['platform', 'list', '--json-output']]
-        });
-        yield put(updateEntity('installedPlatforms', items));
-      } catch (err) {
-        yield put(notifyError('Could not load installed platforms', err));
+      let attempts = 0;
+      let lastError = undefined;
+      while (attempts < 3) {
+        attempts++;
+        try {
+          const items = yield call(backendFetchData, {
+            query: 'core.call',
+            params: [['platform', 'list', '--json-output']]
+          });
+          return yield put(updateEntity('installedPlatforms', items));
+        } catch (err) {
+          lastError = err;
+        }
+        if (
+          lastError instanceof jsonrpc.JsonRpcError &&
+          !lastError.data.includes('Error: Unknown development platform')
+        ) {
+          break;
+        }
       }
+      yield put(notifyError('Could not load installed platforms', lastError));
     });
-  }
+  });
 }
 
 function* watchLoadPlatformUpdates() {
