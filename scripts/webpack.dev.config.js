@@ -38,10 +38,7 @@ module.exports = {
         test: /\.less$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: process.env.NODE_ENV === 'development'
-            }
+            loader: MiniCssExtractPlugin.loader
           },
           { loader: 'css-loader' },
           {
@@ -82,7 +79,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'style.css',
       ignoreOrder: false, // Enable to remove warnings about conflicting order
-      allChunks: true
     }),
     new HtmlWebpackPlugin({
       template: path.join(common.appDir, 'index.html'),

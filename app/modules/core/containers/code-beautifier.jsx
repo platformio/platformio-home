@@ -21,7 +21,7 @@ import { Icon, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import hljs from 'highlight.js/lib/highlight';
+import hljs from 'highlight.js/lib/core';
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
 

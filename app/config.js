@@ -19,7 +19,7 @@ export const IS_WINDOWS =
 export const INPUT_FILTER_DELAY = 300; // ms, dalay before filtering projects, libs, platorms
 export const PLATFORMIO_API_ENDPOINT = 'https://api.platformio.org';
 
-let pathname = (window.location? window.location.pathname : '/');
+let pathname = window.location ? window.location.pathname : '/';
 if (pathname[pathname.length - 1] !== '/') {
   pathname += '/';
 }
