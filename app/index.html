@@ -54,7 +54,11 @@
     theme = 'dark';
   };
   var link = document.createElement('link');
-  link.href = './themes/' + workspace + '-' + theme + '.css';
+  var pathname = (window.location? window.location.pathname : '/');
+  if (pathname[pathname.length - 1] !== '/') {
+    pathname += '/';
+  }
+  link.href = pathname + 'themes/' + workspace + '-' + theme + '.css';
   link.type = 'text/css';
   link.rel = 'stylesheet';
   document.getElementsByTagName('head')[0].appendChild(link);
