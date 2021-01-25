@@ -23,7 +23,7 @@ import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '../../store/actions';
 import { notifyError, notifySuccess, osOpenUrl } from '../core/actions';
 
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { inIframe } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { message } from 'antd';
@@ -74,7 +74,7 @@ function* watchLoadAccountInfo() {
     }
 
     try {
-      data = yield call(apiFetchData, {
+      data = yield call(backendFetchData, {
         query: 'core.call',
         params: [
           ['account', 'show', '--json-output', ...(extended ? [] : ['--offline'])]
@@ -96,7 +96,7 @@ function* watchLoadAccountInfo() {
 function* watchLoginAccount() {
   yield takeLatest(actions.LOGIN_ACCOUNT, function*({ username, password, onEnd }) {
     try {
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'core.call',
         params: [['account', 'login', '--username', username, '--password', password]]
       });
@@ -134,7 +134,7 @@ function* watchLoginWithProvider() {
 
 function* loginAccountWithCode(client_id, code, redirectUri) {
   try {
-    yield call(apiFetchData, {
+    yield call(backendFetchData, {
       query: 'account.call_client',
       params: ['login_with_code', client_id, code, redirectUri]
     });
@@ -150,7 +150,7 @@ function* watchLogoutAccount() {
   yield takeLatest(actions.LOGOUT_ACCOUNT, function*() {
     try {
       yield put(updateEntity('accountInfo', {}));
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'core.call',
         params: [['account', 'logout']]
       });
@@ -174,7 +174,7 @@ function* watchRegisterAccount() {
   }) {
     let err = null;
     try {
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'core.call',
         params: [
           [
@@ -217,7 +217,7 @@ function* watchForgotAccount() {
   yield takeLatest(actions.FORGOT_ACCOUNT, function*({ username, onEnd }) {
     let err = null;
     try {
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'core.call',
         params: [['account', 'forgot', '--username', username]]
       });
@@ -249,7 +249,7 @@ function* watchPasswordAccount() {
   }) {
     let err = null;
     try {
-      yield call(apiFetchData, {
+      yield call(backendFetchData, {
         query: 'core.call',
         params: [
           [
@@ -288,7 +288,7 @@ function* watchTokenAccount() {
       if (regenerate) {
         args.push('--regenerate');
       }
-      const data = yield call(apiFetchData, {
+      const data = yield call(backendFetchData, {
         query: 'core.call',
         params: [args]
       });
@@ -317,7 +317,7 @@ function* watchUpdateProfile() {
   }) {
     let err = null;
     try {
-      const response = yield call(apiFetchData, {
+      const response = yield call(backendFetchData, {
         query: 'core.call',
         params: [
           [

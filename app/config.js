@@ -17,10 +17,14 @@
 export const IS_WINDOWS =
   navigator && navigator.platform && navigator.platform.startsWith('Win');
 export const INPUT_FILTER_DELAY = 300; // ms, dalay before filtering projects, libs, platorms
-export const PLATFORMIO_API_ENDPOINT = 'http://api.platformio.org';
+export const PLATFORMIO_API_ENDPOINT = 'https://api.platformio.org';
 
-let wsrpc = 'ws://127.0.0.1:8008/wsrpc';
+let pathname = window.location ? window.location.pathname : '/';
+if (pathname[pathname.length - 1] !== '/') {
+  pathname += '/';
+}
+let wsrpc = `ws://127.0.0.1:8008${pathname}wsrpc`;
 if (process.env.NODE_ENV === 'production' && window.location && window.location.host) {
-  wsrpc = `ws://${window.location.host}/wsrpc`;
+  wsrpc = `ws://${window.location.host}${pathname}wsrpc`;
 }
 export const BACKEND_ENDPOINT = wsrpc;

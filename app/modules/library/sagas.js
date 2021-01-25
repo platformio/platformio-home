@@ -37,7 +37,7 @@ import {
 } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { checkRegistryPlatformsAndFrameworks } from '../platform/sagas';
 import jsonrpc from 'jsonrpc-lite';
 import { preloadProjects } from '../project/sagas';
@@ -64,7 +64,7 @@ function* watchLoadStats() {
     }
 
     try {
-      data = yield call(apiFetchData, {
+      data = yield call(backendFetchData, {
         query: 'core.call',
         params: [['lib', 'stats', '--json-output']]
       });
@@ -93,7 +93,7 @@ function* watchLoadSearchResult() {
         args.push(query);
       }
       args = args.concat(['--page', page, '--json-output']);
-      result = yield call(apiFetchData, {
+      result = yield call(backendFetchData, {
         query: 'core.call',
         params: [args]
       });
@@ -123,7 +123,7 @@ function* watchLoadLibraryData() {
           return;
         }
         try {
-          const data = yield call(apiFetchData, {
+          const data = yield call(backendFetchData, {
             query: 'core.call',
             params: [['lib', 'show', idOrManifest, '--json-output']]
           });
@@ -154,7 +154,7 @@ function* watchLoadBuiltinLibs() {
       continue;
     }
     try {
-      items = yield call(apiFetchData, {
+      items = yield call(backendFetchData, {
         query: 'core.call',
         params: [['lib', 'builtin', '--json-output'], { force_subprocess: true }]
       });
@@ -183,7 +183,7 @@ function* watchLoadInstalledLibs() {
             args.push('--global');
           }
           args = args.concat(['list', '--json-output']);
-          const items = yield call(apiFetchData, {
+          const items = yield call(backendFetchData, {
             query: 'core.call',
             params: [args, { force_subprocess: true }]
           });
@@ -217,7 +217,7 @@ function* fetchStorageUpdates(storage) {
     args.push('--global');
   }
   args = args.concat(['update', '--only-check', '--json-output']);
-  return yield call(apiFetchData, {
+  return yield call(backendFetchData, {
     query: 'core.call',
     params: [args, { force_subprocess: true }]
   });
@@ -299,7 +299,7 @@ function* watchInstallLibrary() {
         args.push('--global');
       }
       args = args.concat(['install', lib]);
-      result = yield call(apiFetchData, {
+      result = yield call(backendFetchData, {
         query: 'core.call',
         params: [args, { force_subprocess: true }]
       });
@@ -322,7 +322,7 @@ function* watchUninstallOrUpdateLibrary() {
     const { storage, pkg, onEnd } = action;
     let err;
     try {
-      const result = yield call(apiFetchData, {
+      const result = yield call(backendFetchData, {
         query: 'core.call',
         params: [
           action.type === actions.UNINSTALL_LIBRARY &&

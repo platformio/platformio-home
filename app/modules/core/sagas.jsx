@@ -28,7 +28,7 @@ import { ConsentRejectedError } from '@core/errors';
 import React from 'react';
 import URL from 'url-parse';
 import { USER_CONSENTS_KEY } from '@core/constants';
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { getStore } from '../../store/index';
 import jsonrpc from 'jsonrpc-lite';
 import qs from 'querystringify';
@@ -91,6 +91,14 @@ function* watchNotifyError() {
       [
         /Updating.+VCS.+recurse-submodules/g,
         'https://github.com/platformio/platformio-home/issues/143'
+      ],
+      [
+        /Error: Detected a whitespace character/g,
+        'https://github.com/platformio/platform-espressif32/issues/470'
+      ],
+      [
+        /Error: Could not find the package/g,
+        'https://github.com/platformio/platformio-home/issues/2144'
       ]
     ];
     for (const [regex, url] of knownIssues) {
@@ -191,7 +199,7 @@ function* watchOSRequests() {
               const redirectWindow = window.open(url.toString(), '_blank');
               redirectWindow.location;
             } else {
-              yield call(apiFetchData, {
+              yield call(backendFetchData, {
                 query: 'os.open_url',
                 params: [url.toString()]
               });
@@ -199,28 +207,28 @@ function* watchOSRequests() {
             break;
 
           case actions.OS_REVEAL_FILE:
-            yield call(apiFetchData, {
+            yield call(backendFetchData, {
               query: 'os.reveal_file',
               params: [action.path]
             });
             break;
 
           case actions.OS_RENAME_FILE:
-            yield call(apiFetchData, {
+            yield call(backendFetchData, {
               query: 'os.rename',
               params: [action.src, action.dst]
             });
             break;
 
           case actions.OS_COPY_FILE:
-            yield call(apiFetchData, {
+            yield call(backendFetchData, {
               query: 'os.copy',
               params: [action.src, action.dst]
             });
             break;
 
           case actions.OS_MAKE_DIRS:
-            yield call(apiFetchData, {
+            yield call(backendFetchData, {
               query: 'os.make_dirs',
               params: [action.path]
             });
@@ -265,7 +273,7 @@ function* watchRequestContent() {
       }
 
       if (!content) {
-        content = yield call(apiFetchData, {
+        content = yield call(backendFetchData, {
           query: 'os.request_content',
           params: [uri, data, headers, cacheValid]
         });
@@ -297,7 +305,7 @@ function* watchOsFSGlob() {
       return;
     }
     try {
-      items = yield call(apiFetchData, {
+      items = yield call(backendFetchData, {
         query: 'os.glob',
         params: [pathnames, rootDir]
       });
@@ -328,7 +336,7 @@ function* watchLoadLogicalDevices() {
       return;
     }
     try {
-      items = yield call(apiFetchData, {
+      items = yield call(backendFetchData, {
         query: 'os.get_logical_devices'
       });
       yield put(updateEntity('logicalDevices', items));
@@ -347,7 +355,7 @@ function* watchOsListDir() {
       items = {};
     }
     try {
-      const result = yield call(apiFetchData, {
+      const result = yield call(backendFetchData, {
         query: 'os.list_dir',
         params: [/^[A-Z]:$/.test(path) ? path + '\\' : path]
       });
@@ -369,7 +377,7 @@ function* watchOsIsFile() {
       items = {};
     }
     try {
-      const result = yield call(apiFetchData, {
+      const result = yield call(backendFetchData, {
         query: 'os.is_file',
         params: [path]
       });
@@ -391,7 +399,7 @@ function* watchOsIsDir() {
       items = {};
     }
     try {
-      const result = yield call(apiFetchData, {
+      const result = yield call(backendFetchData, {
         query: 'os.is_dir',
         params: [path]
       });
@@ -428,7 +436,7 @@ function* watchToggleFavoriteFolder() {
 
 function* watchOpenTextDocument() {
   yield takeEvery(actions.OPEN_TEXT_DOCUMENT, function*({ path, line, column }) {
-    const is_file = yield call(apiFetchData, {
+    const is_file = yield call(backendFetchData, {
       query: 'os.is_file',
       params: [path]
     });
@@ -436,13 +444,13 @@ function* watchOpenTextDocument() {
       return message.error(`File does not exist on disk ${path}`);
     }
     try {
-      return yield call(apiFetchData, {
+      return yield call(backendFetchData, {
         query: 'ide.open_text_document',
         params: [getSessionId(), path, line, column]
       });
     } catch (err) {
       console.warn(err);
-      return yield call(apiFetchData, {
+      return yield call(backendFetchData, {
         query: 'os.open_file',
         params: [path]
       });

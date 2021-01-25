@@ -27,7 +27,7 @@ import {
   selectSavedConfiguration
 } from '@inspect/selectors';
 
-import { apiFetchData } from '@store/api';
+import { backendFetchData } from '@store/backend';
 import { goTo } from '@core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import { selectProjectInfo } from '@project/selectors';
@@ -44,7 +44,7 @@ function* _updateMetric(name, projectDir, env, duration) {
 
 function* _inspectMemory({ projectDir, env }) {
   const start = Date.now();
-  yield call(apiFetchData, {
+  yield call(backendFetchData, {
     query: 'core.call',
     params: [
       ['run', '-d', projectDir, '-e', env, '-t', 'sizedata'],
@@ -52,7 +52,7 @@ function* _inspectMemory({ projectDir, env }) {
     ]
   });
 
-  const buildDir = yield call(apiFetchData, {
+  const buildDir = yield call(backendFetchData, {
     query: 'project.config_call',
     params: [
       { path: pathlib.join(projectDir, 'platformio.ini') },
@@ -62,7 +62,7 @@ function* _inspectMemory({ projectDir, env }) {
   });
   const sizedataPath = pathlib.join(buildDir, env, 'sizedata.json');
 
-  const jsonContent = yield call(apiFetchData, {
+  const jsonContent = yield call(backendFetchData, {
     query: 'os.request_content',
     params: [sizedataPath]
   });
@@ -79,7 +79,7 @@ function* _inspectCode({ projectDir, env }) {
   const start = Date.now();
   let codeCheckResults;
   try {
-    codeCheckResults = yield call(apiFetchData, {
+    codeCheckResults = yield call(backendFetchData, {
       query: 'core.call',
       params: [
         ['check', '-d', projectDir, '-e', env, '--json-output'],

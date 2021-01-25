@@ -22,7 +22,7 @@ import * as selectors from './selectors';
 import { call, put, select, take } from 'redux-saga/effects';
 import { deleteEntity, updateEntity } from '../../store/actions';
 
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { notifyError } from '../core/actions';
 
 function* watchLoadSerialDevices() {
@@ -37,7 +37,7 @@ function* watchLoadSerialDevices() {
     }
     yield call(function*() {
       try {
-        items = yield call(apiFetchData, {
+        items = yield call(backendFetchData, {
           query: 'core.call',
           params: [['device', 'list', '--serial', '--json-output']]
         });
@@ -61,7 +61,7 @@ function* watchLoadMDNSDevices() {
     }
     yield call(function*() {
       try {
-        items = yield call(apiFetchData, {
+        items = yield call(backendFetchData, {
           query: 'core.call',
           params: [
             ['device', 'list', '--mdns', '--json-output'],

@@ -22,8 +22,8 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import { INPUT_FILTER_DELAY } from '../config';
 import accountSagas from '../modules/account/sagas';
-import { apiFetchData } from './api';
 import { asyncDelay } from '../modules/core/helpers';
+import { backendFetchData } from './backend';
 import coreSagas from '../modules/core/sagas';
 import deviceSagas from '../modules/device/sagas';
 import homeSagas from '../modules/home/sagas';
@@ -37,7 +37,7 @@ import telemetrySagas from './telemetry';
 function* watchLoadStore() {
   yield takeLatest(actions.LOAD_STORE, function*() {
     try {
-      const newState = yield call(apiFetchData, {
+      const newState = yield call(backendFetchData, {
         query: 'app.get_state'
       });
       if (newState['inputValues']) {
@@ -70,7 +70,7 @@ function* autoSaveState() {
       if (savedState.storage.coreSettings) {
         delete savedState.storage.coreSettings;
       }
-      const result = yield call(apiFetchData, {
+      const result = yield call(backendFetchData, {
         query: 'app.save_state',
         params: [savedState]
       });

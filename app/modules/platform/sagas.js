@@ -38,7 +38,7 @@ import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
 import { PLATFORMIO_API_ENDPOINT } from '../../config';
 import ReactGA from 'react-ga';
-import { apiFetchData } from '../../store/api';
+import { backendFetchData } from '../../store/backend';
 import { goTo } from '../core/helpers';
 import jsonrpc from 'jsonrpc-lite';
 import requests from 'superagent';
@@ -50,7 +50,7 @@ const INSTALLED_PLATFORMS_DATA_CACHE = 10;
 function* _loadRegistryPlatforms(silent) {
   let items = [];
   try {
-    items = yield call(apiFetchData, {
+    items = yield call(backendFetchData, {
       query: 'core.call',
       params: [['platform', 'search', '--json-output']]
     });
@@ -63,7 +63,7 @@ function* _loadRegistryPlatforms(silent) {
 function* _loadRegistryFrameworks(silent) {
   let items = [];
   try {
-    items = yield call(apiFetchData, {
+    items = yield call(backendFetchData, {
       query: 'core.call',
       params: [['platform', 'frameworks', '--json-output']]
     });
@@ -89,7 +89,7 @@ function* checkBoards() {
     return;
   }
   try {
-    let items = yield call(apiFetchData, {
+    let items = yield call(backendFetchData, {
       query: 'core.call',
       params: [['boards', '--json-output']]
     });
@@ -153,7 +153,7 @@ function* watchLoadPlatformData() {
         return;
       }
       try {
-        const data = yield call(apiFetchData, {
+        const data = yield call(backendFetchData, {
           query: 'core.call',
           params: [['platform', 'show', name, '--json-output']]
         });
@@ -193,24 +193,35 @@ function* watchLoadFrameworkData() {
 }
 
 function* watchLoadInstalledPlatforms() {
-  while (true) {
-    yield take(actions.LOAD_INSTALLED_PLATFORMS);
+  yield takeLatest(actions.LOAD_INSTALLED_PLATFORMS, function*() {
     const items = yield select(selectors.selectInstalledPlatforms);
     if (items) {
-      continue;
+      return;
     }
     yield call(function*() {
-      try {
-        const items = yield call(apiFetchData, {
-          query: 'core.call',
-          params: [['platform', 'list', '--json-output']]
-        });
-        yield put(updateEntity('installedPlatforms', items));
-      } catch (err) {
-        yield put(notifyError('Could not load installed platforms', err));
+      let attempts = 0;
+      let lastError = undefined;
+      while (attempts < 3) {
+        attempts++;
+        try {
+          const items = yield call(backendFetchData, {
+            query: 'core.call',
+            params: [['platform', 'list', '--json-output']]
+          });
+          return yield put(updateEntity('installedPlatforms', items));
+        } catch (err) {
+          lastError = err;
+        }
+        if (
+          lastError instanceof jsonrpc.JsonRpcError &&
+          !lastError.data.includes('Error: Unknown development platform')
+        ) {
+          break;
+        }
       }
+      yield put(notifyError('Could not load installed platforms', lastError));
     });
-  }
+  });
 }
 
 function* watchLoadPlatformUpdates() {
@@ -223,7 +234,7 @@ function* watchLoadPlatformUpdates() {
 
     yield call(function*() {
       try {
-        const items = yield call(apiFetchData, {
+        const items = yield call(backendFetchData, {
           query: 'core.call',
           params: [
             ['platform', 'update', '--only-check', '--json-output'],
@@ -257,7 +268,7 @@ function* watchAutoCheckPlatformUpdates() {
   }
   yield put(updateStorageItem(lastCheckKey, now));
   try {
-    const result = yield call(apiFetchData, {
+    const result = yield call(backendFetchData, {
       query: 'core.call',
       params: [
         ['platform', 'update', '--only-check', '--json-output'],
@@ -277,7 +288,7 @@ function* watchInstallPlatform() {
     try {
       const start = new Date().getTime();
 
-      result = yield call(apiFetchData, {
+      result = yield call(backendFetchData, {
         query: 'core.call',
         params: [['platform', 'install', platform], { force_subprocess: true }]
       });
@@ -310,7 +321,7 @@ function* watchUninstallOrUpdatePlatform() {
     const { pkgDir, onEnd } = action;
     let err = null;
     try {
-      const result = yield call(apiFetchData, {
+      const result = yield call(backendFetchData, {
         query: 'core.call',
         params: [
           [
