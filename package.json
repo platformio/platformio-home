@@ -1,6 +1,6 @@
 {
   "name": "platformio-home",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "PlatformIO Home",
   "repository": {
     "type": "git",
@@ -52,6 +52,7 @@
     "babel-plugin-redux-saga": "~1.1.2",
     "copy-webpack-plugin": "~7.0.0",
     "css-loader": "~5.0.1",
+    "css-minimizer-webpack-plugin": "^1.2.0",
     "eslint": "~7.18.0",
     "eslint-config-prettier": "~7.2.0",
     "eslint-import-resolver-webpack": "~0.13.0",
@@ -68,6 +69,7 @@
     "react-hot-loader": "~4.13.0",
     "redux-logger": "~3.0.6",
     "style-loader": "~2.0.0",
+    "terser-webpack-plugin": "^5.1.1",
     "url-loader": "~4.1.1",
     "webpack": "~5.17.0",
     "webpack-bundle-analyzer": "~3.9.0",

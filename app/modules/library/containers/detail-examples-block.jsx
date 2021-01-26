@@ -35,11 +35,22 @@ class LibraryDetailExamplesBlock extends React.Component {
     osFsGlob: PropTypes.func.isRequired
   };
 
-  static getGlobPatterns(custom) {
-    if (custom) {
-      return typeof custom === 'string' ? [custom] : custom;
-    }
+  static getGlobPatterns(examples) {
     const result = [];
+    if (examples) {
+      if (typeof examples === 'string') {
+        return [examples];
+      } else if (typeof examples[0] === 'string') {
+        return examples;
+      } else if (examples[0].base && examples[0].files) {
+        examples.forEach(example => {
+          example.files.forEach(filename => {
+            result.push(path.join(example.base, filename));
+          });
+        });
+        return result;
+      }
+    }
     for (const ext of ['*.ino', '*.pde', '*.c', '*.cpp', '*.h', '*.hpp']) {
       const exmDir = '[Ee]xamples';
       result.push(path.join(exmDir, ext));

@@ -58,7 +58,7 @@
   if (pathname[pathname.length - 1] !== '/') {
     pathname += '/';
   }
-  link.href = pathname + 'themes/' + workspace + '-' + theme + '.css';
+  link.href = pathname + 'themes/' + workspace + '.' + theme + '.min.css';
   link.type = 'text/css';
   link.rel = 'stylesheet';
   document.getElementsByTagName('head')[0].appendChild(link);

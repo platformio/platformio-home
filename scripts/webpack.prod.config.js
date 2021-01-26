@@ -15,9 +15,11 @@ const common = require('./webpack.common');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 // Create multiple instances
-const cssOutputFile = `themes/${common.workspace}-${common.theme}.css`;
+const cssOutputFile = `themes/${common.workspace}.${common.theme}.min.css`;
 const extractThemeCSS = new MiniCssExtractPlugin({
   filename: cssOutputFile,
   chunkFilename: cssOutputFile, // '[name].[contenthash].css',
@@ -47,6 +49,10 @@ module.exports = {
   optimization: {
     concatenateModules: true,
     minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+      new CssMinimizerPlugin(),
+    ],
     moduleIds: 'hashed',
     nodeEnv: 'production',
     splitChunks: {
@@ -66,7 +72,8 @@ module.exports = {
   output: {
     publicPath: './',
     path: common.outputDir,
-    filename: '[name].[contenthash].min.js'
+    // filename: '[name].[contenthash].min.js'
+    filename: '[name].min.js'
   },
   resolve: {
     alias: common.resolve.alias,
