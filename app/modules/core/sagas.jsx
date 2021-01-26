@@ -73,7 +73,7 @@ function* watchNotifyError() {
         'https://github.com/platformio/platform-linux_arm/issues/2'
       ],
       [
-        /\[Error 2\] The system cannot find the file specified.*WindowsError/g,
+        /\[Error 2\]|\[WinError 2\]|\[Errno 13\]/g,
         'https://github.com/platformio/platformio-core/issues/2321'
       ],
       [
@@ -85,7 +85,7 @@ function* watchNotifyError() {
         'https://github.com/platformio/platformio-core/issues/2811'
       ],
       [
-        /Error: You are not connected to the Internet/g,
+        /Error: You are not connected to the Internet|HTTPSConnectionPool/g,
         'https://github.com/platformio/platformio-core/issues/1348'
       ],
       [
@@ -99,6 +99,18 @@ function* watchNotifyError() {
       [
         /Error: Could not find the package/g,
         'https://github.com/platformio/platformio-home/issues/2144'
+      ],
+      [
+        /Error: Unknown development platform/g,
+        'https://github.com/platformio/platformio-home/issues/2123'
+      ],
+      [
+        /Error: Unknown board ID/g,
+        'https://github.com/platformio/platformio-home/issues/1768'
+      ],
+      [
+        /Error: Could not find one of .* manifest files/g,
+        'https://github.com/platformio/platformio-home/issues/1785'
       ]
     ];
     for (const [regex, url] of knownIssues) {
