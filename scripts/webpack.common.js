@@ -10,7 +10,6 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 const rootDir = path.resolve(__dirname, '..');
 const mediaDir = path.join(rootDir, 'app', 'media');
@@ -132,7 +131,6 @@ module.exports = {
   ],
 
   plugins: [
-    // new WebpackCleanupPlugin(),
     new webpack.DefinePlugin({
       APP_VERSION: JSON.stringify(packageConfig.version)
     }),

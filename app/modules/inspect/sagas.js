@@ -77,9 +77,9 @@ function* _inspectMemory({ projectDir, env }) {
 
 function* _inspectCode({ projectDir, env }) {
   const start = Date.now();
-  let codeCheckResults;
+  let lastError = undefined;
   try {
-    codeCheckResults = yield call(backendFetchData, {
+    const codeCheckResults = yield call(backendFetchData, {
       query: 'core.call',
       params: [
         ['check', '-d', projectDir, '-e', env, '--json-output'],
@@ -87,21 +87,27 @@ function* _inspectCode({ projectDir, env }) {
       ]
     });
     yield _updateMetric('code', projectDir, env, Date.now() - start);
-
-    if (codeCheckResults && codeCheckResults.length) {
-      return codeCheckResults;
-    }
-  } catch (e) {
-    if (e instanceof jsonrpc.JsonRpcError) {
-      // Try to recover from error because of return code <> 0
-      codeCheckResults = JSON.parse(e.data);
-      if (codeCheckResults && codeCheckResults.length) {
-        return codeCheckResults;
-      }
-    }
-    throw e;
+    return codeCheckResults;
+  } catch (err) {
+    lastError = err;
+    console.warn('Problem has occured when inspecting a code', err);
   }
-  throw new Error('Unexpected code check result');
+  // examine tool output in verbose mode
+  try {
+    const output = yield call(backendFetchData, {
+      query: 'core.call',
+      params: [
+        ['check', '-d', projectDir, '-e', env, '--verbose'],
+        { force_subprocess: true }
+      ]
+    });
+    throw new Error(output);
+  } catch (err) {
+    if (err.data) {
+      throw new Error(err.data.replace('\\n', '\n'));
+    }
+  }
+  throw lastError;
 }
 
 function* watchInspectProject() {
@@ -148,13 +154,10 @@ function* watchInspectProject() {
 
       if (code) {
         codeCheckResult = yield call(_inspectCode, configuration);
-        yield put(
-          updateEntity(RESULT_KEY, {
-            memory: memoryResult,
-            codeChecks: codeCheckResult
-          })
-        );
       }
+      yield put(
+        updateEntity(RESULT_KEY, { memory: memoryResult, codeChecks: codeCheckResult })
+      );
       const entity = { memory: memoryResult, codeChecks: codeCheckResult };
       if (onEnd) {
         onEnd(entity);
@@ -172,6 +175,8 @@ function* watchInspectProject() {
         }
       } else if (e instanceof SyntaxError) {
         error = 'Bad JSON';
+      } else {
+        error = e.toString();
       }
       if (onEnd) {
         onEnd(undefined, error);
