@@ -5,67 +5,66 @@
   <title>PlatformIO Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<script>
-  if (window.document.documentMode) {
-    window.alert('Your browser is not supported. Please use one of the modern browsers (Chrome, Firefox, Opera, Safari, etc).');
-    window.location = 'https://www.google.com/chrome/';
-  }
+<body>
+  <script>
+    if (window.document.documentMode) {
+      window.alert('Your browser is not supported. Please use one of the modern browsers (Chrome, Firefox, Opera, Safari, etc).');
+      window.location = 'https://www.google.com/chrome/';
+    }
 
-  function getQueryVariable(variable) {
-    if (!window.location) {
+    function getQueryVariable(variable) {
+      if (!window.location) {
+        return null;
+      }
+      var query = window.location.search.substring(1);
+      var vars = query.split('&');
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+          return decodeURIComponent(pair[1]);
+        }
+      }
       return null;
     }
-    var query = window.location.search.substring(1);
-    var vars = query.split('&');
-    for (var i = 0; i < vars.length; i++) {
-      var pair = vars[i].split('=');
-      if (decodeURIComponent(pair[0]) == variable) {
-        return decodeURIComponent(pair[1]);
-      }
+
+    function onDidKeyDown(e) {
+      const obj = {
+        altKey: e.altKey,
+        code: e.code,
+        ctrlKey: e.ctrlKey,
+        isComposing: e.isComposing,
+        key: e.key,
+        location: e.location,
+        metaKey: e.metaKey,
+        repeat: e.repeat,
+        shiftKey: e.shiftKey
+      };
+      try {
+        window.parent.postMessage({'command': 'kbd-event', 'data': obj}, '*');
+      } catch (err) {}
     }
-    return null;
-  }
-
-  function onDidKeyDown(e) {
-    const obj = {
-      altKey: e.altKey,
-      code: e.code,
-      ctrlKey: e.ctrlKey,
-      isComposing: e.isComposing,
-      key: e.key,
-      location: e.location,
-      metaKey: e.metaKey,
-      repeat: e.repeat,
-      shiftKey: e.shiftKey
-    };
-    try {
-      window.parent.postMessage({'command': 'kbd-event', 'data': obj}, '*');
-    } catch (err) {}
-  }
-
-  document.addEventListener('keydown', onDidKeyDown);
+    document.addEventListener('keydown', onDidKeyDown);
 
 <% if (process.env.NODE_ENV === 'production') { %>
-  var workspace = getQueryVariable('workspace');
-  var theme = getQueryVariable('theme');
-  if (!workspace || workspace === 'undefined') {
-    workspace = 'platformio';
-  };
-  if (!theme || theme === 'undefined') {
-    theme = 'dark';
-  };
-  var link = document.createElement('link');
-  var pathname = (window.location? window.location.pathname : '/');
-  if (pathname[pathname.length - 1] !== '/') {
-    pathname += '/';
-  }
-  link.href = pathname + 'themes/' + workspace + '.' + theme + '.min.css';
-  link.type = 'text/css';
-  link.rel = 'stylesheet';
-  document.getElementsByTagName('head')[0].appendChild(link);
-</script>
+    var workspace = getQueryVariable('workspace');
+    var theme = getQueryVariable('theme');
+    if (!workspace || workspace === 'undefined') {
+      workspace = 'platformio';
+    };
+    if (!theme || theme === 'undefined') {
+      theme = 'dark';
+    };
+    var link = document.createElement('link');
+    var pathname = (window.location? window.location.pathname : '/');
+    if (pathname[pathname.length - 1] !== '/') {
+      pathname += '/';
+    }
+    link.href = pathname + 'themes/' + workspace + '.' + theme + '.min.css';
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    document.getElementsByTagName('head')[0].appendChild(link);
 <% } %>
-<body>
+  </script>
   <div id="app">Loading...</div>
 </body>
 </html>
