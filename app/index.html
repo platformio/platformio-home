@@ -27,6 +27,15 @@
       return null;
     }
 
+    /**
+     * Re-broadcast events for VSCode
+     * See https://github.com/microsoft/vscode/issues/135017
+     */
+     window.addEventListener('message', (e) => {
+      if (e.data.command === 'execCommand') {
+        document.execCommand(e.data.data);
+      }
+    });
     function onDidKeyDown(e) {
       const obj = {
         altKey: e.altKey,
