@@ -21,9 +21,14 @@ import { Icon, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import hljs from 'highlight.js/lib/common';
+import hljs from 'highlight.js/lib/core'; // eslint-disable-line import/no-unresolved
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
+
+hljs.registerLanguage('plaintext', require('highlight.js/lib/languages/plaintext'));
+hljs.registerLanguage('cpp', require('highlight.js/lib/languages/cpp'));
+hljs.registerLanguage('json', require('highlight.js/lib/languages/json'));
+hljs.registerLanguage('ini', require('highlight.js/lib/languages/ini'));
 
 class CodeBeautifier extends React.Component {
   static propTypes = {
