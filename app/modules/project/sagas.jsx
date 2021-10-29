@@ -144,8 +144,8 @@ function* watchOpenProject() {
   yield takeEvery(actions.OPEN_PROJECT, function* ({ projectDir }) {
     try {
       return yield call(backendFetchData, {
-        query: 'ide.open_project',
-        params: [projectDir],
+        query: 'ide.send_command',
+        params: ['open_project', projectDir],
       });
     } catch (err) {
       console.warn(err);

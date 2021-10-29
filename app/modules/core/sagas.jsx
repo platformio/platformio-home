@@ -458,8 +458,8 @@ function* watchOpenTextDocument() {
     }
     try {
       return yield call(backendFetchData, {
-        query: 'ide.open_text_document',
-        params: [path, line, column],
+        query: 'ide.send_command',
+        params: ['open_text_document', { path, line, column }],
       });
     } catch (err) {
       console.warn(err);
