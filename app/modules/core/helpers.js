@@ -48,15 +48,6 @@ export function getStartLocation() {
   return startLocation || '/';
 }
 
-export function getSessionId() {
-  let sessionId = null;
-  if (window.location && window.location.search) {
-    sessionId = qs.parse(window.location.search);
-    sessionId = sessionId && sessionId.sid ? sessionId.sid : null;
-  }
-  return parseInt(sessionId || 0);
-}
-
 export function goTo(history, path, state, redirect = false) {
   if (history.length) {
     const lastEntry = history.entries[history.index];

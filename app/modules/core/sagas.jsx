@@ -22,7 +22,7 @@ import * as selectors from './selectors';
 import { Button, Modal, message, notification } from 'antd';
 import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { deleteEntity, updateEntity, updateStorageItem } from '../../store/actions';
-import { getSessionId, inIframe, reportException } from './helpers';
+import { inIframe, reportException } from './helpers';
 
 import { ConsentRejectedError } from '@core/errors';
 import React from 'react';
@@ -458,7 +458,7 @@ function* watchOpenTextDocument() {
     try {
       return yield call(backendFetchData, {
         query: 'ide.open_text_document',
-        params: [getSessionId(), path, line, column]
+        params: [path, line, column]
       });
     } catch (err) {
       console.warn(err);

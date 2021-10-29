@@ -45,7 +45,6 @@ import {
   updateEntity,
   updateStorageItem
 } from '../../store/actions';
-import { getSessionId, goTo } from '@core/helpers';
 import { selectEntity, selectStorageItem } from '../../store/selectors';
 
 import { ConfigFileModifiedError } from '@project/errors';
@@ -54,6 +53,7 @@ import React from 'react';
 import ReactGA from 'react-ga';
 import { backendFetchData } from '../../store/backend';
 import { ensureUserConsent } from '@core/sagas';
+import { goTo } from '@core/helpers';
 
 import jsonrpc from 'jsonrpc-lite';
 
@@ -145,7 +145,7 @@ function* watchOpenProject() {
     try {
       return yield call(backendFetchData, {
         query: 'ide.open_project',
-        params: [getSessionId(), projectDir]
+        params: [projectDir]
       });
     } catch (err) {
       console.warn(err);
