@@ -20,7 +20,7 @@ module.exports = {
     "plugin:import/warnings",
     "prettier"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
