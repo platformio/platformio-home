@@ -16,7 +16,7 @@
 
 import { USER_CONSENTS_KEY } from '@core/constants';
 import { selectStorageItem } from '../../store/selectors';
-import shajs from 'sha.js';
+import hash from 'object-hash';
 
 export function selectShowAtStartup(state) {
   const caller = selectStorageItem(state, 'coreCaller');
@@ -28,12 +28,7 @@ export function selectShowAtStartup(state) {
 }
 
 export function getRequestContentKey(uri, data = undefined) {
-  const hash = shajs('sha1');
-  hash.update(uri);
-  if (data) {
-    hash.update(JSON.stringify(data));
-  }
-  return hash.digest('hex');
+  return hash(`${uri}-${JSON.stringify(data || '')}`);
 }
 
 export function selectRequestedContents(state) {
@@ -51,12 +46,7 @@ export function selectRequestedContent(state, uri, data = undefined) {
 }
 
 export function selectOsFSGlobKey(pathnames, rootDir = undefined) {
-  const hash = shajs('sha1');
-  hash.update(pathnames.join());
-  if (rootDir) {
-    hash.update(rootDir);
-  }
-  return hash.digest('hex');
+  return hash(`${pathnames.join()}-${rootDir || ''}`);
 }
 
 export function selectOsFSGlobs(state) {
