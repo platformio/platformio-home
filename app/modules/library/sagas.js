@@ -274,7 +274,7 @@ function* watchAutoCheckLibraryUpdates() {
   const storages = yield select(selectors.selectLibraryStorages);
   for (const storage of storages) {
     try {
-      total += (yield call(fetchStorageUpdates, storage.path)).length;
+      total += (yield call(fetchStorageUpdates, storage)).length;
     } catch (err) {
       console.error(
         'Failed check of PIO Core library updates for ' + storage.path,
