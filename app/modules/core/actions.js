@@ -44,16 +44,16 @@ export const notifySuccess = (title, result) =>
 
 export const updateRouteBadge = (path, count) =>
   createAction(UPDATE_ROUTE_BADGE, { path, count });
-export const showAtStartup = value => createAction(SHOW_AT_STARTUP, { value });
+export const showAtStartup = (value) => createAction(SHOW_AT_STARTUP, { value });
 
-export const osOpenUrl = url => createAction(OS_OPEN_URL, { url });
-export const osRevealFile = path => createAction(OS_REVEAL_FILE, { path });
+export const osOpenUrl = (url) => createAction(OS_OPEN_URL, { url });
+export const osRevealFile = (path) => createAction(OS_REVEAL_FILE, { path });
 export const osRenameFile = (src, dst) => createAction(OS_RENAME_FILE, { src, dst });
 export const osCopyFile = (src, dst) => createAction(OS_COPY_FILE, { src, dst });
-export const osMakeDirs = path => createAction(OS_MAKE_DIRS, { path });
-export const osListDir = path => createAction(OS_LIST_DIR, { path });
-export const osIsFile = path => createAction(OS_IS_FILE, { path });
-export const osIsDir = path => createAction(OS_IS_DIR, { path });
+export const osMakeDirs = (path) => createAction(OS_MAKE_DIRS, { path });
+export const osListDir = (path) => createAction(OS_LIST_DIR, { path });
+export const osIsFile = (path) => createAction(OS_IS_FILE, { path });
+export const osIsDir = (path) => createAction(OS_IS_DIR, { path });
 export const osFsGlob = (pathnames, rootDir = undefined) =>
   createAction(OS_FS_GLOB, { pathnames, rootDir });
 
@@ -61,12 +61,12 @@ export const requestContent = ({
   uri,
   data = undefined,
   headers = undefined,
-  cacheValid = undefined
+  cacheValid = undefined,
 }) => createAction(REQUEST_CONTENT, { uri, data, headers, cacheValid });
 export const loadLogicalDevices = (force = false) =>
   createAction(LOAD_LOGICAL_DEVICES, { force });
 export const resetFSItems = () => createAction(RESET_FS_ITEMS);
-export const toggleFavoriteFolder = path =>
+export const toggleFavoriteFolder = (path) =>
   createAction(TOGGLE_FAVORITE_FOLDER, { path });
 export const openTextDocument = (path, line = undefined, column = undefined) =>
   createAction(OPEN_TEXT_DOCUMENT, { path, line, column });

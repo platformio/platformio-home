@@ -31,7 +31,7 @@ class FrameworkDetailPage extends React.Component {
     loadFrameworkData: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -55,9 +55,10 @@ function mapStateToProps(state, ownProps) {
   return {
     name,
     data: selectFrameworkData(state, name),
-    showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: (name) =>
+      goTo(ownProps.history, '/platforms/embedded/show', { name }),
+    showFramework: (name) =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
   };
 }
 

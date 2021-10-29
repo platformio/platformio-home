@@ -29,11 +29,11 @@ export default class LibraryStats extends React.Component {
       dlweek: PropTypes.array.isRequired,
       lastkeywords: PropTypes.array.isRequired,
       topkeywords: PropTypes.array.isRequired,
-      updated: PropTypes.array.isRequired
+      updated: PropTypes.array.isRequired,
     }),
     osOpenUrl: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
-    showLibrary: PropTypes.func.isRequired
+    showLibrary: PropTypes.func.isRequired,
   };
 
   getKeywordBtnSize(index) {
@@ -79,7 +79,7 @@ export default class LibraryStats extends React.Component {
           <Col span={8}>
             <h3>Updated</h3>
             <ul>
-              {this.props.data.updated.map(item => (
+              {this.props.data.updated.map((item) => (
                 <li key={item.id}>
                   <a
                     className="inline-block-tight"
@@ -97,7 +97,7 @@ export default class LibraryStats extends React.Component {
           <Col span={8}>
             <h3>Added</h3>
             <ul>
-              {this.props.data.added.map(item => (
+              {this.props.data.added.map((item) => (
                 <li key={item.id}>
                   <a
                     className="inline-block-tight"
@@ -115,7 +115,7 @@ export default class LibraryStats extends React.Component {
           <Col span={8}>
             <h3>Keywords</h3>
             <ul className="last-keywords">
-              {this.props.data.lastkeywords.map(name => (
+              {this.props.data.lastkeywords.map((name) => (
                 <li key={name}>
                   <Button
                     icon="tag"
@@ -149,7 +149,7 @@ export default class LibraryStats extends React.Component {
           <Col span={8}>
             <h3>Today</h3>
             <ul>
-              {this.props.data.dlday.map(item => (
+              {this.props.data.dlday.map((item) => (
                 <li key={item.id}>
                   <Tooltip title={`+${item.diff}, total: ${item.total}`}>
                     <Icon type="caret-up" size="small" />
@@ -162,7 +162,7 @@ export default class LibraryStats extends React.Component {
           <Col span={8}>
             <h3>Week</h3>
             <ul>
-              {this.props.data.dlweek.map(item => (
+              {this.props.data.dlweek.map((item) => (
                 <li key={item.id}>
                   <Tooltip title={`+${item.diff}, total: ${item.total}`}>
                     <Icon type="caret-up" size="small" />
@@ -175,7 +175,7 @@ export default class LibraryStats extends React.Component {
           <Col span={8}>
             <h3>Month</h3>
             <ul>
-              {this.props.data.dlmonth.map(item => (
+              {this.props.data.dlmonth.map((item) => (
                 <li key={item.id}>
                   <Tooltip title={`+${item.diff}, total: ${item.total}`}>
                     <Icon type="caret-up" size="small" />

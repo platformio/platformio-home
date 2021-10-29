@@ -31,11 +31,11 @@ export default class PlatformDetailPackages extends React.Component {
         version: PropTypes.string,
         originalVersion: PropTypes.string,
         url: PropTypes.string,
-        optional: PropTypes.bool
+        optional: PropTypes.bool,
       })
     ),
     osOpenUrl: PropTypes.func.isRequired,
-    showInstalledPlatforms: PropTypes.func.isRequired
+    showInstalledPlatforms: PropTypes.func.isRequired,
   };
 
   getTableColumns(extended) {
@@ -51,23 +51,23 @@ export default class PlatformDetailPackages extends React.Component {
               record.name
             )}
           </span>
-        )
-      }
+        ),
+      },
     ];
     if (extended) {
       columns = columns.concat([
         {
           title: 'Type',
-          dataIndex: 'type'
+          dataIndex: 'type',
         },
         {
           title: 'Optional',
           key: 'optional',
-          render: (_, record) => <Icon type={record.optional ? 'check' : ''} />
+          render: (_, record) => <Icon type={record.optional ? 'check' : ''} />,
         },
         {
           title: 'Requirements',
-          dataIndex: 'requirements'
+          dataIndex: 'requirements',
         },
         {
           title: 'Installed',
@@ -77,16 +77,16 @@ export default class PlatformDetailPackages extends React.Component {
               {record.version}{' '}
               {record.originalVersion && <span> ({record.originalVersion})</span>}
             </span>
-          )
-        }
+          ),
+        },
       ]);
       return columns;
     }
     columns = columns.concat([
       {
         title: 'Description',
-        dataIndex: 'description'
-      }
+        dataIndex: 'description',
+      },
     ]);
     return columns;
   }

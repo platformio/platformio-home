@@ -23,7 +23,7 @@ import { osOpenUrl } from '../actions';
 
 class OpenInBrowser extends React.Component {
   static propTypes = {
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   onDidOpen() {
@@ -47,5 +47,5 @@ class OpenInBrowser extends React.Component {
 // Redux
 
 export default connect(null, {
-  osOpenUrl
+  osOpenUrl,
 })(OpenInBrowser);

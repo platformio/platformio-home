@@ -28,7 +28,7 @@ import { selectLibraryData } from '../selectors';
 
 class LibraryDetailPage extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   };
 
   static propTypes = {
@@ -39,7 +39,7 @@ class LibraryDetailPage extends React.Component {
     loadLibraryData: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
-    showInstalledLibraries: PropTypes.func.isRequired
+    showInstalledLibraries: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -71,7 +71,7 @@ function mapStateToProps(state, ownProps) {
     idOrManifest,
     searchLibrary: (query, page) =>
       goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showInstalledLibraries: () => goTo(ownProps.history, '/libraries/installed')
+    showInstalledLibraries: () => goTo(ownProps.history, '/libraries/installed'),
   };
 }
 

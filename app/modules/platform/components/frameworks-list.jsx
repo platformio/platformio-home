@@ -25,7 +25,7 @@ export default class FrameworksList extends React.Component {
     filterValue: PropTypes.string,
     setFilter: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
-    showFramework: PropTypes.func.isRequired
+    showFramework: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
@@ -65,37 +65,37 @@ export default class FrameworksList extends React.Component {
           placeholder="Filter frameworks by name"
           defaultValue={this.props.filterValue}
           size="large"
-          onChange={e => this.onDidFilter(e.target.value)}
-          ref={elm => (this._searchInputElement = elm)}
+          onChange={(e) => this.onDidFilter(e.target.value)}
+          ref={(elm) => (this._searchInputElement = elm)}
         />
         {this.props.items && this.props.items.length === 0 && (
           <ul className="background-message text-center">
             <li>No Results</li>
           </ul>
         )}
-        {this.props.items.map(item => this.renderItem(item))}
+        {this.props.items.map((item) => this.renderItem(item))}
       </div>
     );
   }
 
   renderItem(item) {
-    const title = <a onClick={e => this.onDidShow(e, item.name)}>{item.title}</a>;
+    const title = <a onClick={(e) => this.onDidShow(e, item.name)}>{item.title}</a>;
     return (
       <Card
         hoverable
         key={item.name}
         title={title}
-        onClick={e => this.onDidShow(e, item.name)}
+        onClick={(e) => this.onDidShow(e, item.name)}
         className="list-item-card"
       >
         <div className="block">{item.description}</div>
         <div className="inline-buttons">
-          {(item.platforms || []).map(item => (
+          {(item.platforms || []).map((item) => (
             <Button
               key={item.title}
               icon="appstore"
               size="small"
-              onClick={e => this.onDidPlatform(e, item.name)}
+              onClick={(e) => this.onDidPlatform(e, item.name)}
             >
               {item.title}
             </Button>

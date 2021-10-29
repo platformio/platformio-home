@@ -23,20 +23,20 @@ const routes = [
     path: '/device',
     icon: 'usb',
     label: 'Serial',
-    component: DeviceSerialPage
+    component: DeviceSerialPage,
   },
   {
     path: '/device/logical',
     icon: 'hdd',
     label: 'Logical',
-    component: DeviceLogicalPage
+    component: DeviceLogicalPage,
   },
   {
     path: '/device/mdns',
     icon: 'wifi',
     label: 'Multicast DNS',
-    component: DeviceMDNSPage
-  }
+    component: DeviceMDNSPage,
+  },
 ];
 
 export default routes;

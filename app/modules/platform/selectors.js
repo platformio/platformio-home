@@ -85,7 +85,7 @@ export function selectInstalledPlatformData(state, nameAndVersion) {
   if (!items) {
     return null;
   }
-  return items.find(item => `${item.name}@${item.version}` === nameAndVersion);
+  return items.find((item) => `${item.name}@${item.version}` === nameAndVersion);
 }
 
 // Expanders
@@ -99,14 +99,14 @@ export function expandFrameworksOrPlatforms(state, what, items) {
       ? selectRegistryPlatforms(state)
       : selectRegistryFrameworks(state)) || [];
   if (items.length && items[0] === '*') {
-    return data.map(item => {
+    return data.map((item) => {
       return {
         name: item.name,
-        title: item.title
+        title: item.title,
       };
     });
   }
-  return items.map(name => {
+  return items.map((name) => {
     let title = helpers.title(name);
     for (const d of data) {
       if (d.name === name) {
@@ -115,7 +115,7 @@ export function expandFrameworksOrPlatforms(state, what, items) {
     }
     return {
       name,
-      title
+      title,
     };
   });
 }
@@ -125,16 +125,16 @@ export function expandRegistryPackages(state, items) {
     return items;
   }
   const packages = selectRegistryPackages(state);
-  return items.map(name => {
+  return items.map((name) => {
     if (!packages) {
       return {
-        name
+        name,
       };
     }
     return {
       name: name,
       url: packages[name].url,
-      description: packages[name].description
+      description: packages[name].description,
     };
   });
 }
@@ -146,10 +146,10 @@ export function selectNormalizedBoards(state) {
   if (!items) {
     return null;
   }
-  return items.map(item => {
+  return items.map((item) => {
     const newItem = Object.assign({}, item);
     newItem.platform = expandFrameworksOrPlatforms(state, 'platforms', [
-      newItem.platform
+      newItem.platform,
     ])[0];
     newItem.frameworks = expandFrameworksOrPlatforms(
       state,
@@ -166,8 +166,8 @@ export function selectVisibleEmbeddedPlatforms(state) {
   if (!items) {
     return null;
   }
-  items = items.filter(item => !item.forDesktop);
-  items = items.map(item => {
+  items = items.filter((item) => !item.forDesktop);
+  items = items.map((item) => {
     const newItem = Object.assign({}, item);
     newItem.frameworks = expandFrameworksOrPlatforms(
       state,
@@ -188,8 +188,8 @@ export function selectVisibleDesktopPlatforms(state) {
   if (!items) {
     return null;
   }
-  items = items.filter(item => item.forDesktop);
-  items = items.map(item => {
+  items = items.filter((item) => item.forDesktop);
+  items = items.map((item) => {
     const newItem = Object.assign({}, item);
     newItem.frameworks = expandFrameworksOrPlatforms(
       state,
@@ -209,7 +209,7 @@ export function selectPlatformData(state, name) {
   if (name.includes('@')) {
     data = selectInstalledPlatformData(state, name);
   } else {
-    data = (selectRegistryPlatforms(state) || []).find(item => item.name === name);
+    data = (selectRegistryPlatforms(state) || []).find((item) => item.name === name);
   }
   if (!data) {
     return null;
@@ -228,16 +228,16 @@ export function selectPlatformData(state, name) {
     const boards = selectBoards(state);
     if (boards) {
       data.boards = boards
-        .filter(item => item.platform === data.name)
-        .map(item => Object.assign({}, item));
+        .filter((item) => item.platform === data.name)
+        .map((item) => Object.assign({}, item));
     }
   }
 
   // make titled frameworks and platforms
   if (data.boards) {
-    data.boards = data.boards.map(item => {
+    data.boards = data.boards.map((item) => {
       item.platform = expandFrameworksOrPlatforms(state, 'platforms', [
-        item.platform
+        item.platform,
       ])[0];
       item.frameworks = expandFrameworksOrPlatforms(
         state,
@@ -252,7 +252,7 @@ export function selectPlatformData(state, name) {
 }
 
 export function selectFrameworkData(state, name) {
-  let data = (selectRegistryFrameworks(state) || []).find(item => item.name === name);
+  let data = (selectRegistryFrameworks(state) || []).find((item) => item.name === name);
   if (!data) {
     return null;
   }
@@ -265,12 +265,12 @@ export function selectFrameworkData(state, name) {
   const boards = selectBoards(state);
   if (boards) {
     data.boards = boards
-      .filter(item => item.frameworks.includes(data.name))
-      .map(item => Object.assign({}, item));
+      .filter((item) => item.frameworks.includes(data.name))
+      .map((item) => Object.assign({}, item));
     // make titled frameworks and platforms
-    data.boards = data.boards.map(item => {
+    data.boards = data.boards.map((item) => {
       item.platform = expandFrameworksOrPlatforms(state, 'platforms', [
-        item.platform
+        item.platform,
       ])[0];
       item.frameworks = expandFrameworksOrPlatforms(
         state,
@@ -290,7 +290,7 @@ export function selectVisibleInstalledPlatforms(state) {
   if (!items) {
     return null;
   }
-  items = items.map(item => {
+  items = items.map((item) => {
     const newItem = Object.assign({}, item);
     newItem.frameworks = expandFrameworksOrPlatforms(
       state,
@@ -311,7 +311,7 @@ export function selectVisiblePlatformUpdates(state) {
   if (!items) {
     return null;
   }
-  items = items.map(item => {
+  items = items.map((item) => {
     const newItem = Object.assign({}, item);
     newItem.frameworks = expandFrameworksOrPlatforms(
       state,
@@ -332,7 +332,7 @@ export function selectVisibleFrameworks(state) {
   if (!items) {
     return null;
   }
-  items = items.map(item => {
+  items = items.map((item) => {
     const newItem = Object.assign({}, item);
     newItem.platforms = expandFrameworksOrPlatforms(
       state,

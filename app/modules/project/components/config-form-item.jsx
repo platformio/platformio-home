@@ -30,7 +30,7 @@ export class ConfigFormItem extends Form.Item {
           undefined,
           this.renderExtra(prefixCls)
         )
-      )
+      ),
     ];
   }
 }

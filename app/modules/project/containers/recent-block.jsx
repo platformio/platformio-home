@@ -44,9 +44,9 @@ class RecentProjectsBlock extends React.Component {
         boards: PropTypes.arrayOf(
           PropTypes.shape({
             id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired
+            name: PropTypes.string.isRequired,
           })
-        )
+        ),
       })
     ),
 
@@ -57,7 +57,7 @@ class RecentProjectsBlock extends React.Component {
     hideProject: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired,
-    showBoards: PropTypes.func.isRequired
+    showBoards: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -76,7 +76,7 @@ class RecentProjectsBlock extends React.Component {
         title: 'Name',
         dataIndex: 'name',
         className: 'text-word-break',
-        sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())
+        sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
       },
       {
         title: workspaceSettings.getMessage('Boards'),
@@ -87,7 +87,7 @@ class RecentProjectsBlock extends React.Component {
           return (
             <span>
               {record.boards
-                .filter(board => {
+                .filter((board) => {
                   if (known.includes(board.id)) {
                     return false;
                   }
@@ -102,7 +102,7 @@ class RecentProjectsBlock extends React.Component {
                 ))}
             </span>
           );
-        }
+        },
       },
       {
         title: 'Modified',
@@ -113,7 +113,7 @@ class RecentProjectsBlock extends React.Component {
           <Tooltip title={new Date(record.modified * 1000).toString()}>
             {humanize.relativeTime(record.modified)}
           </Tooltip>
-        )
+        ),
       },
       {
         title: 'Action',
@@ -126,8 +126,8 @@ class RecentProjectsBlock extends React.Component {
             <span className="ant-divider" />{' '}
             <a onClick={() => this.props.openProject(record.path)}>Open</a>
           </span>
-        )
-      }
+        ),
+      },
     ];
   }
 
@@ -175,7 +175,7 @@ class RecentProjectsBlock extends React.Component {
           className="block"
           defaultValue={this.props.filterValue}
           placeholder="Search project..."
-          onChange={e => this.props.setFilter(e.target.value)}
+          onChange={(e) => this.props.setFilter(e.target.value)}
         />
         <Table
           rowKey="path"
@@ -206,7 +206,7 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleProjects(state),
     filterValue: selectFilter(state),
-    showBoards: () => goTo(ownProps.router.history, '/boards')
+    showBoards: () => goTo(ownProps.router.history, '/boards'),
   };
 }
 
@@ -215,7 +215,7 @@ function mapDispatchToProps(dispatch) {
     Object.assign({}, actions, {
       osRevealFile,
       updateInputValue,
-      setFilter: value => dispatch(lazyUpdateInputValue(INPUT_FILTER_KEY, value))
+      setFilter: (value) => dispatch(lazyUpdateInputValue(INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

@@ -28,7 +28,7 @@ export default class AccountLoginForm extends React.Component {
     loginWithProvider: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
-    showForgotPage: PropTypes.func.isRequired
+    showForgotPage: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -38,7 +38,7 @@ export default class AccountLoginForm extends React.Component {
       providerModalVisible: false,
       providerOpenedInExteralBrowser: false,
       providerModalOkText: 'Continue',
-      providerName: ''
+      providerName: '',
     };
   }
 
@@ -49,11 +49,11 @@ export default class AccountLoginForm extends React.Component {
         return;
       }
       this.setState({
-        loading: true
+        loading: true,
       });
       this.props.loginAccount(values.username, values.password, () => {
         this.setState({
-          loading: false
+          loading: false,
         });
         this.props.showInformationPage();
       });
@@ -64,7 +64,7 @@ export default class AccountLoginForm extends React.Component {
     if (inIframe()) {
       this.setState({
         providerModalVisible: true,
-        providerName: provider
+        providerName: provider,
       });
       return;
     }
@@ -80,12 +80,12 @@ export default class AccountLoginForm extends React.Component {
     this.setState({
       providerOpenedInExteralBrowser: true,
       loading: true,
-      providerModalOkText: 'Redirecting...'
+      providerModalOkText: 'Redirecting...',
     });
     setTimeout(() => {
       this.setState({
         loading: false,
-        providerModalOkText: 'Finish'
+        providerModalOkText: 'Finish',
       });
     }, 5000);
     this.props.loginWithProvider(this.state.providerName);
@@ -96,7 +96,7 @@ export default class AccountLoginForm extends React.Component {
       providerModalVisible: false,
       providerOpenedInExteralBrowser: false,
       loading: false,
-      providerModalOkText: 'Continue'
+      providerModalOkText: 'Continue',
     });
   }
 
@@ -109,7 +109,7 @@ export default class AccountLoginForm extends React.Component {
           okText={this.state.providerModalOkText}
           okButtonProps={{
             loading: this.state.loading,
-            disabled: this.state.loading
+            disabled: this.state.loading,
           }}
           onCancel={::this.onDidCloseProviderModal}
           onOk={::this.onDidOkProviderModal}
@@ -158,15 +158,15 @@ export default class AccountLoginForm extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please input your username or email'
-              }
-            ]
+                message: 'Please input your username or email',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="user" />}
               placeholder="Username or email"
               size="large"
-              ref={elm => elm.focus()}
+              ref={(elm) => elm.focus()}
             />
           )}
         </Form.Item>
@@ -175,9 +175,9 @@ export default class AccountLoginForm extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please input your password'
-              }
-            ]
+                message: 'Please input your password',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="lock" />}

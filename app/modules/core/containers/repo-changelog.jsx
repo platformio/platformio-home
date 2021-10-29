@@ -29,7 +29,7 @@ class RepositoryChangelog extends React.Component {
   static propTypes = {
     uri: PropTypes.string.isRequired,
     items: PropTypes.arrayOf(PropTypes.object),
-    requestContent: PropTypes.func.isRequired
+    requestContent: PropTypes.func.isRequired,
   };
 
   static prepareAPI(uri) {
@@ -46,7 +46,7 @@ class RepositoryChangelog extends React.Component {
     }
     return {
       provider: uriData.hostname,
-      requestEndpoint: `https://api.github.com/repos/${owner}/${repo}/releases`
+      requestEndpoint: `https://api.github.com/repos/${owner}/${repo}/releases`,
     };
   }
 
@@ -87,22 +87,22 @@ class RepositoryChangelog extends React.Component {
 
 class ReleaseNotes extends React.Component {
   static propTypes = {
-    items: PropTypes.array.isRequired
+    items: PropTypes.array.isRequired,
   };
 
   render() {
     const renderer = new marked.Renderer();
-    renderer.link = function(href, title, text) {
+    renderer.link = function (href, title, text) {
       const link = marked.Renderer.prototype.link.call(this, href, title, text);
       return link.replace('<a', '<a target="_blank" ');
     };
     marked.setOptions({
-      renderer: renderer
+      renderer: renderer,
     });
     return (
       <div className="release-notes">
         <h2>Release Notes</h2>
-        {this.props.items.map(item => (
+        {this.props.items.map((item) => (
           <div key={item.id}>
             <h3>
               <Tooltip title={item.tag_name}>{item.name || item.tag_name}</Tooltip>{' '}
@@ -130,7 +130,7 @@ function mapStateToProps(state, ownProps) {
   }
   const content = selectRequestedContent(state, api.requestEndpoint);
   return {
-    items: content ? JSON.parse(content) : null
+    items: content ? JSON.parse(content) : null,
   };
 }
 

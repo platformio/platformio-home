@@ -23,7 +23,7 @@ export function selectSerialDevicesList(state) {
   if (!entity) {
     return;
   }
-  return entity.map(port => ({ name: port.port, value: port.port }));
+  return entity.map((port) => ({ name: port.port, value: port.port }));
 }
 
 export function selectMDNSDevices(state) {

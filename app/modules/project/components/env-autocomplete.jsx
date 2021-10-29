@@ -16,22 +16,22 @@
 
 import {
   MODE_SELECT,
-  OptionAutocomplete
+  OptionAutocomplete,
 } from '@project/components/option-autocomplete';
 
 import { OptionEditorFactory } from '@project/helpers';
 import React from 'react';
 
 OptionEditorFactory.register(
-  schema => schema && schema.name === 'default_envs',
+  (schema) => schema && schema.name === 'default_envs',
   (schema, inputProps, _itemProps, decoratorOptions, project) => (
     <OptionAutocomplete
       inputProps={inputProps}
       mode={MODE_SELECT}
       multiple={!schema || schema.multiple}
-      items={project.envs.map(name => ({
+      items={project.envs.map((name) => ({
         name,
-        value: name
+        value: name,
       }))}
     />
   )

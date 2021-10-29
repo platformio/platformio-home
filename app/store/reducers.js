@@ -20,7 +20,7 @@ import { combineReducers } from 'redux';
 
 export function copyWithoutMatchingKeys(obj, re) {
   const newObj = Object.assign({}, obj);
-  Object.keys(newObj).forEach(key => {
+  Object.keys(newObj).forEach((key) => {
     if (re.test(key)) {
       delete newObj[key];
     }
@@ -39,7 +39,7 @@ function entities(state = {}, action) {
   switch (action.type) {
     case ActionTypes.UPDATE_ENTITY:
       return Object.assign({}, state, {
-        [action.key]: action.data
+        [action.key]: action.data,
       });
 
     case ActionTypes.DELETE_ENTITY:
@@ -51,7 +51,7 @@ function entities(state = {}, action) {
 function inputValues(state = {}, action) {
   if (action.type === ActionTypes.UPDATE_INPUT_VALUE) {
     const newState = Object.assign({}, state, {
-      [action.key]: action.value
+      [action.key]: action.value,
     });
     if (!newState[action.key]) {
       delete newState[action.key];
@@ -65,7 +65,7 @@ function storage(state = {}, action) {
   switch (action.type) {
     case ActionTypes.UPDATE_STORAGE_ITEM:
       return Object.assign({}, state, {
-        [action.key]: action.data
+        [action.key]: action.data,
       });
 
     case ActionTypes.DELETE_STORAGE_ITEM:
@@ -78,7 +78,7 @@ const appReducer = combineReducers({
   router,
   entities,
   inputValues,
-  storage
+  storage,
 });
 
 function rootReducer(state, action) {

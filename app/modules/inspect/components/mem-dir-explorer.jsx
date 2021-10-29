@@ -22,7 +22,7 @@ import {
   compareString,
   formatSize,
   multiSort,
-  safeFormatSize
+  safeFormatSize,
 } from '@inspect/helpers';
 
 import { PathBreadcrumb } from './path-breadcrumb.jsx';
@@ -33,14 +33,14 @@ const PARENT_ITEM_IDX = -1;
 const PARENT_ITEM = Object.freeze({
   idx: PARENT_ITEM_IDX,
   isDir: true,
-  relativePath: PARENT_DIR
+  relativePath: PARENT_DIR,
 });
 
 const FileItemType = PropTypes.shape({
   relativePath: PropTypes.string.isRequired,
   isDir: PropTypes.bool,
   ram: PropTypes.int,
-  flash: PropTypes.int
+  flash: PropTypes.int,
 });
 
 export const FileItemsType = PropTypes.arrayOf(FileItemType);
@@ -54,7 +54,7 @@ export class MemoryDirExplorer extends React.PureComponent {
     dir: PropTypes.string,
     items: FileItemsType,
     onDirChange: PropTypes.func.isRequired,
-    onFileClick: PropTypes.func
+    onFileClick: PropTypes.func,
   };
 
   renderIcon(isDir) {
@@ -75,22 +75,22 @@ export class MemoryDirExplorer extends React.PureComponent {
         sorter: multiSort(sortDirFirst, (a, b) =>
           compareString(a.relativePath, b.relativePath)
         ),
-        width: '100%'
+        width: '100%',
       },
       {
         title: 'Flash',
         dataIndex: 'flash',
-        render: size => <div className="text-nowrap">{safeFormatSize(size)}</div>,
+        render: (size) => <div className="text-nowrap">{safeFormatSize(size)}</div>,
         sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.flash, b.flash)),
-        align: 'right'
+        align: 'right',
       },
       {
         title: 'RAM',
         dataIndex: 'ram',
-        render: size => <div className="text-nowrap">{safeFormatSize(size)}</div>,
+        render: (size) => <div className="text-nowrap">{safeFormatSize(size)}</div>,
         sorter: multiSort(sortDirFirst, (a, b) => compareNumber(a.ram, b.ram)),
-        align: 'right'
-      }
+        align: 'right',
+      },
     ];
   }
 

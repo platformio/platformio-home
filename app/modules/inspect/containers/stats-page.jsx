@@ -21,7 +21,7 @@ import { formatSize, limitPathLength } from '@inspect/helpers';
 import {
   selectCodeStats,
   selectDeviceInfo,
-  selectMemoryStats
+  selectMemoryStats,
 } from '@inspect/selectors';
 
 import { CodeDefects } from '@inspect/components/code-defects';
@@ -42,39 +42,39 @@ class MemoryStatisticsPage extends React.PureComponent {
       topFiles: PropTypes.arrayOf(
         PropTypes.shape({
           path: PropTypes.string.isRequired,
-          flash: PropTypes.number.isRequired
+          flash: PropTypes.number.isRequired,
         })
       ).isRequired,
       topSymbols: PropTypes.arrayOf(
         PropTypes.shape({
           displayName: PropTypes.string.isRequired,
           type: PropTypes.string.isRequired,
-          size: PropTypes.number.isRequired
+          size: PropTypes.number.isRequired,
         })
-      ).isRequired
+      ).isRequired,
     }),
     code: PropTypes.shape({
       defectsCountTotal: PropTypes.number,
       defectsCountBySeverity: PropTypes.shape({
         low: PropTypes.number,
         medium: PropTypes.number,
-        high: PropTypes.number
+        high: PropTypes.number,
       }),
       stats: PropTypes.arrayOf(
         PropTypes.shape({
           component: PropTypes.string.isRequired,
           high: PropTypes.number.isRequired,
           medium: PropTypes.number.isRequired,
-          low: PropTypes.number.isRequired
+          low: PropTypes.number.isRequired,
         })
       ),
-      topDefects: PropTypes.arrayOf(DefectType)
+      topDefects: PropTypes.arrayOf(DefectType),
     }),
     device: DeviceType,
     // callbacks
     onMemoryClick: PropTypes.func.isRequired,
     onCodeClick: PropTypes.func.isRequired,
-    onSymbolsClick: PropTypes.func.isRequired
+    onSymbolsClick: PropTypes.func.isRequired,
   };
 
   formatMemoryProgress(percent, value) {
@@ -92,7 +92,7 @@ class MemoryStatisticsPage extends React.PureComponent {
     return [
       `${this.props.code.defectsCountBySeverity.high} High`,
       `${this.props.code.defectsCountBySeverity.medium} Medium`,
-      `${this.props.code.defectsCountBySeverity.low} Low`
+      `${this.props.code.defectsCountBySeverity.low} Low`,
     ].join(' / ');
   }
 
@@ -154,7 +154,7 @@ class MemoryStatisticsPage extends React.PureComponent {
             >
               <Progress
                 type="dashboard"
-                format={percent =>
+                format={(percent) =>
                   this.formatMemoryProgress(percent, this.props.memory.ram)
                 }
                 onClick={::this.handleMemoryClick}
@@ -174,7 +174,7 @@ class MemoryStatisticsPage extends React.PureComponent {
             >
               <Progress
                 type="dashboard"
-                format={percent =>
+                format={(percent) =>
                   this.formatMemoryProgress(percent, this.props.memory.flash)
                 }
                 onClick={::this.handleMemoryClick}
@@ -232,7 +232,7 @@ class MemoryStatisticsPage extends React.PureComponent {
       <Card title="Top 5 Symbols" className="block">
         <table className="inspect-stats-block">
           <tbody>
-            {this.props.memory.topSymbols.map(symbol => (
+            {this.props.memory.topSymbols.map((symbol) => (
               <tr key={symbol.displayName} onClick={::this.handleSymbolsClick}>
                 <td className="text-right">
                   <b>{formatSize(symbol.size)}</b>
@@ -271,27 +271,27 @@ class MemoryStatisticsPage extends React.PureComponent {
       {
         title: 'Component',
         dataIndex: 'component',
-        render: text => (
+        render: (text) => (
           <Tooltip title={text}>
             <b>{limitPathLength(text || '', 40)}</b>
           </Tooltip>
-        )
+        ),
       },
       {
         align: 'center',
         title: 'High',
-        dataIndex: 'high'
+        dataIndex: 'high',
       },
       {
         align: 'center',
         title: 'Medium',
-        dataIndex: 'medium'
+        dataIndex: 'medium',
       },
       {
         align: 'center',
         title: 'Low',
-        dataIndex: 'low'
-      }
+        dataIndex: 'low',
+      },
     ];
 
     const ds = [
@@ -299,8 +299,8 @@ class MemoryStatisticsPage extends React.PureComponent {
       { component: '\u00A0' },
       {
         component: 'Total',
-        ...this.props.code.defectsCountBySeverity
-      }
+        ...this.props.code.defectsCountBySeverity,
+      },
     ];
 
     return (
@@ -311,7 +311,7 @@ class MemoryStatisticsPage extends React.PureComponent {
           dataSource={ds}
           onRow={({ component }) => ({
             className: component === '\u00A0' ? 'empty-row' : '',
-            onClick: ::this.handleCodeClick
+            onClick: ::this.handleCodeClick,
           })}
           rowKey="component"
           pagination={false}
@@ -329,7 +329,7 @@ class MemoryStatisticsPage extends React.PureComponent {
       {
         title: 'Level',
         dataIndex: 'level',
-        render: CodeDefects.renderSeverityLevel
+        render: CodeDefects.renderSeverityLevel,
       },
       {
         title: 'Message',
@@ -339,8 +339,8 @@ class MemoryStatisticsPage extends React.PureComponent {
             {message}
           </Tooltip>
         ),
-        width: '100%'
-      }
+        width: '100%',
+      },
     ];
     return (
       <Card title="Top Defects" className="block defects-stats-block">
@@ -388,7 +388,7 @@ function mapStateToProps(state, { history }) {
     memory: selectMemoryStats(state),
     onMemoryClick: () => goTo(history, '/inspect/result/files'),
     onCodeClick: () => goTo(history, '/inspect/result/defects'),
-    onSymbolsClick: () => goTo(history, '/inspect/result/symbols')
+    onSymbolsClick: () => goTo(history, '/inspect/result/symbols'),
   };
 }
 

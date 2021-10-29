@@ -28,7 +28,7 @@ class CodePage extends React.PureComponent {
   static propTypes = {
     defects: PropTypes.arrayOf(DefectType),
     osOpenUrl: PropTypes.func.isRequired,
-    openTextDocument: PropTypes.func.isRequired
+    openTextDocument: PropTypes.func.isRequired,
   };
 
   render() {
@@ -61,13 +61,13 @@ class CodePage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    defects: selectCodeCheckDefects(state)
+    defects: selectCodeCheckDefects(state),
   };
 }
 
 const dispatchToProps = {
   osOpenUrl,
-  openTextDocument
+  openTextDocument,
 };
 
 export default connect(mapStateToProps, dispatchToProps)(CodePage);

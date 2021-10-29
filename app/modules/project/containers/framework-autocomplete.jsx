@@ -30,25 +30,25 @@ function mapStateToProps(state, ownProps) {
     const platform = getConfigOptionValue(sectionData, 'platform');
     if (platform && !platform.toLowerCase().includes('github')) {
       items = rawItems.filter(
-        framework =>
+        (framework) =>
           !framework.platforms ||
           !framework.platforms.length ||
           framework.platforms.includes(platform)
       );
-      items = items.map(framework => ({
+      items = items.map((framework) => ({
         name: `${framework.title} (${framework.name})`,
-        value: framework.name
+        value: framework.name,
       }));
     }
   }
 
   return {
-    items
+    items,
   };
 }
 
 const dispatchToProps = {
-  onLoad: () => loadRegistryFrameworks(true)
+  onLoad: () => loadRegistryFrameworks(true),
 };
 
 export const FrameworkAutocomplete = connect(
@@ -58,7 +58,7 @@ export const FrameworkAutocomplete = connect(
 FrameworkAutocomplete.displayName = 'FrameworkAutocomplete';
 
 OptionEditorFactory.register(
-  schema => schema && schema.name.endsWith('framework'),
+  (schema) => schema && schema.name.endsWith('framework'),
   (schema, inputProps) => (
     <FrameworkAutocomplete
       {...inputProps}

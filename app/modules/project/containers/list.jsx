@@ -18,13 +18,13 @@ import { Badge, Button, Input, Spin } from 'antd';
 import {
   INPUT_FILTER_KEY,
   selectFilter,
-  selectVisibleProjects
+  selectVisibleProjects,
 } from '@project/selectors';
 import {
   hideProject,
   loadProjects,
   openProject,
-  updateConfigDescription
+  updateConfigDescription,
 } from '@project/actions';
 import { lazyUpdateInputValue, updateInputValue } from '@store/actions';
 
@@ -61,14 +61,14 @@ class ProjectsListComponent extends React.PureComponent {
     updateInputValue: PropTypes.func.isRequired,
     showBoards: PropTypes.func.isRequired,
     updateConfigDescription: PropTypes.func.isRequired,
-    setFilter: PropTypes.func.isRequired
+    setFilter: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
     super(...args);
     this.state = {
       newProjectVisible: false,
-      openProjectVisible: false
+      openProjectVisible: false,
     };
   }
 
@@ -95,9 +95,9 @@ class ProjectsListComponent extends React.PureComponent {
     }
   };
 
-  handleFilterChange = e => {
+  handleFilterChange = (e) => {
     this.setState({
-      filterValue: e.target.value
+      filterValue: e.target.value,
     });
   };
 
@@ -105,7 +105,7 @@ class ProjectsListComponent extends React.PureComponent {
     this.props.setFilter(this.state.filterValue);
   };
 
-  handleBoardClick = name => {
+  handleBoardClick = (name) => {
     this.props.updateInputValue(BOARDS_INPUT_FILTER_KEY, name);
     this.props.showBoards();
   };
@@ -116,25 +116,25 @@ class ProjectsListComponent extends React.PureComponent {
 
   handleOpenProjectClick = () => {
     this.setState({
-      openProjectVisible: true
+      openProjectVisible: true,
     });
   };
 
   handleOpenProjectCancel = () => {
     this.setState({
-      openProjectVisible: false
+      openProjectVisible: false,
     });
   };
 
   handleNewProjectCancel = () => {
     this.setState({
-      newProjectVisible: false
+      newProjectVisible: false,
     });
   };
 
   handleCreateNewProjectClick = () => {
     this.setState({
-      newProjectVisible: true
+      newProjectVisible: true,
     });
   };
 
@@ -145,15 +145,15 @@ class ProjectsListComponent extends React.PureComponent {
           name: ACTION_OPEN,
           icon: 'folder-open',
           text: 'Open',
-          type: 'primary'
+          type: 'primary',
         },
         {
           name: ACTION_CONFIGURE,
           icon: 'setting',
           text: 'Configure',
-          type: 'primary'
-        }
-      ]
+          type: 'primary',
+        },
+      ],
     ];
   }
 
@@ -162,13 +162,13 @@ class ProjectsListComponent extends React.PureComponent {
       {
         name: ACTION_HIDE,
         icon: 'eye-invisible',
-        text: 'Hide'
+        text: 'Hide',
       },
       {
         name: ACTION_REVEAL,
         icon: 'folder',
-        text: 'Reveal'
-      }
+        text: 'Reveal',
+      },
     ];
   }
 
@@ -184,7 +184,7 @@ class ProjectsListComponent extends React.PureComponent {
 
     return (
       <div>
-        {ds.map(project => (
+        {ds.map((project) => (
           <ProjectListItem
             key={project.path}
             data={project}
@@ -302,10 +302,10 @@ class ProjectsListComponent extends React.PureComponent {
   }
 }
 
-const mapStateToProps = function(state) {
+const mapStateToProps = function (state) {
   return {
     filterValue: selectFilter(state),
-    items: selectVisibleProjects(state)
+    items: selectVisibleProjects(state),
   };
 };
 
@@ -317,13 +317,13 @@ function dispatchToProps(dispatch, ownProps) {
         hideProject,
         openProject,
         osRevealFile,
-        setFilter: value => dispatch(lazyUpdateInputValue(INPUT_FILTER_KEY, value)),
+        setFilter: (value) => dispatch(lazyUpdateInputValue(INPUT_FILTER_KEY, value)),
         updateInputValue,
-        updateConfigDescription
+        updateConfigDescription,
       },
       dispatch
     ),
-    showBoards: () => goTo(ownProps.history, '/boards')
+    showBoards: () => goTo(ownProps.history, '/boards'),
   };
 }
 

@@ -92,5 +92,5 @@ export function commonprefix(paths) {
 }
 
 export function split(path) {
-  return path.split(sep).filter(item => item.length);
+  return path.split(sep).filter((item) => item.length);
 }

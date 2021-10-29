@@ -22,12 +22,12 @@ export const REINSPECT_PROJECT = 'REINSPECT_PROJECT';
 export function inspectProject(configuration, onEnd) {
   return createAction(INSPECT_PROJECT, {
     configuration,
-    onEnd
+    onEnd,
   });
 }
 
 export function reinspectProject(onEnd) {
   return createAction(REINSPECT_PROJECT, {
-    onEnd
+    onEnd,
   });
 }

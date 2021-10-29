@@ -24,7 +24,7 @@ import routes from './routes';
 
 class InspectPage extends React.Component {
   static propTypes = {
-    deleteEntity: PropTypes.func.isRequired
+    deleteEntity: PropTypes.func.isRequired,
   };
 
   componentWillUnmount() {
@@ -42,7 +42,7 @@ class InspectPage extends React.Component {
 }
 
 const mapDispatchToProps = {
-  deleteEntity
+  deleteEntity,
 };
 
 export default connect(undefined, mapDispatchToProps)(InspectPage);

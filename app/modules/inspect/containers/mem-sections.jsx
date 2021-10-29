@@ -24,7 +24,7 @@ import { selectSectionsSizeData } from '@inspect/selectors';
 
 class SectionsExplorerPage extends React.PureComponent {
   static propTypes = {
-    sections: SectionsType
+    sections: SectionsType,
   };
 
   render() {
@@ -46,7 +46,7 @@ class SectionsExplorerPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    sections: selectSectionsSizeData(state)
+    sections: selectSectionsSizeData(state),
   };
 }
 

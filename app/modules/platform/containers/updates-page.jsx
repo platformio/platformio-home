@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   UPDATES_INPUT_FILTER_KEY,
   selectUpdatesFilter,
-  selectVisiblePlatformUpdates
+  selectVisiblePlatformUpdates,
 } from '../selectors';
 import { osOpenUrl, osRevealFile } from '../../core/actions';
 
@@ -41,7 +41,7 @@ class PlatformUpdatesPage extends React.Component {
     showFramework: PropTypes.func.isRequired,
     updatePlatform: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
-    osRevealFile: PropTypes.func.isRequired
+    osRevealFile: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -64,9 +64,10 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisiblePlatformUpdates(state),
     filterValue: selectUpdatesFilter(state),
-    showPlatform: name => goTo(ownProps.history, '/platforms/installed/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: (name) =>
+      goTo(ownProps.history, '/platforms/installed/show', { name }),
+    showFramework: (name) =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
   };
 }
 
@@ -75,8 +76,8 @@ function mapDispatchToProps(dispatch) {
     Object.assign({}, actions, {
       osOpenUrl,
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

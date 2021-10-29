@@ -42,14 +42,14 @@ class ProjectExamplesModal extends React.Component {
     osOpenUrl: PropTypes.func.isRequired,
     showInstalledPlatforms: PropTypes.func.isRequired,
     showEmbeddedPlatforms: PropTypes.func.isRequired,
-    showDesktopPlatforms: PropTypes.func.isRequired
+    showDesktopPlatforms: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       examplePath: null,
-      inProgress: false
+      inProgress: false,
     };
   }
 
@@ -62,7 +62,7 @@ class ProjectExamplesModal extends React.Component {
 
   onDidExample(examplePath) {
     this.setState({
-      examplePath
+      examplePath,
     });
   }
 
@@ -71,11 +71,11 @@ class ProjectExamplesModal extends React.Component {
       return message.error('Please select an example');
     }
     this.setState({
-      inProgress: true
+      inProgress: true,
     });
     this.props.importProject(this.state.examplePath, (err, location) => {
       this.setState({
-        inProgress: false
+        inProgress: false,
       });
       if (!err) {
         this.props.addProject(location, true);
@@ -86,7 +86,7 @@ class ProjectExamplesModal extends React.Component {
 
   onDidCancel() {
     this.setState({
-      inProgress: false
+      inProgress: false,
     });
     this.props.onCancel();
   }
@@ -125,7 +125,7 @@ class ProjectExamplesModal extends React.Component {
     }
     const knownPlatforms = [];
     const duplicatedPlatforms = [];
-    this.props.items.forEach(item => {
+    this.props.items.forEach((item) => {
       if (knownPlatforms.includes(item.platform.title)) {
         duplicatedPlatforms.push(item.platform.title);
         return;
@@ -166,10 +166,10 @@ class ProjectExamplesModal extends React.Component {
           onChange={::this.onDidExample}
         >
           {this.props.items
-            .filter(item =>
+            .filter((item) =>
               workspaceSettings.get('filterProjectExample', () => true)(item)
             )
-            .map(data => (
+            .map((data) => (
               <Select.OptGroup
                 key={`${data.platform.title}-${data.platform.version}`}
                 label={
@@ -181,7 +181,7 @@ class ProjectExamplesModal extends React.Component {
                   </span>
                 }
               >
-                {data.items.map(item => (
+                {data.items.map((item) => (
                   <Select.Option
                     key={`${data.platform.title}-${data.platform.version}-${item.name}-${item.description}`}
                     value={item.path}
@@ -245,11 +245,11 @@ function mapStateToProps(state, ownProps) {
     items: selectProjectExamples(state),
     showInstalledPlatforms: () => goTo(ownProps.router.history, '/platforms/installed'),
     showEmbeddedPlatforms: () => goTo(ownProps.router.history, '/platforms/embedded'),
-    showDesktopPlatforms: () => goTo(ownProps.router.history, '/platforms/desktop')
+    showDesktopPlatforms: () => goTo(ownProps.router.history, '/platforms/desktop'),
   };
 }
 
 export default connect(mapStateToProps, {
   ...actions,
-  osOpenUrl
+  osOpenUrl,
 })(ProjectExamplesModal);

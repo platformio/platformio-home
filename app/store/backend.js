@@ -26,14 +26,14 @@ export const actions = {
   BACKEND_ERRORED: 'BACKEND_ERRORED',
   BACKEND_REQUEST: 'BACKEND_REQUEST',
   BACKEND_RESULT_SUCCESS: 'BACKEND_RESULT_SUCCESS',
-  BACKEND_RESULT_ERROR: 'BACKEND_RESULT_ERROR'
+  BACKEND_RESULT_ERROR: 'BACKEND_RESULT_ERROR',
 };
 
 actions.backendRequest = (id, query, params) =>
   createAction(actions.BACKEND_REQUEST, {
     id,
     query,
-    params
+    params,
   });
 
 export function* backendFetchData({ query, params = [] }) {
@@ -43,7 +43,7 @@ export function* backendFetchData({ query, params = [] }) {
   while (true) {
     const action = yield take([
       actions.BACKEND_RESULT_SUCCESS,
-      actions.BACKEND_RESULT_ERROR
+      actions.BACKEND_RESULT_ERROR,
     ]);
     if (action.id !== id) {
       continue;
@@ -56,7 +56,7 @@ export function* backendFetchData({ query, params = [] }) {
 }
 
 export function backendMiddleware(options) {
-  return store => {
+  return (store) => {
     let socket = null;
     let messageQueue = [];
     const reconnect = {
@@ -64,7 +64,7 @@ export function backendMiddleware(options) {
       loading: null,
       delay: 500, // msec
       maxDelay: 10000, // msec
-      retries: 0
+      retries: 0,
     };
 
     function newSocket(endpoint) {
@@ -90,7 +90,7 @@ export function backendMiddleware(options) {
         store.dispatch(createAction(actions.BACKEND_CONNECTED));
         const _messageQueue = messageQueue.slice(0);
         messageQueue = []; // reset messageQueue
-        _messageQueue.forEach(data => sock.send(data));
+        _messageQueue.forEach((data) => sock.send(data));
       };
 
       sock.onclose = () => {
@@ -107,7 +107,7 @@ export function backendMiddleware(options) {
         );
       };
 
-      sock.onmessage = event => {
+      sock.onmessage = (event) => {
         try {
           const result = jsonrpc.parse(event.data);
           switch (result.type) {
@@ -131,7 +131,7 @@ export function backendMiddleware(options) {
     if (!socket) {
       return undefined;
     }
-    return next => action => {
+    return (next) => (action) => {
       if (action && action.type === actions.BACKEND_REQUEST) {
         const msg = JSON.stringify(
           jsonrpc.request(action.id, action.query, action.params)

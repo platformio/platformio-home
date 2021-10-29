@@ -20,7 +20,7 @@ import {
   compareString,
   formatHex,
   formatSize,
-  getFilterMenu
+  getFilterMenu,
 } from '@inspect/helpers';
 
 import React from 'react';
@@ -28,18 +28,20 @@ import { SectionsType } from '@inspect/types';
 
 export class MemorySections extends React.PureComponent {
   static propTypes = {
-    sections: SectionsType
+    sections: SectionsType,
   };
 
   constructor(...args) {
     super(...args);
 
     this.state = {
-      search: ''
+      search: '',
     };
   }
 
-  renderAddress = addr => <code>{formatHex(addr, { width: this.addressWidth })}</code>;
+  renderAddress = (addr) => (
+    <code>{formatHex(addr, { width: this.addressWidth })}</code>
+  );
 
   getTableColumns(ds) {
     return [
@@ -48,41 +50,41 @@ export class MemorySections extends React.PureComponent {
         dataIndex: 'name',
         defaultSortOrder: 'ascend',
         sorter: (a, b) => compareString(a.name, b.name),
-        width: '100%'
+        width: '100%',
       },
       {
         title: 'Type',
         dataIndex: 'type',
         filters: getFilterMenu(ds, 'type'),
         onFilter: (value, record) => record.type === value,
-        render: type => <Tag>{type}</Tag>,
+        render: (type) => <Tag>{type}</Tag>,
         sorter: (a, b) => compareString(a.type, b.type),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Flags',
         dataIndex: 'flags',
         filters: getFilterMenu(ds, 'flags'),
         onFilter: (value, record) => record.flags === value,
-        render: flags => flags.length !== 0 && <Tag>{flags}</Tag>,
+        render: (flags) => flags.length !== 0 && <Tag>{flags}</Tag>,
         sorter: (a, b) => compareString(a.flags, b.flags),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Address',
         dataIndex: 'startAddr',
         render: this.renderAddress,
         sorter: (a, b) => compareNumber(a.startAddr, b.startAddr),
-        align: 'center'
+        align: 'center',
       },
 
       {
         title: 'Size',
         dataIndex: 'size',
-        render: size => <div className="text-nowrap">{formatSize(size)}</div>,
+        render: (size) => <div className="text-nowrap">{formatSize(size)}</div>,
         sorter: (a, b) => compareNumber(a.size, b.size),
-        align: 'right'
-      }
+        align: 'right',
+      },
     ];
   }
 
@@ -113,7 +115,7 @@ export class MemorySections extends React.PureComponent {
           footer={::this.renderFooter}
           pagination={{
             defaultPageSize: 20,
-            hideOnSinglePage: true
+            hideOnSinglePage: true,
           }}
           rowKey="idx"
           size="middle"

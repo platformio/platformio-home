@@ -27,7 +27,7 @@ import { osOpenUrl } from '../../core/actions';
 class AccountRegistrationPage extends React.Component {
   static propTypes = {
     registerAccount: PropTypes.func.isRequired,
-    showLoginPage: PropTypes.func.isRequired
+    showLoginPage: PropTypes.func.isRequired,
   };
 
   render() {
@@ -44,7 +44,7 @@ class AccountRegistrationPage extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    showLoginPage: () => goTo(ownProps.history, '/account/login')
+    showLoginPage: () => goTo(ownProps.history, '/account/login'),
   };
 }
 

@@ -15,8 +15,8 @@
  */
 
 import { USER_CONSENTS_KEY } from '@core/constants';
-import { selectStorageItem } from '../../store/selectors';
 import hash from 'object-hash';
+import { selectStorageItem } from '../../store/selectors';
 
 export function selectShowAtStartup(state) {
   const caller = selectStorageItem(state, 'coreCaller');
@@ -81,7 +81,7 @@ export function selectOsIsDirItems(state) {
 
 export function selectRouteBadges(state) {
   const items = selectStorageItem(state, 'routeBadges') || {};
-  return Object.keys(items).map(key => ({ path: key, count: items[key] }));
+  return Object.keys(items).map((key) => ({ path: key, count: items[key] }));
 }
 
 export function selectUserConsents(state) {

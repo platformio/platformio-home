@@ -21,7 +21,7 @@ import {
   formatHex,
   formatSize,
   getFilterMenu,
-  multiSort
+  multiSort,
 } from '@inspect/helpers';
 
 import { PathBreadcrumb } from './path-breadcrumb';
@@ -32,7 +32,7 @@ import { SymbolType } from '@inspect/types';
 
 const typeToOrder = {
   STT_FUNC: 1,
-  STT_OBJECT: 2
+  STT_OBJECT: 2,
 };
 
 function sortFunctionsFirst(a, b) {
@@ -44,14 +44,14 @@ export class MemorySymbols extends React.PureComponent {
     symbols: PropTypes.arrayOf(SymbolType),
     openTextDocument: PropTypes.func.isRequired,
     file: PropTypes.string,
-    onDirChange: PropTypes.func
+    onDirChange: PropTypes.func,
   };
 
   constructor(...args) {
     super(...args);
 
     this.state = {
-      search: ''
+      search: '',
     };
   }
 
@@ -90,7 +90,9 @@ export class MemorySymbols extends React.PureComponent {
     );
   }
 
-  renderAddress = addr => <code>{formatHex(addr, { width: this.addressWidth })}</code>;
+  renderAddress = (addr) => (
+    <code>{formatHex(addr, { width: this.addressWidth })}</code>
+  );
 
   getTableColumns(ds) {
     return [
@@ -103,49 +105,49 @@ export class MemorySymbols extends React.PureComponent {
         sorter: multiSort(sortFunctionsFirst, (a, b) =>
           compareString(a.displayName, b.displayName)
         ),
-        width: '100%'
+        width: '100%',
       },
       {
         title: 'Type',
         align: 'center',
         dataIndex: 'type',
-        render: text => <Tag>{text}</Tag>,
+        render: (text) => <Tag>{text}</Tag>,
         filters: getFilterMenu(ds, 'type'),
         onFilter: (type, record) => record.type.includes(type),
-        sorter: (a, b) => compareString(a.type, b.type)
+        sorter: (a, b) => compareString(a.type, b.type),
       },
       {
         title: 'Bind',
         align: 'center',
         dataIndex: 'bind',
-        render: text => <Tag>{text}</Tag>,
+        render: (text) => <Tag>{text}</Tag>,
         filters: getFilterMenu(ds, 'bind'),
         onFilter: (bind, record) => record.bind.includes(bind),
-        sorter: (a, b) => compareString(a.bind, b.bind)
+        sorter: (a, b) => compareString(a.bind, b.bind),
       },
       {
         title: 'Address',
         dataIndex: 'addr',
         render: this.renderAddress,
         sorter: (a, b) => compareNumber(a.addr, b.addr),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Section',
         dataIndex: 'section',
-        render: text => <Tag>{text}</Tag>,
+        render: (text) => <Tag>{text}</Tag>,
         filters: getFilterMenu(ds, 'section'),
         onFilter: (section, record) => record.section === section,
         sorter: (a, b) => compareString(a.section, b.section),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Size',
         dataIndex: 'size',
-        render: size => <div className="text-nowrap">{formatSize(size)}</div>,
+        render: (size) => <div className="text-nowrap">{formatSize(size)}</div>,
         sorter: (a, b) => compareNumber(a.size, b.size),
-        align: 'right'
-      }
+        align: 'right',
+      },
     ];
   }
 
@@ -173,15 +175,15 @@ export class MemorySymbols extends React.PureComponent {
     const textFields = ['name', 'demangled_name', 'section'];
     const tokens = search
       .match(/\S+/g)
-      .filter(token => !stopWords.includes(token))
-      .map(token => {
+      .filter((token) => !stopWords.includes(token))
+      .map((token) => {
         if (!isNaN(token)) {
           return token.toLowerCase();
         }
         return token;
       });
 
-    return symbols.filter(symbol => {
+    return symbols.filter((symbol) => {
       for (const token of tokens) {
         let foundToken = false;
         if (!isNaN(token)) {
@@ -205,13 +207,13 @@ export class MemorySymbols extends React.PureComponent {
     });
   }
 
-  handleBreadcrumbChange = path => {
+  handleBreadcrumbChange = (path) => {
     this.props.onDirChange(path);
   };
 
-  handleSearch = search => {
+  handleSearch = (search) => {
     this.setState({
-      search
+      search,
     });
   };
 
@@ -233,7 +235,7 @@ export class MemorySymbols extends React.PureComponent {
             // onChange={this.handleSearch}
             onSearch={this.handleSearch}
             placeholder='Search, for ex. "init 0x80 bss"'
-            ref={el => {
+            ref={(el) => {
               this.searchEl = el;
             }}
             size="large"
@@ -248,7 +250,7 @@ export class MemorySymbols extends React.PureComponent {
           footer={this.renderFooter}
           pagination={{
             defaultPageSize: 15,
-            hideOnSinglePage: true
+            hideOnSinglePage: true,
           }}
           rowKey="idx"
           size="middle"
@@ -257,7 +259,7 @@ export class MemorySymbols extends React.PureComponent {
     );
   }
 
-  renderFooter = ds => {
+  renderFooter = (ds) => {
     const totalSize = ds.reduce((total, { size = 0 }) => {
       return total + size;
     }, 0);

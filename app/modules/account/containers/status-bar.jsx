@@ -23,7 +23,7 @@ import { goTo } from '../../core/helpers';
 class AccountStatusBar extends React.Component {
   static propTypes = {
     router: PropTypes.object.isRequired,
-    showInformationPage: PropTypes.func.isRequired
+    showInformationPage: PropTypes.func.isRequired,
   };
 
   render() {
@@ -43,7 +43,7 @@ class AccountStatusBar extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    showInformationPage: () => goTo(ownProps.router.history, '/account')
+    showInformationPage: () => goTo(ownProps.router.history, '/account'),
   };
 }
 

@@ -22,20 +22,17 @@ import React from 'react';
 export class PathBreadcrumb extends React.PureComponent {
   static propTypes = {
     path: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
   };
 
-  handleItemClick = e => {
+  handleItemClick = (e) => {
     e.preventDefault();
     const a = e.target.closest('a');
     if (!a) {
       return;
     }
     const idx = parseInt(a.dataset.idx);
-    const path = (this.props.path || '')
-      .split('/')
-      .slice(0, idx)
-      .join('/');
+    const path = (this.props.path || '').split('/').slice(0, idx).join('/');
     this.props.onChange(path.length ? path : undefined);
   };
 

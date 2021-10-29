@@ -32,14 +32,14 @@ class ProjectOpenModal extends React.Component {
     // callbacks
     onCancel: PropTypes.func.isRequired,
     // dispatch
-    addProject: PropTypes.func.isRequired
+    addProject: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       projectDir: null,
-      checking: false
+      checking: false,
     };
   }
 
@@ -77,7 +77,7 @@ class ProjectOpenModal extends React.Component {
 
   onDidSelect(projectDir) {
     this.setState({
-      projectDir
+      projectDir,
     });
   }
 
@@ -112,7 +112,7 @@ class ProjectOpenModal extends React.Component {
       >
         {'Open' +
           (this.state.projectDir ? ` "${path.basename(this.state.projectDir)}"` : '')}
-      </Button>
+      </Button>,
     ];
   }
 }
@@ -120,5 +120,5 @@ class ProjectOpenModal extends React.Component {
 // Redux
 
 export default connect(undefined, {
-  addProject
+  addProject,
 })(ProjectOpenModal);

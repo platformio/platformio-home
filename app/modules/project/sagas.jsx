@@ -23,12 +23,12 @@ import * as selectors from './selectors';
 import {
   CONFIG_SCHEMA_KEY,
   PROJECT_CONFIG_KEY,
-  PROJECT_CONFIG_SAVE_CONSENT_ID
+  PROJECT_CONFIG_SAVE_CONSENT_ID,
 } from '@project/constants';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
-  UPDATE_PLATFORM
+  UPDATE_PLATFORM,
 } from '../platform/actions';
 import { Modal, message } from 'antd';
 import {
@@ -36,14 +36,14 @@ import {
   // ensureUserConsent,
   notifyError,
   notifySuccess,
-  osRevealFile
+  osRevealFile,
 } from '../core/actions';
 import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   deleteEntity,
   saveState,
   updateEntity,
-  updateStorageItem
+  updateStorageItem,
 } from '../../store/actions';
 import { selectEntity, selectStorageItem } from '../../store/selectors';
 
@@ -60,11 +60,11 @@ import jsonrpc from 'jsonrpc-lite';
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
 function* watchAddProject() {
-  yield takeEvery(actions.ADD_PROJECT, function*({ projectDir, withOpen, onEnd }) {
+  yield takeEvery(actions.ADD_PROJECT, function* ({ projectDir, withOpen, onEnd }) {
     const iniPath = pathlib.join(projectDir, 'platformio.ini');
     const fileExists = yield call(backendFetchData, {
       query: 'os.is_file',
-      params: [iniPath]
+      params: [iniPath],
     });
     if (!fileExists) {
       if (onEnd) {
@@ -96,28 +96,28 @@ function* watchAddProject() {
 }
 
 function* watchHideProject() {
-  yield takeEvery(actions.HIDE_PROJECT, function*({ projectDir }) {
+  yield takeEvery(actions.HIDE_PROJECT, function* ({ projectDir }) {
     const storageItems =
       (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     const entityItems = (yield select(selectors.selectProjects)) || [];
     yield put(
       updateStorageItem(
         RECENT_PROJECTS_STORAGE_KEY,
-        storageItems.filter(item => item !== projectDir)
+        storageItems.filter((item) => item !== projectDir)
       )
     );
     yield put(saveState());
     yield put(
       updateEntity(
         'projects',
-        entityItems.filter(item => item.path !== projectDir)
+        entityItems.filter((item) => item.path !== projectDir)
       )
     );
   });
 }
 
 function* watchProjectRename() {
-  yield takeEvery(OS_RENAME_FILE, function*({ src, dst }) {
+  yield takeEvery(OS_RENAME_FILE, function* ({ src, dst }) {
     const storageItems =
       (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
     if (!storageItems.includes(src)) {
@@ -129,7 +129,7 @@ function* watchProjectRename() {
     yield put(
       updateStorageItem(
         RECENT_PROJECTS_STORAGE_KEY,
-        storageItems.filter(item => item !== src)
+        storageItems.filter((item) => item !== src)
       )
     );
     yield put(saveState());
@@ -141,11 +141,11 @@ function* watchProjectRename() {
 }
 
 function* watchOpenProject() {
-  yield takeEvery(actions.OPEN_PROJECT, function*({ projectDir }) {
+  yield takeEvery(actions.OPEN_PROJECT, function* ({ projectDir }) {
     try {
       return yield call(backendFetchData, {
         query: 'ide.open_project',
-        params: [projectDir]
+        params: [projectDir],
       });
     } catch (err) {
       console.warn(err);
@@ -162,7 +162,7 @@ function* watchOpenProject() {
           You can open it with your favourite IDE or process with{' '}
           <kbd>platformio run</kbd> command.
         </div>
-      )
+      ),
     });
   });
 }
@@ -185,7 +185,7 @@ function* watchLoadProjects() {
     }
     try {
       items = yield call(backendFetchData, {
-        query: 'project.get_projects'
+        query: 'project.get_projects',
       });
       yield put(updateEntity('projects', items));
       yield put(actions.projectsLoaded());
@@ -204,7 +204,7 @@ function* watchLoadProjectExamples() {
     }
     try {
       items = yield call(backendFetchData, {
-        query: 'project.get_project_examples'
+        query: 'project.get_project_examples',
       });
       yield put(updateEntity('projectExamples', items));
     } catch (err) {
@@ -214,9 +214,12 @@ function* watchLoadProjectExamples() {
 }
 
 function* watchCleanupProjectExamples() {
-  yield takeEvery([INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM], function*() {
-    yield put(deleteEntity(/^projectExamples/));
-  });
+  yield takeEvery(
+    [INSTALL_PLATFORM, UNINSTALL_PLATFORM, UPDATE_PLATFORM],
+    function* () {
+      yield put(deleteEntity(/^projectExamples/));
+    }
+  );
 }
 
 function* watchImportProject() {
@@ -229,14 +232,14 @@ function* watchImportProject() {
 
       result = yield call(backendFetchData, {
         query: 'project.import_pio',
-        params: [projectDir]
+        params: [projectDir],
       });
 
       ReactGA.timing({
         category: 'Project',
         variable: 'import',
         value: new Date().getTime() - start,
-        label: projectDir
+        label: projectDir,
       });
 
       yield put(
@@ -263,14 +266,14 @@ function* watchInitProject() {
 
       result = yield call(backendFetchData, {
         query: 'project.init',
-        params: [board, framework, projectDir]
+        params: [board, framework, projectDir],
       });
 
       ReactGA.timing({
         category: 'Project',
         variable: 'init',
         value: new Date().getTime() - start,
-        label: board
+        label: board,
       });
 
       yield put(
@@ -302,14 +305,14 @@ function* watchImportArduinoProject() {
 
       result = yield call(backendFetchData, {
         query: 'project.import_arduino',
-        params: [board, useArduinoLibs, arduinoProjectDir]
+        params: [board, useArduinoLibs, arduinoProjectDir],
       });
 
       ReactGA.timing({
         category: 'Project',
         variable: 'import_arduino',
         value: new Date().getTime() - start,
-        label: board
+        label: board,
       });
 
       yield put(
@@ -340,10 +343,10 @@ function* watchImportArduinoProject() {
 }
 
 function* watchLoadConfigSchema() {
-  yield takeLatest(actions.LOAD_CONFIG_SCHEMA, function*() {
+  yield takeLatest(actions.LOAD_CONFIG_SCHEMA, function* () {
     try {
       const schema = yield call(backendFetchData, {
-        query: 'project.get_config_schema'
+        query: 'project.get_config_schema',
       });
       // group by scope to pass to section without extra processing
       const schemaByScope = {};
@@ -364,24 +367,24 @@ function* watchLoadConfigSchema() {
 }
 
 function* watchLoadProjectConfig() {
-  yield takeLatest(actions.LOAD_PROJECT_CONFIG, function*({ projectDir }) {
+  yield takeLatest(actions.LOAD_PROJECT_CONFIG, function* ({ projectDir }) {
     try {
       yield put(deleteEntity(new RegExp(`^${PROJECT_CONFIG_KEY}$`)));
       const configPath = pathlib.join(projectDir, 'platformio.ini');
       const tupleConfig = yield call(backendFetchData, {
         query: 'project.config_load',
-        params: [configPath]
+        params: [configPath],
       });
       const mtime = yield call(backendFetchData, {
         query: 'os.get_file_mtime',
-        params: [configPath]
+        params: [configPath],
       });
       const config = tupleConfig.map(([section, items]) => ({
         section,
         items: items.map(([name, value]) => ({
           name,
-          value
-        }))
+          value,
+        })),
       }));
       yield put(updateEntity(PROJECT_CONFIG_KEY, { config, mtime }));
     } catch (e) {
@@ -395,110 +398,107 @@ function* watchLoadProjectConfig() {
 }
 
 function* watchSaveProjectConfig() {
-  yield takeLatest(actions.SAVE_PROJECT_CONFIG, function*({
-    projectDir,
-    data,
-    options,
-    onEnd
-  }) {
-    const { mtime, force } = options || {};
-    let error;
-    try {
-      yield call(ensureUserConsent, PROJECT_CONFIG_SAVE_CONSENT_ID, {
-        content: `Warning!
+  yield takeLatest(
+    actions.SAVE_PROJECT_CONFIG,
+    function* ({ projectDir, data, options, onEnd }) {
+      const { mtime, force } = options || {};
+      let error;
+      try {
+        yield call(ensureUserConsent, PROJECT_CONFIG_SAVE_CONSENT_ID, {
+          content: `Warning!
           The entire file contents or platformio.ini will be rewritten with the current
           configuration defined in this UI.
           Continue to save the configuration?`,
-        okText: 'Save'
-      });
-      const configPath = pathlib.join(projectDir, 'platformio.ini');
-      if (!force) {
-        const currentMtime = yield call(backendFetchData, {
-          query: 'os.get_file_mtime',
-          params: [configPath]
+          okText: 'Save',
         });
-        if (currentMtime - mtime > 0.00001) {
-          throw new ConfigFileModifiedError({
-            loadedAt: mtime,
-            modifiedAt: currentMtime
+        const configPath = pathlib.join(projectDir, 'platformio.ini');
+        if (!force) {
+          const currentMtime = yield call(backendFetchData, {
+            query: 'os.get_file_mtime',
+            params: [configPath],
           });
+          if (currentMtime - mtime > 0.00001) {
+            throw new ConfigFileModifiedError({
+              loadedAt: mtime,
+              modifiedAt: currentMtime,
+            });
+          }
         }
-      }
 
-      yield call(backendFetchData, {
-        query: 'project.config_dump',
-        params: [configPath, data]
-      });
-      message.success('Project configuration saved');
-      // Refresh mtime
-      const newMtime = yield call(backendFetchData, {
-        query: 'os.get_file_mtime',
-        params: [configPath]
-      });
-      const entity = yield select(selectEntity, PROJECT_CONFIG_KEY);
-      yield put(updateEntity(PROJECT_CONFIG_KEY, { ...entity, mtime: newMtime }));
-      // Reload list because displaying of config required project in the state
-      yield put(actions.loadProjects(true));
-    } catch (e) {
-      error = e;
-      if (
-        !(
-          e &&
-          (e instanceof ConsentRejectedError || e instanceof ConfigFileModifiedError)
-        )
-      ) {
-        yield put(notifyError('Could not save project config', e));
+        yield call(backendFetchData, {
+          query: 'project.config_dump',
+          params: [configPath, data],
+        });
+        message.success('Project configuration saved');
+        // Refresh mtime
+        const newMtime = yield call(backendFetchData, {
+          query: 'os.get_file_mtime',
+          params: [configPath],
+        });
+        const entity = yield select(selectEntity, PROJECT_CONFIG_KEY);
+        yield put(updateEntity(PROJECT_CONFIG_KEY, { ...entity, mtime: newMtime }));
+        // Reload list because displaying of config required project in the state
+        yield put(actions.loadProjects(true));
+      } catch (e) {
+        error = e;
+        if (
+          !(
+            e &&
+            (e instanceof ConsentRejectedError || e instanceof ConfigFileModifiedError)
+          )
+        ) {
+          yield put(notifyError('Could not save project config', e));
+        }
+      } finally {
+        yield call(onEnd, error);
       }
-    } finally {
-      yield call(onEnd, error);
     }
-  });
+  );
 }
 
 function* _patchProjectState(path, patch) {
   const exProjects = (yield select(selectors.selectProjects)) || [];
-  const exProject = exProjects.find(x => x.path === path);
+  const exProject = exProjects.find((x) => x.path === path);
   if (!exProject) {
     return;
   }
   const project = { ...exProject, ...patch };
-  const projects = exProjects.map(p => (p === exProject ? project : p));
+  const projects = exProjects.map((p) => (p === exProject ? project : p));
   yield put(updateEntity('projects', projects));
   return exProject;
 }
 
 function* watchUpdateConfigDescription() {
-  yield takeLatest(actions.UPDATE_CONFIG_DESCRIPTION, function*({
-    projectDir,
-    description,
-    onEnd
-  }) {
-    let err;
-    let undo;
-    try {
-      // Patch existing state if loaded
-      undo = yield _patchProjectState(projectDir, { description });
+  yield takeLatest(
+    actions.UPDATE_CONFIG_DESCRIPTION,
+    function* ({ projectDir, description, onEnd }) {
+      let err;
+      let undo;
+      try {
+        // Patch existing state if loaded
+        undo = yield _patchProjectState(projectDir, { description });
 
-      // Patch file via RPC
-      yield call(backendFetchData, {
-        query: 'project.config_update_description',
-        params: [pathlib.join(projectDir, 'platformio.ini'), description]
-      });
-      message.success('Project description is saved into configuration file');
-    } catch (e) {
-      err = e;
-      yield put(notifyError('Could not update project description', e));
-      // Rollback edit
-      if (undo) {
-        yield _patchProjectState(projectDir, { description: undo.description });
-      }
-      console.error(e);
-    } finally {
-      if (onEnd) {
-        yield call(onEnd, err);
+        // Patch file via RPC
+        yield call(backendFetchData, {
+          query: 'project.config_update_description',
+          params: [pathlib.join(projectDir, 'platformio.ini'), description],
+        });
+        message.success('Project description is saved into configuration file');
+      } catch (e) {
+        err = e;
+        yield put(notifyError('Could not update project description', e));
+        // Rollback edit
+        if (undo) {
+          yield _patchProjectState(projectDir, { description: undo.description });
+        }
+        console.error(e);
+      } finally {
+        if (onEnd) {
+          yield call(onEnd, err);
+        }
       }
     }
-  });
+  );
 }
 
 export default [
@@ -515,5 +515,5 @@ export default [
   watchLoadConfigSchema,
   watchLoadProjectConfig,
   watchSaveProjectConfig,
-  watchUpdateConfigDescription
+  watchUpdateConfigDescription,
 ];

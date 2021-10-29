@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   INSTALLED_INPUT_FILTER_KEY,
   selectInstalledFilter,
-  selectVisibleInstalledLibs
+  selectVisibleInstalledLibs,
 } from '../selectors';
 
 import { Button } from 'antd';
@@ -42,7 +42,7 @@ class LibraryInstalledPage extends React.Component {
     osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
-    uninstallLibrary: PropTypes.func.isRequired
+    uninstallLibrary: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -80,12 +80,12 @@ function mapStateToProps(state, ownProps) {
     searchLibrary: (query, page) =>
       goTo(ownProps.history, '/libraries/registry/search', {
         query,
-        page
+        page,
       }),
-    showLibrary: idOrManifest =>
+    showLibrary: (idOrManifest) =>
       goTo(ownProps.history, '/libraries/installed/show', {
-        idOrManifest
-      })
+        idOrManifest,
+      }),
   };
 }
 
@@ -93,8 +93,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     Object.assign({}, actions, {
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

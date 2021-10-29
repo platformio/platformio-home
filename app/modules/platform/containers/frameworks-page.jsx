@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   FRAMEWORKS_INPUT_FILTER_KEY,
   selectFrameworksFilter,
-  selectVisibleFrameworks
+  selectVisibleFrameworks,
 } from '../selectors';
 
 import FrameworksList from '../components/frameworks-list';
@@ -37,7 +37,7 @@ class FrameworksPage extends React.Component {
     setFilter: PropTypes.func.isRequired,
     loadRegistryFrameworks: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
-    showFramework: PropTypes.func.isRequired
+    showFramework: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -60,17 +60,18 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleFrameworks(state),
     filterValue: selectFrameworksFilter(state),
-    showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: (name) =>
+      goTo(ownProps.history, '/platforms/embedded/show', { name }),
+    showFramework: (name) =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     Object.assign({}, actions, {
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(FRAMEWORKS_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(FRAMEWORKS_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

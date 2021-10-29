@@ -19,7 +19,7 @@ import React from 'react';
 
 export default class CustomIcon extends React.Component {
   static propTypes = {
-    type: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
   };
 
   render() {

@@ -30,13 +30,13 @@ export class Progress extends React.PureComponent {
       PropTypes.shape({
         done: PropTypes.bool.isRequired,
         expectedDuration: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
       })
-    ).isRequired
+    ).isRequired,
   };
 
   static getCurrentStep(props) {
-    return props.steps.find(x => !x.done);
+    return props.steps.find((x) => !x.done);
   }
 
   constructor(...args) {
@@ -47,7 +47,7 @@ export class Progress extends React.PureComponent {
       this.state = {
         mode: MODE_LINEAR_TIME,
         stepStartedAt: now,
-        stepDuration: 0
+        stepDuration: 0,
       };
     } else {
       this.state = {};
@@ -66,7 +66,7 @@ export class Progress extends React.PureComponent {
       this.setState({
         mode: MODE_LINEAR_TIME,
         stepStartedAt: Date.now().valueOf(),
-        stepDuration: 0
+        stepDuration: 0,
       });
     }
   }
@@ -80,7 +80,7 @@ export class Progress extends React.PureComponent {
   }
 
   handleTimer() {
-    this.setState(state => {
+    this.setState((state) => {
       const currentStep = Progress.getCurrentStep(this.props);
       if (!currentStep || !state.stepStartedAt) {
         // No step running or all steps completed
@@ -104,7 +104,7 @@ export class Progress extends React.PureComponent {
     let completedProgress = 0;
     let ongoingProgress = 0;
     let stepName;
-    const isAllDone = this.props.steps.every(x => x.done);
+    const isAllDone = this.props.steps.every((x) => x.done);
 
     if (isAllDone) {
       stepName = 'Complete';
@@ -123,7 +123,7 @@ export class Progress extends React.PureComponent {
       }
       ongoingProgress = stepBaseProgress + stepProgress / totalSteps;
 
-      const doneSteps = this.props.steps.filter(x => x.done).length;
+      const doneSteps = this.props.steps.filter((x) => x.done).length;
       if (totalSteps > 1) {
         completedProgress = doneSteps / totalSteps;
       }
@@ -135,7 +135,7 @@ export class Progress extends React.PureComponent {
           {stepName}: {(ongoingProgress * 100).toFixed(0)}%
         </center>
         <AntProgress
-          format={x => `${x.toFixed(0)}%`}
+          format={(x) => `${x.toFixed(0)}%`}
           successPercent={completedProgress * 100}
           percent={ongoingProgress * 100}
         />

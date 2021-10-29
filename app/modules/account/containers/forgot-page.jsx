@@ -28,7 +28,7 @@ class AccountForgotPage extends React.Component {
   static propTypes = {
     forgotAccountPassword: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
-    showRegistrationPage: PropTypes.func.isRequired
+    showRegistrationPage: PropTypes.func.isRequired,
   };
 
   render() {
@@ -46,7 +46,7 @@ class AccountForgotPage extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     showLoginPage: () => goTo(ownProps.history, '/account/login'),
-    showRegistrationPage: () => goTo(ownProps.history, '/account/registration')
+    showRegistrationPage: () => goTo(ownProps.history, '/account/registration'),
   };
 }
 

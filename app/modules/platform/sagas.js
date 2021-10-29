@@ -23,7 +23,7 @@ import {
   STORE_READY,
   deleteEntity,
   updateEntity,
-  updateStorageItem
+  updateStorageItem,
 } from '../../store/actions';
 import {
   all,
@@ -32,7 +32,7 @@ import {
   select,
   take,
   takeEvery,
-  takeLatest
+  takeLatest,
 } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
@@ -52,7 +52,7 @@ function* _loadRegistryPlatforms(silent) {
   try {
     items = yield call(backendFetchData, {
       query: 'core.call',
-      params: [['platform', 'search', '--json-output']]
+      params: [['platform', 'search', '--json-output']],
     });
   } catch (err) {
     silent ? console.error(err) : yield put(notifyError('Platforms: Registry', err));
@@ -65,7 +65,7 @@ function* _loadRegistryFrameworks(silent) {
   try {
     items = yield call(backendFetchData, {
       query: 'core.call',
-      params: [['platform', 'frameworks', '--json-output']]
+      params: [['platform', 'frameworks', '--json-output']],
     });
   } catch (err) {
     silent ? console.error(err) : yield put(notifyError('Platforms: Frameworks', err));
@@ -91,9 +91,9 @@ function* checkBoards() {
   try {
     let items = yield call(backendFetchData, {
       query: 'core.call',
-      params: [['boards', '--json-output']]
+      params: [['boards', '--json-output']],
     });
-    items = items.map(item => {
+    items = items.map((item) => {
       item.frameworks = item.frameworks || [];
       return item;
     });
@@ -135,14 +135,14 @@ function* watchLoadBoards() {
 function* watchLoadRegistryPlatformsOrFrameworks() {
   yield takeEvery(
     [actions.LOAD_REGISTRY_PLATFORMS, actions.LOAD_REGISTRY_FRAMEWORKS],
-    function*() {
+    function* () {
       yield call(checkRegistryPlatformsAndFrameworks);
     }
   );
 }
 
 function* watchLoadPlatformData() {
-  yield takeLatest(actions.LOAD_PLATFORM_DATA, function*({ name }) {
+  yield takeLatest(actions.LOAD_PLATFORM_DATA, function* ({ name }) {
     // need this data to make titled buttons
     const silent = name.includes('@');
     yield call(checkRegistryPlatformsAndFrameworks, silent);
@@ -155,7 +155,7 @@ function* watchLoadPlatformData() {
       try {
         const data = yield call(backendFetchData, {
           query: 'core.call',
-          params: [['platform', 'show', name, '--json-output']]
+          params: [['platform', 'show', name, '--json-output']],
         });
         const items = (yield select(selectors.selectInstalledPlatformsData)) || [];
         items.push(data);
@@ -186,19 +186,19 @@ function* watchLoadPlatformData() {
 }
 
 function* watchLoadFrameworkData() {
-  yield takeLatest(actions.LOAD_FRAMEWORK_DATA, function*() {
+  yield takeLatest(actions.LOAD_FRAMEWORK_DATA, function* () {
     const silent = false;
     yield all([call(checkRegistryPlatformsAndFrameworks, silent), call(checkBoards)]);
   });
 }
 
 function* watchLoadInstalledPlatforms() {
-  yield takeLatest(actions.LOAD_INSTALLED_PLATFORMS, function*() {
+  yield takeLatest(actions.LOAD_INSTALLED_PLATFORMS, function* () {
     const items = yield select(selectors.selectInstalledPlatforms);
     if (items) {
       return;
     }
-    yield call(function*() {
+    yield call(function* () {
       let attempts = 0;
       let lastError = undefined;
       while (attempts < 3) {
@@ -206,7 +206,7 @@ function* watchLoadInstalledPlatforms() {
         try {
           const items = yield call(backendFetchData, {
             query: 'core.call',
-            params: [['platform', 'list', '--json-output']]
+            params: [['platform', 'list', '--json-output']],
           });
           return yield put(updateEntity('installedPlatforms', items));
         } catch (err) {
@@ -232,14 +232,14 @@ function* watchLoadPlatformUpdates() {
     yield put(deleteEntity(/^platformUpdates/));
     yield put(updateRouteBadge('/platforms/updates', 0));
 
-    yield call(function*() {
+    yield call(function* () {
       try {
         const items = yield call(backendFetchData, {
           query: 'core.call',
           params: [
             ['platform', 'update', '--only-check', '--json-output'],
-            { force_subprocess: true }
-          ]
+            { force_subprocess: true },
+          ],
         });
         yield put(updateEntity('platformUpdates', items));
       } catch (err) {
@@ -272,8 +272,8 @@ function* watchAutoCheckPlatformUpdates() {
       query: 'core.call',
       params: [
         ['platform', 'update', '--only-check', '--json-output'],
-        { force_subprocess: true }
-      ]
+        { force_subprocess: true },
+      ],
     });
     yield put(updateRouteBadge('/platforms/updates', result.length));
   } catch (err) {
@@ -282,7 +282,7 @@ function* watchAutoCheckPlatformUpdates() {
 }
 
 function* watchInstallPlatform() {
-  yield takeEvery(actions.INSTALL_PLATFORM, function*({ platform, onEnd }) {
+  yield takeEvery(actions.INSTALL_PLATFORM, function* ({ platform, onEnd }) {
     let err,
       result = null;
     try {
@@ -290,14 +290,14 @@ function* watchInstallPlatform() {
 
       result = yield call(backendFetchData, {
         query: 'core.call',
-        params: [['platform', 'install', platform], { force_subprocess: true }]
+        params: [['platform', 'install', platform], { force_subprocess: true }],
       });
 
       ReactGA.timing({
         category: 'Platform',
         variable: 'install',
         value: new Date().getTime() - start,
-        label: platform
+        label: platform,
       });
 
       // clean cache
@@ -315,82 +315,85 @@ function* watchInstallPlatform() {
 }
 
 function* watchUninstallOrUpdatePlatform() {
-  yield takeEvery([actions.UNINSTALL_PLATFORM, actions.UPDATE_PLATFORM], function*(
-    action
-  ) {
-    const { pkgDir, onEnd } = action;
-    let err = null;
-    try {
-      const result = yield call(backendFetchData, {
-        query: 'core.call',
-        params: [
-          [
-            'platform',
-            action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update',
-            pkgDir
+  yield takeEvery(
+    [actions.UNINSTALL_PLATFORM, actions.UPDATE_PLATFORM],
+    function* (action) {
+      const { pkgDir, onEnd } = action;
+      let err = null;
+      try {
+        const result = yield call(backendFetchData, {
+          query: 'core.call',
+          params: [
+            [
+              'platform',
+              action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update',
+              pkgDir,
+            ],
+            { force_subprocess: true },
           ],
-          { force_subprocess: true }
-        ]
-      });
+        });
 
-      // remove from state
-      if (action.type === actions.UPDATE_PLATFORM) {
-        yield put(deleteEntity(/^installedPlatforms/));
-      }
-      const state = yield select();
-      for (const key of Object.keys(state.entities)) {
-        if (
-          !['installedPlatformsData', 'installedPlatforms', 'platformUpdates'].includes(
-            key
-          )
-        ) {
-          continue;
+        // remove from state
+        if (action.type === actions.UPDATE_PLATFORM) {
+          yield put(deleteEntity(/^installedPlatforms/));
         }
-        if (state.entities[key].find(item => item.__pkg_dir === pkgDir)) {
-          yield put(
-            updateEntity(
-              key,
-              state.entities[key].filter(item => item.__pkg_dir !== pkgDir)
-            )
-          );
-        }
-      }
-      yield put(
-        notifySuccess(
-          `Platform has been successfully ${
-            action.type === actions.UNINSTALL_PLATFORM ? 'uninstalled' : 'updated'
-          }`,
-          result
-        )
-      );
-    } catch (err_) {
-      err = err_;
-      if (
-        err instanceof jsonrpc.JsonRpcError &&
-        err.data.includes('Error: Unknown development platform')
-      ) {
-        yield put(deleteEntity(/^installedPlatforms/));
         const state = yield select();
-        if (state.router) {
-          return goTo(state.router.history, '/platforms/installed', undefined, true);
+        for (const key of Object.keys(state.entities)) {
+          if (
+            ![
+              'installedPlatformsData',
+              'installedPlatforms',
+              'platformUpdates',
+            ].includes(key)
+          ) {
+            continue;
+          }
+          if (state.entities[key].find((item) => item.__pkg_dir === pkgDir)) {
+            yield put(
+              updateEntity(
+                key,
+                state.entities[key].filter((item) => item.__pkg_dir !== pkgDir)
+              )
+            );
+          }
         }
-      } else {
-        yield put(notifyError('Could not load platform data', err));
-      }
-      yield put(
-        notifyError(
-          `Could not ${
-            action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update'
-          } platform`,
-          err
-        )
-      );
-    } finally {
-      if (onEnd) {
-        yield call(onEnd, err);
+        yield put(
+          notifySuccess(
+            `Platform has been successfully ${
+              action.type === actions.UNINSTALL_PLATFORM ? 'uninstalled' : 'updated'
+            }`,
+            result
+          )
+        );
+      } catch (err_) {
+        err = err_;
+        if (
+          err instanceof jsonrpc.JsonRpcError &&
+          err.data.includes('Error: Unknown development platform')
+        ) {
+          yield put(deleteEntity(/^installedPlatforms/));
+          const state = yield select();
+          if (state.router) {
+            return goTo(state.router.history, '/platforms/installed', undefined, true);
+          }
+        } else {
+          yield put(notifyError('Could not load platform data', err));
+        }
+        yield put(
+          notifyError(
+            `Could not ${
+              action.type === actions.UNINSTALL_PLATFORM ? 'uninstall' : 'update'
+            } platform`,
+            err
+          )
+        );
+      } finally {
+        if (onEnd) {
+          yield call(onEnd, err);
+        }
       }
     }
-  });
+  );
 }
 
 export default [
@@ -402,5 +405,5 @@ export default [
   watchLoadPlatformUpdates,
   watchAutoCheckPlatformUpdates,
   watchInstallPlatform,
-  watchUninstallOrUpdatePlatform
+  watchUninstallOrUpdatePlatform,
 ];

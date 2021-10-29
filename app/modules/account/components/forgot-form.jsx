@@ -26,13 +26,13 @@ export default class AccountForgotForm extends React.Component {
     forgotAccountPassword: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
     };
   }
 
@@ -43,11 +43,11 @@ export default class AccountForgotForm extends React.Component {
         return;
       }
       this.setState({
-        loading: true
+        loading: true,
       });
-      this.props.forgotAccountPassword(values.username, err => {
+      this.props.forgotAccountPassword(values.username, (err) => {
         this.setState({
-          loading: false
+          loading: false,
         });
         if (!err) {
           this.props.showLoginPage();
@@ -69,15 +69,15 @@ export default class AccountForgotForm extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please input your username or email'
-              }
-            ]
+                message: 'Please input your username or email',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
               placeholder="Username or email"
               size="large"
-              ref={elm => elm.focus()}
+              ref={(elm) => elm.focus()}
             />
           )}
         </Form.Item>

@@ -19,7 +19,7 @@ import {
   columnSortFactory,
   getFilterMenu,
   limitPathLength,
-  multiSort
+  multiSort,
 } from '@inspect/helpers';
 
 import { DefectType } from '@inspect/types';
@@ -31,14 +31,14 @@ export class CodeDefects extends React.PureComponent {
   static propTypes = {
     defects: PropTypes.arrayOf(DefectType),
     osOpenUrl: PropTypes.func.isRequired,
-    openTextDocument: PropTypes.func.isRequired
+    openTextDocument: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
     super(...args);
 
     this.state = {
-      search: ''
+      search: '',
     };
   }
 
@@ -83,7 +83,7 @@ export class CodeDefects extends React.PureComponent {
         filters: getFilterMenu(ds, 'tool'),
         onFilter: (value, record) => record.tool === value,
         sorter: columnSortFactory('string', 'tool'),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Level',
@@ -91,27 +91,27 @@ export class CodeDefects extends React.PureComponent {
         defaultSortOrder: 'ascend',
         filters: Object.entries(SEVERITY_LEVEL_NAME).map(([value, text]) => ({
           text,
-          value: parseInt(value)
+          value: parseInt(value),
         })),
         onFilter: (value, record) => record.level === value,
         render: CodeDefects.renderSeverityLevel,
         sorter: columnSortFactory('number', 'level'),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Category',
         dataIndex: 'category',
         filters: getFilterMenu(ds, 'category'),
         onFilter: (value, record) => record.category === value,
-        render: category => <Tag>{category.toUpperCase()}</Tag>,
+        render: (category) => <Tag>{category.toUpperCase()}</Tag>,
         sorter: columnSortFactory('string', 'category'),
-        align: 'center'
+        align: 'center',
       },
       {
         title: 'Message',
         dataIndex: 'message',
         sorter: columnSortFactory('string', 'message'),
-        render: ::this.renderMessage
+        render: ::this.renderMessage,
       },
       {
         title: 'Location',
@@ -127,8 +127,8 @@ export class CodeDefects extends React.PureComponent {
           columnSortFactory('string', 'file'),
           columnSortFactory('number', 'line'),
           columnSortFactory('number', 'column')
-        )
-      }
+        ),
+      },
     ];
   }
 
@@ -143,7 +143,7 @@ export class CodeDefects extends React.PureComponent {
           dataSource={ds}
           pagination={{
             defaultPageSize: 15,
-            hideOnSinglePage: true
+            hideOnSinglePage: true,
           }}
           rowKey="idx"
           size="middle"

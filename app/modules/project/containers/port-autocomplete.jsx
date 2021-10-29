@@ -23,12 +23,12 @@ import { selectSerialDevicesList } from '@device/selectors';
 
 function mapStateToProps(state) {
   return {
-    items: selectSerialDevicesList(state)
+    items: selectSerialDevicesList(state),
   };
 }
 
 const dispatchToProps = {
-  onLoad: () => loadSerialDevices(true)
+  onLoad: () => loadSerialDevices(true),
 };
 
 export const PortAutocomplete = connect(
@@ -38,6 +38,6 @@ export const PortAutocomplete = connect(
 PortAutocomplete.displayName = 'PortAutocomplete';
 
 OptionEditorFactory.register(
-  schema => schema && schema.name.endsWith('_port'),
+  (schema) => schema && schema.name.endsWith('_port'),
   (_schema, inputProps) => <PortAutocomplete {...inputProps} />
 );

@@ -25,18 +25,18 @@ function mapStateToProps(state) {
   const rawItems = selectRegistryPlatforms(state);
   let items;
   if (rawItems) {
-    items = rawItems.map(platform => ({
+    items = rawItems.map((platform) => ({
       name: `${platform.title} (${platform.name})`,
-      value: platform.name
+      value: platform.name,
     }));
   }
   return {
-    items
+    items,
   };
 }
 
 const dispatchToProps = {
-  onLoad: () => loadRegistryPlatforms(true)
+  onLoad: () => loadRegistryPlatforms(true),
 };
 
 export const PlatformAutocomplete = connect(
@@ -46,6 +46,6 @@ export const PlatformAutocomplete = connect(
 PlatformAutocomplete.displayName = 'PlatformAutocomplete';
 
 OptionEditorFactory.register(
-  schema => schema && schema.name.endsWith('platform'),
+  (schema) => schema && schema.name.endsWith('platform'),
   (_schema, inputProps) => <PlatformAutocomplete {...inputProps} />
 );

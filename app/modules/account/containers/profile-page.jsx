@@ -31,12 +31,12 @@ class AccountProfilePage extends React.Component {
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
         firstname: PropTypes.string,
-        lastname: PropTypes.string
-      }).isRequired
+        lastname: PropTypes.string,
+      }).isRequired,
     }),
     userLogged: PropTypes.bool,
     updateProfile: PropTypes.func.isRequired,
-    showLoginPage: PropTypes.func.isRequired
+    showLoginPage: PropTypes.func.isRequired,
   };
 
   render() {
@@ -59,7 +59,7 @@ function mapStateToProps(state, ownProps) {
   return {
     data: selectAccountInfo(state),
     userLogged: selectIsUserLogged(state),
-    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true)
+    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true),
   };
 }
 

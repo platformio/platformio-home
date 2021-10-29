@@ -20,12 +20,12 @@ import { ProjectsListPage } from '@project/containers/list';
 const routes = [
   {
     path: '/projects',
-    component: ProjectsListPage
+    component: ProjectsListPage,
   },
   {
     path: '/projects/config',
-    component: ProjectConfigPage
-  }
+    component: ProjectConfigPage,
+  },
 ];
 
 export default routes;

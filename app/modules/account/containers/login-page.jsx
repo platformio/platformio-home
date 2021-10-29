@@ -30,14 +30,14 @@ class AccountLoginPage extends React.Component {
     data: PropTypes.shape({
       profile: PropTypes.object,
       packages: PropTypes.array,
-      subscriptions: PropTypes.array
+      subscriptions: PropTypes.array,
     }),
     loginAccount: PropTypes.func.isRequired,
     loginWithProvider: PropTypes.func.isRequired,
     showInformationPage: PropTypes.func.isRequired,
     showRegistrationPage: PropTypes.func.isRequired,
     showForgotPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {
@@ -61,7 +61,7 @@ function mapStateToProps(state, ownProps) {
     data: selectAccountInfo(state),
     showInformationPage: () => goTo(ownProps.history, '/account', null, true),
     showRegistrationPage: () => goTo(ownProps.history, '/account/registration'),
-    showForgotPage: () => goTo(ownProps.history, '/account/forgot')
+    showForgotPage: () => goTo(ownProps.history, '/account/forgot'),
   };
 }
 

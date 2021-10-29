@@ -32,7 +32,7 @@ import {
   Row,
   Select,
   Tag,
-  Tooltip
+  Tooltip,
 } from 'antd';
 import { ConfigOptionType, ProjectType, SchemaType } from '@project/types';
 import { OptionEditorFactory, splitMultipleField } from '@project/helpers';
@@ -43,7 +43,7 @@ import {
   SECTION_NAME_KEY,
   SECTION_PLATFORMIO,
   SECTION_USER_ENV,
-  TYPE_TEXT
+  TYPE_TEXT,
 } from '@project/constants';
 
 import { ConfigFormItem } from '@project/components/config-form-item';
@@ -93,7 +93,7 @@ class ConfigSectionComponent extends React.PureComponent {
     onRemove: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired,
     onOptionAdd: PropTypes.func.isRequired,
-    onOptionRemove: PropTypes.func.isRequired
+    onOptionRemove: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -173,11 +173,11 @@ class ConfigSectionComponent extends React.PureComponent {
     }
   };
 
-  handleDocumentationClick = url => {
+  handleDocumentationClick = (url) => {
     this.props.onDocumentationClick(url);
   };
 
-  handleRename = e => {
+  handleRename = (e) => {
     let name = e.target.value;
     if (this.props.type === SECTION_USER_ENV) {
       name = SECTION_USER_ENV + name;
@@ -186,11 +186,11 @@ class ConfigSectionComponent extends React.PureComponent {
     this.setState({ nameValid });
   };
 
-  handleRemoveOptionClick = e => {
+  handleRemoveOptionClick = (e) => {
     this.props.onOptionRemove(this.props.name, e.target.closest('a').dataset.name);
   };
 
-  handleNewOptionSelect = name => {
+  handleNewOptionSelect = (name) => {
     this.props.onOptionAdd(this.props.name, name);
   };
 
@@ -202,7 +202,7 @@ class ConfigSectionComponent extends React.PureComponent {
     this.props.onDefaultToggle(this.props.name, !this.props.defaultEnv);
   };
 
-  blockSubmit = e => {
+  blockSubmit = (e) => {
     e.preventDefault();
   };
 
@@ -301,7 +301,7 @@ class ConfigSectionComponent extends React.PureComponent {
       trigger: 'onBlur',
       validateTrigger: false,
       valuePropName: 'defaultValue',
-      initialValue
+      initialValue,
     };
 
     const label = this.renderLabel(name, schema, { multiple });
@@ -311,14 +311,14 @@ class ConfigSectionComponent extends React.PureComponent {
       key: name,
       label,
       labelCol: {
-        id: this.generateFieldLabelId(name)
-      }
+        id: this.generateFieldLabelId(name),
+      },
     };
 
     const inputProps = {
       autoFocus,
       defaultValue,
-      configSectionData: this.props.initialValues
+      configSectionData: this.props.initialValues,
     };
     const input = OptionEditorFactory.factory(
       schema,
@@ -333,9 +333,9 @@ class ConfigSectionComponent extends React.PureComponent {
   }
 
   getNewOptionsData(group) {
-    const alreadyAdded = new Set(this.props.initialValues.map(option => option.name));
+    const alreadyAdded = new Set(this.props.initialValues.map((option) => option.name));
     const result = new Map();
-    this.props.schema.forEach(schema => {
+    this.props.schema.forEach((schema) => {
       if ((group && schema.group !== group) || alreadyAdded.has(schema.name)) {
         return;
       }
@@ -370,7 +370,7 @@ class ConfigSectionComponent extends React.PureComponent {
             key={group}
             label={`${group.substr(0, 1).toUpperCase()}${group.substr(1)} Options`}
           >
-            {items.map(schema => {
+            {items.map((schema) => {
               const lines = [];
               if (schema.description) {
                 lines.push(schema.description);
@@ -428,7 +428,7 @@ class ConfigSectionComponent extends React.PureComponent {
   renderSectionName() {
     const itemLayout = {
       labelCol: { xs: 24, sm: 5, md: 4, lg: 3 },
-      wrapperCol: { xs: 24, sm: 19, md: 20, lg: 21 }
+      wrapperCol: { xs: 24, sm: 19, md: 20, lg: 21 },
     };
     return (
       <React.Fragment>
@@ -485,7 +485,7 @@ class ConfigSectionComponent extends React.PureComponent {
     const fields = this.props.initialValues.map(({ name }) => name);
     const groups = new Set();
     const fieldsByGroup = [];
-    fields.forEach(name => {
+    fields.forEach((name) => {
       const group = schema[name] ? schema[name].group : 'Custom';
       if (!groups.has(group)) {
         groups.add(group);
@@ -499,10 +499,10 @@ class ConfigSectionComponent extends React.PureComponent {
       ? {
           xs: 24,
           xm: 15,
-          md: 18
+          md: 18,
         }
       : {
-          span: 24
+          span: 24,
         };
     return (
       <Row gutter={0}>
@@ -520,7 +520,7 @@ class ConfigSectionComponent extends React.PureComponent {
           <Form layout="vertical" className="config-form">
             {this.renderEmptyMessage(fields)}
             {fields.length !== 0 &&
-              [...groups].map(groupName =>
+              [...groups].map((groupName) =>
                 this.renderGroup(groupName, fieldsByGroup[groupName], schema, values)
               )}
           </Form>
@@ -538,7 +538,7 @@ export const ConfigSectionForm = Form.create({
         Object.entries(changedFields[props.id]).map(([escapedName, field]) => {
           const name = unescapeFieldName(escapedName);
           let value = field.value;
-          const fieldSchema = props.schema.find(s => s.name === name);
+          const fieldSchema = props.schema.find((s) => s.name === name);
           if (
             fieldSchema &&
             fieldSchema.multiple &&
@@ -551,8 +551,8 @@ export const ConfigSectionForm = Form.create({
             name,
             {
               ...field,
-              value
-            }
+              value,
+            },
           ];
         })
       )
@@ -561,11 +561,11 @@ export const ConfigSectionForm = Form.create({
   mapPropsToFields(props) {
     // TODO: load "dirty", "touched", "name" field state
     const result = fromEntries(
-      props.initialValues.map(option => [
+      props.initialValues.map((option) => [
         escapeFieldName(option.name),
-        Form.createFormField({ value: option.value })
+        Form.createFormField({ value: option.value }),
       ])
     );
     return result;
-  }
+  },
 })(ConfigSectionComponent);

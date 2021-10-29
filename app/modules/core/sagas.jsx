@@ -39,7 +39,7 @@ const REQUESTED_CONTENTS_CACHE_SIZE = 50;
 const OS_FS_GLOBS_CACHE_SIZE = 50;
 
 function* watchShowAtStartup() {
-  yield takeEvery(actions.SHOW_AT_STARTUP, function*({ value }) {
+  yield takeEvery(actions.SHOW_AT_STARTUP, function* ({ value }) {
     const caller = yield select(selectStorageItem, 'coreCaller');
     if (!caller) {
       return;
@@ -55,7 +55,7 @@ function* watchNotifyError() {
     return getStore().dispatch(actions.osOpenUrl(url));
   }
 
-  yield takeEvery(actions.NOTIFY_ERROR, function({ title, err }) {
+  yield takeEvery(actions.NOTIFY_ERROR, function ({ title, err }) {
     if (!err) {
       return;
     }
@@ -70,48 +70,48 @@ function* watchNotifyError() {
     const knownIssues = [
       [
         /toolchain-gccarmlinuxgnueabi|WiringPi/g,
-        'https://github.com/platformio/platform-linux_arm/issues/2'
+        'https://github.com/platformio/platform-linux_arm/issues/2',
       ],
       [
         /\[Error 2\]|\[WinError 2\]|\[Errno 13\]/g,
-        'https://github.com/platformio/platformio-core/issues/2321'
+        'https://github.com/platformio/platformio-core/issues/2321',
       ],
       [
         /Please try this solution -> http:\/\/bit.ly\/faq-package-manager/g,
-        'http://bit.ly/faq-package-manager'
+        'http://bit.ly/faq-package-manager',
       ],
       [
         /Please install Git client/g,
-        'https://github.com/platformio/platformio-core/issues/2811'
+        'https://github.com/platformio/platformio-core/issues/2811',
       ],
       [
         /Error: You are not connected to the Internet|HTTPSConnectionPool/g,
-        'https://github.com/platformio/platformio-core/issues/1348'
+        'https://github.com/platformio/platformio-core/issues/1348',
       ],
       [
         /Updating.+VCS.+recurse-submodules/g,
-        'https://github.com/platformio/platformio-home/issues/143'
+        'https://github.com/platformio/platformio-home/issues/143',
       ],
       [
         /Error: Detected a whitespace character/g,
-        'https://github.com/platformio/platform-espressif32/issues/470'
+        'https://github.com/platformio/platform-espressif32/issues/470',
       ],
       [
         /Error: Could not find the package/g,
-        'https://github.com/platformio/platformio-home/issues/2144'
+        'https://github.com/platformio/platformio-home/issues/2144',
       ],
       [
         /Error: Unknown development platform/g,
-        'https://github.com/platformio/platformio-home/issues/2123'
+        'https://github.com/platformio/platformio-home/issues/2123',
       ],
       [
         /Error: Unknown board ID/g,
-        'https://github.com/platformio/platformio-home/issues/1768'
+        'https://github.com/platformio/platformio-home/issues/1768',
       ],
       [
         /Error: Could not find one of .* manifest files/g,
-        'https://github.com/platformio/platformio-home/issues/1785'
-      ]
+        'https://github.com/platformio/platformio-home/issues/1785',
+      ],
     ];
     for (const [regex, url] of knownIssues) {
       if (description.match(regex)) {
@@ -123,7 +123,7 @@ function* watchNotifyError() {
             <Button type="danger" onClick={() => _openUrl(url)}>
               Check available solutions
             </Button>
-          )
+          ),
         });
       }
     }
@@ -139,21 +139,21 @@ function* watchNotifyError() {
             _openUrl(
               `https://github.com/platformio/platformio-home/issues/new?${qs.stringify({
                 title,
-                body: description
+                body: description,
               })}`
             )
           }
         >
           Report a problem
         </Button>
-      )
+      ),
     });
     reportException(`${title} => ${description}`);
   });
 }
 
 function* watchNotifySuccess() {
-  yield takeEvery(actions.NOTIFY_SUCCESS, function({ title, result }) {
+  yield takeEvery(actions.NOTIFY_SUCCESS, function ({ title, result }) {
     if (!result) {
       return;
     }
@@ -167,12 +167,12 @@ function* watchNotifySuccess() {
               <div key={index}>{text}</div>
             ))}
           </div>
-        )
+        ),
       });
     } else {
       notification.success({
         message: title,
-        description: result
+        description: result,
       });
     }
   });
@@ -180,7 +180,7 @@ function* watchNotifySuccess() {
 
 function* watchUpdateRouteBadge() {
   const itemKey = 'routeBadges';
-  yield takeEvery(actions.UPDATE_ROUTE_BADGE, function*({ path, count }) {
+  yield takeEvery(actions.UPDATE_ROUTE_BADGE, function* ({ path, count }) {
     const result = (yield select(selectStorageItem, itemKey)) || {};
     result[path] = parseInt(count);
     if (result[path] === 0) {
@@ -197,9 +197,9 @@ function* watchOSRequests() {
       actions.OS_REVEAL_FILE,
       actions.OS_RENAME_FILE,
       actions.OS_MAKE_DIRS,
-      actions.OS_COPY_FILE
+      actions.OS_COPY_FILE,
     ],
-    function*(action) {
+    function* (action) {
       try {
         switch (action.type) {
           case actions.OS_OPEN_URL:
@@ -213,7 +213,7 @@ function* watchOSRequests() {
             } else {
               yield call(backendFetchData, {
                 query: 'os.open_url',
-                params: [url.toString()]
+                params: [url.toString()],
               });
             }
             break;
@@ -221,28 +221,28 @@ function* watchOSRequests() {
           case actions.OS_REVEAL_FILE:
             yield call(backendFetchData, {
               query: 'os.reveal_file',
-              params: [action.path]
+              params: [action.path],
             });
             break;
 
           case actions.OS_RENAME_FILE:
             yield call(backendFetchData, {
               query: 'os.rename',
-              params: [action.src, action.dst]
+              params: [action.src, action.dst],
             });
             break;
 
           case actions.OS_COPY_FILE:
             yield call(backendFetchData, {
               query: 'os.copy',
-              params: [action.src, action.dst]
+              params: [action.src, action.dst],
             });
             break;
 
           case actions.OS_MAKE_DIRS:
             yield call(backendFetchData, {
               query: 'os.make_dirs',
-              params: [action.path]
+              params: [action.path],
             });
             break;
         }
@@ -257,61 +257,62 @@ function* watchRequestContent() {
   const crossDomains = [
     'api.github.com',
     'raw.githubusercontent.com',
-    'platformio.org'
+    'platformio.org',
   ];
-  yield takeEvery(actions.REQUEST_CONTENT, function*({
-    uri,
-    data,
-    headers,
-    cacheValid
-  }) {
-    let content = yield select(selectors.selectRequestedContent, uri, data);
-    if (content) {
-      return;
-    }
-    try {
-      if (uri.startsWith('http') && crossDomains.some(d => uri.includes(d))) {
-        content = yield call(() => {
-          const r = data ? requests.post(uri).send(data) : requests.get(uri);
-          if (headers) {
-            r.set(headers);
-          }
-          return new Promise(resolve => {
-            r.end((err, result) =>
-              err || !result.ok ? resolve(undefined) : resolve(result.text)
-            );
+  yield takeEvery(
+    actions.REQUEST_CONTENT,
+    function* ({ uri, data, headers, cacheValid }) {
+      let content = yield select(selectors.selectRequestedContent, uri, data);
+      if (content) {
+        return;
+      }
+      try {
+        if (uri.startsWith('http') && crossDomains.some((d) => uri.includes(d))) {
+          content = yield call(() => {
+            const r = data ? requests.post(uri).send(data) : requests.get(uri);
+            if (headers) {
+              r.set(headers);
+            }
+            return new Promise((resolve) => {
+              r.end((err, result) =>
+                err || !result.ok ? resolve(undefined) : resolve(result.text)
+              );
+            });
           });
-        });
-      }
+        }
 
-      if (!content) {
-        content = yield call(backendFetchData, {
-          query: 'os.request_content',
-          params: [uri, data, headers, cacheValid]
-        });
-      }
+        if (!content) {
+          content = yield call(backendFetchData, {
+            query: 'os.request_content',
+            params: [uri, data, headers, cacheValid],
+          });
+        }
 
-      const contents = (yield select(selectors.selectRequestedContents)) || [];
-      contents.push({
-        key: selectors.getRequestContentKey(uri, data),
-        content
-      });
-      yield put(
-        updateEntity(
-          'requestedContents',
-          contents.slice(REQUESTED_CONTENTS_CACHE_SIZE * -1)
-        )
-      );
-    } catch (err) {
-      return yield put(
-        actions.notifyError('Error occurred while requesting content from ' + uri, err)
-      );
+        const contents = (yield select(selectors.selectRequestedContents)) || [];
+        contents.push({
+          key: selectors.getRequestContentKey(uri, data),
+          content,
+        });
+        yield put(
+          updateEntity(
+            'requestedContents',
+            contents.slice(REQUESTED_CONTENTS_CACHE_SIZE * -1)
+          )
+        );
+      } catch (err) {
+        return yield put(
+          actions.notifyError(
+            'Error occurred while requesting content from ' + uri,
+            err
+          )
+        );
+      }
     }
-  });
+  );
 }
 
 function* watchOsFSGlob() {
-  yield takeEvery(actions.OS_FS_GLOB, function*({ pathnames, rootDir }) {
+  yield takeEvery(actions.OS_FS_GLOB, function* ({ pathnames, rootDir }) {
     let items = yield select(selectors.selectOsFSGlob, pathnames, rootDir);
     if (items) {
       return;
@@ -319,12 +320,12 @@ function* watchOsFSGlob() {
     try {
       items = yield call(backendFetchData, {
         query: 'os.glob',
-        params: [pathnames, rootDir]
+        params: [pathnames, rootDir],
       });
       const current = (yield select(selectors.selectOsFSGlobs)) || [];
       current.push({
         key: selectors.selectOsFSGlobKey(pathnames, rootDir),
-        items
+        items,
       });
       yield put(updateEntity('osFsGlob', current.slice(OS_FS_GLOBS_CACHE_SIZE * -1)));
     } catch (err) {
@@ -339,7 +340,7 @@ function* watchOsFSGlob() {
 }
 
 function* watchLoadLogicalDevices() {
-  yield takeLatest(actions.LOAD_LOGICAL_DEVICES, function*({ force }) {
+  yield takeLatest(actions.LOAD_LOGICAL_DEVICES, function* ({ force }) {
     if (force) {
       yield put(deleteEntity(/^logicalDevices/));
     }
@@ -349,7 +350,7 @@ function* watchLoadLogicalDevices() {
     }
     try {
       items = yield call(backendFetchData, {
-        query: 'os.get_logical_devices'
+        query: 'os.get_logical_devices',
       });
       yield put(updateEntity('logicalDevices', items));
     } catch (err) {
@@ -359,7 +360,7 @@ function* watchLoadLogicalDevices() {
 }
 
 function* watchOsListDir() {
-  yield takeEvery(actions.OS_LIST_DIR, function*({ path }) {
+  yield takeEvery(actions.OS_LIST_DIR, function* ({ path }) {
     let items = yield select(selectors.selectOsDirItems);
     if (items && items[path]) {
       return;
@@ -369,7 +370,7 @@ function* watchOsListDir() {
     try {
       const result = yield call(backendFetchData, {
         query: 'os.list_dir',
-        params: [/^[A-Z]:$/.test(path) ? path + '\\' : path]
+        params: [/^[A-Z]:$/.test(path) ? path + '\\' : path],
       });
       yield put(
         updateEntity('osDirItems', Object.assign({}, items, { [path]: result }))
@@ -381,7 +382,7 @@ function* watchOsListDir() {
 }
 
 function* watchOsIsFile() {
-  yield takeEvery(actions.OS_IS_FILE, function*({ path }) {
+  yield takeEvery(actions.OS_IS_FILE, function* ({ path }) {
     let items = yield select(selectors.selectOsIsFileItems);
     if (items && items[path]) {
       return;
@@ -391,7 +392,7 @@ function* watchOsIsFile() {
     try {
       const result = yield call(backendFetchData, {
         query: 'os.is_file',
-        params: [path]
+        params: [path],
       });
       yield put(
         updateEntity('osIsFileItems', Object.assign({}, items, { [path]: result }))
@@ -403,7 +404,7 @@ function* watchOsIsFile() {
 }
 
 function* watchOsIsDir() {
-  yield takeEvery(actions.OS_IS_DIR, function*({ path }) {
+  yield takeEvery(actions.OS_IS_DIR, function* ({ path }) {
     let items = yield select(selectors.selectOsIsDirItems);
     if (items && items[path]) {
       return;
@@ -413,7 +414,7 @@ function* watchOsIsDir() {
     try {
       const result = yield call(backendFetchData, {
         query: 'os.is_dir',
-        params: [path]
+        params: [path],
       });
       yield put(
         updateEntity('osIsDirItems', Object.assign({}, items, { [path]: result }))
@@ -427,7 +428,7 @@ function* watchOsIsDir() {
 }
 
 function* watchResetFSItems() {
-  yield takeLatest(actions.RESET_FS_ITEMS, function*() {
+  yield takeLatest(actions.RESET_FS_ITEMS, function* () {
     yield put(updateEntity('osDirItems', null));
     yield put(updateEntity('osIsFileItems', null));
     yield put(updateEntity('osIsDirItems', null));
@@ -435,22 +436,22 @@ function* watchResetFSItems() {
 }
 
 function* watchToggleFavoriteFolder() {
-  yield takeEvery(actions.TOGGLE_FAVORITE_FOLDER, function*({ path }) {
+  yield takeEvery(actions.TOGGLE_FAVORITE_FOLDER, function* ({ path }) {
     const items = (yield select(selectStorageItem, 'favoriteFolders')) || [];
     yield put(
       updateStorageItem(
         'favoriteFolders',
-        items.includes(path) ? items.filter(item => item !== path) : [...items, path]
+        items.includes(path) ? items.filter((item) => item !== path) : [...items, path]
       )
     );
   });
 }
 
 function* watchOpenTextDocument() {
-  yield takeEvery(actions.OPEN_TEXT_DOCUMENT, function*({ path, line, column }) {
+  yield takeEvery(actions.OPEN_TEXT_DOCUMENT, function* ({ path, line, column }) {
     const is_file = yield call(backendFetchData, {
       query: 'os.is_file',
-      params: [path]
+      params: [path],
     });
     if (!is_file) {
       return message.error(`File does not exist on disk ${path}`);
@@ -458,13 +459,13 @@ function* watchOpenTextDocument() {
     try {
       return yield call(backendFetchData, {
         query: 'ide.open_text_document',
-        params: [path, line, column]
+        params: [path, line, column],
       });
     } catch (err) {
       console.warn(err);
       return yield call(backendFetchData, {
         query: 'os.open_file',
-        params: [path]
+        params: [path],
       });
     }
   });
@@ -484,7 +485,7 @@ export function* ensureUserConsent(id, modalOptions) {
           },
           onCancel: () => {
             reject(new ConsentRejectedError());
-          }
+          },
         });
       });
     };
@@ -492,7 +493,7 @@ export function* ensureUserConsent(id, modalOptions) {
     yield put(
       updateStorageItem(USER_CONSENTS_KEY, {
         ...consents,
-        [id]: Date.now().valueOf()
+        [id]: Date.now().valueOf(),
       })
     );
   }
@@ -512,5 +513,5 @@ export default [
   watchOsIsDir,
   watchResetFSItems,
   watchToggleFavoriteFolder,
-  watchOpenTextDocument
+  watchOpenTextDocument,
 ];

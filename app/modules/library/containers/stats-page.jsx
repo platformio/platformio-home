@@ -32,7 +32,7 @@ class LibraryStatsPage extends React.Component {
     loadStats: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
-    showLibrary: PropTypes.func.isRequired
+    showLibrary: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -70,8 +70,8 @@ function mapStateToProps(state, ownProps) {
     data: selectStats(state),
     searchLibrary: (query, page) =>
       goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest =>
-      goTo(ownProps.history, '/libraries/registry/show', { idOrManifest })
+    showLibrary: (idOrManifest) =>
+      goTo(ownProps.history, '/libraries/registry/show', { idOrManifest }),
   };
 }
 

@@ -25,7 +25,7 @@ import hljs from 'highlight.js/lib/core';
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
 
-['plaintext', 'cpp', 'json', 'ini'].forEach(langName => {
+['plaintext', 'cpp', 'json', 'ini'].forEach((langName) => {
   const langModule = require(`highlight.js/lib/languages/${langName}`);
   hljs.registerLanguage(langName, langModule);
 });
@@ -38,7 +38,7 @@ class CodeBeautifier extends React.Component {
     language: PropTypes.string,
     className: PropTypes.string,
     toggle: PropTypes.bool,
-    requestContent: PropTypes.func.isRequired
+    requestContent: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -78,7 +78,7 @@ class CodeBeautifier extends React.Component {
         type="up-circle-o"
         className="source-code-toggler"
         title="Show/Hide source code"
-        onClick={e => this.onDidToggle(e)}
+        onClick={(e) => this.onDidToggle(e)}
       />
     );
   }
@@ -94,7 +94,7 @@ class CodeBeautifier extends React.Component {
     return (
       <pre>
         <code
-          ref={code => (this._codeElement = code)}
+          ref={(code) => (this._codeElement = code)}
           className={this.props.language || 'c'}
         >
           {this.props.content}
@@ -113,7 +113,7 @@ class CodeBeautifier extends React.Component {
           <Icon type="file" /> {this.props.title || path.basename(this.props.uri)}{' '}
           {this.renderToggler()}
         </h3>
-        <div ref={item => (this._codeTogglePlaceholder = item)}>
+        <div ref={(item) => (this._codeTogglePlaceholder = item)}>
           {this.renderFileContent()}
         </div>
       </div>
@@ -128,7 +128,7 @@ function mapStateToProps(state, ownProps) {
     return {};
   }
   return {
-    content: selectRequestedContent(state, ownProps.uri)
+    content: selectRequestedContent(state, ownProps.uri),
   };
 }
 

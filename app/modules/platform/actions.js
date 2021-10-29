@@ -31,8 +31,8 @@ export const UPDATE_PLATFORM = 'UPDATE_PLATFORM';
 export const loadBoards = () => createAction(LOAD_BOARDS);
 export const loadRegistryPlatforms = () => createAction(LOAD_REGISTRY_PLATFORMS);
 export const loadRegistryFrameworks = () => createAction(LOAD_REGISTRY_FRAMEWORKS);
-export const loadPlatformData = name => createAction(LOAD_PLATFORM_DATA, { name });
-export const loadFrameworkData = name => createAction(LOAD_FRAMEWORK_DATA, { name });
+export const loadPlatformData = (name) => createAction(LOAD_PLATFORM_DATA, { name });
+export const loadFrameworkData = (name) => createAction(LOAD_FRAMEWORK_DATA, { name });
 export const loadInstalledPlatforms = () => createAction(LOAD_INSTALLED_PLATFORMS);
 export const loadPlatformUpdates = () => createAction(LOAD_PLATFORM_UPDATES);
 

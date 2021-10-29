@@ -20,12 +20,12 @@ import { osOpenUrl } from '@core/actions';
 
 function mapDispatch(dispatch) {
   return {
-    onClick: url =>
+    onClick: (url) =>
       dispatch(
         osOpenUrl(url, {
-          target: '_blank'
+          target: '_blank',
         })
-      )
+      ),
   };
 }
 

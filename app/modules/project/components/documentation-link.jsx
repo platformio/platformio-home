@@ -28,7 +28,7 @@ export class DocumentationLink extends React.PureComponent {
     scope: PropTypes.string.isRequired,
 
     // callbacks
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
   };
 
   getDocumentationUrl(scope, group, name) {
@@ -47,7 +47,7 @@ export class DocumentationLink extends React.PureComponent {
     )}#${encodeURIComponent(hash)}`;
   }
 
-  handleClick = e => {
+  handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.props.onClick(

@@ -31,7 +31,7 @@ export const loadAccountInfo = (extended = false) =>
 export const loginAccount = (username, password, onEnd) =>
   createAction(LOGIN_ACCOUNT, { username, password, onEnd });
 export const logoutAccount = () => createAction(LOGOUT_ACCOUNT);
-export const loginWithProvider = provider =>
+export const loginWithProvider = (provider) =>
   createAction(LOGIN_WITH_PROVIDER, { provider });
 export const registerAccount = (
   username,
@@ -47,7 +47,7 @@ export const registerAccount = (
     firstname,
     lastname,
     password,
-    onEnd
+    onEnd,
   });
 export const updateProfile = (
   username,
@@ -63,7 +63,7 @@ export const updateProfile = (
     firstname,
     lastname,
     currentPassword,
-    onEnd
+    onEnd,
   });
 export const forgotAccountPassword = (username, onEnd) =>
   createAction(FORGOT_ACCOUNT, { username, onEnd });

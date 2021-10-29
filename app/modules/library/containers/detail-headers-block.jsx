@@ -28,10 +28,10 @@ class LibraryDetailHeadersBlock extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
       headers: PropTypes.arrayOf(PropTypes.string),
-      __pkg_dir: PropTypes.string
+      __pkg_dir: PropTypes.string,
     }).isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
-    osFsGlob: PropTypes.func.isRequired
+    osFsGlob: PropTypes.func.isRequired,
   };
 
   static getGlobPatterns() {
@@ -95,7 +95,7 @@ function mapStateToProps(state, ownProps) {
           LibraryDetailHeadersBlock.getGlobPatterns(),
           ownProps.data.__pkg_dir
         )
-      : undefined
+      : undefined,
   };
 }
 

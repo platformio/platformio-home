@@ -28,50 +28,50 @@ const routes = [
     path: '/',
     icon: 'home',
     label: 'Home',
-    component: HomePage
+    component: HomePage,
   },
   {
     path: '/account',
     // icon: 'user',
     // label: 'Account',
-    component: AccountIndex
+    component: AccountIndex,
   },
   {
     path: '/projects',
     icon: 'file-ppt',
     label: 'Projects',
-    component: ProjectsPage
+    component: ProjectsPage,
   },
   {
     path: '/inspect',
     icon: 'monitor',
     label: 'Inspect',
-    component: InspectPage
+    component: InspectPage,
   },
   {
     path: '/libraries',
     icon: 'book',
     label: 'Libraries',
-    component: LibraryIndex
+    component: LibraryIndex,
   },
   {
     path: '/boards',
     icon: 'calculator',
     label: 'Boards',
-    component: BoardsPage
+    component: BoardsPage,
   },
   {
     path: '/platforms',
     icon: 'appstore',
     label: 'Platforms',
-    component: PlatformPage
+    component: PlatformPage,
   },
   {
     path: '/device',
     icon: 'usb',
     label: 'Devices',
-    component: DevicePage
-  }
+    component: DevicePage,
+  },
 ];
 
 export default routes;

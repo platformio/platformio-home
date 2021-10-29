@@ -28,7 +28,7 @@ export class QuickEdit extends React.PureComponent {
     value: PropTypes.string,
 
     // callbacks
-    onSave: PropTypes.func.isRequired
+    onSave: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -40,7 +40,7 @@ export class QuickEdit extends React.PureComponent {
     this.setState(
       {
         value: this.props.value,
-        editing: true
+        editing: true,
       },
       () => {
         if (this.$input) {
@@ -60,29 +60,29 @@ export class QuickEdit extends React.PureComponent {
     this.setState({ editing: false });
   }
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({ value: e.target.value });
   };
 
-  handleSaveClick = e => {
+  handleSaveClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.stopEdit(true);
   };
 
-  handleCancelClick = e => {
+  handleCancelClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.stopEdit();
   };
 
-  handleBeginEditClick = e => {
+  handleBeginEditClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.beginEdit();
   };
 
-  handleKeyDown = e => {
+  handleKeyDown = (e) => {
     if (e.keyCode === 27) {
       // Escape
       this.stopEdit();
@@ -92,7 +92,7 @@ export class QuickEdit extends React.PureComponent {
     }
   };
 
-  handleUpdateRef = $el => {
+  handleUpdateRef = ($el) => {
     this.$input = $el;
   };
 

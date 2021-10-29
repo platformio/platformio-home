@@ -23,13 +23,13 @@ export default class AccountPasswordForm extends React.Component {
   static propTypes = {
     form: PropTypes.object.isRequired,
     changeAccountPassword: PropTypes.func.isRequired,
-    showForgotPage: PropTypes.func.isRequired
+    showForgotPage: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
     };
   }
 
@@ -40,11 +40,11 @@ export default class AccountPasswordForm extends React.Component {
         return;
       }
       this.setState({
-        loading: true
+        loading: true,
       });
       this.props.changeAccountPassword(values.passwordOld, values.passwordNew, () => {
         this.setState({
-          loading: false
+          loading: false,
         });
       });
     });
@@ -61,9 +61,9 @@ export default class AccountPasswordForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input your current password'
-                }
-              ]
+                  message: 'Please input your current password',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
@@ -81,9 +81,9 @@ export default class AccountPasswordForm extends React.Component {
                   message:
                     'Please input valid new password. ' +
                     'Must contain at least 8 characters ' +
-                    'including a number and a lowercase letter'
-                }
-              ]
+                    'including a number and a lowercase letter',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

@@ -36,18 +36,18 @@ export default class Boards extends React.Component {
         vendor: PropTypes.string.isRequired,
         platform: PropTypes.shape({
           name: PropTypes.string.isRequired,
-          title: PropTypes.string.isRequired
+          title: PropTypes.string.isRequired,
         }).isRequired,
         frameworks: PropTypes.arrayOf(
           PropTypes.shape({
             name: PropTypes.string.isRequired,
-            title: PropTypes.string.isRequired
+            title: PropTypes.string.isRequired,
           })
         ).isRequired,
         mcu: PropTypes.string.isRequired,
         fcpu: PropTypes.number.isRequired,
         rom: PropTypes.number.isRequired,
-        ram: PropTypes.number.isRequired
+        ram: PropTypes.number.isRequired,
       })
     ),
     noHeader: PropTypes.bool,
@@ -56,7 +56,7 @@ export default class Boards extends React.Component {
     onFilter: PropTypes.func,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -65,7 +65,7 @@ export default class Boards extends React.Component {
       data: null,
       filterValue: this.props.defaultFilter,
       dataFilters: null,
-      dataSorters: null
+      dataSorters: null,
     };
     if (this.props.items) {
       // eslint-disable-next-line react/no-direct-mutation-state
@@ -95,7 +95,7 @@ export default class Boards extends React.Component {
   componentDidUpdate() {
     if (!this.state.data && this.props.items) {
       this.setState({
-        data: this.normalizeTableData(this.props.items)
+        data: this.normalizeTableData(this.props.items),
       });
     }
   }
@@ -114,19 +114,19 @@ export default class Boards extends React.Component {
     let result = items.slice(0);
 
     if (this.state.filterValue) {
-      items = fuzzySearch(items, this.state.filterValue, item =>
+      items = fuzzySearch(items, this.state.filterValue, (item) =>
         [
           item.vendor,
           item.id,
           item.name,
           item.mcu,
           JSON.stringify(item.platforms),
-          JSON.stringify(item.frameworks)
+          JSON.stringify(item.frameworks),
         ].join(' ')
       );
     }
 
-    result = items.map(item => {
+    result = items.map((item) => {
       item.frameworks = item.frameworks.sort((a, b) =>
         cmpSort(a.name.toUpperCase(), b.name.toUpperCase())
       );
@@ -140,7 +140,7 @@ export default class Boards extends React.Component {
           item.extra.push('debug-onboard');
         }
       }
-      if ((item.connectivity || []).some(c => Boards.IoTConnectivity.includes(c))) {
+      if ((item.connectivity || []).some((c) => Boards.IoTConnectivity.includes(c))) {
         item.extra.push('iot');
       }
 
@@ -166,13 +166,13 @@ export default class Boards extends React.Component {
 
   onFilterChange(value) {
     this.setState({
-      filterValue: value
+      filterValue: value,
     });
   }
 
   onDidFilter() {
     this.setState({
-      data: this.normalizeTableData(this.props.items)
+      data: this.normalizeTableData(this.props.items),
     });
     if (this.props.onFilter) {
       this.props.onFilter(this.state.filterValue);
@@ -182,14 +182,14 @@ export default class Boards extends React.Component {
   onDidTableChange(_, filters, sorters) {
     this.setState({
       dataFilters: filters,
-      dataSorters: sorters
+      dataSorters: sorters,
     });
   }
 
   onDidClearDataFiltersAndSorters() {
     this.setState({
       dataFilters: null,
-      dataSorters: null
+      dataSorters: null,
     });
     // if (this._searchInputElement) {
     //   this._searchInputElement.input.input.value = '';
@@ -207,7 +207,7 @@ export default class Boards extends React.Component {
       filters.extra.push(value);
     }
     this.setState({
-      dataFilters: filters
+      dataFilters: filters,
     });
   }
 
@@ -229,14 +229,14 @@ export default class Boards extends React.Component {
 
   getVendorFilters(data) {
     let result = [];
-    data.forEach(item => {
+    data.forEach((item) => {
       if (!result.includes(item.vendor)) {
         result.push(item.vendor);
       }
     });
-    result = result.map(vendor => ({
+    result = result.map((vendor) => ({
       value: vendor,
-      text: vendor
+      text: vendor,
     }));
     return result.sort((a, b) => cmpSort(a.value.toUpperCase(), b.value.toUpperCase()));
   }
@@ -244,11 +244,11 @@ export default class Boards extends React.Component {
   getPlatformFilters(data) {
     const result = [];
     const candidates = new Map();
-    data.map(item => candidates.set(item.platform.name, item.platform.title));
+    data.map((item) => candidates.set(item.platform.name, item.platform.title));
     for (var [name, title] of candidates.entries()) {
       result.push({
         value: name,
-        text: title
+        text: title,
       });
     }
     return result.sort((a, b) => cmpSort(a.value.toUpperCase(), b.value.toUpperCase()));
@@ -257,13 +257,13 @@ export default class Boards extends React.Component {
   getFrameworkFilters(data) {
     const result = [];
     const candidates = new Map();
-    data.map(board =>
-      board.frameworks.map(item => candidates.set(item.name, item.title))
+    data.map((board) =>
+      board.frameworks.map((item) => candidates.set(item.name, item.title))
     );
     for (var [name, title] of candidates.entries()) {
       result.push({
         value: name,
-        text: title
+        text: title,
       });
     }
     return result.sort((a, b) => cmpSort(a.value.toUpperCase(), b.value.toUpperCase()));
@@ -281,21 +281,21 @@ export default class Boards extends React.Component {
     let total = 0;
     let values = null;
     const filters = this.state.dataFilters || {};
-    data.forEach(item => {
+    data.forEach((item) => {
       for (const key of Object.keys(filters)) {
         if (!filters[key] || !filters[key].length) {
           continue;
         }
         switch (key) {
           case 'frameworks':
-            values = item.frameworks.map(f => f.name);
-            if (!filters[key].find(f => values.includes(f))) {
+            values = item.frameworks.map((f) => f.name);
+            if (!filters[key].find((f) => values.includes(f))) {
               return;
             }
             break;
 
           case 'extra':
-            if (!filters[key].every(value => item.extra.includes(value))) {
+            if (!filters[key].every((value) => item.extra.includes(value))) {
               return;
             }
             break;
@@ -346,7 +346,7 @@ export default class Boards extends React.Component {
           >
             {record.name}
           </a>
-        )
+        ),
       },
       {
         title: 'Platform',
@@ -358,7 +358,7 @@ export default class Boards extends React.Component {
           <a onClick={() => this.props.showPlatform(record.platform.name)}>
             {record.platform.title}
           </a>
-        )
+        ),
       },
       {
         title: 'Frameworks',
@@ -366,7 +366,7 @@ export default class Boards extends React.Component {
         filteredValue: dataFilters.frameworks || null,
         filters: this.getFrameworkFilters(data),
         onFilter: (value, record) =>
-          record.frameworks.map(item => item.name).includes(value),
+          record.frameworks.map((item) => item.name).includes(value),
         render: (_, record) => (
           <span>
             {record.frameworks.map((framework, index) => (
@@ -378,13 +378,13 @@ export default class Boards extends React.Component {
               </span>
             ))}
           </span>
-        )
+        ),
       },
       {
         title: 'MCU',
         dataIndex: 'mcu',
         sorter: (a, b) => cmpSort(a.mcu.toUpperCase(), b.mcu.toUpperCase()),
-        sortOrder: dataSorters.columnKey === 'mcu' && dataSorters.order
+        sortOrder: dataSorters.columnKey === 'mcu' && dataSorters.order,
       },
       {
         title: 'FRQ',
@@ -392,7 +392,7 @@ export default class Boards extends React.Component {
         className: 'text-nowrap',
         sorter: (a, b) => cmpSort(a.fcpu, b.fcpu),
         sortOrder: dataSorters.columnKey === 'fcpu' && dataSorters.order,
-        render: (_, record) => <span>{Math.round(record.fcpu / 1000000)} Mhz</span>
+        render: (_, record) => <span>{Math.round(record.fcpu / 1000000)} Mhz</span>,
       },
       {
         title: 'ROM',
@@ -400,7 +400,7 @@ export default class Boards extends React.Component {
         className: 'text-nowrap',
         sorter: (a, b) => cmpSort(a.rom, b.rom),
         sortOrder: dataSorters.columnKey === 'rom' && dataSorters.order,
-        render: (_, record) => this.humanizeMemorySize(record.rom)
+        render: (_, record) => this.humanizeMemorySize(record.rom),
       },
       {
         title: 'RAM',
@@ -408,7 +408,7 @@ export default class Boards extends React.Component {
         className: 'text-nowrap',
         sorter: (a, b) => cmpSort(a.ram, b.ram),
         sortOrder: dataSorters.columnKey === 'ram' && dataSorters.order,
-        render: (_, record) => this.humanizeMemorySize(record.ram)
+        render: (_, record) => this.humanizeMemorySize(record.ram),
       },
       {
         title: 'Extra',
@@ -417,37 +417,37 @@ export default class Boards extends React.Component {
         filters: [
           {
             text: 'Certified Board',
-            value: 'certified'
+            value: 'certified',
           },
           {
             text: 'IoT-enabled',
-            value: 'iot'
+            value: 'iot',
           },
           {
             text: 'Unit Testing',
-            value: 'test'
+            value: 'test',
           },
           {
             text: 'Debug: On-board',
-            value: 'debug-onboard'
+            value: 'debug-onboard',
           },
           {
             text: 'Debug: External',
-            value: 'debug-external'
-          }
+            value: 'debug-external',
+          },
         ],
         filteredValue: dataFilters.extra || null,
         onFilter: (_, record) =>
-          ((this.state.dataFilters || {}).extra || []).every(value =>
+          ((this.state.dataFilters || {}).extra || []).every((value) =>
             record.extra.includes(value)
           ),
-        render: (_, record) => this.renderExtraFeatures(record)
-      }
+        render: (_, record) => this.renderExtraFeatures(record),
+      },
     ];
     if (!this.props.excludeColumns) {
       return columns;
     }
-    return columns.filter(item => !this.props.excludeColumns.includes(item.title));
+    return columns.filter((item) => !this.props.excludeColumns.includes(item.title));
   }
 
   render() {
@@ -461,9 +461,9 @@ export default class Boards extends React.Component {
           placeholder={workspaceSettings.getMessage('Search board...')}
           defaultValue={this.state.filterValue || this.props.defaultFilter}
           size="large"
-          onChange={e => this.onFilterChange(e.target.value)}
+          onChange={(e) => this.onFilterChange(e.target.value)}
           onSearch={::this.onDidFilter}
-          ref={elm => (this._searchInputElement = elm)}
+          ref={(elm) => (this._searchInputElement = elm)}
         />
         {!data && (
           <div className="text-center">
@@ -579,7 +579,7 @@ export default class Boards extends React.Component {
       pageSizeOptions: ['10', '15', '30', '50', '100', '1000'],
       size: 'default',
       showSizeChanger: true,
-      hideOnSinglePage: true
+      hideOnSinglePage: true,
     };
 
     return (
@@ -611,7 +611,7 @@ export default class Boards extends React.Component {
         {record.connectivity && (
           <li>
             <Icon type="global" /> Connectivity:{' '}
-            {(record.connectivity || ['-']).map(c => c.toLowerCase()).join(', ')}
+            {(record.connectivity || ['-']).map((c) => c.toLowerCase()).join(', ')}
           </li>
         )}
       </ul>
@@ -636,10 +636,10 @@ export default class Boards extends React.Component {
             </a>{' '}
           </Tooltip>
         )}
-        {record.extra.some(item => item.startsWith('debug-')) && (
+        {record.extra.some((item) => item.startsWith('debug-')) && (
           <Tooltip
             title={`Debug: ${
-              record.extra.some(item => item === 'debug-onboard')
+              record.extra.some((item) => item === 'debug-onboard')
                 ? 'On-board'
                 : 'External'
             }`}

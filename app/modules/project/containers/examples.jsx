@@ -38,7 +38,7 @@ export class ProjectExampleItem {
     }
     this._sources.push({
       uri,
-      title
+      title,
     });
   }
 
@@ -55,14 +55,14 @@ export class ProjectExamplesWrapped extends React.Component {
 
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
-    importProject: PropTypes.func.isRequired
+    importProject: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       selectedItem: null,
-      importInProgress: false
+      importInProgress: false,
     };
     if (this.props.items.length) {
       this.state.selectedItem = this.props.items[0];
@@ -71,7 +71,7 @@ export class ProjectExamplesWrapped extends React.Component {
 
   onDidChange(name) {
     this.setState({
-      selectedItem: this.props.items.find(item => item.name === name)
+      selectedItem: this.props.items.find((item) => item.name === name),
     });
   }
 
@@ -84,11 +84,11 @@ export class ProjectExamplesWrapped extends React.Component {
 
   onDidImport() {
     this.setState({
-      importInProgress: true
+      importInProgress: true,
     });
     this.props.importProject(this.state.selectedItem.projectPath, (err, location) => {
       this.setState({
-        importInProgress: false
+        importInProgress: false,
       });
       if (!err) {
         this.props.addProject(location, true);
@@ -144,7 +144,7 @@ export class ProjectExamplesWrapped extends React.Component {
         onChange={::this.onDidChange}
         style={{ width: '100%' }}
       >
-        {this.props.items.map(item => (
+        {this.props.items.map((item) => (
           <Select.Option key={item.name} value={item.name}>
             {item.name}
           </Select.Option>

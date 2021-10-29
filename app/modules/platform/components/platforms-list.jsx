@@ -35,13 +35,13 @@ export default class PlatformsList extends React.Component {
     uninstallPlatform: PropTypes.func.isRequired,
     updatePlatform: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
-    osRevealFile: PropTypes.func.isRequired
+    osRevealFile: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      advancedVisible: false
+      advancedVisible: false,
     };
   }
 
@@ -51,13 +51,13 @@ export default class PlatformsList extends React.Component {
 
   onDidAdvanced() {
     this.setState({
-      advancedVisible: true
+      advancedVisible: true,
     });
   }
 
   onDidCancelAdvanced() {
     this.setState({
-      advancedVisible: false
+      advancedVisible: false,
     });
   }
 
@@ -79,8 +79,10 @@ export default class PlatformsList extends React.Component {
           </ul>
         )}
         {this.props.items
-          .filter(item => workspaceSettings.get('filterPlatformCard', () => true)(item))
-          .map(item => (
+          .filter((item) =>
+            workspaceSettings.get('filterPlatformCard', () => true)(item)
+          )
+          .map((item) => (
             <PlatformCard
               key={item.__pkg_dir || item.name}
               item={item}
@@ -104,8 +106,8 @@ export default class PlatformsList extends React.Component {
           placeholder="Filter platforms by name..."
           defaultValue={this.props.filterValue}
           size="large"
-          onChange={e => this.onDidFilter(e.target.value)}
-          ref={item => (item ? item.focus() : null)}
+          onChange={(e) => this.onDidFilter(e.target.value)}
+          ref={(item) => (item ? item.focus() : null)}
         />
         <div className="block text-right">
           <Button.Group>
@@ -114,7 +116,7 @@ export default class PlatformsList extends React.Component {
               type="primary"
               icon="download"
               disabled={this.state.advancedVisible}
-              onClick={e => this.onDidAdvanced(e)}
+              onClick={(e) => this.onDidAdvanced(e)}
             >
               Advanced Installation
             </Button>

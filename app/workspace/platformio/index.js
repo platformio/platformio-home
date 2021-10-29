@@ -20,11 +20,11 @@ const urls = {
   facebook: 'https://www.facebook.com/platformio',
   linkedin: 'https://www.linkedin.com/company/platformio',
   github: 'https://github.com/platformio',
-  community: 'https://community.platformio.org'
+  community: 'https://community.platformio.org',
 };
 
 const messages = {
-  homeQuickButtonProjectExamples: 'Project Examples'
+  homeQuickButtonProjectExamples: 'Project Examples',
 };
 
 export default {
@@ -39,8 +39,8 @@ export default {
     { title: 'Docs', url: 'http://docs.platformio.org' },
     { title: 'News', url: urls.twitter },
     { title: 'Community', url: urls.community },
-    { title: 'Contact Us', url: 'https://platformio.org/contact' }
+    { title: 'Contact Us', url: 'https://platformio.org/contact' },
   ],
   urls,
-  messages
+  messages,
 };

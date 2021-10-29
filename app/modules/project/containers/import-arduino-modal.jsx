@@ -37,7 +37,7 @@ class ProjectImportArduinoModal extends React.Component {
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     importArduinoProject: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -46,36 +46,36 @@ class ProjectImportArduinoModal extends React.Component {
       selectedBoard: null,
       useArduinoLibs: false,
       arduinoProjectDir: null,
-      inProgress: false
+      inProgress: false,
     };
   }
 
   onDidBoard(board) {
     if (
       !board.frameworks ||
-      !board.frameworks.map(item => item.name).includes('arduino')
+      !board.frameworks.map((item) => item.name).includes('arduino')
     ) {
       this.setState({
-        selectedBoard: null
+        selectedBoard: null,
       });
       return message.error(
         `Board ${board.name} is not compatible with Arduino framework`
       );
     }
     this.setState({
-      selectedBoard: board.id
+      selectedBoard: board.id,
     });
   }
 
   onDidUseArduinoLibs(e) {
     this.setState({
-      useArduinoLibs: e.target.checked
+      useArduinoLibs: e.target.checked,
     });
   }
 
   onDidArduinoProjectDir(arduinoProjectDir) {
     this.setState({
-      arduinoProjectDir
+      arduinoProjectDir,
     });
   }
 
@@ -87,7 +87,7 @@ class ProjectImportArduinoModal extends React.Component {
       return message.error('Please select a folder with Arduino project');
     }
     this.setState({
-      inProgress: true
+      inProgress: true,
     });
     this.props.importArduinoProject(
       this.state.selectedBoard,
@@ -95,7 +95,7 @@ class ProjectImportArduinoModal extends React.Component {
       this.state.arduinoProjectDir,
       (err, location) => {
         this.setState({
-          inProgress: false
+          inProgress: false,
         });
         if (!err) {
           this.props.addProject(location, true);
@@ -107,7 +107,7 @@ class ProjectImportArduinoModal extends React.Component {
 
   onDidCancel() {
     this.setState({
-      inProgress: false
+      inProgress: false,
     });
     this.props.onCancel();
   }
@@ -166,5 +166,5 @@ class ProjectImportArduinoModal extends React.Component {
 
 export default connect(null, {
   ...actions,
-  osOpenUrl
+  osOpenUrl,
 })(ProjectImportArduinoModal);

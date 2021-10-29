@@ -27,7 +27,7 @@ class TabNode extends React.Component {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node])
       .isRequired,
     connectDragSource: PropTypes.func.isRequired,
-    connectDropTarget: PropTypes.func.isRequired
+    connectDropTarget: PropTypes.func.isRequired,
   };
 
   render() {
@@ -48,24 +48,24 @@ const cardTarget = {
 
     props.moveTabNode(dragKey, hoverKey);
     monitor.getItem().index = hoverKey;
-  }
+  },
 };
 
 const cardSource = {
   beginDrag(props) {
     return {
       id: props.id,
-      index: props.index
+      index: props.index,
     };
-  }
+  },
 };
 
-const WrapTabNode = DropTarget('DND_NODE', cardTarget, connect => ({
-  connectDropTarget: connect.dropTarget()
+const WrapTabNode = DropTarget('DND_NODE', cardTarget, (connect) => ({
+  connectDropTarget: connect.dropTarget(),
 }))(
   DragSource('DND_NODE', cardSource, (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
+    isDragging: monitor.isDragging(),
   }))(TabNode)
 );
 
@@ -73,12 +73,12 @@ export class DraggableTabs extends React.Component {
   static propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node])
       .isRequired,
-    onOrderChange: PropTypes.func
+    onOrderChange: PropTypes.func,
   };
 
   moveTabNode = (dragKey, hoverKey) => {
     const oldOrder = [];
-    React.Children.forEach(this.props.children, c => {
+    React.Children.forEach(this.props.children, (c) => {
       if (oldOrder.indexOf(c.key) === -1) {
         oldOrder.push(c.key);
       }
@@ -98,7 +98,7 @@ export class DraggableTabs extends React.Component {
 
   renderTabBar = (props, DefaultTabBar) => (
     <DefaultTabBar {...props}>
-      {node => (
+      {(node) => (
         <WrapTabNode key={node.key} index={node.key} moveTabNode={this.moveTabNode}>
           {node}
         </WrapTabNode>

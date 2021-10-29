@@ -28,7 +28,7 @@ class DeviceLogicalPage extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.object.isRequired),
     loadLogicalDevices: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -65,13 +65,13 @@ class DeviceLogicalPage extends React.Component {
               </a>
             </Tooltip>
           </span>
-        )
+        ),
       },
       {
         title: 'Name',
         dataIndex: 'name',
-        sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase())
-      }
+        sorter: (a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()),
+      },
     ];
   }
 
@@ -118,7 +118,7 @@ class DeviceLogicalPage extends React.Component {
         size="middle"
         pagination={{
           defaultPageSize: 15,
-          hideOnSinglePage: true
+          hideOnSinglePage: true,
         }}
       />
     );
@@ -129,11 +129,11 @@ class DeviceLogicalPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectLogicalDevices(state)
+    items: selectLogicalDevices(state),
   };
 }
 
 export default connect(mapStateToProps, {
   loadLogicalDevices,
-  osOpenUrl
+  osOpenUrl,
 })(DeviceLogicalPage);

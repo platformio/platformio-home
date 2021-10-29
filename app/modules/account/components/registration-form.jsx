@@ -25,13 +25,13 @@ export default class AccountRegistrationForm extends React.Component {
     form: PropTypes.object.isRequired,
     registerAccount: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
     };
   }
 
@@ -42,7 +42,7 @@ export default class AccountRegistrationForm extends React.Component {
         return;
       }
       this.setState({
-        loading: true
+        loading: true,
       });
       this.props.registerAccount(
         values.username,
@@ -50,9 +50,9 @@ export default class AccountRegistrationForm extends React.Component {
         values.firstname,
         values.lastname,
         values.password,
-        err => {
+        (err) => {
           this.setState({
-            loading: false
+            loading: false,
           });
           if (!err) {
             this.props.showLoginPage();
@@ -79,14 +79,14 @@ export default class AccountRegistrationForm extends React.Component {
                 message:
                   'Please input valid username. ' +
                   'Must contain at least 4 characters including' +
-                  ' single hyphens, and cannot begin or end with a hyphen'
-              }
-            ]
+                  ' single hyphens, and cannot begin or end with a hyphen',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
               placeholder="Username"
-              ref={elm => elm.focus()}
+              ref={(elm) => elm.focus()}
             />
           )}
         </Form.Item>
@@ -96,14 +96,14 @@ export default class AccountRegistrationForm extends React.Component {
               {
                 type: 'email',
                 required: true,
-                message: 'Please input valid email'
-              }
-            ]
+                message: 'Please input valid email',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="mail" style={{ fontSize: 13 }} />}
               placeholder="Email"
-              ref={elm => elm.focus()}
+              ref={(elm) => elm.focus()}
             />
           )}
         </Form.Item>
@@ -112,14 +112,14 @@ export default class AccountRegistrationForm extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please input last name'
-              }
-            ]
+                message: 'Please input last name',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="profile" style={{ fontSize: 13 }} />}
               placeholder="First name"
-              ref={elm => elm.focus()}
+              ref={(elm) => elm.focus()}
             />
           )}
         </Form.Item>
@@ -128,14 +128,14 @@ export default class AccountRegistrationForm extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please input first name'
-              }
-            ]
+                message: 'Please input first name',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="profile" style={{ fontSize: 13 }} />}
               placeholder="Last Name"
-              ref={elm => elm.focus()}
+              ref={(elm) => elm.focus()}
             />
           )}
         </Form.Item>
@@ -148,9 +148,9 @@ export default class AccountRegistrationForm extends React.Component {
                 message:
                   'Please input valid password. ' +
                   'Must contain at least 8 characters ' +
-                  'including a number and a lowercase letter'
-              }
-            ]
+                  'including a number and a lowercase letter',
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
@@ -164,7 +164,7 @@ export default class AccountRegistrationForm extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please confirm password'
+                message: 'Please confirm password',
               },
               (rule, value) => {
                 if (!value || getFieldValue('password') === value) {
@@ -173,8 +173,8 @@ export default class AccountRegistrationForm extends React.Component {
                 return Promise.reject(
                   'The two passwords that you entered do not match'
                 );
-              }
-            ]
+              },
+            ],
           })(
             <Input
               prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

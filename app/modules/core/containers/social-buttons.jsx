@@ -24,7 +24,7 @@ import { osOpenUrl } from '../actions';
 
 class SocialButtons extends React.Component {
   static propTypes = {
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {
@@ -69,5 +69,5 @@ class SocialButtons extends React.Component {
 // Redux
 
 export default connect(null, {
-  osOpenUrl
+  osOpenUrl,
 })(SocialButtons);

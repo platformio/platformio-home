@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   BUILTIN_INPUT_FILTER_KEY,
   selectBuiltinFilter,
-  selectVisibletBuiltinLibs
+  selectVisibletBuiltinLibs,
 } from '../selectors';
 
 import { Alert } from 'antd';
@@ -38,7 +38,7 @@ class LibraryBuiltinPage extends React.Component {
       PropTypes.shape({
         items: PropTypes.array.isRequired,
         name: PropTypes.string.isRequired,
-        path: PropTypes.string.isRequired
+        path: PropTypes.string.isRequired,
       }).isRequired
     ),
     filterValue: PropTypes.string,
@@ -47,7 +47,7 @@ class LibraryBuiltinPage extends React.Component {
     osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
-    showInstalledPlatforms: PropTypes.func.isRequired
+    showInstalledPlatforms: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -85,9 +85,9 @@ function mapStateToProps(state, ownProps) {
     filterValue: selectBuiltinFilter(state),
     searchLibrary: (query, page) =>
       goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest =>
+    showLibrary: (idOrManifest) =>
       goTo(ownProps.history, '/libraries/builtin/show', { idOrManifest }),
-    showInstalledPlatforms: () => goTo(ownProps.history, '/platforms/installed')
+    showInstalledPlatforms: () => goTo(ownProps.history, '/platforms/installed'),
   };
 }
 
@@ -95,8 +95,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     Object.assign({}, actions, {
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(BUILTIN_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(BUILTIN_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

@@ -30,7 +30,7 @@ class DeviceSerialPage extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.object.isRequired),
     loadSerialDevices: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -67,21 +67,21 @@ class DeviceSerialPage extends React.Component {
               </a>
             </Tooltip>
           </span>
-        )
+        ),
       },
       {
         title: 'Description',
         dataIndex: 'description',
         className: 'text-word-break',
         sorter: (a, b) =>
-          cmpSort(a.description.toUpperCase(), b.description.toUpperCase())
+          cmpSort(a.description.toUpperCase(), b.description.toUpperCase()),
       },
       {
         title: 'Hardware',
         dataIndex: 'hwid',
         className: 'text-nowrap',
-        sorter: (a, b) => cmpSort(a.hwid.toUpperCase(), b.hwid.toUpperCase())
-      }
+        sorter: (a, b) => cmpSort(a.hwid.toUpperCase(), b.hwid.toUpperCase()),
+      },
     ];
   }
 
@@ -148,7 +148,7 @@ class DeviceSerialPage extends React.Component {
         size="middle"
         pagination={{
           defaultPageSize: 15,
-          hideOnSinglePage: true
+          hideOnSinglePage: true,
         }}
       />
     );
@@ -159,11 +159,11 @@ class DeviceSerialPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectSerialDevices(state)
+    items: selectSerialDevices(state),
   };
 }
 
 export default connect(mapStateToProps, {
   ...actions,
-  osOpenUrl
+  osOpenUrl,
 })(DeviceSerialPage);

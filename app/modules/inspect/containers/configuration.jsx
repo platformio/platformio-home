@@ -36,14 +36,14 @@ class InspectionFormComponent extends React.Component {
     projects: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        path: PropTypes.string.isRequired
+        path: PropTypes.string.isRequired,
       })
     ),
     savedConfiguration: PropTypes.object,
     // callbacks
     inspectProject: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -55,7 +55,7 @@ class InspectionFormComponent extends React.Component {
     this._isMounted = true;
     const defaults = {
       memory: true,
-      code: true
+      code: true,
     };
     this.props.loadProjects(true);
     // Storage with saved configuration loads asynchronously, so data can come later
@@ -74,7 +74,7 @@ class InspectionFormComponent extends React.Component {
       const selectedProject = this.props.form.getFieldValue('projectDir');
       if (
         selectedProject &&
-        !this.props.projects.find(p => p.path === selectedProject)
+        !this.props.projects.find((p) => p.path === selectedProject)
       ) {
         this.props.form.setFieldsValue({ projectDir: undefined });
       }
@@ -108,25 +108,25 @@ class InspectionFormComponent extends React.Component {
   handleProjectChange(projectDir) {
     const newEnvs = this._getProjectEnvs(projectDir);
     this.props.form.setFieldsValue({
-      env: newEnvs.length === 1 ? newEnvs[0] : undefined
+      env: newEnvs.length === 1 ? newEnvs[0] : undefined,
     });
   }
 
   handleOpenProjectCancel(projectDir) {
     this.setState({
-      openProjectVisible: false
+      openProjectVisible: false,
     });
     if (projectDir) {
       this.props.form.setFieldsValue({
         projectDir,
-        env: undefined
+        env: undefined,
       });
     }
   }
 
   handleOpenProjectClick() {
     this.setState({
-      openProjectVisible: true
+      openProjectVisible: true,
     });
   }
 
@@ -158,7 +158,7 @@ class InspectionFormComponent extends React.Component {
   }
 
   _getProjectByPath(projectDir) {
-    return (this.props.projects || []).find(x => x.path === projectDir);
+    return (this.props.projects || []).find((x) => x.path === projectDir);
   }
 
   _getProjectEnvs(projectDir) {
@@ -178,7 +178,7 @@ class InspectionFormComponent extends React.Component {
         size="large"
         placeholder={projectDir && items ? 'Select environment' : ''}
       >
-        {items.map(name => (
+        {items.map((name) => (
           <Select.Option key={name} value={name}>
             {name}
           </Select.Option>
@@ -243,14 +243,14 @@ class InspectionFormComponent extends React.Component {
             <label className="switch-label">
               {this.props.form.getFieldDecorator('memory', {
                 valuePropName: 'checked',
-                initialValue: true
+                initialValue: true,
               })(<Switch />)}{' '}
               Inspect Memory
             </label>
             <label className="switch-label">
               {this.props.form.getFieldDecorator('code', {
                 valuePropName: 'checked',
-                initialValue: true
+                initialValue: true,
               })(<Switch />)}{' '}
               Check Code
             </label>
@@ -288,14 +288,14 @@ function mapStateToProps(state) {
   return {
     error: selectInspectionError(state),
     projects: selectProjects(state),
-    savedConfiguration: selectSavedConfiguration(state)
+    savedConfiguration: selectSavedConfiguration(state),
   };
 }
 
 const dispatchToProps = {
   inspectProject,
   loadProjects,
-  osOpenUrl
+  osOpenUrl,
 };
 
 const ConnectedInspectionForm = connect(

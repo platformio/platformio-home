@@ -21,7 +21,7 @@ import React from 'react';
 
 export default class ProjectInitCarousel extends React.Component {
   static propTypes = {
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {

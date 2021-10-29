@@ -30,7 +30,7 @@ export const TYPES = Object.freeze([
   TYPE_INT,
   TYPE_INT_RANGE,
   TYPE_BOOL,
-  TYPE_FILE
+  TYPE_FILE,
 ]);
 
 export const SCOPE_PLATFORMIO = 'platformio';
@@ -48,7 +48,7 @@ export const SECTIONS = Object.freeze([
   SECTION_PLATFORMIO,
   SECTION_GLOBAL_ENV,
   SECTION_USER_ENV,
-  SECTION_CUSTOM
+  SECTION_CUSTOM,
 ]);
 
 export const PROJECT_CONFIG_SAVE_CONSENT_ID = 'project-config-save';

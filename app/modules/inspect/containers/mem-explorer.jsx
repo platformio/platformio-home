@@ -36,7 +36,7 @@ class DirectoryUnfolder {
       if (!this.children.has(parentPath)) {
         this.children.set(parentPath, {
           dirs: new Set(),
-          files: new Set()
+          files: new Set(),
         });
       }
 
@@ -103,10 +103,10 @@ class FileExplorerPage extends React.PureComponent {
         flash: PropTypes.number.isRequired,
         isDir: PropTypes.bool.isRequired,
         path: PropTypes.string.isRequired,
-        ram: PropTypes.number.isRequired
+        ram: PropTypes.number.isRequired,
       })
     ),
-    openTextDocument: PropTypes.func.isRequired
+    openTextDocument: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -125,7 +125,7 @@ class FileExplorerPage extends React.PureComponent {
     const dirUnfolder = new DirectoryUnfolder();
 
     const result = (this.props.files || [])
-      .filter(item => !cwd || (cwd && item.path.startsWith(`${cwd}/`)))
+      .filter((item) => !cwd || (cwd && item.path.startsWith(`${cwd}/`)))
       .map(({ path, isDir, ram, flash }) => {
         const relativePath = path.substring(cwd ? cwd.length + 1 : 0);
         const relativePathParts = relativePath.split('/');
@@ -143,12 +143,12 @@ class FileExplorerPage extends React.PureComponent {
           isDir: relativePathParts.length !== 1 || isDir,
           flash,
           ram,
-          relativePath: name
+          relativePath: name,
         };
       })
       .filter(({ relativePath }) => uniqueFilter.filter(relativePath))
       // Override with aggregated values
-      .map(x => {
+      .map((x) => {
         aggregator.assign(x, x.relativePath);
         x.relativePath = dirUnfolder.unfold(x.relativePath);
         return x;
@@ -162,13 +162,13 @@ class FileExplorerPage extends React.PureComponent {
     if (path === undefined || !files) {
       return;
     }
-    const item = files.filter(x => x.path === path)[0];
+    const item = files.filter((x) => x.path === path)[0];
     return item && !item.isDir ? item : undefined;
   }
 
-  handlePathChange = path => {
+  handlePathChange = (path) => {
     this.setState({
-      path
+      path,
     });
   };
 
@@ -208,12 +208,12 @@ class FileExplorerPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    files: selectExplorerSizeData(state)
+    files: selectExplorerSizeData(state),
   };
 }
 
 const dispatchToProps = {
-  openTextDocument
+  openTextDocument,
 };
 
 export default connect(mapStateToProps, dispatchToProps)(FileExplorerPage);

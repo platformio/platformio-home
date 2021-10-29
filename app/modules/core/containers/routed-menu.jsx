@@ -32,19 +32,19 @@ class RoutedMenu extends React.Component {
     badges: PropTypes.arrayOf(
       PropTypes.shape({
         path: PropTypes.string,
-        count: PropTypes.number
+        count: PropTypes.number,
       })
     ),
     theme: PropTypes.string,
     mode: PropTypes.string,
 
-    connectRouter: PropTypes.func.isRequired
+    connectRouter: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      selectedKeys: []
+      selectedKeys: [],
     };
     this._matchedBadges = [];
     this.props.connectRouter(this.props.router);
@@ -58,13 +58,13 @@ class RoutedMenu extends React.Component {
       return;
     }
     this.setState({
-      selectedKeys: [this.activeRouteKey()]
+      selectedKeys: [this.activeRouteKey()],
     });
   }
 
   componentDidMount() {
     this.setState({
-      selectedKeys: [this.activeRouteKey()]
+      selectedKeys: [this.activeRouteKey()],
     });
   }
 
@@ -97,20 +97,20 @@ class RoutedMenu extends React.Component {
     const items = this.props.routes
       .slice(0)
       .filter(
-        item =>
+        (item) =>
           !workspaceSettings
             .get('menuIgnorePatterns', [])
-            .some(pattern => pattern.test(item.path))
+            .some((pattern) => pattern.test(item.path))
       )
       .reverse()
-      .map(item => item.label && this.renderItem(item));
+      .map((item) => item.label && this.renderItem(item));
     return (
       <Menu
         theme={this.props.theme}
         mode={this.props.mode || 'inline'}
         defaultSelectedKeys={[this.props.routes[0].path]}
         selectedKeys={this.state.selectedKeys}
-        onClick={item => goTo(this.props.router.history, item.key)}
+        onClick={(item) => goTo(this.props.router.history, item.key)}
       >
         {items.reverse()}
       </Menu>
@@ -143,7 +143,7 @@ class RoutedMenu extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    badges: selectRouteBadges(state)
+    badges: selectRouteBadges(state),
   };
 }
 
