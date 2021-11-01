@@ -60,16 +60,16 @@ import jsonrpc from 'jsonrpc-lite';
 const RECENT_PROJECTS_STORAGE_KEY = 'recentProjects';
 
 function* watchAddProject() {
-  yield takeEvery(actions.ADD_PROJECT, function* ({ projectDir, withOpen, onEnd }) {
+  yield takeEvery(actions.ADD_PROJECT, function* ({ projectDir, options }) {
     const iniPath = pathlib.join(projectDir, 'platformio.ini');
     const fileExists = yield call(backendFetchData, {
       query: 'os.is_file',
       params: [iniPath],
     });
     if (!fileExists) {
-      if (onEnd) {
+      if (options.onEnd) {
         yield call(
-          onEnd,
+          options.onEnd,
           'This is not PlatformIO Project (should contain "platformio.ini" file).',
           projectDir
         );
@@ -86,11 +86,11 @@ function* watchAddProject() {
     }
     yield put(deleteEntity(/^projects/));
     yield put(actions.loadProjects());
-    if (withOpen) {
+    if (options.withOpen) {
       yield put(actions.openProject(projectDir));
     }
-    if (onEnd) {
-      yield call(onEnd, undefined, projectDir);
+    if (options.onEnd) {
+      yield call(options.onEnd, undefined, projectDir);
     }
   });
 }
