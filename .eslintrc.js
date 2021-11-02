@@ -10,15 +10,13 @@ module.exports = {
   },
   "plugins": [
     "import",
-    "react",
-    "prettier"
+    "react"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings",
-    "prettier"
+    "plugin:import/warnings"
   ],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
@@ -57,7 +55,6 @@ module.exports = {
       }
     ],
     "prefer-const": "error",
-    "prettier/prettier": ["error"],
     "quotes": [
       "error",
       "single",
