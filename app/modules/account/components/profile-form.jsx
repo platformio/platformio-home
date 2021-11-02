@@ -26,17 +26,17 @@ export default class AccountProfileForm extends React.Component {
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
         firstname: PropTypes.string,
-        lastname: PropTypes.string
-      }).isRequired
+        lastname: PropTypes.string,
+      }).isRequired,
     }).isRequired,
     form: PropTypes.object.isRequired,
-    updateProfile: PropTypes.func.isRequired
+    updateProfile: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
     };
   }
 
@@ -45,7 +45,7 @@ export default class AccountProfileForm extends React.Component {
       username: this.props.data.profile.username,
       email: this.props.data.profile.email,
       firstname: this.props.data.profile.firstname,
-      lastname: this.props.data.profile.lastname
+      lastname: this.props.data.profile.lastname,
     });
   }
 
@@ -56,7 +56,7 @@ export default class AccountProfileForm extends React.Component {
         return;
       }
       this.setState({
-        loading: true
+        loading: true,
       });
       this.props.updateProfile(
         values.username,
@@ -66,7 +66,7 @@ export default class AccountProfileForm extends React.Component {
         values.currentPassword,
         () => {
           this.setState({
-            loading: false
+            loading: false,
           });
           this.props.form.resetFields('currentPassword');
         }
@@ -89,14 +89,14 @@ export default class AccountProfileForm extends React.Component {
                   message:
                     'Please input valid username. ' +
                     'Must contain at least 4 characters including' +
-                    ' single hyphens, and cannot begin or end with a hyphen'
-                }
-              ]
+                    ' single hyphens, and cannot begin or end with a hyphen',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="user" style={{ fontSize: 13 }} />}
                 placeholder="Username"
-                ref={elm => elm.focus()}
+                ref={(elm) => elm.focus()}
               />
             )}
           </Form.Item>
@@ -106,14 +106,14 @@ export default class AccountProfileForm extends React.Component {
                 {
                   type: 'email',
                   required: true,
-                  message: 'Please input valid email'
-                }
-              ]
+                  message: 'Please input valid email',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="mail" style={{ fontSize: 13 }} />}
                 placeholder="Email"
-                ref={elm => elm.focus()}
+                ref={(elm) => elm.focus()}
               />
             )}
           </Form.Item>
@@ -122,14 +122,14 @@ export default class AccountProfileForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input last name'
-                }
-              ]
+                  message: 'Please input last name',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="profile" style={{ fontSize: 13 }} />}
                 placeholder="First name"
-                ref={elm => elm.focus()}
+                ref={(elm) => elm.focus()}
               />
             )}
           </Form.Item>
@@ -138,14 +138,14 @@ export default class AccountProfileForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input first name'
-                }
-              ]
+                  message: 'Please input first name',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="profile" style={{ fontSize: 13 }} />}
                 placeholder="Last Name"
-                ref={elm => elm.focus()}
+                ref={(elm) => elm.focus()}
               />
             )}
           </Form.Item>
@@ -154,9 +154,9 @@ export default class AccountProfileForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input your current password'
-                }
-              ]
+                  message: 'Please input your current password',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

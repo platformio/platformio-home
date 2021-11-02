@@ -28,7 +28,7 @@ class AccountPasswordPage extends React.Component {
   static propTypes = {
     userLogged: PropTypes.bool,
     changeAccountPassword: PropTypes.func.isRequired,
-    showLoginPage: PropTypes.func.isRequired
+    showLoginPage: PropTypes.func.isRequired,
   };
 
   render() {
@@ -51,7 +51,7 @@ function mapStateToProps(state, ownProps) {
   return {
     userLogged: selectIsUserLogged(state),
     showLoginPage: () => goTo(ownProps.history, '/account/login', null, true),
-    showForgotPage: () => goTo(ownProps.history, '/account/forgot')
+    showForgotPage: () => goTo(ownProps.history, '/account/forgot'),
   };
 }
 

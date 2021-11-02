@@ -25,15 +25,15 @@ export const ProjectType = PropTypes.shape({
   boards: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
+      name: PropTypes.string.isRequired,
     })
-  )
+  ),
 });
 
 export const ActionType = PropTypes.shape({
   name: PropTypes.string.isRequired,
   icon: PropTypes.string,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
 });
 
 export const SchemaType = PropTypes.arrayOf(
@@ -47,11 +47,11 @@ export const SchemaType = PropTypes.arrayOf(
     multiple: PropTypes.bool,
     scope: PropTypes.oneOf(SCOPES).isRequired,
     sysenvvar: PropTypes.string,
-    type: PropTypes.oneOf(TYPES)
+    type: PropTypes.oneOf(TYPES),
   })
 );
 
 export const ConfigOptionType = PropTypes.shape({
   name: PropTypes.string.isRequired,
-  value: PropTypes.any
+  value: PropTypes.any,
 });

@@ -32,13 +32,15 @@ export const SAVE_PROJECT_CONFIG = 'SAVE_PROJECT_CONFIG';
 export const UPDATE_CONFIG_DESCRIPTION = 'UPDATE_CONFIG_DESCRIPTION';
 export const LOAD_SERIAL_PORTS = 'LOAD_SERIAL_PORTS';
 
-export const addProject = (projectDir, withOpen = true, onEnd) =>
-  createAction(ADD_PROJECT, { projectDir, withOpen, onEnd });
-export const hideProject = projectDir => createAction(HIDE_PROJECT, { projectDir });
-export const openProject = projectDir => createAction(OPEN_PROJECT, { projectDir });
+export const addProject = (
+  projectDir,
+  options = { withOpen: true, withReload: true, onEnd: undefined }
+) => createAction(ADD_PROJECT, { projectDir, options });
+export const hideProject = (projectDir) => createAction(HIDE_PROJECT, { projectDir });
+export const openProject = (projectDir) => createAction(OPEN_PROJECT, { projectDir });
 export const importProject = (projectDir, onEnd = undefined) =>
   createAction(IMPORT_PROJECT, { projectDir, onEnd });
-export const loadProjects = force => createAction(LOAD_PROJECTS, { force });
+export const loadProjects = (force) => createAction(LOAD_PROJECTS, { force });
 export const projectsLoaded = () => createAction(PROJECTS_LOADED);
 export const initProject = (board, framework, projectDir, onEnd = undefined) =>
   createAction(INIT_PROJECT, { board, framework, projectDir, onEnd });
@@ -52,13 +54,13 @@ export const importArduinoProject = (
     board,
     useArduinoLibs,
     arduinoProjectDir,
-    onEnd
+    onEnd,
   });
 export const loadProjectExamples = () => createAction(LOAD_PROJECT_EXAMPLES);
 
 export const loadConfigSchema = () => createAction(LOAD_CONFIG_SCHEMA);
 
-export const loadProjectConfig = projectDir =>
+export const loadProjectConfig = (projectDir) =>
   createAction(LOAD_PROJECT_CONFIG, { projectDir });
 
 export const saveProjectConfig = (projectDir, data, options, onEnd) =>

@@ -21,16 +21,16 @@ import { InspectionResultPage } from '@inspect/containers/result';
 const routes = [
   {
     path: '/inspect',
-    component: InspectionForm
+    component: InspectionForm,
   },
   {
     path: '/inspect/result',
-    component: InspectionResultPage
+    component: InspectionResultPage,
   },
   {
     path: '/inspect/processing',
-    component: InspectionProcessingPage
-  }
+    component: InspectionProcessingPage,
+  },
 ];
 
 export default routes;

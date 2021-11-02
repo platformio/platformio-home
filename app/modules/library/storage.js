@@ -62,7 +62,7 @@ export class LibraryStorage {
 }
 
 export function filterStorageItems(storages, filterValue) {
-  return storages.map(storage => {
+  return storages.map((storage) => {
     let items = storage.items;
     if (items && filterValue) {
       items = fuzzySearch(items, filterValue, 'name');

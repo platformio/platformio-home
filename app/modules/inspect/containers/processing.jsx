@@ -20,7 +20,7 @@ import {
   selectInspectionResult,
   selectMemoryStats,
   selectMetric,
-  selectSavedConfiguration
+  selectSavedConfiguration,
 } from '@inspect/selectors';
 
 import { ConfigurationType } from '@inspect/types';
@@ -45,10 +45,10 @@ class InspectionProcessing extends React.PureComponent {
     codeDuration: PropTypes.number,
     project: PropTypes.shape({
       name: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired
+      path: PropTypes.string.isRequired,
     }),
     // callbacks
-    showConfiguration: PropTypes.func.isRequired
+    showConfiguration: PropTypes.func.isRequired,
   };
 
   componentDidUpdate() {
@@ -69,14 +69,14 @@ class InspectionProcessing extends React.PureComponent {
         done: this.props.memoryDone,
         expectedDuration:
           this.props.memoryDuration || DEFAULT_MEMORY_INSPECT_DURATION_MS,
-        name: 'Memory'
+        name: 'Memory',
       });
     }
     if (this.props.configuration.code) {
       steps.push({
         done: this.props.codeDone,
         expectedDuration: this.props.codeDuration || DEFAULT_CODE_INSPECT_DURATION_MS,
-        name: 'Code'
+        name: 'Code',
       });
     }
     return (
@@ -123,13 +123,13 @@ function mapStateToProps(state) {
     data: selectInspectionResult(state),
     codeDone: !!selectCodeStats(state),
     memoryDone: !!selectMemoryStats(state),
-    project: selectProjectInfo(state, configuration.projectDir)
+    project: selectProjectInfo(state, configuration.projectDir),
   };
 }
 
 function dispatchProps(dispatch, ownProps) {
   return {
-    showConfiguration: () => goTo(ownProps.history, '/inspect')
+    showConfiguration: () => goTo(ownProps.history, '/inspect'),
   };
 }
 

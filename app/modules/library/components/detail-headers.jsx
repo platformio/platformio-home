@@ -20,7 +20,7 @@ import React from 'react';
 
 export default class LibraryDetailHeaders extends React.Component {
   static propTypes = {
-    items: PropTypes.arrayOf(PropTypes.string).isRequired
+    items: PropTypes.arrayOf(PropTypes.string).isRequired,
   };
 
   render() {
@@ -33,7 +33,7 @@ export default class LibraryDetailHeaders extends React.Component {
     }
     return (
       <div>
-        {this.props.items.sort().map(header => (
+        {this.props.items.sort().map((header) => (
           <h3 key={header}>
             <Icon type="file-add" /> {header}
           </h3>

@@ -35,11 +35,11 @@ function* watchLoadSerialDevices() {
     if (items) {
       return;
     }
-    yield call(function*() {
+    yield call(function* () {
       try {
         items = yield call(backendFetchData, {
           query: 'core.call',
-          params: [['device', 'list', '--serial', '--json-output']]
+          params: [['device', 'list', '--serial', '--json-output']],
         });
         yield put(updateEntity('serialDevices', items));
       } catch (err) {
@@ -59,14 +59,14 @@ function* watchLoadMDNSDevices() {
     if (items) {
       return;
     }
-    yield call(function*() {
+    yield call(function* () {
       try {
         items = yield call(backendFetchData, {
           query: 'core.call',
           params: [
             ['device', 'list', '--mdns', '--json-output'],
-            { force_subprocess: true }
-          ]
+            { force_subprocess: true },
+          ],
         });
         yield put(updateEntity('mDNSDevices', items));
       } catch (err) {

@@ -32,20 +32,20 @@ class LibrarySearchPage extends React.Component {
       items: PropTypes.array.isRequired,
       total: PropTypes.number.isRequired,
       page: PropTypes.number.isRequired,
-      perpage: PropTypes.number.isRequired
+      perpage: PropTypes.number.isRequired,
     }),
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     loadSearchResult: PropTypes.func.isRequired,
     searchQuery: PropTypes.string.isRequired,
-    searchPage: PropTypes.number
+    searchPage: PropTypes.number,
   };
 
   static STATUS = {
     LOADING: 0,
     LOADING_MORE: 1,
     NORESULTS: 2,
-    LOADED: 3
+    LOADED: 3,
   };
 
   constructor() {
@@ -127,7 +127,7 @@ class LibrarySearchPage extends React.Component {
           </ul>
         )}
         <div className="block">
-          {items.map(item => (
+          {items.map((item) => (
             <LibrarySearchCard
               key={item.id}
               item={item}
@@ -164,10 +164,10 @@ function mapStateToProps(state, ownProps) {
     searchPage: ownProps.location.state.page,
     searchLibrary: (query, page) =>
       goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest =>
+    showLibrary: (idOrManifest) =>
       goTo(ownProps.history, '/libraries/registry/show', {
-        idOrManifest
-      })
+        idOrManifest,
+      }),
   };
 }
 

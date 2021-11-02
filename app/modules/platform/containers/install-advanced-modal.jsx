@@ -29,14 +29,14 @@ class PlatformInstallAdvancedModal extends React.Component {
     onCancel: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
     loadInstalledPlatforms: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       value: null,
-      installing: false
+      installing: false,
     };
   }
 
@@ -52,7 +52,7 @@ class PlatformInstallAdvancedModal extends React.Component {
 
   onDidValue(value) {
     this.setState({
-      value
+      value,
     });
   }
 
@@ -62,9 +62,9 @@ class PlatformInstallAdvancedModal extends React.Component {
       return;
     }
     this.setState({
-      installing: true
+      installing: true,
     });
-    this.props.installPlatform(this.state.value, err => {
+    this.props.installPlatform(this.state.value, (err) => {
       this.setState({ installing: false });
       if (!err) {
         this.props.loadInstalledPlatforms();
@@ -76,7 +76,7 @@ class PlatformInstallAdvancedModal extends React.Component {
   onDidCancel() {
     this.setState({
       value: null,
-      installing: false
+      installing: false,
     });
     this.props.onCancel();
   }
@@ -96,9 +96,9 @@ class PlatformInstallAdvancedModal extends React.Component {
           placeholder="Platform name, repository, requirements..."
           size="large"
           value={this.state.value}
-          onChange={e => this.onDidValue(e.target.value)}
+          onChange={(e) => this.onDidValue(e.target.value)}
           onPressEnter={::this.onDidInstall}
-          ref={elm => (this._inputElement = elm)}
+          ref={(elm) => (this._inputElement = elm)}
         />
 
         <ul className="block list-styled">

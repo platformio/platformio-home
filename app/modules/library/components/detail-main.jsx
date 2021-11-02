@@ -41,16 +41,16 @@ export default class LibraryDetailMain extends React.Component {
       dlstats: PropTypes.object,
       version: PropTypes.oneOfType([
         PropTypes.object, // registry library
-        PropTypes.string // built-in/installed library
+        PropTypes.string, // built-in/installed library
       ]).isRequired,
       versions: PropTypes.arrayOf(PropTypes.object),
       __src_url: PropTypes.string,
-      __pkg_dir: PropTypes.string
+      __pkg_dir: PropTypes.string,
     }),
     osOpenUrl: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     installLibrary: PropTypes.func.isRequired,
-    showInstalledLibraries: PropTypes.func.isRequired
+    showInstalledLibraries: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -60,44 +60,44 @@ export default class LibraryDetailMain extends React.Component {
       installing: false,
       uninstalling: false,
       selectedVersion: null,
-      activeTab: 'examples'
+      activeTab: 'examples',
     };
   }
 
   onDidTabChange(activeTab) {
     this.setState({
-      activeTab
+      activeTab,
     });
   }
 
   onDidVersionChange(value) {
     this.setState({
-      selectedVersion: value
+      selectedVersion: value,
     });
   }
 
   onDidInstallTo() {
     this.setState({
-      installToVisible: true
+      installToVisible: true,
     });
   }
 
   onDidCancelInstallTo() {
     this.setState({
-      installToVisible: false
+      installToVisible: false,
     });
   }
 
   onDidInstall() {
     this.setState({
-      installing: true
+      installing: true,
     });
     this.props.installLibrary(
       null, // global storage
       this.getLibraryForInstall(),
       () =>
         this.setState({
-          installing: false
+          installing: false,
         })
     );
   }
@@ -149,7 +149,7 @@ export default class LibraryDetailMain extends React.Component {
               defaultValue={versions[0].name}
               onChange={::this.onDidVersionChange}
             >
-              {versions.map(item => (
+              {versions.map((item) => (
                 <Select.Option key={item.name} value={item.name} title={item.released}>
                   {item.component}
                 </Select.Option>
@@ -199,7 +199,7 @@ export default class LibraryDetailMain extends React.Component {
   render() {
     let versions = null;
     if (this.props.data.versions) {
-      versions = this.props.data.versions.slice(0).map(item => {
+      versions = this.props.data.versions.slice(0).map((item) => {
         item.component = (
           <span>
             <strong>{item.name}</strong>{' '}
@@ -277,7 +277,7 @@ export default class LibraryDetailMain extends React.Component {
           <Col sm={6}>
             <h2>Tags</h2>
             <div className="inline-buttons">
-              {this.props.data.keywords.map(name => (
+              {this.props.data.keywords.map((name) => (
                 <Button
                   key={name}
                   icon="tag"
@@ -291,7 +291,7 @@ export default class LibraryDetailMain extends React.Component {
             {this.props.data.platforms.length > 0 && (
               <div className="inline-buttons">
                 <h2>Platforms</h2>
-                {this.props.data.platforms.map(item => (
+                {this.props.data.platforms.map((item) => (
                   <Button
                     key={item.name}
                     icon="appstore"
@@ -306,7 +306,7 @@ export default class LibraryDetailMain extends React.Component {
             {this.props.data.frameworks.length > 0 && (
               <div className="inline-buttons">
                 <h2>Frameworks</h2>
-                {this.props.data.frameworks.map(item => (
+                {this.props.data.frameworks.map((item) => (
                   <Button
                     key={item.name}
                     icon="setting"
@@ -319,7 +319,7 @@ export default class LibraryDetailMain extends React.Component {
               </div>
             )}
             <h2>Authors</h2>
-            {this.props.data.authors.map(item => (
+            {this.props.data.authors.map((item) => (
               <div key={item.name} className="library-author">
                 <Icon type="book" />
                 <a onClick={() => this.onDidAuthorSearch(item.name)}>
@@ -394,7 +394,7 @@ export default class LibraryDetailMain extends React.Component {
             {versions && (
               <div>
                 <h2>Versions</h2>
-                {versions.map(item => (
+                {versions.map((item) => (
                   <div key={item.name}>
                     <Tooltip placement="left" title={item.released}>
                       {item.component}

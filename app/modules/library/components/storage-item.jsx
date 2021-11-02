@@ -31,33 +31,33 @@ export default class LibraryStorageItem extends React.Component {
       url: PropTypes.string,
       keywords: PropTypes.arrayOf(PropTypes.string).isRequired,
       authors: PropTypes.arrayOf(PropTypes.object),
-      __src_url: PropTypes.string
+      __src_url: PropTypes.string,
     }),
     onShow: PropTypes.func.isRequired,
     onReveal: PropTypes.func.isRequired,
     onUninstall: PropTypes.func.isRequired,
     onUpdate: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
-    actions: PropTypes.number.isRequired
+    actions: PropTypes.number.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       actionInProgress: false,
-      componentMounted: false
+      componentMounted: false,
     };
   }
 
   componentDidMount() {
     this.setState({
-      componentMounted: true
+      componentMounted: true,
     });
   }
 
   componentWillUnmount() {
     this.setState({
-      componentMounted: false
+      componentMounted: false,
     });
   }
 
@@ -74,12 +74,12 @@ export default class LibraryStorageItem extends React.Component {
   onDidUninstallOrUpdateItem(e, cmd) {
     e.stopPropagation();
     this.setState({
-      actionInProgress: true
+      actionInProgress: true,
     });
     (cmd === 'uninstall' ? this.props.onUninstall : this.props.onUpdate)(() =>
       this.state.componentMounted
         ? this.setState({
-            actionInProgress: false
+            actionInProgress: false,
           })
         : {}
     );
@@ -88,7 +88,9 @@ export default class LibraryStorageItem extends React.Component {
   render() {
     const title = (
       <div>
-        <a onClick={e => this.onDidShow(e, this.props.item)}>{this.props.item.name}</a>{' '}
+        <a onClick={(e) => this.onDidShow(e, this.props.item)}>
+          {this.props.item.name}
+        </a>{' '}
         <small>
           {this.props.item.authors && this.props.item.authors.length
             ? ` by ${this.props.item.authors[0].name}`
@@ -110,7 +112,7 @@ export default class LibraryStorageItem extends React.Component {
         title={title}
         hoverable
         extra={extra}
-        onClick={e => this.onDidShow(e, this.props.item)}
+        onClick={(e) => this.onDidShow(e, this.props.item)}
         className="list-item-card"
       >
         <div className="block">
@@ -119,12 +121,12 @@ export default class LibraryStorageItem extends React.Component {
         <Row>
           <Col sm={16}>
             <div className="inline-buttons">
-              {(this.props.item.keywords || []).map(name => (
+              {(this.props.item.keywords || []).map((name) => (
                 <Button
                   key={name}
                   icon="tag"
                   size="small"
-                  onClick={e => this.onDidKeywordSearch(e, name)}
+                  onClick={(e) => this.onDidKeywordSearch(e, name)}
                 >
                   {name}
                 </Button>
@@ -138,7 +140,7 @@ export default class LibraryStorageItem extends React.Component {
                 <Button
                   type="primary"
                   icon="folder"
-                  onClick={e => this.props.onReveal(e)}
+                  onClick={(e) => this.props.onReveal(e)}
                 >
                   Reveal
                 </Button>
@@ -151,9 +153,9 @@ export default class LibraryStorageItem extends React.Component {
                   title="Are you sure?"
                   okText="Yes"
                   cancelText="No"
-                  onCancel={e => e.stopPropagation()}
-                  onClick={e => e.stopPropagation()}
-                  onConfirm={e => this.onDidUninstallOrUpdateItem(e, 'uninstall')}
+                  onCancel={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  onConfirm={(e) => this.onDidUninstallOrUpdateItem(e, 'uninstall')}
                 >
                   <Button
                     type="primary"
@@ -178,7 +180,7 @@ export default class LibraryStorageItem extends React.Component {
                     (this.props.item.versionWanted &&
                       this.props.item.versionWanted !== this.props.item.versionLatest)
                   }
-                  onClick={e => this.onDidUninstallOrUpdateItem(e, 'update')}
+                  onClick={(e) => this.onDidUninstallOrUpdateItem(e, 'update')}
                 >
                   {this.props.item.versionWanted
                     ? `Update to ${this.props.item.versionLatest}${

@@ -17,7 +17,7 @@
 import { notifyError } from '../modules/core/actions';
 
 export function crashReporterMiddleware(store) {
-  return next => action => {
+  return (next) => (action) => {
     try {
       return next(action);
     } catch (err) {

@@ -29,7 +29,7 @@ export default class PlatformCard extends React.Component {
       versionLatest: PropTypes.object,
       frameworks: PropTypes.array,
       __src_url: PropTypes.string,
-      __pkg_dir: PropTypes.string
+      __pkg_dir: PropTypes.string,
     }),
     actions: PropTypes.arrayOf(PropTypes.string),
     showPlatform: PropTypes.func.isRequired,
@@ -37,26 +37,26 @@ export default class PlatformCard extends React.Component {
     installPlatform: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
     updatePlatform: PropTypes.func.isRequired,
-    osRevealFile: PropTypes.func.isRequired
+    osRevealFile: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
       actionInProgress: false,
-      componentMounted: false
+      componentMounted: false,
     };
   }
 
   componentDidMount() {
     this.setState({
-      componentMounted: true
+      componentMounted: true,
     });
   }
 
   componentWillUnmount() {
     this.setState({
-      componentMounted: false
+      componentMounted: false,
     });
   }
 
@@ -88,14 +88,14 @@ export default class PlatformCard extends React.Component {
   onDidUninstallOrUpdate(e, cmd) {
     e.stopPropagation();
     this.setState({
-      actionInProgress: true
+      actionInProgress: true,
     });
     (cmd === 'uninstall' ? this.props.uninstallPlatform : this.props.updatePlatform)(
       this.props.item.__pkg_dir,
       () =>
         this.state.componentMounted
           ? this.setState({
-              actionInProgress: false
+              actionInProgress: false,
             })
           : {}
     );
@@ -132,12 +132,12 @@ export default class PlatformCard extends React.Component {
         <Row>
           <Col sm={16}>
             <div className="inline-buttons">
-              {(this.props.item.frameworks || []).map(item => (
+              {(this.props.item.frameworks || []).map((item) => (
                 <Button
                   key={item.title}
                   icon="setting"
                   size="small"
-                  onClick={e => this.onDidFramework(e, item.name)}
+                  onClick={(e) => this.onDidFramework(e, item.name)}
                 >
                   {item.title}
                 </Button>
@@ -156,9 +156,9 @@ export default class PlatformCard extends React.Component {
                   title="Are you sure?"
                   okText="Yes"
                   cancelText="No"
-                  onCancel={e => e.stopPropagation()}
-                  onClick={e => e.stopPropagation()}
-                  onConfirm={e => this.onDidUninstallOrUpdate(e, 'uninstall')}
+                  onCancel={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  onConfirm={(e) => this.onDidUninstallOrUpdate(e, 'uninstall')}
                 >
                   <Button
                     type="primary"
@@ -176,7 +176,7 @@ export default class PlatformCard extends React.Component {
                   icon="cloud-download-o"
                   loading={this.state.actionInProgress}
                   disabled={this.state.actionInProgress}
-                  onClick={e => this.onDidUninstallOrUpdate(e, 'update')}
+                  onClick={(e) => this.onDidUninstallOrUpdate(e, 'update')}
                 >
                   {this.props.item.versionLatest
                     ? `Update to ${this.props.item.versionLatest}`

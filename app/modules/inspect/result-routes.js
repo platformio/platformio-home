@@ -25,8 +25,8 @@ const common = [
     path: '/inspect/result',
     icon: 'line-chart',
     label: 'Statistics',
-    component: StatisticsPage
-  }
+    component: StatisticsPage,
+  },
 ];
 
 const memory = [
@@ -34,20 +34,20 @@ const memory = [
     path: '/inspect/result/files',
     icon: 'cluster',
     label: 'Explorer',
-    component: FileExplorerPage
+    component: FileExplorerPage,
   },
   {
     path: '/inspect/result/symbols',
     icon: 'tags',
     label: 'Symbols',
-    component: SymbolsPage
+    component: SymbolsPage,
   },
   {
     path: '/inspect/result/sections',
     icon: 'database',
     label: 'Sections',
-    component: SectionsPage
-  }
+    component: SectionsPage,
+  },
 ];
 
 const code = [
@@ -55,12 +55,12 @@ const code = [
     path: '/inspect/result/defects',
     icon: 'bug',
     label: 'Defects',
-    component: CodePage
-  }
+    component: CodePage,
+  },
 ];
 
 export default {
   common,
   memory,
-  code
+  code,
 };

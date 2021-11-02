@@ -77,8 +77,8 @@ function* watchLoadAccountInfo() {
       data = yield call(backendFetchData, {
         query: 'core.call',
         params: [
-          ['account', 'show', '--json-output', ...(extended ? [] : ['--offline'])]
-        ]
+          ['account', 'show', '--json-output', ...(extended ? [] : ['--offline'])],
+        ],
       });
     } catch (err) {
       if (
@@ -94,11 +94,11 @@ function* watchLoadAccountInfo() {
 }
 
 function* watchLoginAccount() {
-  yield takeLatest(actions.LOGIN_ACCOUNT, function*({ username, password, onEnd }) {
+  yield takeLatest(actions.LOGIN_ACCOUNT, function* ({ username, password, onEnd }) {
     try {
       yield call(backendFetchData, {
         query: 'core.call',
-        params: [['account', 'login', '--username', username, '--password', password]]
+        params: [['account', 'login', '--username', username, '--password', password]],
       });
       yield put(deleteEntity(/^accountInfo/));
     } catch (err) {
@@ -115,7 +115,7 @@ function* watchLoginAccount() {
 }
 
 function* watchLoginWithProvider() {
-  yield takeLatest(actions.LOGIN_WITH_PROVIDER, function*({ provider }) {
+  yield takeLatest(actions.LOGIN_WITH_PROVIDER, function* ({ provider }) {
     const scopeList = 'openid offline_access email profile';
     const url = `${ACCOUNTS_AUTH_OPENID_ENDPOINT}?client_id=${encodeURIComponent(
       ACCOUNTS_AUTH_CLIENT_ID
@@ -136,7 +136,7 @@ function* loginAccountWithCode(client_id, code, redirectUri) {
   try {
     yield call(backendFetchData, {
       query: 'account.call_client',
-      params: ['login_with_code', client_id, code, redirectUri]
+      params: ['login_with_code', client_id, code, redirectUri],
     });
   } catch (err) {
     if (err && err.data) {
@@ -147,12 +147,12 @@ function* loginAccountWithCode(client_id, code, redirectUri) {
 }
 
 function* watchLogoutAccount() {
-  yield takeLatest(actions.LOGOUT_ACCOUNT, function*() {
+  yield takeLatest(actions.LOGOUT_ACCOUNT, function* () {
     try {
       yield put(updateEntity('accountInfo', {}));
       yield call(backendFetchData, {
         query: 'core.call',
-        params: [['account', 'logout']]
+        params: [['account', 'logout']],
       });
     } catch (err) {
       if (err && err.data) {
@@ -164,62 +164,58 @@ function* watchLogoutAccount() {
 }
 
 function* watchRegisterAccount() {
-  yield takeLatest(actions.REGISTER_ACCOUNT, function*({
-    username,
-    email,
-    firstname,
-    lastname,
-    password,
-    onEnd
-  }) {
-    let err = null;
-    try {
-      yield call(backendFetchData, {
-        query: 'core.call',
-        params: [
-          [
-            'account',
-            'register',
-            '--username',
-            username,
-            '--email',
-            email,
-            '--firstname',
-            firstname,
-            '--lastname',
-            lastname,
-            '--password',
-            password
-          ]
-        ]
-      });
-      yield put(
-        notifySuccess(
-          'Congrats!',
-          'Please check your email for the further instructions.'
-        )
-      );
-    } catch (err_) {
-      err = err_;
-      if (err && err.data) {
-        return showAPIErrorMessage(err.data);
-      }
-      return yield put(notifyError('Could not create PIO Account', err));
-    } finally {
-      if (onEnd) {
-        yield call(onEnd, err);
+  yield takeLatest(
+    actions.REGISTER_ACCOUNT,
+    function* ({ username, email, firstname, lastname, password, onEnd }) {
+      let err = null;
+      try {
+        yield call(backendFetchData, {
+          query: 'core.call',
+          params: [
+            [
+              'account',
+              'register',
+              '--username',
+              username,
+              '--email',
+              email,
+              '--firstname',
+              firstname,
+              '--lastname',
+              lastname,
+              '--password',
+              password,
+            ],
+          ],
+        });
+        yield put(
+          notifySuccess(
+            'Congrats!',
+            'Please check your email for the further instructions.'
+          )
+        );
+      } catch (err_) {
+        err = err_;
+        if (err && err.data) {
+          return showAPIErrorMessage(err.data);
+        }
+        return yield put(notifyError('Could not create PIO Account', err));
+      } finally {
+        if (onEnd) {
+          yield call(onEnd, err);
+        }
       }
     }
-  });
+  );
 }
 
 function* watchForgotAccount() {
-  yield takeLatest(actions.FORGOT_ACCOUNT, function*({ username, onEnd }) {
+  yield takeLatest(actions.FORGOT_ACCOUNT, function* ({ username, onEnd }) {
     let err = null;
     try {
       yield call(backendFetchData, {
         query: 'core.call',
-        params: [['account', 'forgot', '--username', username]]
+        params: [['account', 'forgot', '--username', username]],
       });
       yield put(
         notifySuccess(
@@ -242,130 +238,124 @@ function* watchForgotAccount() {
 }
 
 function* watchPasswordAccount() {
-  yield takeLatest(actions.PASSWORD_ACCOUNT, function*({
-    oldPassword,
-    newPassword,
-    onEnd
-  }) {
-    let err = null;
-    try {
-      yield call(backendFetchData, {
-        query: 'core.call',
-        params: [
-          [
-            'account',
-            'password',
-            '--old-password',
-            oldPassword,
-            '--new-password',
-            newPassword
-          ]
-        ]
-      });
-      yield put(notifySuccess('Congrats!', 'Successfully updated password!'));
-    } catch (err_) {
-      err = err_;
-      if (err && err.data) {
-        return showAPIErrorMessage(err.data);
-      }
-      return yield put(notifyError('Could not change password for PIO Account', err));
-    } finally {
-      if (onEnd) {
-        yield call(onEnd, err);
+  yield takeLatest(
+    actions.PASSWORD_ACCOUNT,
+    function* ({ oldPassword, newPassword, onEnd }) {
+      let err = null;
+      try {
+        yield call(backendFetchData, {
+          query: 'core.call',
+          params: [
+            [
+              'account',
+              'password',
+              '--old-password',
+              oldPassword,
+              '--new-password',
+              newPassword,
+            ],
+          ],
+        });
+        yield put(notifySuccess('Congrats!', 'Successfully updated password!'));
+      } catch (err_) {
+        err = err_;
+        if (err && err.data) {
+          return showAPIErrorMessage(err.data);
+        }
+        return yield put(notifyError('Could not change password for PIO Account', err));
+      } finally {
+        if (onEnd) {
+          yield call(onEnd, err);
+        }
       }
     }
-  });
+  );
 }
 
 function* watchTokenAccount() {
-  yield takeLatest(actions.SHOW_ACCOUNT_TOKEN, function*({
-    password,
-    regenerate,
-    onEnd
-  }) {
-    try {
-      const args = ['account', 'token', '--json-output', '--password', password];
-      if (regenerate) {
-        args.push('--regenerate');
-      }
-      const data = yield call(backendFetchData, {
-        query: 'core.call',
-        params: [args]
-      });
-      yield put(updateEntity('accountToken', data.result || null));
-    } catch (err) {
-      if (err && err.data) {
-        return showAPIErrorMessage(err.data);
-      }
-      return yield put(notifyError('Could not fetch PIO Account token', err));
-    } finally {
-      if (onEnd) {
-        yield call(onEnd);
+  yield takeLatest(
+    actions.SHOW_ACCOUNT_TOKEN,
+    function* ({ password, regenerate, onEnd }) {
+      try {
+        const args = ['account', 'token', '--json-output', '--password', password];
+        if (regenerate) {
+          args.push('--regenerate');
+        }
+        const data = yield call(backendFetchData, {
+          query: 'core.call',
+          params: [args],
+        });
+        yield put(updateEntity('accountToken', data.result || null));
+      } catch (err) {
+        if (err && err.data) {
+          return showAPIErrorMessage(err.data);
+        }
+        return yield put(notifyError('Could not fetch PIO Account token', err));
+      } finally {
+        if (onEnd) {
+          yield call(onEnd);
+        }
       }
     }
-  });
+  );
 }
 
 function* watchUpdateProfile() {
-  yield takeLatest(actions.UPDATE_PROFILE, function*({
-    username,
-    email,
-    firstname,
-    lastname,
-    currentPassword,
-    onEnd
-  }) {
-    let err = null;
-    try {
-      const response = yield call(backendFetchData, {
-        query: 'core.call',
-        params: [
-          [
-            'account',
-            'update',
-            '--username',
-            username,
-            '--email',
-            email,
-            '--firstname',
-            firstname,
-            '--lastname',
-            lastname,
-            '--current-password',
-            currentPassword
-          ]
-        ]
-      });
-      yield put(actions.loadAccountInfo(true));
-      if (response.includes('re-login')) {
-        yield put(updateEntity('accountInfo', {}));
-        if (response.includes('check your mail')) {
+  yield takeLatest(
+    actions.UPDATE_PROFILE,
+    function* ({ username, email, firstname, lastname, currentPassword, onEnd }) {
+      let err = null;
+      try {
+        const response = yield call(backendFetchData, {
+          query: 'core.call',
+          params: [
+            [
+              'account',
+              'update',
+              '--username',
+              username,
+              '--email',
+              email,
+              '--firstname',
+              firstname,
+              '--lastname',
+              lastname,
+              '--current-password',
+              currentPassword,
+            ],
+          ],
+        });
+        yield put(actions.loadAccountInfo(true));
+        if (response.includes('re-login')) {
+          yield put(updateEntity('accountInfo', {}));
+          if (response.includes('check your mail')) {
+            yield put(
+              notifySuccess(
+                'Congrats!',
+                'Successfully updated profile! Please check your mail to verify your new email address and re-login.'
+              )
+            );
+            return;
+          }
           yield put(
-            notifySuccess(
-              'Congrats!',
-              'Successfully updated profile! Please check your mail to verify your new email address and re-login.'
-            )
+            notifySuccess('Congrats!', 'Successfully updated profile! Please re-login')
           );
           return;
         }
-        yield put(
-          notifySuccess('Congrats!', 'Successfully updated profile! Please re-login')
-        );
-        return;
-      }
-      yield put(notifySuccess('Congrats!', 'Successfully updated profile!'));
-    } catch (err_) {
-      err = err_;
-      if (err && err.data) {
-        return showAPIErrorMessage(err.data);
-      }
-      return yield put(notifyError('Could not update profile of PIO Account', err));
-    } finally {
-      if (onEnd) {
-        yield call(onEnd, err);
+        yield put(notifySuccess('Congrats!', 'Successfully updated profile!'));
+      } catch (err_) {
+        err = err_;
+        if (err && err.data) {
+          return showAPIErrorMessage(err.data);
+        }
+        return yield put(notifyError('Could not update profile of PIO Account', err));
+      } finally {
+        if (onEnd) {
+          yield call(onEnd, err);
+        }
       }
     }
-  });
+  );
 }
 
 export default [
@@ -377,5 +367,5 @@ export default [
   watchForgotAccount,
   watchPasswordAccount,
   watchTokenAccount,
-  watchUpdateProfile
+  watchUpdateProfile,
 ];

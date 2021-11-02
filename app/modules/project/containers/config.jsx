@@ -25,18 +25,18 @@ import {
   SECTION_GLOBAL_ENV,
   SECTION_PLATFORMIO,
   SECTION_USER_ENV,
-  TYPE_BOOL
+  TYPE_BOOL,
 } from '@project/constants';
 import {
   loadConfigSchema,
   loadProjectConfig,
-  saveProjectConfig
+  saveProjectConfig,
 } from '@project/actions';
 import { openTextDocument, osOpenUrl } from '@core/actions';
 import {
   selectConfigSchema,
   selectProjectConfig,
-  selectProjectInfo
+  selectProjectInfo,
 } from '@project/selectors';
 
 import { ConfigFileModifiedError } from '@project/errors';
@@ -56,26 +56,26 @@ class ProjectConfig extends React.PureComponent {
     initialConfig: PropTypes.arrayOf(
       PropTypes.shape({
         section: PropTypes.string.isRequired,
-        items: PropTypes.arrayOf(ConfigOptionType)
+        items: PropTypes.arrayOf(ConfigOptionType),
       })
     ),
     schema: PropTypes.shape({
       [SCOPE_PLATFORMIO]: SchemaType,
-      [SCOPE_ENV]: SchemaType
+      [SCOPE_ENV]: SchemaType,
     }),
     // callbacks
     loadConfigSchema: PropTypes.func.isRequired,
     loadProjectConfig: PropTypes.func.isRequired,
     saveProjectConfig: PropTypes.func.isRequired,
     openTextDocument: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   static iconBySectionType = {
     [SECTION_PLATFORMIO]: 'appstore',
     [SECTION_GLOBAL_ENV]: 'environment',
     [SECTION_USER_ENV]: 'environment',
-    [SECTION_CUSTOM]: 'user'
+    [SECTION_CUSTOM]: 'user',
   };
 
   sectionIdCounter = 0;
@@ -83,7 +83,7 @@ class ProjectConfig extends React.PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
-      showToc: false
+      showToc: false,
     };
   }
 
@@ -99,28 +99,28 @@ class ProjectConfig extends React.PureComponent {
   }
 
   save(force) {
-    const stateConfig = this.state.config.map(section => ({
+    const stateConfig = this.state.config.map((section) => ({
       ...section,
-      items: section.items.filter(option => {
+      items: section.items.filter((option) => {
         const scope = this.getSectionScope(this.getSectionType(section.section));
         const scopeSchema = (scope && this.props.schema[scope]) || [];
-        const schema = scopeSchema.find(s => s.name === option.name);
+        const schema = scopeSchema.find((s) => s.name === option.name);
         if (schema && schema.type === TYPE_BOOL && option.value === schema.default) {
           // Skip saving checkboxes with default values
           return false;
         }
         return true;
-      })
+      }),
     }));
 
     this.setState({
       config: stateConfig,
-      saving: true
+      saving: true,
     });
 
     const apiConfig = stateConfig.map(({ section, items }) => [
       section,
-      items.map(({ name, value }) => [name, value])
+      items.map(({ name, value }) => [name, value]),
     ]);
 
     this.props.saveProjectConfig(
@@ -128,11 +128,11 @@ class ProjectConfig extends React.PureComponent {
       apiConfig,
       {
         force,
-        mtime: this.props.mtime
+        mtime: this.props.mtime,
       },
-      err => {
+      (err) => {
         this.setState({
-          saving: false
+          saving: false,
         });
         if (!force && err instanceof ConfigFileModifiedError) {
           Modal.confirm({
@@ -149,7 +149,7 @@ class ProjectConfig extends React.PureComponent {
             title: 'Do you want to override externally modified config?',
             onOk: () => {
               this.save(true);
-            }
+            },
           });
         }
       }
@@ -165,19 +165,19 @@ class ProjectConfig extends React.PureComponent {
       prevProps.initialConfig !== this.props.initialConfig ||
       prevProps.schema !== this.props.schema
     ) {
-      const config = this.props.initialConfig.map(section => ({
+      const config = this.props.initialConfig.map((section) => ({
         ...section,
-        id: this.generateSectionId(section)
+        id: this.generateSectionId(section),
       }));
       this.setState({
-        config
+        config,
       });
 
       // Restore active tab if section is present, otherwise display first
-      this.setState(prevState => {
+      this.setState((prevState) => {
         if (prevState.activeTabKey === undefined || !this.getActiveSection(prevState)) {
           return {
-            activeTabKey: prevState.config.length ? prevState.config[0].id : undefined
+            activeTabKey: prevState.config.length ? prevState.config[0].id : undefined,
           };
         }
       });
@@ -214,14 +214,14 @@ class ProjectConfig extends React.PureComponent {
     if (!state.config) {
       return;
     }
-    return state.config.find(s => s.id === state.activeTabKey);
+    return state.config.find((s) => s.id === state.activeTabKey);
   }
 
   sectionExists(name, state) {
     if (!state) {
       state = this.state;
     }
-    return state.config && state.config.findIndex(s => s.section === name) !== -1;
+    return state.config && state.config.findIndex((s) => s.section === name) !== -1;
   }
 
   generateSectionId(section) {
@@ -251,8 +251,8 @@ class ProjectConfig extends React.PureComponent {
   }
 
   setActiveSection(name) {
-    this.setState(prevState => {
-      const section = prevState.config.find(s => s.section === name);
+    this.setState((prevState) => {
+      const section = prevState.config.find((s) => s.section === name);
       if (section) {
         return { activeTabKey: section.id };
       }
@@ -266,24 +266,24 @@ class ProjectConfig extends React.PureComponent {
     const type = this.getSectionType(name);
     const newSection = {
       section: name,
-      items
+      items,
     };
     newSection.id = this.generateSectionId(newSection);
 
-    this.setState(prevState => {
+    this.setState((prevState) => {
       let config;
       if (type === SECTION_PLATFORMIO) {
         config = [newSection, ...prevState.config];
       } else if (type === SECTION_GLOBAL_ENV) {
         let insertIdx = 0;
         const pioIdx = prevState.config.findIndex(
-          s => s.section === SECTION_PLATFORMIO
+          (s) => s.section === SECTION_PLATFORMIO
         );
         if (pioIdx !== -1) {
           insertIdx = pioIdx + 1;
         } else {
           const firstEnvIdx = prevState.config.findIndex(
-            s => this.getSectionType(s.section) === SECTION_USER_ENV
+            (s) => this.getSectionType(s.section) === SECTION_USER_ENV
           );
           if (firstEnvIdx !== -1) {
             insertIdx = firstEnvIdx;
@@ -296,19 +296,19 @@ class ProjectConfig extends React.PureComponent {
       }
 
       return {
-        config
+        config,
       };
     });
   }
 
   removeSection(targetKey) {
-    this.setState(oldState => {
-      const removedIdx = oldState.config.findIndex(s => s.id === targetKey);
+    this.setState((oldState) => {
+      const removedIdx = oldState.config.findIndex((s) => s.id === targetKey);
       if (removedIdx === -1) {
         return;
       }
 
-      const config = oldState.config.filter(s => s.id !== targetKey);
+      const config = oldState.config.filter((s) => s.id !== targetKey);
       const state = { config };
 
       // Fix active tab
@@ -329,10 +329,10 @@ class ProjectConfig extends React.PureComponent {
   }
 
   addSectionField(sectionName, name, value) {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const scope = this.getSectionScope(this.getSectionType(sectionName));
       const scopeSchema = (scope && this.props.schema[scope]) || [];
-      const schema = scopeSchema.find(s => s.name === name);
+      const schema = scopeSchema.find((s) => s.name === name);
       if (value === undefined) {
         if (schema && schema.multiple) {
           value = [];
@@ -343,68 +343,68 @@ class ProjectConfig extends React.PureComponent {
 
       const field = {
         name,
-        value
+        value,
       };
-      const oldSection = prevState.config.find(s => s.section === sectionName);
+      const oldSection = prevState.config.find((s) => s.section === sectionName);
       const newSection = {
         ...oldSection,
-        items: [...oldSection.items, field]
+        items: [...oldSection.items, field],
       };
       return {
-        config: prevState.config.map(section =>
+        config: prevState.config.map((section) =>
           section !== oldSection ? section : newSection
-        )
+        ),
       };
     });
   }
 
   removeSectionField(sectionName, name) {
-    this.setState(prevState => {
-      const oldSection = prevState.config.find(s => s.section === sectionName);
+    this.setState((prevState) => {
+      const oldSection = prevState.config.find((s) => s.section === sectionName);
       const newSection = {
         ...oldSection,
-        items: oldSection.items.filter(item => item.name !== name)
+        items: oldSection.items.filter((item) => item.name !== name),
       };
       return {
-        config: prevState.config.map(section =>
+        config: prevState.config.map((section) =>
           section !== oldSection ? section : newSection
-        )
+        ),
       };
     });
   }
 
   getSectionValue(sectionName, name, defaultValue) {
-    const section = this.state.config.find(s => s.section === sectionName);
+    const section = this.state.config.find((s) => s.section === sectionName);
     if (!section) {
       return defaultValue;
     }
-    const option = section.items.find(o => o.name === name);
+    const option = section.items.find((o) => o.name === name);
     return option && option.value != undefined ? option.value : defaultValue;
   }
 
   _updateSectionValue(sectionName, name, valueUpdater) {
-    const oldSection = this.state.config.find(s => s.section === sectionName);
+    const oldSection = this.state.config.find((s) => s.section === sectionName);
     if (!oldSection) {
       this.addSection(sectionName, [
         {
           name,
-          value: valueUpdater()
-        }
+          value: valueUpdater(),
+        },
       ]);
       return;
     }
 
-    this.setState(prevState => {
-      const oldSection = prevState.config.find(s => s.section === sectionName);
+    this.setState((prevState) => {
+      const oldSection = prevState.config.find((s) => s.section === sectionName);
       if (!oldSection) {
         return;
       }
       const items = oldSection.items.slice();
-      const optionIdx = oldSection.items.findIndex(item => item.name === name);
+      const optionIdx = oldSection.items.findIndex((item) => item.name === name);
       if (optionIdx === -1) {
         items.push({
           name,
-          value: valueUpdater()
+          value: valueUpdater(),
         });
       } else {
         const oldItem = items[optionIdx];
@@ -412,12 +412,12 @@ class ProjectConfig extends React.PureComponent {
       }
       const newSection = {
         ...oldSection,
-        items
+        items,
       };
       return {
-        config: prevState.config.map(section =>
+        config: prevState.config.map((section) =>
           section !== oldSection ? section : newSection
-        )
+        ),
       };
     });
   }
@@ -427,16 +427,16 @@ class ProjectConfig extends React.PureComponent {
   }
 
   renameSection(tabId, name) {
-    this.setState(state => ({
-      config: state.config.map(section => {
+    this.setState((state) => ({
+      config: state.config.map((section) => {
         if (section.id !== tabId) {
           return section;
         }
         return {
           ...section,
-          section: name
+          section: name,
         };
-      })
+      }),
     }));
   }
 
@@ -462,12 +462,12 @@ class ProjectConfig extends React.PureComponent {
     );
   };
 
-  handleTabChange = activeTabKey => {
+  handleTabChange = (activeTabKey) => {
     this.setState({ activeTabKey });
   };
 
-  handleTabOrderChange = order => {
-    this.setState(prevState => {
+  handleTabOrderChange = (order) => {
+    this.setState((prevState) => {
       const prevConfig = prevState.config;
       const config = prevConfig.slice().sort((a, b) => {
         const orderA = order.indexOf(a.id);
@@ -491,15 +491,15 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
-  handleDocumentationClick = url => {
+  handleDocumentationClick = (url) => {
     this.props.osOpenUrl(url, {
-      target: '_blank'
+      target: '_blank',
     });
   };
 
   handleSectionRename = (name, tabId) => {
     // Prevent duplicate names
-    const existingSection = this.state.config.find(s => s.section === name);
+    const existingSection = this.state.config.find((s) => s.section === name);
     if (existingSection) {
       return false;
     }
@@ -515,14 +515,14 @@ class ProjectConfig extends React.PureComponent {
     const reportIssueUrl =
       'https://github.com/platformio/platformio-home/issues/new?' +
       querystringify.stringify({
-        title: 'Edit Project Config'
+        title: 'Edit Project Config',
       });
     this.props.osOpenUrl(reportIssueUrl);
   };
 
   handleToggleTocClick = () => {
-    this.setState(prevState => ({
-      showToc: !prevState.showToc
+    this.setState((prevState) => ({
+      showToc: !prevState.showToc,
     }));
   };
 
@@ -531,8 +531,8 @@ class ProjectConfig extends React.PureComponent {
     this.setState({
       autoFocus: {
         section,
-        option: name
-      }
+        option: name,
+      },
     });
   };
 
@@ -546,26 +546,26 @@ class ProjectConfig extends React.PureComponent {
     });
   };
 
-  handleNewOptionSelect = name => {
+  handleNewOptionSelect = (name) => {
     const sectionName = this.getActiveSection().section;
     this.addSectionField(sectionName, name);
     this.setState({
       autoFocus: {
         section: sectionName,
-        option: name
-      }
+        option: name,
+      },
     });
   };
 
   handleDefaultToggle = (sectionName, isDefault) => {
     const env = sectionName.replace(SECTION_USER_ENV, '');
     const updater = isDefault
-      ? oldValue => {
+      ? (oldValue) => {
           const set = new Set(oldValue);
           set.add(env);
           return [...set];
         }
-      : oldValue => {
+      : (oldValue) => {
           const set = new Set(oldValue);
           set.delete(env);
           return [...set];
@@ -577,9 +577,9 @@ class ProjectConfig extends React.PureComponent {
   forceRerenderSection(name) {
     // Force section rerender to overcome defaultValue side effect
     // by changing component id (used as key to render)
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const state = {};
-      state.config = prevState.config.map(section => {
+      state.config = prevState.config.map((section) => {
         if (section.section !== name) {
           return section;
         }
@@ -589,7 +589,7 @@ class ProjectConfig extends React.PureComponent {
         }
         return {
           ...section,
-          id: newId
+          id: newId,
         };
       });
       return state;
@@ -668,7 +668,7 @@ class ProjectConfig extends React.PureComponent {
         )}
       </Menu>
     );
-    if (newSectionMenu.props.children.filter(x => !!x).length) {
+    if (newSectionMenu.props.children.filter((x) => !!x).length) {
       return (
         <Dropdown.Button
           className="add-section-btn"
@@ -730,7 +730,7 @@ class ProjectConfig extends React.PureComponent {
       onDocumentationClick: this.handleDocumentationClick,
       onOptionAdd: this.handleOptionAdd,
       onOptionRemove: this.handleOptionRemove,
-      onTocToggle: this.handleTocToggle
+      onTocToggle: this.handleTocToggle,
     };
     const tabCls = [`section-${type}-icon`];
     if (props.defaultEnv) {
@@ -777,7 +777,7 @@ class ProjectConfig extends React.PureComponent {
         onChange={this.handleTabChange}
         type="card"
       >
-        {this.state.config.map(section =>
+        {this.state.config.map((section) =>
           this.renderConfigSection(section.id, section)
         )}
       </DraggableTabs>
@@ -797,14 +797,14 @@ class ProjectConfig extends React.PureComponent {
   }
 }
 
-const mapStateToProps = function(state, ownProps) {
+const mapStateToProps = function (state, ownProps) {
   const { projectDir } = ownProps.location.state;
   const config = selectProjectConfig(state) || {};
   return {
     project: selectProjectInfo(state, projectDir),
     schema: selectConfigSchema(state),
     initialConfig: config.config,
-    mtime: config.mtime
+    mtime: config.mtime,
   };
 };
 
@@ -813,7 +813,7 @@ const dispatchToProps = {
   loadProjectConfig,
   openTextDocument,
   osOpenUrl,
-  saveProjectConfig
+  saveProjectConfig,
 };
 
 export const ProjectConfigPage = connect(

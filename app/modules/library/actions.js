@@ -30,7 +30,7 @@ export const UPDATE_LIBRARY = 'UPDATE_LIBRARY';
 export const loadStats = () => createAction(LOAD_STATS);
 export const loadSearchResult = (query, page = 1, onEnd) =>
   createAction(LOAD_SEARCH_RESULT, { query, page, onEnd });
-export const loadLibraryData = idOrManifest =>
+export const loadLibraryData = (idOrManifest) =>
   createAction(LOAD_LIBRARY_DATA, { idOrManifest });
 export const loadBuiltinLibs = () => createAction(LOAD_BUILTIN_LIBS);
 export const loadInstalledLibs = () => createAction(LOAD_INSTALLED_LIBS);

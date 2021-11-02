@@ -27,7 +27,7 @@ import {
   Input,
   Row,
   Spin,
-  Tooltip
+  Tooltip,
 } from 'antd';
 
 import { IS_WINDOWS } from '../../../config';
@@ -44,7 +44,7 @@ class FileExplorer extends React.Component {
     devices: PropTypes.arrayOf(
       PropTypes.shape({
         path: PropTypes.string,
-        name: PropTypes.string
+        name: PropTypes.string,
       })
     ),
     osDirItems: PropTypes.object,
@@ -59,12 +59,12 @@ class FileExplorer extends React.Component {
     osCopyFile: PropTypes.func.isRequired,
     osRenameFile: PropTypes.func.isRequired,
     resetFSItems: PropTypes.func.isRequired,
-    toggleFavoriteFolder: PropTypes.func.isRequired
+    toggleFavoriteFolder: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     ask: 'directory',
-    onSelect: () => {}
+    onSelect: () => {},
   };
 
   constructor() {
@@ -73,7 +73,7 @@ class FileExplorer extends React.Component {
       showHidden: false,
       pendingMakeDirs: false,
       pendingRenameFile: false,
-      rootDir: null
+      rootDir: null,
     };
     this.props.loadLogicalDevices();
   }
@@ -87,7 +87,7 @@ class FileExplorer extends React.Component {
 
   onDidToggleHidden() {
     this.setState({
-      showHidden: !this.state.showHidden
+      showHidden: !this.state.showHidden,
     });
   }
 
@@ -98,14 +98,14 @@ class FileExplorer extends React.Component {
   onRequestCreateFolder() {
     this.setState({
       pendingMakeDirs: !this.state.pendingMakeDirs,
-      pendingRenameFile: false
+      pendingRenameFile: false,
     });
   }
 
   onRequestRenameFile() {
     this.setState({
       pendingRenameFile: !this.state.pendingRenameFile,
-      pendingMakeDirs: false
+      pendingMakeDirs: false,
     });
   }
 
@@ -134,7 +134,7 @@ class FileExplorer extends React.Component {
     this.setState({
       rootDir,
       pendingMakeDirs: false,
-      pendingRenameFile: false
+      pendingRenameFile: false,
     });
     this.props.osListDir(rootDir);
     if (this.props.ask === 'directory') {
@@ -157,17 +157,17 @@ class FileExplorer extends React.Component {
     }
 
     if (!this.state.rootDir) {
-      return this.props.devices.map(item => ({
+      return this.props.devices.map((item) => ({
         name: item.name || item.path,
         path: item.path,
-        isDir: true
+        isDir: true,
       }));
     }
 
     return this.props.osDirItems[this.state.rootDir].map(([name, isDir]) => ({
       name,
       isDir,
-      path: path.join(this.state.rootDir, name)
+      path: path.join(this.state.rootDir, name),
     }));
   }
 
@@ -205,13 +205,13 @@ class FileExplorer extends React.Component {
                   <Input
                     placeholder="Folder Name"
                     onPressEnter={::this.onDidMakeDirs}
-                    ref={elm => (elm ? elm.focus() : '')}
+                    ref={(elm) => (elm ? elm.focus() : '')}
                   />
                 ) : (
                   <Input
                     defaultValue={path.basename(this.state.rootDir)}
                     onPressEnter={::this.onDidRenameFile}
-                    ref={elm => (elm ? elm.focus() : '')}
+                    ref={(elm) => (elm ? elm.focus() : '')}
                   />
                 )}
               </Tooltip>
@@ -294,7 +294,7 @@ class FileExplorer extends React.Component {
     while (lastPath) {
       routes.push({
         path: lastPath,
-        name: path.basename(lastPath)
+        name: path.basename(lastPath),
       });
       const parent = path.dirname(lastPath);
       if (!parent || parent === lastPath) {
@@ -344,7 +344,7 @@ class FileExplorer extends React.Component {
         </ul>
         <b>Devices</b>
         <ul>
-          {this.props.devices.map(item => (
+          {this.props.devices.map((item) => (
             <li key={item.path}>
               <Icon type="hdd" />
               <a onClick={() => this.onDidChangeRoot(item.path)} title={item.name}>
@@ -371,7 +371,7 @@ class FileExplorer extends React.Component {
     } else {
       content = (
         <ul>
-          {items.map(item => (
+          {items.map((item) => (
             <li key={item}>
               <Icon type="star-o" />
               <a onClick={() => this.onDidChangeRoot(item)} title={item}>
@@ -409,8 +409,8 @@ class FileExplorer extends React.Component {
       <div className="fe-root-items">
         <ul>
           {items
-            .filter(item => this.filterHidden(item.name))
-            .map(item => (
+            .filter((item) => this.filterHidden(item.name))
+            .map((item) => (
               <li key={item.path}>{this.renderRootItem(item)}</li>
             ))}
         </ul>
@@ -449,7 +449,7 @@ function mapStateToProps(state) {
     osDirItems: selectors.selectOsDirItems(state),
     homeDir: selectStorageItem(state, 'homeDir'),
     projectsDir: selectStorageItem(state, 'projectsDir'),
-    favoriteFolders: selectStorageItem(state, 'favoriteFolders')
+    favoriteFolders: selectStorageItem(state, 'favoriteFolders'),
   };
 }
 

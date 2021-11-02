@@ -23,22 +23,22 @@ export const RESULT_KEY = 'inspectSizedata';
 
 export const SYMBOL_ICON_BY_TYPE = Object.freeze({
   STT_FUNC: 'profile',
-  STT_OBJECT: 'tag'
+  STT_OBJECT: 'tag',
 });
 
 export const SYMBOL_NAME_BY_TYPE = Object.freeze({
   STT_FUNC: 'Function',
-  STT_OBJECT: 'Variable'
+  STT_OBJECT: 'Variable',
 });
 
 export const SEVERITY_LEVEL = Object.freeze({
   HIGH: 1,
   MEDIUM: 2,
-  LOW: 4
+  LOW: 4,
 });
 
 export const SEVERITY_LEVEL_NAME = {
   [SEVERITY_LEVEL.HIGH]: 'High',
   [SEVERITY_LEVEL.MEDIUM]: 'Medium',
-  [SEVERITY_LEVEL.LOW]: 'Low'
+  [SEVERITY_LEVEL.LOW]: 'Low',
 };

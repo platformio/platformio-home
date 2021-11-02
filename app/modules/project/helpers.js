@@ -21,7 +21,7 @@ import {
   TYPE_FILE,
   TYPE_INT,
   TYPE_INT_RANGE,
-  TYPE_TEXT
+  TYPE_TEXT,
 } from '@project/constants';
 import { Checkbox, Input, Select } from 'antd';
 
@@ -33,12 +33,12 @@ export function splitMultipleField(v) {
   }
   return v
     .split(v.includes('\n') ? /\n/ : /, /)
-    .map(v => v.replace(/^\s+|\s+$/g, ''))
+    .map((v) => v.replace(/^\s+|\s+$/g, ''))
     .filter((v, i) => v.length || i);
 }
 
 export function getConfigOptionValue(data, name) {
-  const option = data.find(o => o.name === name) || {};
+  const option = data.find((o) => o.name === name) || {};
   return option.value;
 }
 
@@ -48,20 +48,20 @@ class OptionEditorFactoryImpl {
   }
 
   register(matcher, factoryCallback) {
-    if (!this.factories.find(f => f.matcher === matcher)) {
+    if (!this.factories.find((f) => f.matcher === matcher)) {
       this.factories.push({
         matcher,
-        factoryCallback
+        factoryCallback,
       });
     }
   }
 
   isCustomized(schema) {
-    return this.factories.findIndex(f => f.matcher(schema)) !== -1;
+    return this.factories.findIndex((f) => f.matcher(schema)) !== -1;
   }
 
   factory(schema, inputProps, itemProps, decoratorOptions, project) {
-    const factory = this.factories.find(f => f.matcher(schema));
+    const factory = this.factories.find((f) => f.matcher(schema));
     if (!factory) {
       return this.defaultFactory(
         schema,
@@ -106,7 +106,7 @@ class OptionEditorFactoryImpl {
             mode={multiple ? 'multiple' : 'default'}
             tokenSeparators={[',', '\n']}
           >
-            {schema.choices.map(value => (
+            {schema.choices.map((value) => (
               <Select.Option key={value} value={value}>
                 {value}
               </Select.Option>

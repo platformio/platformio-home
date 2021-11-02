@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   UPDATES_INPUT_FILTER_KEY,
   selectUpdatesFilter,
-  selectVisibleLibUpdates
+  selectVisibleLibUpdates,
 } from '../selectors';
 
 import { LibraryStorage } from '../storage';
@@ -41,7 +41,7 @@ class LibraryUpdatesPage extends React.Component {
     osRevealFile: PropTypes.func.isRequired,
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
-    updateLibrary: PropTypes.func.isRequired
+    updateLibrary: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -66,8 +66,8 @@ function mapStateToProps(state, ownProps) {
     filterValue: selectUpdatesFilter(state),
     searchLibrary: (query, page) =>
       goTo(ownProps.history, '/libraries/registry/search', { query, page }),
-    showLibrary: idOrManifest =>
-      goTo(ownProps.history, '/libraries/installed/show', { idOrManifest })
+    showLibrary: (idOrManifest) =>
+      goTo(ownProps.history, '/libraries/installed/show', { idOrManifest }),
   };
 }
 
@@ -75,8 +75,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     Object.assign({}, actions, {
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(UPDATES_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

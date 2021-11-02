@@ -42,7 +42,7 @@ export default class PlatformMain extends React.Component {
       packages: PropTypes.arrayOf(PropTypes.object),
       boards: PropTypes.arrayOf(PropTypes.object),
       __src_url: PropTypes.string,
-      __pkg_dir: PropTypes.string
+      __pkg_dir: PropTypes.string,
     }),
     osRevealFile: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
@@ -50,7 +50,7 @@ export default class PlatformMain extends React.Component {
     showInstalledPlatforms: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
     uninstallPlatform: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -58,7 +58,7 @@ export default class PlatformMain extends React.Component {
     this.state = {
       installing: false,
       uninstalling: false,
-      versionForInstall: null
+      versionForInstall: null,
     };
   }
 
@@ -68,13 +68,13 @@ export default class PlatformMain extends React.Component {
 
   onDidVersionChange(value) {
     this.setState({
-      versionForInstall: value
+      versionForInstall: value,
     });
   }
 
   onDidInstall() {
     this.setState({
-      installing: true
+      installing: true,
     });
     this.props.installPlatform(
       this.state.versionForInstall
@@ -82,18 +82,18 @@ export default class PlatformMain extends React.Component {
         : this.props.data.name,
       () =>
         this.setState({
-          installing: false
+          installing: false,
         })
     );
   }
 
   onDidUninstall() {
     this.setState({
-      uninstalling: true
+      uninstalling: true,
     });
-    this.props.uninstallPlatform(this.props.data.__pkg_dir, err => {
+    this.props.uninstallPlatform(this.props.data.__pkg_dir, (err) => {
       this.setState({
-        uninstalling: false
+        uninstalling: false,
       });
       if (!err) {
         this.props.showInstalledPlatforms();
@@ -112,7 +112,7 @@ export default class PlatformMain extends React.Component {
               dropdownMatchSelectWidth={false}
               onChange={::this.onDidVersionChange}
             >
-              {versions.map(name => (
+              {versions.map((name) => (
                 <Select.Option key={name} value={name}>
                   {name}
                 </Select.Option>
@@ -269,7 +269,7 @@ export default class PlatformMain extends React.Component {
           <Col sm={4}>
             <h2>Frameworks</h2>
             <ul className="resources-list">
-              {this.props.data.frameworks.map(item => (
+              {this.props.data.frameworks.map((item) => (
                 <li key={item.name}>
                   <Button
                     icon="setting"
@@ -343,7 +343,7 @@ export default class PlatformMain extends React.Component {
                 <li>
                   <h2>Versions</h2>
                   <ul>
-                    {this.props.data.versions.slice(0).map(name => (
+                    {this.props.data.versions.slice(0).map((name) => (
                       <li key={name}>
                         <Icon type="environment-o" className="inline-block-tight" />
                         {name}

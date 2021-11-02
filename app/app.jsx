@@ -29,7 +29,7 @@ import routes from './routes';
 
 export default class App extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   };
 
   renderHeader() {
@@ -100,7 +100,7 @@ export default class App extends React.Component {
               {routes
                 .slice(0)
                 .reverse()
-                .map(item => (
+                .map((item) => (
                   <Route
                     path={item.path}
                     key={item.path}

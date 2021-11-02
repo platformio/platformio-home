@@ -32,7 +32,7 @@ export function shallowCompare(a, b) {
   return (
     Object.keys(a).length === Object.keys(b).length &&
     Object.keys(a).every(
-      key => Object.prototype.hasOwnProperty.call(b, key) && a[key] === b[key]
+      (key) => Object.prototype.hasOwnProperty.call(b, key) && a[key] === b[key]
     )
   );
 }
@@ -58,7 +58,7 @@ export function formatHex(addr, options) {
 }
 
 export function multiSort(...sorters) {
-  return function(a, b) {
+  return function (a, b) {
     for (let i = 0; i < sorters.length; i++) {
       const result = sorters[i](a, b);
       if (result !== 0) {
@@ -76,7 +76,7 @@ export function compareNumber(a, b) {
 export function compareString(a, b) {
   return String(a).localeCompare(b, undefined, {
     caseFirst: 'upper',
-    numeric: true
+    numeric: true,
   });
 }
 
@@ -87,12 +87,12 @@ export function compareBool(a, b) {
 export function columnSortFactory(type, dataIndex) {
   switch (type) {
     case 'string':
-      return function(a, b) {
+      return function (a, b) {
         return compareString(a[dataIndex], b[dataIndex]);
       };
 
     case 'number':
-      return function(a, b) {
+      return function (a, b) {
         return compareNumber(a[dataIndex], b[dataIndex]);
       };
 
@@ -136,12 +136,12 @@ export function resolveRelativePathSegments(path, sep = pathlib.sep) {
 }
 
 export function getFilterMenu(ds, dataindex) {
-  return [...new Set(ds.map(x => x[dataindex]))]
+  return [...new Set(ds.map((x) => x[dataindex]))]
     .sort()
-    .filter(x => x !== undefined && x !== '')
-    .map(value => ({
+    .filter((x) => x !== undefined && x !== '')
+    .map((value) => ({
       value,
-      text: value
+      text: value,
     }));
 }
 

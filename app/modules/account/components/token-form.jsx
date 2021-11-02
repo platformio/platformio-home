@@ -24,7 +24,7 @@ import {
   Icon,
   Input,
   Row,
-  message
+  message,
 } from 'antd';
 
 import ClipboardJS from 'clipboard';
@@ -36,13 +36,13 @@ export default class AccountTokenForm extends React.Component {
     form: PropTypes.object.isRequired,
     token: PropTypes.string,
     showAccountToken: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      loading: false
+      loading: false,
     };
     this._clipboard = null;
   }
@@ -67,11 +67,11 @@ export default class AccountTokenForm extends React.Component {
         return;
       }
       this.setState({
-        loading: true
+        loading: true,
       });
       this.props.showAccountToken(values.password, values.regenerate, () => {
         this.setState({
-          loading: false
+          loading: false,
         });
       });
     });
@@ -129,9 +129,9 @@ export default class AccountTokenForm extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: 'Please input your password'
-                }
-              ]
+                  message: 'Please input your password',
+                },
+              ],
             })(
               <Input
                 prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

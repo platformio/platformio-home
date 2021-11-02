@@ -29,11 +29,11 @@ export default class FrameworkDetailPage extends React.Component {
       homepage: PropTypes.string.isRequired,
       url: PropTypes.string,
       platforms: PropTypes.arrayOf(PropTypes.object),
-      boards: PropTypes.arrayOf(PropTypes.object)
+      boards: PropTypes.arrayOf(PropTypes.object),
     }),
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {
@@ -74,7 +74,7 @@ export default class FrameworkDetailPage extends React.Component {
           <Col sm={4}>
             <h2>Platforms</h2>
             <ul className="resources-list">
-              {this.props.data.platforms.map(item => (
+              {this.props.data.platforms.map((item) => (
                 <li key={item.name}>
                   <Button
                     icon="appstore"

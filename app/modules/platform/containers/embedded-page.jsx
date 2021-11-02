@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   EMBEDDED_INPUT_FILTER_KEY,
   selectEmbeddedFilter,
-  selectVisibleEmbeddedPlatforms
+  selectVisibleEmbeddedPlatforms,
 } from '../selectors';
 import { osOpenUrl, osRevealFile } from '../../core/actions';
 
@@ -41,7 +41,7 @@ class PlatformEmbeddedPage extends React.Component {
     showFramework: PropTypes.func.isRequired,
     installPlatform: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
-    osRevealFile: PropTypes.func.isRequired
+    osRevealFile: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -64,9 +64,10 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleEmbeddedPlatforms(state),
     filterValue: selectEmbeddedFilter(state),
-    showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: (name) =>
+      goTo(ownProps.history, '/platforms/embedded/show', { name }),
+    showFramework: (name) =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
   };
 }
 
@@ -75,8 +76,8 @@ function mapDispatchToProps(dispatch) {
     Object.assign({}, actions, {
       osOpenUrl,
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(EMBEDDED_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(EMBEDDED_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

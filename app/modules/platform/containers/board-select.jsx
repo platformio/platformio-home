@@ -27,7 +27,7 @@ class BoardSelect extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func.isRequired,
-    loadBoards: PropTypes.func.isRequired
+    loadBoards: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -38,7 +38,7 @@ class BoardSelect extends React.Component {
   }
 
   onDidChange(boardId) {
-    this.props.onChange(this.props.items.find(item => item.id === boardId));
+    this.props.onChange(this.props.items.find((item) => item.id === boardId));
   }
 
   render() {
@@ -51,7 +51,7 @@ class BoardSelect extends React.Component {
       .sort((a, b) =>
         cmpSort(a.platform.title.toUpperCase(), b.platform.title.toUpperCase())
       )
-      .forEach(item => {
+      .forEach((item) => {
         const group = item.platform.title;
         const candidates = data[group] || [];
         candidates.push(item);
@@ -76,7 +76,7 @@ class BoardSelect extends React.Component {
         }}
         onChange={::this.onDidChange}
       >
-        {Object.keys(data).map(group => (
+        {Object.keys(data).map((group) => (
           <Select.OptGroup
             key={group}
             label={
@@ -87,7 +87,7 @@ class BoardSelect extends React.Component {
           >
             {data[group]
               .sort((a, b) => cmpSort(a.name.toUpperCase(), b.name.toUpperCase()))
-              .map(item => (
+              .map((item) => (
                 <Select.Option key={item.id} value={item.id}>
                   {item.name.includes(item.vendor)
                     ? item.name
@@ -105,10 +105,10 @@ class BoardSelect extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectNormalizedBoards(state)
+    items: selectNormalizedBoards(state),
   };
 }
 
 export default connect(mapStateToProps, {
-  loadBoards
+  loadBoards,
 })(BoardSelect);

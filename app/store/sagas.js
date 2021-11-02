@@ -35,10 +35,10 @@ import projectSagas from '../modules/project/sagas';
 import telemetrySagas from './telemetry';
 
 function* watchLoadStore() {
-  yield takeLatest(actions.LOAD_STORE, function*() {
+  yield takeLatest(actions.LOAD_STORE, function* () {
     try {
       const newState = yield call(backendFetchData, {
-        query: 'app.get_state'
+        query: 'app.get_state',
       });
       if (newState['inputValues']) {
         delete newState['inputValues'];
@@ -55,16 +55,16 @@ function* autoSaveState() {
   const triggerActions = [
     actions.SAVE_STATE,
     actions.UPDATE_STORAGE_ITEM,
-    actions.DELETE_STORAGE_ITEM
+    actions.DELETE_STORAGE_ITEM,
   ];
-  yield takeLatest(triggerActions, function*(action) {
+  yield takeLatest(triggerActions, function* (action) {
     if (action.type !== actions.SAVE_STATE) {
       yield call(asyncDelay, 2000);
     }
     try {
       const state = (yield select()) || {};
       const savedState = {
-        storage: Object.assign({}, state.storage)
+        storage: Object.assign({}, state.storage),
       };
       // don't serialize PIO Core Settings
       if (savedState.storage.coreSettings) {
@@ -72,11 +72,12 @@ function* autoSaveState() {
       }
       const result = yield call(backendFetchData, {
         query: 'app.save_state',
-        params: [savedState]
+        params: [savedState],
       });
       if (!result) {
         throw new Error('Received invalid result after saving application state');
       }
+      yield put(actions.fireStateSaved());
     } catch (err) {
       return yield put(notifyError('Could not save application state', err));
     }
@@ -84,7 +85,7 @@ function* autoSaveState() {
 }
 
 function* watchLazyUpdateInputValue() {
-  yield takeLatest(actions.LAZY_UPDATE_INPUT_VALUE, function*({ key, value }) {
+  yield takeLatest(actions.LAZY_UPDATE_INPUT_VALUE, function* ({ key, value }) {
     yield call(asyncDelay, INPUT_FILTER_DELAY);
     yield put(actions.updateInputValue(key, value));
   });
@@ -104,7 +105,7 @@ export default function* root() {
       ...librarySagas,
       ...projectSagas,
       ...platformSagas,
-      ...inspectSagas
-    ].map(s => s())
+      ...inspectSagas,
+    ].map((s) => s())
   );
 }

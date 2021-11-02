@@ -27,13 +27,13 @@ export default class AccountInformation extends React.Component {
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
         firstname: PropTypes.string,
-        lastname: PropTypes.string
+        lastname: PropTypes.string,
       }).isRequired,
       packages: PropTypes.array,
-      subscriptions: PropTypes.array
+      subscriptions: PropTypes.array,
     }).isRequired,
     logoutAccount: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {
@@ -69,47 +69,47 @@ export default class AccountInformation extends React.Component {
       {
         title: 'Plan',
         dataIndex: 'product_name',
-        key: 'product_name'
+        key: 'product_name',
       },
       {
         title: 'Start Date',
         dataIndex: 'begin_at',
         key: 'begin_at',
-        render: text => (
+        render: (text) => (
           <Tooltip title={new Date(text).toString()}>
             {humanize.date('F j, Y', new Date(text))}
           </Tooltip>
-        )
+        ),
       },
       {
         title: 'End Date',
         dataIndex: 'end_at',
         key: 'end_at',
-        render: text => (
+        render: (text) => (
           <Tooltip
             title={parseInt(text) ? new Date(parseInt(text) * 1000).toString() : ''}
           >
             {parseInt(text) ? humanize.date('F j, Y', parseInt(text)) : '-'}
           </Tooltip>
-        )
+        ),
       },
       {
         title: 'Next Payment',
         dataIndex: 'next_bill_at',
         key: 'next_bill_at',
-        render: text => (
+        render: (text) => (
           <Tooltip title={new Date(text).toString()}>
             {humanize.date('F j, Y', new Date(text))}
           </Tooltip>
-        )
+        ),
       },
       {
         title: 'State',
         dataIndex: 'status',
         key: 'status',
-        render: text => (
+        render: (text) => (
           <Tag color={text == 'active' ? '#87d068' : '#f5222d'}>{text}</Tag>
-        )
+        ),
       },
       {
         title: 'Action',
@@ -121,8 +121,8 @@ export default class AccountInformation extends React.Component {
               <Divider type="vertical" />{' '}
               <a onClick={() => this.props.osOpenUrl(record.cancel_url)}>Cancel</a>
             </span>
-          )
-      }
+          ),
+      },
     ];
     return (
       <div>
@@ -142,7 +142,7 @@ export default class AccountInformation extends React.Component {
       <div>
         <h1>Packages</h1>
         {this.props.data.packages &&
-          this.props.data.packages.map(item => (
+          this.props.data.packages.map((item) => (
             <dl key={item.name} className="dl-horizontal">
               <dt>Name</dt>
               <dd>{item.name}</dd>
@@ -172,7 +172,7 @@ export default class AccountInformation extends React.Component {
               <dt>Services</dt>
               <dd>
                 <ul>
-                  {Object.keys(item).map(key => {
+                  {Object.keys(item).map((key) => {
                     if (!key.startsWith('service.')) {
                       return null;
                     }

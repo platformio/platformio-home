@@ -29,10 +29,10 @@ class LibraryDetailExamplesBlock extends React.Component {
   static propTypes = {
     data: PropTypes.shape({
       examples: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
-      __pkg_dir: PropTypes.string
+      __pkg_dir: PropTypes.string,
     }).isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
-    osFsGlob: PropTypes.func.isRequired
+    osFsGlob: PropTypes.func.isRequired,
   };
 
   static getGlobPatterns(examples) {
@@ -43,8 +43,8 @@ class LibraryDetailExamplesBlock extends React.Component {
       } else if (typeof examples[0] === 'string') {
         return examples;
       } else if (examples[0].base && examples[0].files) {
-        examples.forEach(example => {
-          example.files.forEach(filename => {
+        examples.forEach((example) => {
+          example.files.forEach((filename) => {
             result.push(path.join(example.base, filename));
           });
         });
@@ -72,7 +72,7 @@ class LibraryDetailExamplesBlock extends React.Component {
   }
 
   getRemoteItems() {
-    return this.props.uris.sort().map(uri => {
+    return this.props.uris.sort().map((uri) => {
       let name = uri;
       if (name.endsWith('/')) {
         name = uri.substr(0, uri.length - 1);
@@ -131,7 +131,7 @@ class LibraryDetailExamplesBlock extends React.Component {
 function mapStateToProps(state, ownProps) {
   if (!ownProps.data.__pkg_dir) {
     return {
-      uris: ownProps.data.examples
+      uris: ownProps.data.examples,
     };
   }
   return {
@@ -139,10 +139,10 @@ function mapStateToProps(state, ownProps) {
       state,
       LibraryDetailExamplesBlock.getGlobPatterns(ownProps.data.examples),
       ownProps.data.__pkg_dir
-    )
+    ),
   };
 }
 
 export default connect(mapStateToProps, {
-  osFsGlob
+  osFsGlob,
 })(LibraryDetailExamplesBlock);

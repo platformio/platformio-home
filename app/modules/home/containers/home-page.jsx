@@ -35,14 +35,14 @@ import { selectStorageItem } from '../../../store/selectors';
 
 class HomePage extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   };
 
   static propTypes = {
     caller: PropTypes.string,
     showOnStartupState: PropTypes.bool,
     osOpenUrl: PropTypes.func.isRequired,
-    showAtStartup: PropTypes.func.isRequired
+    showAtStartup: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -51,7 +51,7 @@ class HomePage extends React.Component {
       newProjectVisible: false,
       importArduinoProjectVisible: false,
       openProjectVisible: false,
-      projectExamplesVisible: false
+      projectExamplesVisible: false,
     };
   }
 
@@ -61,49 +61,49 @@ class HomePage extends React.Component {
 
   onDidNewProject() {
     this.setState({
-      newProjectVisible: true
+      newProjectVisible: true,
     });
   }
 
   onDidCancelNewProject() {
     this.setState({
-      newProjectVisible: false
+      newProjectVisible: false,
     });
   }
 
   onDidImportArduinoProject() {
     this.setState({
-      importArduinoProjectVisible: true
+      importArduinoProjectVisible: true,
     });
   }
 
   onDidCancelImportArduinoProject() {
     this.setState({
-      importArduinoProjectVisible: false
+      importArduinoProjectVisible: false,
     });
   }
 
   onDidOpenProject() {
     this.setState({
-      openProjectVisible: true
+      openProjectVisible: true,
     });
   }
 
   onDidCancelOpenProject() {
     this.setState({
-      openProjectVisible: false
+      openProjectVisible: false,
     });
   }
 
   onDidProjectExamples() {
     this.setState({
-      projectExamplesVisible: true
+      projectExamplesVisible: true,
     });
   }
 
   onDidCancelProjectExamples() {
     this.setState({
-      projectExamplesVisible: false
+      projectExamplesVisible: false,
     });
   }
 
@@ -243,11 +243,11 @@ class HomePage extends React.Component {
 function mapStateToProps(state) {
   return {
     caller: selectStorageItem(state, 'coreCaller'),
-    showOnStartupState: selectShowAtStartup(state)
+    showOnStartupState: selectShowAtStartup(state),
   };
 }
 
 export default connect(mapStateToProps, {
   osOpenUrl,
-  showAtStartup
+  showAtStartup,
 })(HomePage);

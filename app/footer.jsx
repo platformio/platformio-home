@@ -25,7 +25,7 @@ import { osOpenUrl } from './modules/core/actions';
 
 class AppFooter extends React.Component {
   static propTypes = {
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {
@@ -111,5 +111,5 @@ class AppFooter extends React.Component {
 }
 
 export default connect(null, {
-  osOpenUrl
+  osOpenUrl,
 })(AppFooter);

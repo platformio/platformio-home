@@ -18,7 +18,7 @@ import { LibraryStorage, filterStorageItems } from './storage';
 import {
   expandFrameworksOrPlatforms,
   selectRegistryFrameworks,
-  selectRegistryPlatforms
+  selectRegistryPlatforms,
 } from '../platform/selectors';
 import { selectInputValue } from '../../store/selectors';
 
@@ -54,7 +54,7 @@ export function selectSearchResult(state, query, page = 1) {
   if (!items) {
     return null;
   }
-  const item = items.find(item => item.key === selectStoreSearchKey(query, page));
+  const item = items.find((item) => item.key === selectStoreSearchKey(query, page));
   return item ? item.result : null;
 }
 
@@ -71,7 +71,7 @@ export function selectRegistryLib(state, id) {
   if (!items) {
     return null;
   }
-  return items.find(item => item.id === id) || null;
+  return items.find((item) => item.id === id) || null;
 }
 
 export function selectLibraryData(state, idOrManifest) {
@@ -117,8 +117,8 @@ export function selectVisibletBuiltinLibs(state) {
     return null;
   }
   items = items
-    .filter(data => data.items.length)
-    .map(data => new LibraryStorage(data.name, data.path, data.items));
+    .filter((data) => data.items.length)
+    .map((data) => new LibraryStorage(data.name, data.path, data.items));
   if (!filterValue) {
     return items;
   }
@@ -128,9 +128,9 @@ export function selectVisibletBuiltinLibs(state) {
 export function selectLibraryStorages(state) {
   const projects = selectProjects(state) || [];
   const items = [];
-  projects.forEach(project => {
+  projects.forEach((project) => {
     if (project.envLibStorages) {
-      project.envLibStorages.forEach(storage => {
+      project.envLibStorages.forEach((storage) => {
         items.push(
           new LibraryStorage(
             `Project: ${project.name} > ${storage.name}`,
@@ -142,7 +142,7 @@ export function selectLibraryStorages(state) {
         );
       });
     }
-    project.extraLibStorages.forEach(storage => {
+    project.extraLibStorages.forEach((storage) => {
       items.push(
         new LibraryStorage(
           `Storage: ${storage.name}`,
@@ -160,7 +160,7 @@ export function selectLibraryStorages(state) {
 }
 
 export function selectInstalledLibs(state) {
-  return selectLibraryStorages(state).map(storage => {
+  return selectLibraryStorages(state).map((storage) => {
     const key = `installedLibs${storage.initialPath}`;
     if (state.entities[key]) {
       storage.items = state.entities[key];
@@ -182,7 +182,7 @@ export function selectVisibleInstalledLibs(state) {
 }
 
 export function selectLibUpdates(state) {
-  return selectLibraryStorages(state).map(storage => {
+  return selectLibraryStorages(state).map((storage) => {
     const key = `libUpdates${storage.initialPath}`;
     if (state.entities[key]) {
       storage.items = state.entities[key];

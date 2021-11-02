@@ -26,23 +26,23 @@ export default class LibraryDetailInstallationBlock extends React.Component {
       name: PropTypes.string.isRequired,
       version: PropTypes.oneOfType([
         PropTypes.object, // registry library
-        PropTypes.string // built-in/installed library
+        PropTypes.string, // built-in/installed library
       ]).isRequired,
       versions: PropTypes.array,
       platforms: PropTypes.arrayOf(
         PropTypes.shape({
           name: PropTypes.string,
-          title: PropTypes.string
+          title: PropTypes.string,
         })
       ),
       frameworks: PropTypes.arrayOf(
         PropTypes.shape({
           name: PropTypes.string,
-          title: PropTypes.string
+          title: PropTypes.string,
         })
-      )
+      ),
     }).isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   getVersionName() {

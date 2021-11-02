@@ -30,7 +30,7 @@ class DeviceMDNSPage extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.object.isRequired),
     loadMDNSDevices: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -74,24 +74,24 @@ class DeviceMDNSPage extends React.Component {
               </a>
             </Tooltip>
           </span>
-        )
+        ),
       },
       {
         title: 'Type',
         dataIndex: 'type',
         className: 'text-word-break',
-        sorter: (a, b) => cmpSort(a.type.toUpperCase(), b.type.toUpperCase())
+        sorter: (a, b) => cmpSort(a.type.toUpperCase(), b.type.toUpperCase()),
       },
       {
         title: 'IP',
         dataIndex: 'ip',
-        sorter: (a, b) => this.ip2int(a.ip) > this.ip2int(b.ip)
+        sorter: (a, b) => this.ip2int(a.ip) > this.ip2int(b.ip),
       },
       {
         title: 'Port',
         dataIndex: 'port',
-        sorter: (a, b) => a.port > b.port
-      }
+        sorter: (a, b) => a.port > b.port,
+      },
     ];
   }
 
@@ -145,7 +145,7 @@ class DeviceMDNSPage extends React.Component {
         size="middle"
         pagination={{
           defaultPageSize: 15,
-          hideOnSinglePage: true
+          hideOnSinglePage: true,
         }}
       />
     );
@@ -156,11 +156,11 @@ class DeviceMDNSPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectMDNSDevices(state)
+    items: selectMDNSDevices(state),
   };
 }
 
 export default connect(mapStateToProps, {
   ...actions,
-  osOpenUrl
+  osOpenUrl,
 })(DeviceMDNSPage);

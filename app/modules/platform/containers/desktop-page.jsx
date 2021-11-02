@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   DESKTOP_INPUT_FILTER_KEY,
   selectDesktopFilter,
-  selectVisibleDesktopPlatforms
+  selectVisibleDesktopPlatforms,
 } from '../selectors';
 import { osOpenUrl, osRevealFile } from '../../core/actions';
 
@@ -41,7 +41,7 @@ class PlatformDesktopPage extends React.Component {
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
     osOpenUrl: PropTypes.func.isRequired,
-    osRevealFile: PropTypes.func.isRequired
+    osRevealFile: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -74,9 +74,9 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleDesktopPlatforms(state),
     filterValue: selectDesktopFilter(state),
-    showPlatform: name => goTo(ownProps.history, '/platforms/desktop/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: (name) => goTo(ownProps.history, '/platforms/desktop/show', { name }),
+    showFramework: (name) =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
   };
 }
 
@@ -85,8 +85,8 @@ function mapDispatchToProps(dispatch) {
     Object.assign({}, actions, {
       osOpenUrl,
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(DESKTOP_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(DESKTOP_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

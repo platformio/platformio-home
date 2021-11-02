@@ -25,6 +25,8 @@ if (pathname[pathname.length - 1] !== '/') {
 }
 let wsrpc = `ws://127.0.0.1:8008${pathname}wsrpc`;
 if (process.env.NODE_ENV === 'production' && window.location && window.location.host) {
-  wsrpc = `ws://${window.location.host}${pathname}wsrpc`;
+  wsrpc = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${
+    window.location.host
+  }${pathname}wsrpc`;
 }
 export const BACKEND_ENDPOINT = wsrpc;

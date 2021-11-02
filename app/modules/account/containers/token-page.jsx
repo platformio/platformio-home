@@ -32,7 +32,7 @@ class AccountTokenPage extends React.Component {
     token: PropTypes.string,
     showAccountToken: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   render() {
@@ -55,7 +55,7 @@ function mapStateToProps(state, ownProps) {
   return {
     userLogged: selectIsUserLogged(state),
     token: selectAccountToken(state),
-    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true)
+    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true),
   };
 }
 

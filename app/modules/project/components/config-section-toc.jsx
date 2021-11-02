@@ -26,7 +26,7 @@ export class ConfigSectionToc extends React.Component {
     fields: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     schema: SchemaType.isRequired,
     // callback
-    onCreateId: PropTypes.func.isRequired
+    onCreateId: PropTypes.func.isRequired,
   };
 
   shouldComponentUpdate(nextProps) {
@@ -46,7 +46,7 @@ export class ConfigSectionToc extends React.Component {
       schema[item.name] = item;
     }
 
-    this.props.fields.forEach(name => {
+    this.props.fields.forEach((name) => {
       const group = schema[name] ? schema[name].group : 'Custom';
       if (!groups.has(group)) {
         groups.add(group);
@@ -57,14 +57,14 @@ export class ConfigSectionToc extends React.Component {
 
     return (
       <Anchor className="toc">
-        {[...groups].map(groupName => (
+        {[...groups].map((groupName) => (
           <Anchor.Link
             className="config-section-group"
             href={`#${this.props.onCreateId('group', groupName)}`}
             key={groupName}
             title={`${groupName} Options`}
           >
-            {fieldsByGroup[groupName].map(name => (
+            {fieldsByGroup[groupName].map((name) => (
               <Anchor.Link
                 href={`#${this.props.onCreateId('field', name)}`}
                 key={name}

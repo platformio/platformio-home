@@ -10,17 +10,15 @@ module.exports = {
   },
   "plugins": [
     "import",
-    "react",
-    "prettier"
+    "react"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings",
-    "prettier"
+    "plugin:import/warnings"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
@@ -57,7 +55,6 @@ module.exports = {
       }
     ],
     "prefer-const": "error",
-    "prettier/prettier": ["error"],
     "quotes": [
       "error",
       "single",
@@ -85,6 +82,9 @@ module.exports = {
       }
     ],
     "import/no-named-as-default-member": [
+      "off"
+    ],
+    "react/prop-types": [
       "off"
     ]
   }

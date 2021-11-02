@@ -37,12 +37,12 @@ class InspectionResultComponent extends React.Component {
     device: DeviceType,
     project: PropTypes.shape({
       name: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired
+      path: PropTypes.string.isRequired,
     }),
     // callbacks
     osRevealFile: PropTypes.func.isRequired,
     reinspectProject: PropTypes.func.isRequired,
-    showConfiguration: PropTypes.func.isRequired
+    showConfiguration: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -84,7 +84,7 @@ class InspectionResultComponent extends React.Component {
         {[
           formatFrequency(this.props.device.frequency),
           `${formatSize(this.props.device.ram)} RAM`,
-          `${formatSize(this.props.device.flash)} Flash`
+          `${formatSize(this.props.device.flash)} Flash`,
         ].join(', ')}{' '}
       </small>
     );
@@ -139,7 +139,7 @@ function mapStateToProps(state) {
   return {
     project: selectProjectInfo(state, configuration.projectDir),
     configuration,
-    device: selectDeviceInfo(state)
+    device: selectDeviceInfo(state),
   };
 }
 
@@ -148,11 +148,11 @@ function dispatchProps(dispatch, ownProps) {
     ...bindActionCreators(
       {
         osRevealFile,
-        reinspectProject
+        reinspectProject,
       },
       dispatch
     ),
-    showConfiguration: () => goTo(ownProps.history, '/inspect')
+    showConfiguration: () => goTo(ownProps.history, '/inspect'),
   };
 }
 

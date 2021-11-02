@@ -23,7 +23,7 @@ import { selectIsUserLogged } from './selectors';
 
 class AccountIndex extends React.Component {
   static propTypes = {
-    userLogged: PropTypes.bool
+    userLogged: PropTypes.bool,
   };
 
   render() {
@@ -39,7 +39,7 @@ class AccountIndex extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    userLogged: selectIsUserLogged(state)
+    userLogged: selectIsUserLogged(state),
   };
 }
 

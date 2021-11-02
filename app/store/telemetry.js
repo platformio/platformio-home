@@ -23,17 +23,17 @@ import {
   IMPORT_ARDUINO_PROJECT,
   IMPORT_PROJECT,
   INIT_PROJECT,
-  OPEN_PROJECT
+  OPEN_PROJECT,
 } from '../modules/project/actions';
 import {
   INSTALL_LIBRARY,
   UNINSTALL_LIBRARY,
-  UPDATE_LIBRARY
+  UPDATE_LIBRARY,
 } from '../modules/library/actions';
 import {
   INSTALL_PLATFORM,
   UNINSTALL_PLATFORM,
-  UPDATE_PLATFORM
+  UPDATE_PLATFORM,
 } from '../modules/platform/actions';
 import { OS_OPEN_URL, SHOW_AT_STARTUP } from '../modules/core/actions';
 import { select, takeEvery, takeLatest } from 'redux-saga/effects';
@@ -44,7 +44,7 @@ import { getStartLocation } from '../modules/core/helpers';
 import { selectStorage } from './selectors';
 
 function* watchActivateGA() {
-  yield takeLatest(STORE_READY, function*() {
+  yield takeLatest(STORE_READY, function* () {
     const storage = yield select(selectStorage);
     if (
       !storage.cid ||
@@ -58,8 +58,8 @@ function* watchActivateGA() {
       debug: process.env.NODE_ENV !== 'production',
       titleCase: false,
       gaOptions: {
-        clientId: storage.cid
-      }
+        clientId: storage.cid,
+      },
     });
 
     let appName = `PlatformIO/${storage.coreVersion}`;
@@ -74,7 +74,7 @@ function* watchActivateGA() {
 
       // Custom Dimension
       dimension1: storage.coreSystype,
-      dimension4: 1 // human request, not subprocess
+      dimension4: 1, // human request, not subprocess
     };
     if (storage.coreCaller) {
       options.dimension5 = storage.coreCaller;
@@ -83,7 +83,7 @@ function* watchActivateGA() {
 
     // send initial screen...
     ReactGA.ga('send', 'screenview', {
-      screenName: getStartLocation()
+      screenName: getStartLocation(),
     });
   });
 }
@@ -95,9 +95,9 @@ function* watchPackageActions() {
     UPDATE_LIBRARY,
     INSTALL_PLATFORM,
     UNINSTALL_PLATFORM,
-    UPDATE_PLATFORM
+    UPDATE_PLATFORM,
   ];
-  yield takeEvery(actions, function(action) {
+  yield takeEvery(actions, function (action) {
     let label = '';
     if (action.type.endsWith('_LIBRARY')) {
       label = action.lib || (action.pkgDir ? path.basename(action.pkgDir) : '');
@@ -107,7 +107,7 @@ function* watchPackageActions() {
     ReactGA.event({
       category: 'Package',
       action: action.type.toLowerCase(),
-      label
+      label,
     });
   });
 }
@@ -115,7 +115,7 @@ function* watchPackageActions() {
 function* watchProjectActions() {
   yield takeEvery(
     [IMPORT_ARDUINO_PROJECT, IMPORT_PROJECT, INIT_PROJECT, HIDE_PROJECT, OPEN_PROJECT],
-    function(action) {
+    function (action) {
       let label = action.board || undefined;
       if (!label && action.projectDir) {
         label = path.join(
@@ -126,28 +126,28 @@ function* watchProjectActions() {
       ReactGA.event({
         category: 'Project',
         action: action.type.toLowerCase(),
-        label
+        label,
       });
     }
   );
 }
 
 function* watchOutboundLinks() {
-  yield takeEvery(OS_OPEN_URL, function({ url }) {
+  yield takeEvery(OS_OPEN_URL, function ({ url }) {
     ReactGA.event({
       category: 'Misc',
       action: 'Outbound',
-      label: url
+      label: url,
     });
   });
 }
 
 function* watchShowAtStartup() {
-  yield takeEvery(SHOW_AT_STARTUP, function({ value }) {
+  yield takeEvery(SHOW_AT_STARTUP, function ({ value }) {
     ReactGA.event({
       category: 'Misc',
       action: 'ShowAtStartup',
-      label: value ? 1 : 0
+      label: value ? 1 : 0,
     });
   });
 }
@@ -157,5 +157,5 @@ export default [
   watchPackageActions,
   watchProjectActions,
   watchOutboundLinks,
-  watchShowAtStartup
+  watchShowAtStartup,
 ];

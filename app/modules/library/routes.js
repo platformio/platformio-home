@@ -26,42 +26,42 @@ const routes = [
     path: '/libraries',
     icon: 'book',
     label: 'Registry',
-    component: LibraryStatsPage
+    component: LibraryStatsPage,
   },
   {
     path: '/libraries/registry/show',
-    component: LibraryDetailPage
+    component: LibraryDetailPage,
   },
   {
     path: '/libraries/registry/search',
-    component: LibrarySearchPage
+    component: LibrarySearchPage,
   },
   {
     path: '/libraries/installed',
     icon: 'hdd',
     label: 'Installed',
-    component: LibraryInstalledPage
+    component: LibraryInstalledPage,
   },
   {
     path: '/libraries/installed/show',
-    component: LibraryDetailPage
+    component: LibraryDetailPage,
   },
   {
     path: '/libraries/builtin',
     icon: 'eye-o',
     label: 'Built-in',
-    component: LibraryBuiltinPage
+    component: LibraryBuiltinPage,
   },
   {
     path: '/libraries/builtin/show',
-    component: LibraryDetailPage
+    component: LibraryDetailPage,
   },
   {
     path: '/libraries/updates',
     icon: 'cloud-download-o',
     label: 'Updates',
-    component: LibraryUpdatesPage
-  }
+    component: LibraryUpdatesPage,
+  },
 ];
 
 export default routes;

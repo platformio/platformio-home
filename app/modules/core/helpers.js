@@ -29,13 +29,13 @@ export function reportException(description, fatal = false) {
   if (description instanceof ErrorEvent) {
     description = [
       description.message,
-      `${description.filename}:${description.lineno}`
+      `${description.filename}:${description.lineno}`,
     ];
   }
   description = description.toString().replace(/@/g, '_');
   ReactGA.exception({
     description: description.substring(0, 8192),
-    fatal
+    fatal,
   });
 }
 
@@ -46,15 +46,6 @@ export function getStartLocation() {
     startLocation = startLocation && startLocation.start ? startLocation.start : null;
   }
   return startLocation || '/';
-}
-
-export function getSessionId() {
-  let sessionId = null;
-  if (window.location && window.location.search) {
-    sessionId = qs.parse(window.location.search);
-    sessionId = sessionId && sessionId.sid ? sessionId.sid : null;
-  }
-  return parseInt(sessionId || 0);
 }
 
 export function goTo(history, path, state, redirect = false) {
@@ -73,7 +64,7 @@ export function goTo(history, path, state, redirect = false) {
 }
 
 export function asyncDelay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function title(str) {
@@ -108,7 +99,7 @@ export function cmpArray(a, b) {
 
 export function debounce(fn, time) {
   let timeout;
-  const task = function(...args) {
+  const task = function (...args) {
     task.cancel();
     timeout = setTimeout(() => fn.apply(this, args), time);
   };
@@ -119,13 +110,11 @@ export function debounce(fn, time) {
 export function fuzzySearch(items, query, propertyName) {
   let getter;
   if (typeof propertyName !== 'function') {
-    getter = item => item[propertyName];
+    getter = (item) => item[propertyName];
   } else {
     getter = propertyName;
   }
-  return items.filter(item =>
-    getter(item)
-      .toLowerCase()
-      .includes(query.toLowerCase())
+  return items.filter((item) =>
+    getter(item).toLowerCase().includes(query.toLowerCase())
   );
 }

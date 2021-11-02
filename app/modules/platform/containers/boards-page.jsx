@@ -19,7 +19,7 @@ import * as actions from '../actions';
 import {
   BOARDS_INPUT_FILTER_KEY,
   selectBoardsFilter,
-  selectNormalizedBoards
+  selectNormalizedBoards,
 } from '../selectors';
 
 import Boards from '../components/boards';
@@ -39,7 +39,7 @@ class BoardsPage extends React.Component {
     loadBoards: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -71,9 +71,10 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectNormalizedBoards(state),
     filterValue: selectBoardsFilter(state),
-    showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name =>
-      goTo(ownProps.history, '/platforms/frameworks/show', { name })
+    showPlatform: (name) =>
+      goTo(ownProps.history, '/platforms/embedded/show', { name }),
+    showFramework: (name) =>
+      goTo(ownProps.history, '/platforms/frameworks/show', { name }),
   };
 }
 
@@ -81,7 +82,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     Object.assign({}, actions, {
       osOpenUrl,
-      setFilter: value => dispatch(lazyUpdateInputValue(BOARDS_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(BOARDS_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

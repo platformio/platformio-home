@@ -34,7 +34,7 @@ class LibraryInstallAdvancedModal extends React.Component {
 
     installLibrary: PropTypes.func.isRequired,
     loadProjects: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -42,7 +42,7 @@ class LibraryInstallAdvancedModal extends React.Component {
     this.state = {
       library: null,
       storageDir: null,
-      installing: false
+      installing: false,
     };
   }
 
@@ -64,13 +64,13 @@ class LibraryInstallAdvancedModal extends React.Component {
 
   onDidLibraryChange(value) {
     this.setState({
-      library: value
+      library: value,
     });
   }
 
   onDidStorage(storageDir) {
     this.setState({
-      storageDir
+      storageDir,
     });
   }
 
@@ -84,11 +84,11 @@ class LibraryInstallAdvancedModal extends React.Component {
       return;
     }
     this.setState({
-      installing: true
+      installing: true,
     });
-    this.props.installLibrary(this.state.storageDir, this.state.library, err => {
+    this.props.installLibrary(this.state.storageDir, this.state.library, (err) => {
       this.setState({
-        installing: false
+        installing: false,
       });
       if (!err) {
         this.onDidCancel();
@@ -99,7 +99,7 @@ class LibraryInstallAdvancedModal extends React.Component {
   onDidCancel() {
     this.setState({
       installing: false,
-      library: null
+      library: null,
     });
     this.props.onCancel();
   }
@@ -107,7 +107,7 @@ class LibraryInstallAdvancedModal extends React.Component {
   render() {
     if (this.props.visible && !this.state.library && this.props.library) {
       this.setState({
-        library: this.props.library
+        library: this.props.library,
       });
     }
     const projects = this.props.projects || [];
@@ -127,9 +127,9 @@ class LibraryInstallAdvancedModal extends React.Component {
             size="large"
             style={{ width: '100%' }}
             value={this.state.library}
-            onChange={e => this.onDidLibraryChange(e.target.value)}
+            onChange={(e) => this.onDidLibraryChange(e.target.value)}
             onPressEnter={::this.onDidInstall}
-            ref={elm => (this._inputElement = elm)}
+            ref={(elm) => (this._inputElement = elm)}
           />
         </div>
         <div className="block">
@@ -140,15 +140,15 @@ class LibraryInstallAdvancedModal extends React.Component {
             onChange={::this.onDidStorage}
           >
             <Select.OptGroup label="Projects">
-              {projects.map(item => (
+              {projects.map((item) => (
                 <Select.Option key={item.path} value={item.path} title={item.path}>
                   {item.name}
                 </Select.Option>
               ))}
             </Select.OptGroup>
             <Select.OptGroup label="Custom storage">
-              {projects.map(p =>
-                p.extraLibStorages.map(item => (
+              {projects.map((p) =>
+                p.extraLibStorages.map((item) => (
                   <Select.Option key={item.path} value={item.path} title={item.path}>
                     {item.name}
                   </Select.Option>
@@ -257,12 +257,12 @@ class LibraryInstallAdvancedModal extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    projects: selectProjects(state)
+    projects: selectProjects(state),
   };
 }
 
 export default connect(mapStateToProps, {
   installLibrary,
   loadProjects,
-  osOpenUrl
+  osOpenUrl,
 })(LibraryInstallAdvancedModal);

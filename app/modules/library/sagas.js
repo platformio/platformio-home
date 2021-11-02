@@ -23,7 +23,7 @@ import {
   STORE_READY,
   deleteEntity,
   updateEntity,
-  updateStorageItem
+  updateStorageItem,
 } from '../../store/actions';
 import { asyncDelay, goTo } from '../core/helpers';
 import {
@@ -33,7 +33,7 @@ import {
   select,
   take,
   takeEvery,
-  takeLatest
+  takeLatest,
 } from 'redux-saga/effects';
 import { notifyError, notifySuccess, updateRouteBadge } from '../core/actions';
 
@@ -57,7 +57,7 @@ function* watchLoadStats() {
     yield put(updateEntity('libStats', null));
   }
 
-  yield takeLatest(actions.LOAD_STATS, function*() {
+  yield takeLatest(actions.LOAD_STATS, function* () {
     let data = yield select(selectors.selectStats);
     if (data) {
       return;
@@ -66,7 +66,7 @@ function* watchLoadStats() {
     try {
       data = yield call(backendFetchData, {
         query: 'core.call',
-        params: [['lib', 'stats', '--json-output']]
+        params: [['lib', 'stats', '--json-output']],
       });
       yield put(updateEntity('libStats', data));
     } catch (err) {
@@ -79,7 +79,7 @@ function* watchLoadStats() {
 }
 
 function* watchLoadSearchResult() {
-  yield takeLatest(actions.LOAD_SEARCH_RESULT, function*({ query, page, onEnd }) {
+  yield takeLatest(actions.LOAD_SEARCH_RESULT, function* ({ query, page, onEnd }) {
     let result = yield select(selectors.selectSearchResult, query, page);
     if (result) {
       if (onEnd) {
@@ -95,7 +95,7 @@ function* watchLoadSearchResult() {
       args = args.concat(['--page', page, '--json-output']);
       result = yield call(backendFetchData, {
         query: 'core.call',
-        params: [args]
+        params: [args],
       });
     } catch (err) {
       if (onEnd) {
@@ -106,7 +106,7 @@ function* watchLoadSearchResult() {
     const results = (yield select(selectors.selectSearchResults)) || [];
     results.push({
       key: selectors.selectStoreSearchKey(query, page),
-      result
+      result,
     });
     yield put(updateEntity('libSearch', results.slice(SEARCH_RESULTS_CACHE_SIZE * -1)));
     if (onEnd) {
@@ -116,7 +116,7 @@ function* watchLoadSearchResult() {
 }
 
 function* watchLoadLibraryData() {
-  yield takeLatest(actions.LOAD_LIBRARY_DATA, function*({ idOrManifest }) {
+  yield takeLatest(actions.LOAD_LIBRARY_DATA, function* ({ idOrManifest }) {
     switch (typeof idOrManifest) {
       case 'number': {
         if (yield select(selectors.selectRegistryLib, parseInt(idOrManifest))) {
@@ -125,7 +125,7 @@ function* watchLoadLibraryData() {
         try {
           const data = yield call(backendFetchData, {
             query: 'core.call',
-            params: [['lib', 'show', idOrManifest, '--json-output']]
+            params: [['lib', 'show', idOrManifest, '--json-output']],
           });
           const items = (yield select(selectors.selectRegistryLibs)) || [];
           items.push(data);
@@ -156,7 +156,7 @@ function* watchLoadBuiltinLibs() {
     try {
       items = yield call(backendFetchData, {
         query: 'core.call',
-        params: [['lib', 'builtin', '--json-output'], { force_subprocess: true }]
+        params: [['lib', 'builtin', '--json-output'], { force_subprocess: true }],
       });
       yield put(updateEntity('builtinLibs', items));
     } catch (err) {
@@ -174,7 +174,7 @@ function* watchLoadInstalledLibs() {
       if (storage.items) {
         continue;
       }
-      yield fork(function*() {
+      yield fork(function* () {
         try {
           let args = ['lib'];
           if (storage.path) {
@@ -185,7 +185,7 @@ function* watchLoadInstalledLibs() {
           args = args.concat(['list', '--json-output']);
           const items = yield call(backendFetchData, {
             query: 'core.call',
-            params: [args, { force_subprocess: true }]
+            params: [args, { force_subprocess: true }],
           });
           yield put(updateEntity(`installedLibs${storage.initialPath}`, items));
         } catch (err) {
@@ -209,7 +209,7 @@ function* fetchStorageUpdates(storage) {
       '--storage-dir',
       storage.options.projectDir,
       '--environment',
-      storage.options.projectEnv
+      storage.options.projectEnv,
     ]);
   } else if (storage.path) {
     args = args.concat(['--storage-dir', storage.path]);
@@ -219,7 +219,7 @@ function* fetchStorageUpdates(storage) {
   args = args.concat(['update', '--only-check', '--json-output']);
   return yield call(backendFetchData, {
     query: 'core.call',
-    params: [args, { force_subprocess: true }]
+    params: [args, { force_subprocess: true }],
   });
 }
 
@@ -233,7 +233,7 @@ function* watchLoadLibUpdates() {
 
     const storages = yield select(selectors.selectLibraryStorages);
     for (const storage of storages) {
-      yield fork(function*() {
+      yield fork(function* () {
         try {
           yield put(
             updateEntity(
@@ -274,7 +274,7 @@ function* watchAutoCheckLibraryUpdates() {
   const storages = yield select(selectors.selectLibraryStorages);
   for (const storage of storages) {
     try {
-      total += (yield call(fetchStorageUpdates, storage.path)).length;
+      total += (yield call(fetchStorageUpdates, storage)).length;
     } catch (err) {
       console.error(
         'Failed check of PIO Core library updates for ' + storage.path,
@@ -286,7 +286,7 @@ function* watchAutoCheckLibraryUpdates() {
 }
 
 function* watchInstallLibrary() {
-  yield takeEvery(actions.INSTALL_LIBRARY, function*({ storageDir, lib, onEnd }) {
+  yield takeEvery(actions.INSTALL_LIBRARY, function* ({ storageDir, lib, onEnd }) {
     // clean cache
     yield put(deleteEntity(/^installedLibs/));
     let err,
@@ -301,7 +301,7 @@ function* watchInstallLibrary() {
       args = args.concat(['install', lib]);
       result = yield call(backendFetchData, {
         query: 'core.call',
-        params: [args, { force_subprocess: true }]
+        params: [args, { force_subprocess: true }],
       });
       yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
     } catch (err_) {
@@ -316,89 +316,92 @@ function* watchInstallLibrary() {
 }
 
 function* watchUninstallOrUpdateLibrary() {
-  yield takeEvery([actions.UNINSTALL_LIBRARY, actions.UPDATE_LIBRARY], function*(
-    action
-  ) {
-    const { storage, pkg, onEnd } = action;
-    let err;
-    try {
-      const result = yield call(backendFetchData, {
-        query: 'core.call',
-        params: [
-          action.type === actions.UNINSTALL_LIBRARY &&
-          storage.options &&
-          storage.options.projectDir &&
-          storage.options.projectEnv
-            ? [
-                'lib',
-                '--storage-dir',
-                storage.options.projectDir,
-                '--environment',
-                storage.options.projectEnv,
-                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
-                `${pkg.ownername ? `${pkg.ownername}/` : ''}${pkg.name}@${pkg.version}`
-              ]
-            : [
-                'lib',
-                '--storage-dir',
-                storage.path,
-                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
-                pkg.__pkg_dir
-              ],
-          { force_subprocess: true }
-        ]
-      });
+  yield takeEvery(
+    [actions.UNINSTALL_LIBRARY, actions.UPDATE_LIBRARY],
+    function* (action) {
+      const { storage, pkg, onEnd } = action;
+      let err;
+      try {
+        const result = yield call(backendFetchData, {
+          query: 'core.call',
+          params: [
+            action.type === actions.UNINSTALL_LIBRARY &&
+            storage.options &&
+            storage.options.projectDir &&
+            storage.options.projectEnv
+              ? [
+                  'lib',
+                  '--storage-dir',
+                  storage.options.projectDir,
+                  '--environment',
+                  storage.options.projectEnv,
+                  action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
+                  `${pkg.ownername ? `${pkg.ownername}/` : ''}${pkg.name}@${
+                    pkg.version
+                  }`,
+                ]
+              : [
+                  'lib',
+                  '--storage-dir',
+                  storage.path,
+                  action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update',
+                  pkg.__pkg_dir,
+                ],
+            { force_subprocess: true },
+          ],
+        });
 
-      // remove from state
-      if (action.type === actions.UPDATE_LIBRARY) {
-        yield put(deleteEntity(/^installedLibs/));
-      }
-      const state = yield select();
-      for (const key of Object.keys(state.entities)) {
-        if (!key.startsWith('installedLibs') && !key.startsWith('libUpdates')) {
-          continue;
+        // remove from state
+        if (action.type === actions.UPDATE_LIBRARY) {
+          yield put(deleteEntity(/^installedLibs/));
         }
-        if (state.entities[key].find(item => item.__pkg_dir === pkg.__pkg_dir)) {
+        const state = yield select();
+        for (const key of Object.keys(state.entities)) {
+          if (!key.startsWith('installedLibs') && !key.startsWith('libUpdates')) {
+            continue;
+          }
+          if (state.entities[key].find((item) => item.__pkg_dir === pkg.__pkg_dir)) {
+            yield put(
+              updateEntity(
+                key,
+                state.entities[key].filter((item) => item.__pkg_dir !== pkg.__pkg_dir)
+              )
+            );
+          }
+        }
+
+        yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
+      } catch (err_) {
+        err = err_;
+        if (
+          err instanceof jsonrpc.JsonRpcError &&
+          err.data.includes('Error: Could not find the package')
+        ) {
+          yield put(deleteEntity(/^installedLibs/));
+          if (action.type === actions.UNINSTALL_LIBRARY) {
+            yield put(actions.loadInstalledLibs());
+          }
+          const state = yield select();
+          if (state.router) {
+            return goTo(state.router.history, '/libraries/installed', undefined, true);
+          }
+        } else {
           yield put(
-            updateEntity(
-              key,
-              state.entities[key].filter(item => item.__pkg_dir !== pkg.__pkg_dir)
+            notifyError(
+              `Libraries: Could not ${
+                action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update'
+              } library`,
+              err
             )
           );
         }
-      }
-
-      yield put(notifySuccess('Congrats!', cleanupPackageManagerOutput(result)));
-    } catch (err_) {
-      err = err_;
-      if (
-        err instanceof jsonrpc.JsonRpcError &&
-        err.data.includes('Error: Could not find the package')
-      ) {
-        yield put(deleteEntity(/^installedLibs/));
-        if (action.type === actions.UNINSTALL_LIBRARY) {
-          yield put(actions.loadInstalledLibs());
+      } finally {
+        if (onEnd) {
+          yield call(onEnd, err);
         }
-        const state = yield select();
-        if (state.router) {
-          return goTo(state.router.history, '/libraries/installed', undefined, true);
-        }
-      } else {
-        yield put(
-          notifyError(
-            `Libraries: Could not ${
-              action.type === actions.UNINSTALL_LIBRARY ? 'uninstall' : 'update'
-            } library`,
-            err
-          )
-        );
-      }
-    } finally {
-      if (onEnd) {
-        yield call(onEnd, err);
       }
     }
-  });
+  );
 }
 
 export default [
@@ -410,5 +413,5 @@ export default [
   watchLoadLibUpdates,
   watchAutoCheckLibraryUpdates,
   watchInstallLibrary,
-  watchUninstallOrUpdateLibrary
+  watchUninstallOrUpdateLibrary,
 ];

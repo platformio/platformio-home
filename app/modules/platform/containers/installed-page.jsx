@@ -20,7 +20,7 @@ import { Alert, Button } from 'antd';
 import {
   INSTALLED_INPUT_FILTER_KEY,
   selectInstalledFilter,
-  selectVisibleInstalledPlatforms
+  selectVisibleInstalledPlatforms,
 } from '../selectors';
 import { osOpenUrl, osRevealFile } from '../../core/actions';
 
@@ -44,7 +44,7 @@ class PlatformInstalledPage extends React.Component {
     osOpenUrl: PropTypes.func.isRequired,
     osRevealFile: PropTypes.func.isRequired,
     showEmbeddedPlatforms: PropTypes.func.isRequired,
-    showDesktopPlatforms: PropTypes.func.isRequired
+    showDesktopPlatforms: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -111,16 +111,16 @@ function mapStateToProps(state, ownProps) {
   return {
     items: selectVisibleInstalledPlatforms(state),
     filterValue: selectInstalledFilter(state),
-    showPlatform: name =>
+    showPlatform: (name) =>
       goTo(ownProps.history, '/platforms/installed/show', {
-        name
+        name,
       }),
-    showFramework: name =>
+    showFramework: (name) =>
       goTo(ownProps.history, '/platforms/frameworks/show', {
-        name
+        name,
       }),
     showEmbeddedPlatforms: () => goTo(ownProps.history, '/platforms/embedded'),
-    showDesktopPlatforms: () => goTo(ownProps.history, '/platforms/desktop')
+    showDesktopPlatforms: () => goTo(ownProps.history, '/platforms/desktop'),
   };
 }
 
@@ -129,8 +129,8 @@ function mapDispatchToProps(dispatch) {
     Object.assign({}, actions, {
       osOpenUrl,
       osRevealFile,
-      setFilter: value =>
-        dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value))
+      setFilter: (value) =>
+        dispatch(lazyUpdateInputValue(INSTALLED_INPUT_FILTER_KEY, value)),
     }),
     dispatch
   );

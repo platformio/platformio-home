@@ -40,13 +40,13 @@ export function selectVisibleProjects(state) {
   } else if (!filterValue) {
     return items.sort((a, b) => b.modified - a.modified);
   }
-  return fuzzySearch(items, filterValue, item =>
+  return fuzzySearch(items, filterValue, (item) =>
     [item.path, JSON.stringify(item.boards)].join(' ')
   );
 }
 
 export function selectProjectInfo(state, path) {
-  return (selectProjects(state) || []).find(item => item.path === path);
+  return (selectProjects(state) || []).find((item) => item.path === path);
 }
 
 export function selectConfigSchema(state) {

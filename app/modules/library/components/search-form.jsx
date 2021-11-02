@@ -22,13 +22,13 @@ import React from 'react';
 export default class LibrarySearchForm extends React.Component {
   static propTypes = {
     searchLibrary: PropTypes.func.isRequired,
-    defaultSearch: PropTypes.string
+    defaultSearch: PropTypes.string,
   };
 
   constructor() {
     super(...arguments);
     this.state = {
-      searchQuery: ''
+      searchQuery: '',
     };
   }
 
@@ -40,7 +40,7 @@ export default class LibrarySearchForm extends React.Component {
 
   onQueryChange(value) {
     this.setState({
-      searchQuery: value
+      searchQuery: value,
     });
   }
 
@@ -57,9 +57,9 @@ export default class LibrarySearchForm extends React.Component {
           placeholder="Search libraries..."
           defaultValue={this.props.defaultSearch}
           size="large"
-          onChange={e => this.onQueryChange(e.target.value)}
+          onChange={(e) => this.onQueryChange(e.target.value)}
           onSearch={::this.onDidSearch}
-          ref={elm => (this._searchInputElement = elm)}
+          ref={(elm) => (this._searchInputElement = elm)}
         />
         <div className="block search-tips">
           <Button

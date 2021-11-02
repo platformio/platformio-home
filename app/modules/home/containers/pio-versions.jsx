@@ -24,7 +24,7 @@ import { selectStorageItem } from '../../../store/selectors';
 class PioVersions extends React.Component {
   static propTypes = {
     coreVersion: PropTypes.string,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   renderCoreVersion() {
@@ -71,7 +71,7 @@ class PioVersions extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    coreVersion: selectStorageItem(state, 'coreVersion')
+    coreVersion: selectStorageItem(state, 'coreVersion'),
   };
 }
 

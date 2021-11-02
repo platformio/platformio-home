@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2
     - run: npm install
     - run: npm run lint
     - run: npm run build

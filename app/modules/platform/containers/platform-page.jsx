@@ -35,7 +35,7 @@ class PlatformDetailPage extends React.Component {
     loadPlatformData: PropTypes.func.isRequired,
     showPlatform: PropTypes.func.isRequired,
     showFramework: PropTypes.func.isRequired,
-    installPlatform: PropTypes.func.isRequired
+    installPlatform: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -65,10 +65,11 @@ function mapStateToProps(state, ownProps) {
   return {
     name,
     data: selectPlatformData(state, name),
-    showPlatform: name => goTo(ownProps.history, '/platforms/embedded/show', { name }),
-    showFramework: name =>
+    showPlatform: (name) =>
+      goTo(ownProps.history, '/platforms/embedded/show', { name }),
+    showFramework: (name) =>
       goTo(ownProps.history, '/platforms/frameworks/show', { name }),
-    showInstalledPlatforms: () => goTo(ownProps.history, '/platforms/installed')
+    showInstalledPlatforms: () => goTo(ownProps.history, '/platforms/installed'),
   };
 }
 

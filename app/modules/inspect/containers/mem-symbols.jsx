@@ -26,7 +26,7 @@ import { selectSymbolsSizeData } from '@inspect/selectors';
 class SymbolsPage extends React.PureComponent {
   static propTypes = {
     symbols: PropTypes.arrayOf(SymbolType),
-    openTextDocument: PropTypes.func.isRequired
+    openTextDocument: PropTypes.func.isRequired,
   };
 
   render() {
@@ -51,12 +51,12 @@ class SymbolsPage extends React.PureComponent {
 // Redux
 function mapStateToProps(state) {
   return {
-    symbols: selectSymbolsSizeData(state)
+    symbols: selectSymbolsSizeData(state),
   };
 }
 
 const dispatchToProps = {
-  openTextDocument
+  openTextDocument,
 };
 
 export default connect(mapStateToProps, dispatchToProps)(SymbolsPage);

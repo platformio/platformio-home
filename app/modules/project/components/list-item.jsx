@@ -32,7 +32,7 @@ export class ProjectListItem extends React.PureComponent {
     onAction: PropTypes.func,
     onClick: PropTypes.func,
     onBoardClick: PropTypes.func,
-    updateConfigDescription: PropTypes.func.isRequired
+    updateConfigDescription: PropTypes.func.isRequired,
   };
 
   handleActionClick(e, name) {
@@ -55,7 +55,7 @@ export class ProjectListItem extends React.PureComponent {
     this.props.updateConfigDescription(this.props.data.path, description, onEnd);
   }
 
-  handleClick = e => {
+  handleClick = (e) => {
     e.preventDefault();
     this.props.onClick(e);
   };
@@ -72,7 +72,7 @@ export class ProjectListItem extends React.PureComponent {
           .map(({ name, id }, i) => (
             <React.Fragment key={id}>
               {i ? ', ' : ''}
-              <a onClick={e => this.handleBoardClick(e, name)}>{name}</a>
+              <a onClick={(e) => this.handleBoardClick(e, name)}>{name}</a>
             </React.Fragment>
           ))}
       </div>
@@ -85,7 +85,7 @@ export class ProjectListItem extends React.PureComponent {
     }
     const menu = (
       <Menu onClick={({ key, domEvent }) => this.handleActionClick(domEvent, key)}>
-        {this.props.extraActions.map(action => (
+        {this.props.extraActions.map((action) => (
           <Menu.Item key={action.name}>
             {action.icon && (
               <React.Fragment>
@@ -100,7 +100,7 @@ export class ProjectListItem extends React.PureComponent {
 
     return (
       <Dropdown overlay={menu}>
-        <Button size="small" type="link" onClick={e => e.stopPropagation()}>
+        <Button size="small" type="link" onClick={(e) => e.stopPropagation()}>
           <Icon
             type="ellipsis"
             rotate={90}
@@ -143,12 +143,12 @@ export class ProjectListItem extends React.PureComponent {
           {this.props.actions &&
             this.props.actions.map((actions, i) => (
               <Button.Group key={i}>
-                {actions.map(action => (
+                {actions.map((action) => (
                   <Button
                     key={action.name}
                     icon={action.icon}
                     type={action.type}
-                    onClick={e => this.handleActionClick(e, action.name)}
+                    onClick={(e) => this.handleActionClick(e, action.name)}
                   >
                     {action.text}
                   </Button>
@@ -160,7 +160,7 @@ export class ProjectListItem extends React.PureComponent {
           <Tooltip title="Environments">
             <Icon type="environment" />
           </Tooltip>{' '}
-          {this.props.data.envs.map(env => (
+          {this.props.data.envs.map((env) => (
             <Tag key={env}>{env}</Tag>
           ))}
         </div>

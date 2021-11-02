@@ -22,7 +22,7 @@ import React from 'react';
 export default class CompanyLogo extends React.Component {
   static propTypes = {
     width: PropTypes.string,
-    height: PropTypes.string
+    height: PropTypes.string,
   };
 
   render() {

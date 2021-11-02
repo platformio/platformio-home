@@ -19,13 +19,13 @@ import {
   METRICS_KEY,
   RESULT_KEY,
   SEVERITY_LEVEL,
-  STORAGE_KEY
+  STORAGE_KEY,
 } from '@inspect/constants';
 import {
   arrayFlat,
   resolveRelativePathSegments,
   shallowCompare,
-  windowsToPosixPath
+  windowsToPosixPath,
 } from '@inspect/helpers';
 import { selectEntity, selectStorageItem } from '@store/selectors';
 
@@ -76,7 +76,7 @@ export function selectCodeCheckDefects(state) {
   }
   return arrayFlat(
     codeChecks.map(({ tool, defects }) => {
-      return defects.map(item => {
+      return defects.map((item) => {
         item['tool'] = tool;
         item['level'] = SEVERITY_LEVEL[item.severity.toUpperCase()];
         return item;
@@ -96,18 +96,18 @@ export function selectExplorerSizeData(state) {
     // Autofix Object format into Array
     files = Object.entries(files).map(([k, v]) => ({
       ...v,
-      path: k
+      path: k,
     }));
   }
-  return files.map(v => ({
+  return files.map((v) => ({
     flash: v.flash_size,
     isDir: false,
     path: resolveRelativePathSegments(windowsToPosixPath(v.path), '/'),
     ram: v.ram_size,
-    symbols: (v.symbols || []).map(s => ({
+    symbols: (v.symbols || []).map((s) => ({
       ...s,
-      displayName: s.demangled_name !== undefined ? s.demangled_name : s.name
-    }))
+      displayName: s.demangled_name !== undefined ? s.demangled_name : s.name,
+    })),
   }));
 }
 
@@ -116,7 +116,7 @@ export function selectSymbolsSizeData(state) {
   if (!files) {
     return;
   }
-  return arrayFlat(files.map(({ symbols }) => symbols).filter(x => x && x.length));
+  return arrayFlat(files.map(({ symbols }) => symbols).filter((x) => x && x.length));
 }
 
 export function selectMemoryStats(state) {
@@ -135,7 +135,7 @@ export function selectMemoryStats(state) {
     symbolsCount: files.reduce((total, { symbols = [] }) => total + symbols.length, 0),
     sectionsCount: Object.keys(sections).length,
     topSymbols: allSymbols.sort((a, b) => b.size - a.size).slice(0, 5),
-    topFiles: files.sort((a, b) => b.flash - a.flash).slice(0, 5)
+    topFiles: files.sort((a, b) => b.flash - a.flash).slice(0, 5),
   };
 }
 
@@ -154,7 +154,7 @@ export function selectCodeStats(state) {
         statsByComponent[name] = {
           high: 0,
           medium: 0,
-          low: 0
+          low: 0,
         };
       }
       statsByComponent[name].low += cmpStats.low || 0;
@@ -167,13 +167,13 @@ export function selectCodeStats(state) {
     defectsCountBySeverity: {
       low: defects.filter(({ severity }) => severity === 'low').length,
       medium: defects.filter(({ severity }) => severity === 'medium').length,
-      high: defects.filter(({ severity }) => severity === 'high').length
+      high: defects.filter(({ severity }) => severity === 'high').length,
     },
     stats: Object.entries(statsByComponent)
       .map(([component, stats]) => ({ ...stats, component }))
       .sort((a, b) => a.component.localeCompare(b.component)),
 
-    topDefects: defects.sort((a, b) => a.level - b.level).slice(0, 5)
+    topDefects: defects.sort((a, b) => a.level - b.level).slice(0, 5),
   };
 }
 
@@ -186,7 +186,7 @@ export function selectSectionsSizeData(state) {
   if (!sections.length) {
     sections = Object.entries(sections).map(([k, v]) => ({
       ...v,
-      name: k
+      name: k,
     }));
   }
   return sections.map(({ flags, size, type, start_addr: startAddr, name }) => ({
@@ -194,7 +194,7 @@ export function selectSectionsSizeData(state) {
     size,
     type: type != undefined ? type.toString() : '',
     startAddr,
-    name
+    name,
   }));
 }
 

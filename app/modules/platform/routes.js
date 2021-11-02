@@ -27,52 +27,52 @@ const routes = [
     path: '/platforms',
     icon: 'hdd',
     label: 'Installed',
-    component: PlatformInstalledPage
+    component: PlatformInstalledPage,
   },
   {
     path: '/platforms/installed',
-    component: PlatformInstalledPage
+    component: PlatformInstalledPage,
   },
   {
     path: '/platforms/embedded',
     icon: 'build',
     label: 'Embedded',
-    component: PlatformEmbeddedPage
+    component: PlatformEmbeddedPage,
   },
   {
     path: '/platforms/desktop',
     icon: 'desktop',
     label: 'Desktop',
-    component: PlatformDesktopPage
+    component: PlatformDesktopPage,
   },
   {
     path: '/platforms/frameworks',
     icon: 'setting',
     label: 'Frameworks',
-    component: FrameworksPage
+    component: FrameworksPage,
   },
   {
     path: '/platforms/frameworks/show',
-    component: FrameworkDetailPage
+    component: FrameworkDetailPage,
   },
   {
     path: '/platforms/updates',
     icon: 'cloud-download-o',
     label: 'Updates',
-    component: PlatformUpdatesPage
+    component: PlatformUpdatesPage,
   },
   {
     path: '/platforms/embedded/show',
-    component: PlatformDetailPage
+    component: PlatformDetailPage,
   },
   {
     path: '/platforms/desktop/show',
-    component: PlatformDetailPage
+    component: PlatformDetailPage,
   },
   {
     path: '/platforms/installed/show',
-    component: PlatformDetailPage
-  }
+    component: PlatformDetailPage,
+  },
 ];
 
 export default routes;

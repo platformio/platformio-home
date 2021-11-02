@@ -24,7 +24,7 @@ import {
   selectInspectStorage,
   selectInspectionResult,
   selectIsConfigurationDifferent,
-  selectSavedConfiguration
+  selectSavedConfiguration,
 } from '@inspect/selectors';
 
 import { backendFetchData } from '@store/backend';
@@ -48,8 +48,8 @@ function* _inspectMemory({ projectDir, env }) {
     query: 'core.call',
     params: [
       ['run', '-d', projectDir, '-e', env, '-t', 'sizedata'],
-      { force_subprocess: true }
-    ]
+      { force_subprocess: true },
+    ],
   });
 
   const buildDir = yield call(backendFetchData, {
@@ -57,14 +57,14 @@ function* _inspectMemory({ projectDir, env }) {
     params: [
       { path: pathlib.join(projectDir, 'platformio.ini') },
       'get_optional_dir',
-      'build'
-    ]
+      'build',
+    ],
   });
   const sizedataPath = pathlib.join(buildDir, env, 'sizedata.json');
 
   const jsonContent = yield call(backendFetchData, {
     query: 'os.request_content',
-    params: [sizedataPath]
+    params: [sizedataPath],
   });
   if (!jsonContent) {
     return;
@@ -83,8 +83,8 @@ function* _inspectCode({ projectDir, env }) {
       query: 'core.call',
       params: [
         ['check', '-d', projectDir, '-e', env, '--json-output'],
-        { force_subprocess: true }
-      ]
+        { force_subprocess: true },
+      ],
     });
     yield _updateMetric('code', projectDir, env, Date.now() - start);
     return codeCheckResults;
@@ -98,8 +98,8 @@ function* _inspectCode({ projectDir, env }) {
       query: 'core.call',
       params: [
         ['check', '-d', projectDir, '-e', env, '--verbose'],
-        { force_subprocess: true }
-      ]
+        { force_subprocess: true },
+      ],
     });
     throw new Error(output);
   } catch (err) {
@@ -111,7 +111,7 @@ function* _inspectCode({ projectDir, env }) {
 }
 
 function* watchInspectProject() {
-  yield takeLatest(INSPECT_PROJECT, function*({ configuration, onEnd }) {
+  yield takeLatest(INSPECT_PROJECT, function* ({ configuration, onEnd }) {
     try {
       if (!(yield select(selectProjectInfo, configuration.projectDir))) {
         throw new Error(
@@ -191,7 +191,7 @@ function* watchInspectProject() {
 }
 
 function* watchReinspectProject() {
-  yield takeLatest(REINSPECT_PROJECT, function*({ onEnd }) {
+  yield takeLatest(REINSPECT_PROJECT, function* ({ onEnd }) {
     const configuration = yield select(selectSavedConfiguration);
     if (!configuration) {
       throw new Error('No inspection configuration ro run reinspectProject');

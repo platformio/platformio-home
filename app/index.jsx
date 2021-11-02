@@ -25,7 +25,7 @@ import { Provider } from 'react-redux';
 import React from 'react';
 import { render } from 'react-dom';
 
-window.addEventListener('error', err => reportException(err, true));
+window.addEventListener('error', (err) => reportException(err, true));
 
 render(
   <AppContainer>

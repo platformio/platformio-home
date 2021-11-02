@@ -32,23 +32,23 @@ function mapStateToProps(state, ownProps) {
 
     items = rawItems
       .filter(
-        board =>
+        (board) =>
           (!platform || !board.platform || board.platform === platform) &&
           (!frameworks.length ||
-            frameworks.some(framework => board.frameworks.includes(framework)))
+            frameworks.some((framework) => board.frameworks.includes(framework)))
       )
-      .map(board => ({
+      .map((board) => ({
         name: `${board.name} (${board.id})`,
-        value: board.id
+        value: board.id,
       }));
   }
   return {
-    items
+    items,
   };
 }
 
 const dispatchToProps = {
-  onLoad: () => loadBoards(true)
+  onLoad: () => loadBoards(true),
 };
 
 export const BoardAutocomplete = connect(
@@ -58,6 +58,6 @@ export const BoardAutocomplete = connect(
 BoardAutocomplete.displayName = 'BoardAutocomplete';
 
 OptionEditorFactory.register(
-  schema => schema && schema.name.endsWith('board'),
+  (schema) => schema && schema.name.endsWith('board'),
   (_schema, inputProps) => <BoardAutocomplete {...inputProps} />
 );

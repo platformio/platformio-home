@@ -18,5 +18,5 @@ import { createAction } from '../../store/actions';
 
 export const LOAD_LATEST_TWEETS = 'LOAD_LATEST_TWEETS';
 
-export const loadLatestTweets = username =>
+export const loadLatestTweets = (username) =>
   createAction(LOAD_LATEST_TWEETS, { username });

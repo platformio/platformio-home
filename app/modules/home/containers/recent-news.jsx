@@ -30,10 +30,10 @@ class RecentNews extends React.Component {
   static propTypes = {
     items: PropTypes.oneOfType([
       PropTypes.array,
-      PropTypes.instanceOf(jsonrpc.JsonRpcError)
+      PropTypes.instanceOf(jsonrpc.JsonRpcError),
     ]),
     loadLatestTweets: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -82,7 +82,7 @@ class RecentNews extends React.Component {
     }
     return (
       <Carousel className="block">
-        {[...Array(Math.ceil(this.props.items.length / 3)).keys()].map(rowNum => (
+        {[...Array(Math.ceil(this.props.items.length / 3)).keys()].map((rowNum) => (
           <div key={rowNum}>
             <Row gutter={18}>
               <Col span={8}>{this.renderCard(rowNum * 3)}</Col>
@@ -120,7 +120,7 @@ class RecentNews extends React.Component {
     );
     const cover = <div style={{ backgroundImage: `url(${coverUrl})` }} />;
     return (
-      <Card hoverable cover={cover} onClick={e => this.onClickItem(e, item)}>
+      <Card hoverable cover={cover} onClick={(e) => this.onClickItem(e, item)}>
         <Card.Meta
           title={title}
           description={<span dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -134,11 +134,11 @@ class RecentNews extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    items: selectLatestTweets(state)
+    items: selectLatestTweets(state),
   };
 }
 
 export default connect(mapStateToProps, {
   loadLatestTweets,
-  osOpenUrl
+  osOpenUrl,
 })(RecentNews);

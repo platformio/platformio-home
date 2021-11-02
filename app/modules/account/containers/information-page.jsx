@@ -32,15 +32,15 @@ class AccountInformationPage extends React.Component {
         username: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
         firstname: PropTypes.string,
-        lastname: PropTypes.string
+        lastname: PropTypes.string,
       }).isRequired,
       packages: PropTypes.array,
-      subscriptions: PropTypes.array
+      subscriptions: PropTypes.array,
     }).isRequired,
     loadAccountInfo: PropTypes.func.isRequired,
     logoutAccount: PropTypes.func.isRequired,
     showLoginPage: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -72,7 +72,7 @@ class AccountInformationPage extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     data: selectAccountInfo(state),
-    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true)
+    showLoginPage: () => goTo(ownProps.history, '/account/login', null, true),
   };
 }
 

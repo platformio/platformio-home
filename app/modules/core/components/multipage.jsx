@@ -22,12 +22,12 @@ import RoutedMenu from '../containers/routed-menu';
 
 export default class MultiPage extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   };
 
   static propTypes = {
     routes: PropTypes.arrayOf(PropTypes.object).isRequired,
-    disableMenu: PropTypes.bool
+    disableMenu: PropTypes.bool,
   };
 
   render() {
@@ -44,7 +44,7 @@ export default class MultiPage extends React.Component {
           {this.props.routes
             .slice(0)
             .reverse()
-            .map(item =>
+            .map((item) =>
               typeof item.component === 'function' ? (
                 <Route
                   path={item.path}

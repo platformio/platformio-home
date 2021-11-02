@@ -30,7 +30,7 @@ export class OptionAutocomplete extends React.PureComponent {
   static defaultProps = {
     addIcon: 'plus',
     addText: 'Add',
-    mode: MODE_AUTOCOMPLETE
+    mode: MODE_AUTOCOMPLETE,
   };
 
   static propTypes = {
@@ -45,7 +45,7 @@ export class OptionAutocomplete extends React.PureComponent {
     items: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired
+        value: PropTypes.string.isRequired,
       })
     ),
     mode: PropTypes.oneOf([MODE_AUTOCOMPLETE, MODE_SELECT, MODE_TAGS]),
@@ -55,7 +55,7 @@ export class OptionAutocomplete extends React.PureComponent {
     onBlur: PropTypes.func,
     onChange: PropTypes.func,
     onLoad: PropTypes.func,
-    onSearch: PropTypes.func
+    onSearch: PropTypes.func,
   };
 
   constructor(...args) {
@@ -74,11 +74,11 @@ export class OptionAutocomplete extends React.PureComponent {
 
   load(...args) {
     this.setState({
-      loading: true
+      loading: true,
     });
     this.props.onLoad(...args, () => {
       this.setState({
-        loading: false
+        loading: false,
       });
     });
   }
@@ -95,8 +95,8 @@ export class OptionAutocomplete extends React.PureComponent {
     return (
       (this.props.items &&
         this.props.items
-          .filter(o => !this.props.multiple || !selectedValues.includes(o.value))
-          .map(o => {
+          .filter((o) => !this.props.multiple || !selectedValues.includes(o.value))
+          .map((o) => {
             let name = o.name;
             let value = o.value;
             const key = o.key !== undefined ? o.key : o.value;
@@ -142,7 +142,7 @@ export class OptionAutocomplete extends React.PureComponent {
           ? values.split('\n')
           : Array.isArray(values)
           ? values
-          : []
+          : [],
     });
   }
 
@@ -152,20 +152,20 @@ export class OptionAutocomplete extends React.PureComponent {
     }
   };
 
-  handleBlur = value => {
+  handleBlur = (value) => {
     if (this.props.onBlur) {
       this.props.onBlur(this.transformValueOut(value));
     }
   };
 
-  handleChange = value => {
+  handleChange = (value) => {
     this.updateStateValues(value);
     if (this.props.onChange) {
       this.props.onChange(this.transformValueOut(value));
     }
   };
 
-  handleSearch = query => {
+  handleSearch = (query) => {
     if (this.props.mode === MODE_TAGS) {
       if (this.props.onSearch) {
         this.props.onSearch(query);
@@ -173,7 +173,7 @@ export class OptionAutocomplete extends React.PureComponent {
       // WARN: if use query from props we get prev value because setState in the parent
       // component is async
       this.debouncedOnLoad({
-        query
+        query,
       });
     } else {
       this.updateStateValues(query);
@@ -186,9 +186,9 @@ export class OptionAutocomplete extends React.PureComponent {
     option.props.value.toLowerCase().includes(inputValue.toLowerCase()) ||
     option.props.children.toLowerCase().includes(inputValue.toLowerCase());
 
-  handleTagClose = value => {
+  handleTagClose = (value) => {
     this.setState({
-      values: this.state.values.filter(v => v !== value)
+      values: this.state.values.filter((v) => v !== value),
     });
   };
 
@@ -196,26 +196,26 @@ export class OptionAutocomplete extends React.PureComponent {
     this.setState({ autocompleterVisible: true }, () => this.autocomplete.focus());
   };
 
-  handleAutocompleteRef = autocomplete => {
+  handleAutocompleteRef = (autocomplete) => {
     this.autocomplete = autocomplete;
   };
 
-  handleKeyUp = e => {
+  handleKeyUp = (e) => {
     if (e.keyCode === 13) {
       if (this.state.autocompleterValue && this.state.autocompleterValue.length) {
         this.handleChange([
           ...(this.state.values || []),
-          this.state.autocompleterValue
+          this.state.autocompleterValue,
         ]);
       }
       this.setState({
         autocompleterValue: '',
-        autocompleterVisible: false
+        autocompleterVisible: false,
       });
     }
   };
 
-  handleAddValueChange = value => {
+  handleAddValueChange = (value) => {
     this.setState({ autocompleterValue: value });
   };
 
@@ -225,7 +225,7 @@ export class OptionAutocomplete extends React.PureComponent {
       return (
         <div className="option-autocomplete mode-tags">
           <div className="block">
-            {(this.state.values || []).map(value => (
+            {(this.state.values || []).map((value) => (
               <Tag closable key={value} onClose={() => this.handleTagClose(value)}>
                 {value}
               </Tag>
@@ -278,7 +278,7 @@ export class OptionAutocomplete extends React.PureComponent {
       onBlur: this.handleBlur,
       onFocus: this.handleInputFocus,
       onChange: this.handleChange,
-      onSearch: this.handleSearch
+      onSearch: this.handleSearch,
     };
 
     if (this.props.mode === MODE_AUTOCOMPLETE) {

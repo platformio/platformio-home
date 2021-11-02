@@ -25,7 +25,7 @@ import { backendFetchData } from '../../store/backend';
 import { updateEntity } from '../../store/actions';
 
 function* watchLoadLatestTweets() {
-  yield takeLatest(actions.LOAD_LATEST_TWEETS, function*({ username }) {
+  yield takeLatest(actions.LOAD_LATEST_TWEETS, function* ({ username }) {
     let items = yield select(selectors.selectLatestTweets);
     if (items) {
       return;
@@ -33,7 +33,7 @@ function* watchLoadLatestTweets() {
     try {
       items = yield call(backendFetchData, {
         query: 'misc.load_latest_tweets',
-        params: [`https://news.platformio.org/tweets/${username}/data.json`]
+        params: [`https://news.platformio.org/tweets/${username}/data.json`],
       });
     } catch (err) {
       items = err;

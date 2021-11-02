@@ -39,7 +39,7 @@ class ProjectNewModal extends React.Component {
     addProject: PropTypes.func.isRequired,
     openProject: PropTypes.func.isRequired,
     initProject: PropTypes.func.isRequired,
-    osOpenUrl: PropTypes.func.isRequired
+    osOpenUrl: PropTypes.func.isRequired,
   };
 
   constructor() {
@@ -49,7 +49,7 @@ class ProjectNewModal extends React.Component {
       useDefaultLocation: true,
       frameworks: [],
       projectLocation: null,
-      inProgress: false
+      inProgress: false,
     };
   }
 
@@ -57,26 +57,26 @@ class ProjectNewModal extends React.Component {
     const frameworks = board.frameworks || [];
     this.setState({
       selectedFramework: frameworks.length ? frameworks[0].name : null,
-      frameworks
+      frameworks,
     });
   }
 
   onDidFramework(framework) {
     this.setState({
-      selectedFramework: framework
+      selectedFramework: framework,
     });
   }
 
   onDidUseDefaultLocation(e) {
     this.setState({
-      useDefaultLocation: e.target.checked
+      useDefaultLocation: e.target.checked,
     });
   }
 
   onDidProjectLocation(projectLocation) {
     this.props.form.resetFields(['isCustomLocation']);
     this.setState({
-      projectLocation
+      projectLocation,
     });
   }
 
@@ -87,7 +87,7 @@ class ProjectNewModal extends React.Component {
         return;
       }
       this.setState({
-        inProgress: true
+        inProgress: true,
       });
       this.props.initProject(
         values.board.id,
@@ -100,10 +100,10 @@ class ProjectNewModal extends React.Component {
         ),
         (err, location) => {
           this.setState({
-            inProgress: false
+            inProgress: false,
           });
           if (!err) {
-            this.props.addProject(location, true);
+            this.props.addProject(location);
             this.onDidCancel(location);
           }
         }
@@ -113,7 +113,7 @@ class ProjectNewModal extends React.Component {
 
   onDidCancel(projectDir) {
     this.setState({
-      inProgress: false
+      inProgress: false,
     });
     this.props.onCancel(projectDir);
   }
@@ -153,9 +153,9 @@ class ProjectNewModal extends React.Component {
                 required: true,
                 whitespace: true,
                 pattern: /^[a-z\d\_\-\. ]+$/i,
-                message: 'Please input a valid name for project folder! [a-z0-9_-. ]'
-              }
-            ]
+                message: 'Please input a valid name for project folder! [a-z0-9_-. ]',
+              },
+            ],
           })(<Input placeholder="Project name" />)}
         </Form.Item>
         <Form.Item label="Board" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
@@ -163,9 +163,9 @@ class ProjectNewModal extends React.Component {
             rules: [
               {
                 required: true,
-                message: 'Please select a board!'
-              }
-            ]
+                message: 'Please select a board!',
+              },
+            ],
           })(<BoardSelect onChange={::this.onDidBoard} />)}
         </Form.Item>
         <Form.Item label="Framework" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
@@ -176,7 +176,7 @@ class ProjectNewModal extends React.Component {
             disabled={!this.state.selectedFramework}
             onChange={::this.onDidFramework}
           >
-            {this.state.frameworks.map(item => (
+            {this.state.frameworks.map((item) => (
               <Select.Option key={item.name} value={item.name} title={item.title}>
                 {item.title}
               </Select.Option>
@@ -197,9 +197,9 @@ class ProjectNewModal extends React.Component {
                       ),
                     200
                   ),
-                message: 'Please select a custom project location!'
-              }
-            ]
+                message: 'Please select a custom project location!',
+              },
+            ],
           })(
             <Checkbox
               onChange={::this.onDidUseDefaultLocation}
@@ -236,11 +236,11 @@ class ProjectNewModal extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    projectsDir: selectStorageItem(state, 'projectsDir')
+    projectsDir: selectStorageItem(state, 'projectsDir'),
   };
 }
 
 export default connect(mapStateToProps, {
   ...actions,
-  osOpenUrl
+  osOpenUrl,
 })(Form.create()(ProjectNewModal));

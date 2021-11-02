@@ -30,10 +30,10 @@ export default class LibrarySearchCard extends React.Component {
       frameworks: PropTypes.arrayOf(PropTypes.object).isRequired,
       platforms: PropTypes.arrayOf(PropTypes.object).isRequired,
       keywords: PropTypes.arrayOf(PropTypes.string).isRequired,
-      authornames: PropTypes.arrayOf(PropTypes.string).isRequired
+      authornames: PropTypes.arrayOf(PropTypes.string).isRequired,
     }),
     searchLibrary: PropTypes.func.isRequired,
-    showLibrary: PropTypes.func.isRequired
+    showLibrary: PropTypes.func.isRequired,
   };
 
   componentWillUnmount() {
@@ -56,7 +56,7 @@ export default class LibrarySearchCard extends React.Component {
     const header = (
       <div className="clearfix">
         <div className="pull-left">
-          <a onClick={e => this.onDidShow(e, this.props.item.id)}>
+          <a onClick={(e) => this.onDidShow(e, this.props.item.id)}>
             {this.props.item.name}
           </a>{' '}
           <small>
@@ -73,7 +73,7 @@ export default class LibrarySearchCard extends React.Component {
       <Card
         hoverable
         title={header}
-        onClick={e => this.onDidShow(e, this.props.item.id)}
+        onClick={(e) => this.onDidShow(e, this.props.item.id)}
         className="list-item-card"
       >
         <div className="block">{this.props.item.description}</div>
@@ -122,7 +122,7 @@ export default class LibrarySearchCard extends React.Component {
         {items.map((item, index) => (
           <a
             key={item.name}
-            onClick={e => this.onDidFilterSearch(e, filter, item.name)}
+            onClick={(e) => this.onDidFilterSearch(e, filter, item.name)}
           >
             {item.title}
             {index < items.length - 1 ? ', ' : ''}
@@ -136,7 +136,7 @@ export default class LibrarySearchCard extends React.Component {
     return (
       <span>
         {items.map((name, index) => (
-          <a key={name} onClick={e => this.onDidFilterSearch(e, 'keyword', name)}>
+          <a key={name} onClick={(e) => this.onDidFilterSearch(e, 'keyword', name)}>
             {name}
             {index < items.length - 1 ? ', ' : ''}
           </a>

@@ -27,38 +27,38 @@ const routes = [
     path: '/account',
     icon: 'info-circle-o',
     label: 'Information',
-    component: AccountMainPage
+    component: AccountMainPage,
   },
   {
     path: '/account/login',
-    component: AccountLoginPage
+    component: AccountLoginPage,
   },
   {
     path: '/account/registration',
-    component: AccountRegistrationPage
+    component: AccountRegistrationPage,
   },
   {
     path: '/account/forgot',
-    component: AccountForgotPage
+    component: AccountForgotPage,
   },
   {
     path: '/account/profile',
     icon: 'user',
     label: 'Profile',
-    component: ProfilePage
+    component: ProfilePage,
   },
   {
     path: '/account/password',
     icon: 'lock',
     label: 'Password',
-    component: PasswordPage
+    component: PasswordPage,
   },
   {
     path: '/account/token',
     icon: 'key',
     label: 'Token',
-    component: TokenPage
-  }
+    component: TokenPage,
+  },
 ];
 
 export default routes;

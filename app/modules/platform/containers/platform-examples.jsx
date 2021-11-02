@@ -29,12 +29,12 @@ class PlatformProjectExamples extends React.Component {
   static propTypes = {
     pkgDir: PropTypes.string.isRequired,
     uris: PropTypes.arrayOf(PropTypes.string),
-    osFsGlob: PropTypes.func.isRequired
+    osFsGlob: PropTypes.func.isRequired,
   };
 
   static getGlobPatterns() {
     const patterns = [];
-    ['*', path.join('*', '*'), path.join('*', '*', '*')].forEach(wildcard => {
+    ['*', path.join('*', '*'), path.join('*', '*', '*')].forEach((wildcard) => {
       patterns.push(path.join('examples', wildcard, 'platformio.ini'));
       patterns.push(path.join('examples', wildcard, 'src', '*.c'));
       patterns.push(path.join('examples', wildcard, 'src', '*.cpp'));
@@ -58,9 +58,9 @@ class PlatformProjectExamples extends React.Component {
     }
 
     return this.props.uris
-      .filter(uri => uri.endsWith('platformio.ini'))
+      .filter((uri) => uri.endsWith('platformio.ini'))
       .sort()
-      .map(configUri => {
+      .map((configUri) => {
         const projectDir = path.dirname(configUri);
         const projectDirTokens = path.split(projectDir);
         let projectName = path.basename(projectDir);
@@ -69,7 +69,7 @@ class PlatformProjectExamples extends React.Component {
           projectName = projectDirTokens.slice(examplesIndex + 1).join('/');
         }
         const pei = new ProjectExampleItem(projectName, projectDir);
-        this.props.uris.forEach(uri => {
+        this.props.uris.forEach((uri) => {
           if (uri.startsWith(projectDir)) {
             pei.addSource(uri, uri.substr(projectDir.length + 1));
           }
@@ -98,7 +98,7 @@ function mapStateToProps(state, ownProps) {
       state,
       PlatformProjectExamples.getGlobPatterns(),
       ownProps.pkgDir
-    )
+    ),
   };
 }
 

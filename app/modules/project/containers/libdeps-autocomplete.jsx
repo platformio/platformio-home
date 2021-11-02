@@ -25,7 +25,10 @@ import { selectSearchResult } from '@library/selectors';
 function getFullQuery(query, ownProps) {
   const sectionData = ownProps.configSectionData || [];
   const frameworks = getConfigOptionValue(sectionData, 'framework') || [];
-  const q = [query, ...frameworks.map(f => `framework:"${f.replace(/"/g, '&quot;')}"`)];
+  const q = [
+    query,
+    ...frameworks.map((f) => `framework:"${f.replace(/"/g, '&quot;')}"`),
+  ];
   return q.join(' ');
 }
 
@@ -36,11 +39,11 @@ function mapStateToProps(state, ownProps) {
     getFullQuery(ownProps.query, ownProps)
   );
   if (searchResult) {
-    items = searchResult.items.map(s => ({
+    items = searchResult.items.map((s) => ({
       data: s,
       key: s.id,
       name: `${s.ownername}/${s.name}`,
-      value: `${s.ownername}/${s.name} @ ^${s.versionname}`
+      value: `${s.ownername}/${s.name} @ ^${s.versionname}`,
     }));
   }
   return { items };
@@ -50,7 +53,7 @@ function dispatchToProps(dispatch, ownProps) {
   return {
     onLoad: (options, onEnd) => {
       dispatch(loadSearchResult(getFullQuery(options.query, ownProps), 1, onEnd));
-    }
+    },
   };
 }
 
@@ -66,7 +69,7 @@ class LibDepsAutocomplete extends React.Component {
     this.state = {};
   }
 
-  handleSearch = query => {
+  handleSearch = (query) => {
     this.setState({ query });
   };
 
@@ -82,7 +85,7 @@ class LibDepsAutocomplete extends React.Component {
 }
 
 OptionEditorFactory.register(
-  schema => schema && schema.name === 'lib_deps',
+  (schema) => schema && schema.name === 'lib_deps',
   (_schema, inputProps, _itemProps, decoratorOptions) => {
     decoratorOptions.trigger = 'onChange';
     return (

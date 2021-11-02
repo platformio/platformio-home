@@ -20,7 +20,7 @@ export const ConfigurationType = PropTypes.shape({
   code: PropTypes.bool,
   env: PropTypes.string.isRequired,
   memory: PropTypes.bool,
-  projectDir: PropTypes.string.isRequired
+  projectDir: PropTypes.string.isRequired,
 });
 
 export const DefectType = PropTypes.shape({
@@ -31,7 +31,7 @@ export const DefectType = PropTypes.shape({
   line: PropTypes.number.isRequired,
   message: PropTypes.string.isRequired,
   severity: PropTypes.string.isRequired,
-  tool: PropTypes.string.isRequired
+  tool: PropTypes.string.isRequired,
 });
 
 export const SymbolType = PropTypes.shape({
@@ -44,7 +44,7 @@ export const SymbolType = PropTypes.shape({
   size: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   file: PropTypes.string,
-  line: PropTypes.number
+  line: PropTypes.number,
 });
 
 export const SectionsType = PropTypes.arrayOf(
@@ -53,7 +53,7 @@ export const SectionsType = PropTypes.arrayOf(
     flags: PropTypes.string,
     size: PropTypes.number,
     startAddr: PropTypes.number,
-    type: PropTypes.string
+    type: PropTypes.string,
   })
 );
 
@@ -62,5 +62,5 @@ export const DeviceType = PropTypes.shape({
   flash: PropTypes.number,
   frequency: PropTypes.number,
   mcu: PropTypes.string,
-  ram: PropTypes.number
+  ram: PropTypes.number,
 });

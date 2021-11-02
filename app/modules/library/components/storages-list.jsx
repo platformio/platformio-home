@@ -30,7 +30,7 @@ export default class LibraryStoragesList extends React.Component {
     searchLibrary: PropTypes.func.isRequired,
     showLibrary: PropTypes.func.isRequired,
     uninstallLibrary: PropTypes.func.isRequired,
-    updateLibrary: PropTypes.func.isRequired
+    updateLibrary: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
@@ -66,11 +66,11 @@ export default class LibraryStoragesList extends React.Component {
           placeholder="Filter libraries by name..."
           defaultValue={this.props.filterValue}
           size="large"
-          onChange={e => this.onDidFilter(e.target.value)}
-          ref={elm => (this._searchInputElement = elm)}
+          onChange={(e) => this.onDidFilter(e.target.value)}
+          ref={(elm) => (this._searchInputElement = elm)}
         />
         <div>
-          {this.props.items.map(item => (
+          {this.props.items.map((item) => (
             <LibraryStorageItems
               item={item}
               key={item.name}
