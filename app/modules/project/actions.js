@@ -34,7 +34,7 @@ export const LOAD_SERIAL_PORTS = 'LOAD_SERIAL_PORTS';
 
 export const addProject = (
   projectDir,
-  options = { withOpen: true, onEnd: undefined }
+  options = { withOpen: true, withReload: true, onEnd: undefined }
 ) => createAction(ADD_PROJECT, { projectDir, options });
 export const hideProject = (projectDir) => createAction(HIDE_PROJECT, { projectDir });
 export const openProject = (projectDir) => createAction(OPEN_PROJECT, { projectDir });
