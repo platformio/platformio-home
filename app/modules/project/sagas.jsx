@@ -30,7 +30,15 @@ import {
 } from '@project/constants';
 import { Modal, message } from 'antd';
 import {
-import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+  call,
+  delay,
+  put,
+  race,
+  select,
+  take,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 import { selectEntity, selectStorageItem } from '../../store/selectors';
 
 import { ConfigFileModifiedError } from '@project/errors';
@@ -174,14 +182,46 @@ function* watchLoadProjects() {
         continue;
       }
     }
+    // fetch projects from IDE
+    try {
+      const { ideProjects } = yield race({
+        ideProjects: call(backendFetchData, {
+          query: 'ide.send_command',
+          params: ['get_pio_project_dirs'],
+        }),
+        timeout: delay(2000),
+      });
+      const recentProjects =
+        (yield select(selectStorageItem, RECENT_PROJECTS_STORAGE_KEY)) || [];
+      let newProjectAdded = false;
+      for (const projectDir of ideProjects || []) {
+        if (!recentProjects.includes(projectDir)) {
+          recentProjects.push(projectDir);
+          newProjectAdded = true;
+        }
+      }
+      if (newProjectAdded) {
+        if (!(yield select(selectStorageItem, 'coreVersion'))) {
+          yield take(storeActions.STORE_READY);
+        }
+        yield put(
+          storeActions.updateStorageItem(RECENT_PROJECTS_STORAGE_KEY, recentProjects)
+        );
+        yield put(storeActions.saveState());
+        yield take(storeActions.STATE_SAVED);
+      }
+    } catch (err) {
+      console.warn('Could not fetch projects from IDE', err);
+    }
+
     try {
       items = yield call(backendFetchData, {
         query: 'project.get_projects',
       });
-      yield put(updateEntity('projects', items));
+      yield put(storeActions.updateEntity('projects', items));
       yield put(actions.projectsLoaded());
     } catch (err) {
-      yield put(notifyError('Could not load recent projects', err));
+      yield put(coreActions.notifyError('Could not load recent projects', err));
     }
   }
 }

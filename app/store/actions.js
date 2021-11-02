@@ -25,6 +25,7 @@ export const LOAD_STORE = 'LOAD_STORE';
 export const UPDATE_STORE = 'UPDATE_STORE';
 export const RESET_STORE = 'RESET_STORE';
 export const SAVE_STATE = 'SAVE_STATE';
+export const STATE_SAVED = 'STATE_SAVED';
 
 export const UPDATE_ENTITY = 'UPDATE_ENTITY';
 export const DELETE_ENTITY = 'DELETE_ENTITY';
@@ -37,6 +38,7 @@ export const DELETE_STORAGE_ITEM = 'DELETE_STORAGE_ITEM';
 export const connectRouter = (router) => createAction(CONNECT_ROUTER, { router });
 
 export const fireStoreReady = () => createAction(STORE_READY);
+export const fireStateSaved = () => createAction(STATE_SAVED);
 export const loadStore = () => createAction(LOAD_STORE);
 export const updateStore = (newState) => createAction(UPDATE_STORE, { newState });
 export const resetStore = () => createAction(RESET_STORE);

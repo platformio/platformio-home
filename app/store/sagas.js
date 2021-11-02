@@ -77,6 +77,7 @@ function* autoSaveState() {
       if (!result) {
         throw new Error('Received invalid result after saving application state');
       }
+      yield put(actions.fireStateSaved());
     } catch (err) {
       return yield put(notifyError('Could not save application state', err));
     }
