@@ -206,59 +206,47 @@ class MemoryStatisticsPage extends React.PureComponent {
 
   renderTopFiles() {
     return (
-      <Card title="Top 5 Files" className="block ">
-        <table className="inspect-stats-block">
-          <tbody>
-            {this.props.memory.topFiles.map(({ flash, path }) => (
-              <tr key={path} onClick={::this.handleMemoryClick}>
-                <td className="text-right">
-                  <b>{formatSize(flash)}</b>
-                </td>
-                <td>
-                  <Tooltip title={path} overlayStyle={{ maxWidth: 400 }}>
-                    {limitPathLength(path, 35)}
-                  </Tooltip>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Card title="Top 5 Files" className="inspect-stats-block">
+        {this.props.memory.topFiles.map(({ flash, path }) => (
+          <Row gutter={10} key={path} onClick={::this.handleMemoryClick}>
+            <Col xs={6} lg={4} className="text-right text-nowrap">
+              <b>{formatSize(flash)}</b>
+            </Col>
+            <Col xs={18} lg={20} className="text-truncate">
+              <Tooltip title={path} overlayStyle={{ maxWidth: 400 }}>
+                {limitPathLength(path, 35)}
+              </Tooltip>
+            </Col>
+          </Row>
+        ))}
       </Card>
     );
   }
 
   renderTopSymbols() {
     return (
-      <Card title="Top 5 Symbols" className="block">
-        <table className="inspect-stats-block">
-          <tbody>
-            {this.props.memory.topSymbols.map((symbol) => (
-              <tr key={symbol.displayName} onClick={::this.handleSymbolsClick}>
-                <td className="text-right">
-                  <b>{formatSize(symbol.size)}</b>
-                </td>
-                <td>
-                  <div
-                    style={{ overflow: 'hidden', whiteSpace: 'nowrap', width: '100%' }}
-                  >
-                    <Tooltip
-                      title={`${symbol.type} -> ${
-                        symbol.file ? `${symbol.file}:${symbol.line}` : 'unknown'
-                      }`}
-                      overlayStyle={{ maxWidth: 400 }}
-                    >
-                      <Icon
-                        title={SYMBOL_NAME_BY_TYPE[symbol.type]}
-                        type={SYMBOL_ICON_BY_TYPE[symbol.type]}
-                      />{' '}
-                      {symbol.displayName}
-                    </Tooltip>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Card title="Top 5 Symbols" className="inspect-stats-block">
+        {this.props.memory.topSymbols.map((symbol) => (
+          <Row gutter={10} key={symbol.displayName} onClick={::this.handleSymbolsClick}>
+            <Col xs={6} lg={4} className="text-right text-nowrap">
+              <b>{formatSize(symbol.size)}</b>
+            </Col>
+            <Col xs={18} lg={20} className="text-truncate">
+              <Tooltip
+                title={`${symbol.type} -> ${
+                  symbol.file ? `${symbol.file}:${symbol.line}` : 'unknown'
+                }`}
+                overlayStyle={{ maxWidth: 400 }}
+              >
+                <Icon
+                  title={SYMBOL_NAME_BY_TYPE[symbol.type]}
+                  type={SYMBOL_ICON_BY_TYPE[symbol.type]}
+                />{' '}
+                {symbol.displayName + symbol.displayName}
+              </Tooltip>
+            </Col>
+          </Row>
+        ))}
       </Card>
     );
   }
