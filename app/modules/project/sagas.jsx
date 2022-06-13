@@ -444,7 +444,7 @@ function* watchSaveProjectConfig() {
       try {
         yield call(ensureUserConsent, PROJECT_CONFIG_SAVE_CONSENT_ID, {
           content: `Warning!
-          The entire file contents or platformio.ini will be rewritten with the current
+          The entire file contents of platformio.ini will be rewritten with the current
           configuration defined in this UI.
           Continue to save the configuration?`,
           okText: 'Save',
