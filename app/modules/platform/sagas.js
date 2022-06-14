@@ -290,7 +290,10 @@ function* watchInstallPlatform() {
 
       result = yield call(backendFetchData, {
         query: 'core.call',
-        params: [['platform', 'install', platform], { force_subprocess: true }],
+        params: [
+          ['pkg', 'install', '--global', '--platform', platform],
+          { force_subprocess: true },
+        ],
       });
 
       ReactGA.timing({
