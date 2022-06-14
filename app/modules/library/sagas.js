@@ -17,6 +17,7 @@
 /* eslint-disable no-constant-condition */
 
 import * as actions from './actions';
+import * as pathlib from '@core/path';
 import * as selectors from './selectors';
 
 import {
@@ -292,13 +293,23 @@ function* watchInstallLibrary() {
     let err,
       result = null;
     try {
-      let args = ['lib'];
+      let args = ['pkg', 'install'];
+      const isPlatformIOProject = storageDir
+        ? yield call(backendFetchData, {
+            query: 'os.is_file',
+            params: [pathlib.join(storageDir, 'platformio.ini')],
+          })
+        : false;
       if (storageDir) {
-        args = args.concat(['--storage-dir', storageDir]);
-      } else {
+        args = args.concat([
+          isPlatformIOProject ? '--project-dir' : '--storage-dir',
+          storageDir,
+        ]);
+      }
+      if (!isPlatformIOProject) {
         args.push('--global');
       }
-      args = args.concat(['install', lib]);
+      args = args.concat(['--library', lib]);
       result = yield call(backendFetchData, {
         query: 'core.call',
         params: [args, { force_subprocess: true }],
