@@ -63,7 +63,7 @@ module.exports = {
     // serve index.html in place of 404 responses to allow HTML5 history
     historyApiFallback: true,
     port: 9000,
-    host: 'localhost'
+    host: '127.0.0.1'
   },
   plugins: [
     ...common.plugins,
