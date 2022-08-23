@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright (c) 2017-present PlatformIO Plus <contact@pioplus.com>
  * All rights reserved.
@@ -18,11 +20,14 @@ const packageConfig = JSON.parse(
 );
 const workspace = process.env.PIOHOME_WORKSPACE || 'platformio';
 const theme = process.env.PIOHOME_THEME || 'dark';
+const workspaceConfig = JSON.parse(
+  fs.readFileSync(path.join(rootDir, `workspaces/${workspace}/package.json`), 'utf8')
+);
 const themeModifyVars = Object.assign(
   {},
   packageConfig.themes[theme],
-  (packageConfig.workspaces[workspace].themes
-    ? packageConfig.workspaces[workspace].themes[theme]
+  (workspaceConfig.themes
+    ? workspaceConfig.themes[theme]
     : null) || {}
 );
 
@@ -55,7 +60,7 @@ module.exports = {
         {
           loader: 'babel-loader',
           options: {
-            plugins: [['import', { libraryName: 'antd', style: true }]]
+            plugins: [['import', {libraryName: 'antd', style: true}]]
           }
         }
       ]
@@ -63,20 +68,20 @@ module.exports = {
     {
       test: /\.css$/,
       use: [
-        { loader: 'style-loader' },
-        { loader: 'css-loader', options: { importLoaders: true } }
+        {loader: 'style-loader'},
+        {loader: 'css-loader', options: {importLoaders: true}}
       ],
       exclude: /node_modules/
     },
     {
       test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
       exclude: /(node_modules|bower_components)/,
-      use: [{ loader: 'file-loader' }]
+      use: [{loader: 'file-loader'}]
     },
     {
       test: /\.(woff|woff2)$/,
       exclude: /(node_modules|bower_components)/,
-      use: [{ loader: 'url-loader', options: { prefix: 'font/', limit: 5000 } }]
+      use: [{loader: 'url-loader', options: {prefix: 'font/', limit: 5000}}]
     },
     {
       test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
@@ -84,7 +89,7 @@ module.exports = {
       use: [
         {
           loader: 'url-loader',
-          options: { mimetype: 'application/octet-stream', limit: 10000 }
+          options: {mimetype: 'application/octet-stream', limit: 10000}
         }
       ]
     },
@@ -94,7 +99,7 @@ module.exports = {
       use: [
         {
           loader: 'url-loader',
-          options: { mimetype: 'image/svg+xml', limit: 10000 }
+          options: {mimetype: 'image/svg+xml', limit: 10000}
         }
       ]
     },
@@ -104,7 +109,7 @@ module.exports = {
       use: [
         {
           loader: 'url-loader',
-          options: { mimetype: 'image/gif', limit: 10000 }
+          options: {mimetype: 'image/gif', limit: 10000}
         }
       ]
     },
@@ -114,7 +119,7 @@ module.exports = {
       use: [
         {
           loader: 'url-loader',
-          options: { mimetype: 'image/jpg', limit: 10000 }
+          options: {mimetype: 'image/jpg', limit: 10000}
         }
       ]
     },
@@ -124,7 +129,7 @@ module.exports = {
       use: [
         {
           loader: 'url-loader',
-          options: { mimetype: 'image/image/png', limit: 10000 }
+          options: {mimetype: 'image/image/png', limit: 10000}
         }
       ]
     }
@@ -135,7 +140,7 @@ module.exports = {
       APP_VERSION: JSON.stringify(packageConfig.version)
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: path.join(mediaDir, 'fonts'), to: 'fonts' }]
+      patterns: [{from: path.join(mediaDir, 'fonts'), to: 'fonts'}]
     })
   ]
 };

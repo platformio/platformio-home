@@ -1,0 +1,10 @@
+{
+  "name": "platformio",
+  "version": "1.0.0",
+  "main": "''",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/platformio/platformio-home.git"
+  },
+  "license": "Apache-2.0"
+}

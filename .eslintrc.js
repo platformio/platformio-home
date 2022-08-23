@@ -1,91 +1,91 @@
 module.exports = {
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
+  'env': {
+    'browser': true,
+    'es6': true,
+    'node': true
   },
-  "globals": {
-    "APP_VERSION": true,
-    "getQueryVariable": true
+  'globals': {
+    'APP_VERSION': true,
+    'getQueryVariable': true
   },
-  "plugins": [
-    "import",
-    "react"
+  'plugins': [
+    'import',
+    'react'
   ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings"
+  'extends': [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings'
   ],
-  "parser": "@babel/eslint-parser",
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
+  'parser': '@babel/eslint-parser',
+  'parserOptions': {
+    'ecmaVersion': 6,
+    'sourceType': 'module',
+    'ecmaFeatures': {
+      'jsx': true
     }
   },
-  "settings": {
-    "import/resolver": {
-      "webpack": {
-        "config": "scripts/webpack.dev.config.js"
+  'settings': {
+    'import/resolver': {
+      'webpack': {
+        'config': 'scripts/webpack.dev.config.js'
       }
     },
-    "import/ignore": [
-      "node_modules"
+    'import/ignore': [
+      'node_modules'
     ],
-    "react": {
-      "version": "detect",
+    'react': {
+      'version': 'detect',
     }
   },
-  "rules": {
-    "curly": [
-      "warn",
-      "all"
+  'rules': {
+    'curly': [
+      'warn',
+      'all'
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
+    'linebreak-style': [
+      'error',
+      'unix'
     ],
-    "no-console": [
-      "error",
+    'no-console': [
+      'error',
       {
-        "allow": ["warn", "error", "info"]
+        'allow': ['warn', 'error', 'info']
       }
     ],
-    "prefer-const": "error",
-    "quotes": [
-      "error",
-      "single",
-      "avoid-escape"
+    'prefer-const': 'error',
+    'quotes': [
+      'error',
+      'single',
+      'avoid-escape'
     ],
-    "semi": [
-      "error",
-      "always"
+    'semi': [
+      'error',
+      'always'
     ],
-    "sort-imports": [
-      "warn",
+    'sort-imports': [
+      'warn',
       {
-        "ignoreCase": false,
-        "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+        'ignoreCase': false,
+        'ignoreMemberSort': false,
+        'memberSyntaxSortOrder': ['none', 'all', 'multiple', 'single']
       }
     ],
-    "no-useless-escape": [
-      "off"
+    'no-useless-escape': [
+      'off'
     ],
-    "no-empty": [
-      "warn",
+    'no-empty': [
+      'warn',
       {
-        "allowEmptyCatch": true
+        'allowEmptyCatch': true
       }
     ],
-    "import/no-named-as-default-member": [
-      "off"
+    'import/no-named-as-default-member': [
+      'off'
     ],
-    "react/prop-types": [
-      "off"
+    'react/prop-types': [
+      'off'
     ]
   }
 };

@@ -1,0 +1,18 @@
+{
+  "name": "aceinna",
+  "version": "1.0.0",
+  "main": "''",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/platformio/platformio-home.git"
+  },
+  "license": "Apache-2.0",
+  "themes": {
+    "light": {
+      "@primary-color": "#0C7F7B"
+    },
+    "dark": {
+      "@primary-color": "#0C7F7B"
+    }
+  }
+}
