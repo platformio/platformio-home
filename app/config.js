@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-export const IS_WINDOWS =
-  navigator && navigator.platform && navigator.platform.startsWith('Win');
+import { select, takeLatest } from 'redux-saga/effects';
+import { STORE_READY } from './store/actions';
+import { selectStorage } from './store/selectors';
+
+export function* watchLoadIsWindows() {
+  yield takeLatest(STORE_READY, function* () {
+    const storage = yield select(selectStorage);
+    if (!storage.coreSystype) {
+      return;
+    }
+    IS_WINDOWS = storage.coreSystype.indexOf('windows') > -1;
+  });
+};
+
+export let IS_WINDOWS;
+
 export const INPUT_FILTER_DELAY = 300; // ms, dalay before filtering projects, libs, platorms
 export const PLATFORMIO_API_ENDPOINT = 'https://api.platformio.org';
 

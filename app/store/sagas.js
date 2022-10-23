@@ -20,7 +20,7 @@ import * as actions from './actions';
 
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
-import { INPUT_FILTER_DELAY } from '../config';
+import { INPUT_FILTER_DELAY, watchLoadIsWindows } from '../config';
 import accountSagas from '../modules/account/sagas';
 import { asyncDelay } from '../modules/core/helpers';
 import { backendFetchData } from './backend';
@@ -106,6 +106,7 @@ export default function* root() {
       ...projectSagas,
       ...platformSagas,
       ...inspectSagas,
+      watchLoadIsWindows,
     ].map((s) => s())
   );
 }
