@@ -17,7 +17,7 @@
 const urls = {
   home: 'https://www.aceinna.com/',
   welcome: 'https://github.com/Aceinna/platform-aceinna_imu#description',
-  linkedin: 'https://www.linkedin.com/company/aceinna/',
+  linkedin: 'https://www.linkedin.com/company/aceinna',
   twitter: 'https://twitter.com/MEMSsensortech',
   github: 'https://github.com/aceinna',
   weibo: 'https://weibo.com/',
