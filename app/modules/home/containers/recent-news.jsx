@@ -38,23 +38,22 @@ class RecentNews extends React.Component {
 
   constructor() {
     super(...arguments);
-    const twitterUrl = workspaceSettings.getUrl('twitter');
-    this.props.loadLatestTweets(twitterUrl.substring(twitterUrl.lastIndexOf('/') + 1));
+    const linkedInUrl = workspaceSettings.getUrl('linkedin');
+    this.props.loadLatestTweets(
+      linkedInUrl.substring(linkedInUrl.lastIndexOf('/') + 1)
+    );
   }
 
   onClickItem(e, item) {
     e.preventDefault();
-    if (item.entries.urls.length) {
-      return this.props.osOpenUrl(item.entries.urls[0]);
-    }
-    return this.props.osOpenUrl(item.tweetUrl);
+    return this.props.osOpenUrl(item.permalink);
   }
 
   render() {
     return (
       <div className="recent-news">
         <Divider>
-          <a onClick={() => this.props.osOpenUrl(workspaceSettings.getUrl('twitter'))}>
+          <a onClick={() => this.props.osOpenUrl(workspaceSettings.getUrl('linkedin'))}>
             Recent News
           </a>
         </Divider>
@@ -101,8 +100,8 @@ class RecentNews extends React.Component {
     }
     const item = this.props.items[itemIndex];
     let coverUrl = workspaceSettings.get('companyLogoSrc');
-    if (item.entries.photos.length) {
-      coverUrl = item.entries.photos[0];
+    if (item.content.thumbnail) {
+      coverUrl = item.content?.thumbnail?.url;
     }
     const title = (
       <ul className="list-inline">
@@ -111,11 +110,9 @@ class RecentNews extends React.Component {
             <Icon type="pushpin" title="Pinned news" />
           </li>
         )}
-        <li>{item.timeFormatted}</li>
-        <li>
-          <Icon type="twitter" />
-        </li>
         <li>{item.author}</li>
+        <li>&bull;</li>
+        <li>{item.timeFormatted}</li>
       </ul>
     );
     const cover = <div style={{ backgroundImage: `url(${coverUrl})` }} />;
@@ -123,7 +120,14 @@ class RecentNews extends React.Component {
       <Card hoverable cover={cover} onClick={(e) => this.onClickItem(e, item)}>
         <Card.Meta
           title={title}
-          description={<span dangerouslySetInnerHTML={{ __html: item.text }} />}
+          description={
+            <span
+              dangerouslySetInnerHTML={{
+                __html: item.text.replace(/[\n]+/g, '\n<br />'),
+              }}
+            />
+          }
+          style={{ color: 'red !important' }}
         />
       </Card>
     );
