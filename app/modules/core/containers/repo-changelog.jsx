@@ -22,6 +22,7 @@ import URL from 'url-parse';
 import { connect } from 'react-redux';
 import humanize from 'humanize';
 import marked from 'marked';
+import DOMPurify from 'dompurify';
 import { requestContent } from '../actions';
 import { selectRequestedContent } from '../selectors';
 
@@ -113,7 +114,7 @@ class ReleaseNotes extends React.Component {
                 </Tooltip>
               </small>
             </h3>
-            <div dangerouslySetInnerHTML={{ __html: marked(item.body || '') }}></div>
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(item.body || '')) }}></div>
           </div>
         ))}
       </div>
